@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GSU | Geoeconomic Strategy Unit</title>
     
+    <link rel="icon" type="image/x-icon" href="gsu.ico">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -202,12 +204,12 @@
             pointer-events: auto; /* Re-enable pointer events for buttons/links */
         }
 
-        /* 3D Container - Now Full Screen but positioned */
+        /* 3D Container */
         #canvas-container {
             position: absolute;
             top: 0;
             right: 0;
-            width: 60%; /* Occupy right side */
+            width: 60%; 
             height: 100%;
             z-index: 1;
             cursor: grab;
@@ -264,7 +266,7 @@
             display: block;
         }
 
-        /* Deliverables List with SVGs */
+        /* Deliverables List */
         .deliverables-list {
             list-style: none;
         }
@@ -285,7 +287,7 @@
             fill: var(--accent-gold);
         }
 
-        /* Team Carousel */
+        /* Team Carousel & Cards */
         .carousel-wrapper {
             position: relative;
             overflow: hidden;
@@ -307,39 +309,82 @@
         }
 
         .team-card {
-            min-width: 300px;
-            max-width: 300px;
+            min-width: 320px;
+            max-width: 320px;
             background: rgba(255,255,255,0.03);
             border-top: 3px solid var(--accent-gold);
             padding: 2rem;
             scroll-snap-align: start;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .team-card:hover {
             background: rgba(255,255,255,0.06);
         }
 
+        .team-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0); 
+            border: 0px solid rgba(203, 168, 78, 0.3);
+            align-self: flex-start;
+        }
+
+        .team-header {
+            margin-bottom: 1rem;
+        }
+
         .team-role {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--accent-gold);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
             display: block;
+            line-height: 1.3;
+        }
+
+        .team-name-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
 
         .team-name {
             font-family: var(--font-head);
             font-size: 1.5rem;
-            margin-bottom: 1rem;
-            display: block;
+            line-height: 1.2;
+        }
+
+        .linkedin-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+
+        .linkedin-icon:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .linkedin-icon svg {
+            fill: white;
+            width: 18px;
+            height: 18px;
         }
 
         .team-bio {
             font-size: 0.95rem;
             opacity: 0.7;
             line-height: 1.5;
+            margin-top: auto;
         }
 
         .carousel-controls {
@@ -428,7 +473,7 @@
 
     <nav class="container">
         <div class="logo">
-            <img src="logo.png" alt="GSU Logo">
+            <img src="gsu.png" alt="GSU Logo">
         </div>
         <div class="nav-links">
             <a href="#about">About</a>
@@ -519,14 +564,141 @@
 
             <div class="carousel-wrapper fade-up delay-2">
                 <div class="carousel" id="teamCarousel">
-                    <div class="team-card"><span class="team-role">Founder & Chief Analyst</span><span class="team-name">Ishan Jasuja</span><p class="team-bio">Holds a Master's in International Political Economy from King's College London. Experienced in financial services and diplomacy.</p></div>
-                    <div class="team-card"><span class="team-role">Chief Data Officer</span><span class="team-name">Pranoy Roy Choudhury</span><p class="team-bio">Data lead developing quantitative frameworks. Focuses on monetary policy and financial governance at King's College London.</p></div>
-                    <div class="team-card"><span class="team-role">CTO</span><span class="team-name">Adip Krishna Guduru</span><p class="team-bio">Spearheading the technological infrastructure and digital strategy, ensuring secure and scalable delivery of GSU intelligence platforms.</p></div>
-                    <div class="team-card"><span class="team-role">Global Policy Intelligence</span><span class="team-name">Hillary Eyram</span><p class="team-bio">Holds a BSc in Business Administration with a strong interest in tracking development trends in emerging markets.</p></div>
-                    <div class="team-card"><span class="team-role">Research Fellow (GPIU)</span><span class="team-name">Niamh Allen</span><p class="team-bio">MA Social Policy graduate. Tracks geopolitical developments to inform high-level policy for the Global Policy Intelligence Unit.</p></div>
-                    <div class="team-card"><span class="team-role">Regional Policy Fellow</span><span class="team-name">Nurein Akindele</span><p class="team-bio">Focuses on the Europe Program. Contributes to policy briefs and geoeconomic trend analysis.</p></div>
-                    <div class="team-card"><span class="team-role">Strategic Analyst</span><span class="team-name">Liliya Anisimova</span><p class="team-bio">Brings a nuanced understanding of how legal frameworks, economics, and global power dynamics intersect. LSE & KCL Alumna.</p></div>
-                    <div class="team-card"><span class="team-role">Analyst</span><span class="team-name">Sreemayukha Nyayapathi</span><p class="team-bio">Master's in International Relations from Glasgow. Specializes in assessing India's role in a changing global landscape.</p></div>
+                    
+                    <div class="team-card">
+                        <img src="brian.png" alt="Dr. Brian O. Reuben" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Founder, The Sixteenth Council</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Dr. Brian O. Reuben</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">With over two decades of experience, Dr. Reuben empowers businesses and governments to deliver sustainable value through strategic decision-making and responsible leadership.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="ishan.png" alt="Ishan Jasuja" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Director</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Ishan Jasuja</span>
+                                <a href="https://www.linkedin.com/in/ishanjasuja/" target="_blank" class="linkedin-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="team-bio">Holds a Master's in International Political Economy from King's College London. His experience spans financial services, strategic advisory, and diplomacy, equipping him to navigate high-stakes global challenges.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="adip.png" alt="Adip Krishna Guduru" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Chief Technology Officer</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Adip Krishna Guduru</span>
+                                <a href="https://www.linkedin.com/in/adipkg/" target="_blank" class="linkedin-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="team-bio">Spearheads the unit's technological infrastructure and digital strategy. He ensures the secure and scalable delivery of GSU's intelligence platforms and data-driven assets.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="pranoy.png" alt="Pranoy Roy Choudhury" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Chief Data Officer</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Pranoy Roy Choudhury</span>
+                                <a href="https://www.linkedin.com/in/pranoy-roy-choudhury/" target="_blank" class="linkedin-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="team-bio">Leads the development of quantitative frameworks and data analysis. His work focuses on financial governance, and emerging technologies, supported by his research at King's College London.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="lauren.png" alt="Lauren Mason" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Regional Policy Fellow</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Lauren Mason</span>
+                                <a href="https://www.linkedin.com/in/lauren-mason-583b4722a/" target="_blank" class="linkedin-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="team-bio">Holds a Master’s degree in War Studies from King’s College London. Her research focuses on EU security, UK domestic politics, and geoeconomic risk, informing European policy and business strategy.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="niamh.png" alt="Niamh Allen" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Research Fellow (GPIU)</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Niamh Allen</span>
+                                <a href="https://www.linkedin.com/in/niamh-allen-7a0bbb212/" target="_blank" class="linkedin-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="team-bio">An MA Social Policy graduate who tracks geopolitical developments to inform high-level policy. She contributes key insights to the Global Policy Intelligence Unit's strategic outputs.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="nurein.png" alt="Nurein Akindele" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Regional Policy Fellow</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Nurein Akindele</span>
+                                <a href="https://www.linkedin.com/in/nurein-akindele/" target="_blank" class="linkedin-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="team-bio">Focuses on the Europe Program, contributing to policy briefs and geoeconomic trend analysis. He brings extensive experience in international development and sustainability strategies.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="liliya.png" alt="Liliya Anisimova" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Strategic Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Liliya Anisimova</span>
+                                <a href="https://www.linkedin.com/in/liliya-anisimova-lse/" target="_blank" class="linkedin-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="team-bio">An LSE and King's College London alumna. She brings a nuanced understanding of how legal frameworks, economics, and global power dynamics intersect to shape market realities.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="sreemayukha.png" alt="Sreemayukha Nyayapathi" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Sreemayukha Nyayapathi</span>
+                                <a href="https://www.linkedin.com/in/sreemayukha-nyayapathi-8b488b227/" target="_blank" class="linkedin-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="team-bio">Holds a Master's in International Relations from the University of Glasgow. She specializes in assessing South Asian geopolitics and India's evolving role in the changing global landscape.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="hillary.png" alt="Hillary Eyram" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Hillary Eyram</span>
+                                </div>
+                        </div>
+                        <p class="team-bio">Holds a BSc in Business Administration. She contributes to research and strategic analysis, with a strong interest in tracking development trends across emerging markets.</p>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -666,11 +838,11 @@
             // Camera setup - FOV 45
             camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
             
-            // Position camera based on screen size to fix cropping
+            // Position camera based on screen size
             if(window.innerWidth > 900) {
-                 camera.position.set(15, 10, 45); // Offset to right
+                 camera.position.set(15, 10, 45); // Desktop: Offset to right
             } else {
-                 camera.position.set(0, 0, 60); // Center on mobile
+                 camera.position.set(0, 0, 50); // Mobile: Centered and closer (Zoomed In)
             }
 
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -719,35 +891,26 @@
         }
 
         function createGlobeFromData(imageData, imgWidth, imgHeight) {
-            // Pre-process image data into lookup table (like reference code)
             const activeLatLon = {};
 
-            // Image is 360x180 (width x height)
-            // Map each pixel to lat/lon
-            let darkPixelCount = 0;
             for(let y = 0; y < imgHeight; y++) {
-                const lat = 90 - y; // Top row is lat 90, bottom is lat -89
+                const lat = 90 - y; 
                 if(!activeLatLon[lat]) activeLatLon[lat] = [];
 
                 for(let x = 0; x < imgWidth; x++) {
-                    const lon = -180 + x; // Left column is lon -180, right is lon 179
+                    const lon = -180 + x; 
                     const i = (y * imgWidth + x) * 4;
 
                     const red = imageData[i];
                     const green = imageData[i + 1];
                     const blue = imageData[i + 2];
 
-                    // Dark pixels = continents
                     if(red < 80 && green < 80 && blue < 80) {
                         activeLatLon[lat].push(lon);
-                        darkPixelCount++;
                     }
                 }
             }
-            console.log('Dark pixels found:', darkPixelCount);
-            console.log('Latitudes with data:', Object.keys(activeLatLon).length);
 
-            // Check if coordinate is near a continent
             const visibilityForCoordinate = (lon, lat) => {
                 const latKey = Math.round(lat);
                 if(!activeLatLon[latKey] || !activeLatLon[latKey].length) return false;
@@ -759,7 +922,6 @@
                 return Math.abs(lon - closest) < 1.5;
             };
 
-            // Create separate dots for continents and oceans
             const continentPositions = [];
             const oceanPositions = [];
             const dotDensity = 2.5;
@@ -774,19 +936,13 @@
                     const pos = latLonToVector3(lat, lon, dotSphereRadius);
 
                     if(visibilityForCoordinate(lon, lat)) {
-                        // Continent dot
                         continentPositions.push(pos.x, pos.y, pos.z);
                     } else {
-                        // Ocean dot
                         oceanPositions.push(pos.x, pos.y, pos.z);
                     }
                 }
             }
 
-            console.log('Continent dots:', continentPositions.length / 3);
-            console.log('Ocean dots:', oceanPositions.length / 3);
-
-            // Create continent points (gold)
             const continentGeometry = new THREE.BufferGeometry();
             continentGeometry.setAttribute('position', new THREE.Float32BufferAttribute(continentPositions, 3));
 
@@ -794,7 +950,7 @@
                 uniforms: { u_time: { value: 0 } },
                 vertexShader: vertex,
                 fragmentShader: fragment.replace('vec3 colorGold = vec3(0.796, 0.658, 0.305);', 'vec3 colorGold = vec3(0.796, 0.658, 0.305);')
-                                        .replace('vec3 colorWhite = vec3(0.8, 0.85, 0.9);', 'vec3 colorWhite = vec3(0.796, 0.658, 0.305);'), // Both gold
+                                        .replace('vec3 colorWhite = vec3(0.8, 0.85, 0.9);', 'vec3 colorWhite = vec3(0.796, 0.658, 0.305);'), 
                 transparent: true,
                 blending: THREE.AdditiveBlending,
                 depthWrite: false
@@ -804,7 +960,6 @@
             scene.add(continentPoints);
             materials.push(continentMaterial);
 
-            // Create ocean points (white/light gray)
             const oceanGeometry = new THREE.BufferGeometry();
             oceanGeometry.setAttribute('position', new THREE.Float32BufferAttribute(oceanPositions, 3));
 
@@ -812,7 +967,7 @@
                 uniforms: { u_time: { value: 0 } },
                 vertexShader: vertex,
                 fragmentShader: fragment.replace('vec3 colorGold = vec3(0.796, 0.658, 0.305);', 'vec3 colorGold = vec3(0.9, 0.9, 0.92);')
-                                        .replace('vec3 colorWhite = vec3(0.8, 0.85, 0.9);', 'vec3 colorWhite = vec3(0.85, 0.85, 0.87);'), // Light gray tones
+                                        .replace('vec3 colorWhite = vec3(0.8, 0.85, 0.9);', 'vec3 colorWhite = vec3(0.85, 0.85, 0.87);'), 
                 transparent: true,
                 blending: THREE.AdditiveBlending,
                 depthWrite: false
@@ -822,14 +977,12 @@
             scene.add(oceanPoints);
             materials.push(oceanMaterial);
 
-            // Add Inner Dark Sphere to block back dots
             const innerGeo = new THREE.SphereGeometry(dotSphereRadius - 0.5, 32, 32);
             const innerMat = new THREE.MeshBasicMaterial({ color: 0x192030 });
             scene.add(new THREE.Mesh(innerGeo, innerMat));
         }
 
         function createFallbackGlobe() {
-            // If image fails, create random dots
             const geometry = new THREE.BufferGeometry();
             const positions = [];
             for(let i=0; i<3000; i++) {
@@ -858,7 +1011,6 @@
                 const v1 = latLonToVector3(route.start.lat, route.start.lon, dotSphereRadius);
                 const v2 = latLonToVector3(route.end.lat, route.end.lon, dotSphereRadius);
                 
-                // Curve height based on distance
                 const dist = v1.distanceTo(v2);
                 const mid = v1.clone().add(v2).multiplyScalar(0.5).normalize().multiplyScalar(dotSphereRadius + (dist * 0.3));
                 
@@ -866,7 +1018,6 @@
                 const points = curve.getPoints(50);
                 const geometry = new THREE.BufferGeometry().setFromPoints(points);
                 
-                // Animated Line Shader
                 const lineMaterial = new THREE.ShaderMaterial({
                     uniforms: {
                         color: { value: new THREE.Color(0xcba84e) },
@@ -884,21 +1035,15 @@
                         uniform float uTime;
                         varying float vProgress;
                         void main() {
-                            // Create a moving dash
                             float dash = sin(vProgress * 10.0 - uTime * 3.0);
-                            // Only show parts of the sine wave
                             if(dash < 0.5) discard; 
-                            
-                            // Fade ends
                             float opacity = smoothstep(0.0, 0.2, vProgress) * smoothstep(1.0, 0.8, vProgress);
-                            
                             gl_FragColor = vec4(color, opacity);
                         }
                     `,
                     transparent: true
                 });
                 
-                // Add UVs to geometry for shader
                 const uvs = [];
                 for(let i=0; i<=50; i++) uvs.push(i/50, 0);
                 geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
@@ -918,8 +1063,8 @@
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
             
-            // Re-center if mobile
-            if(window.innerWidth < 900) camera.position.set(0, 0, 60);
+            // Re-center and adjust zoom on mobile
+            if(window.innerWidth < 900) camera.position.set(0, 0, 50);
             else camera.position.set(15, 10, 45);
         }
 
