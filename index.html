@@ -330,8 +330,8 @@
             border-radius: 50%;
             object-fit: cover;
             margin-bottom: 1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0); 
-            border: 0px solid rgba(203, 168, 78, 0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); 
+            border: 1px solid rgba(203, 168, 78, 0.3);
             align-self: flex-start;
         }
 
@@ -412,6 +412,88 @@
             border-color: var(--accent-gold);
             color: var(--accent-gold);
         }
+        
+        /* YouTube Section */
+        #youtube-insights {
+            padding-bottom: 6rem;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border: 1px solid rgba(203, 168, 78, 0.2);
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.4s var(--easing);
+        }
+
+        .video-wrapper:hover {
+            border-color: rgba(203, 168, 78, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Clients Section */
+        .client-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .client-card:hover {
+            border-color: var(--accent-gold);
+            background: rgba(255,255,255,0.05);
+            transform: translateY(-5px);
+        }
+
+        .client-logo {
+            height: 70px;
+            width: auto;
+            max-width: 80%;
+            margin-bottom: 2rem;
+            filter: grayscale(100%) brightness(200%); 
+            transition: 0.4s;
+            opacity: 0.8;
+        }
+
+        .client-card:hover .client-logo {
+            filter: grayscale(0%) brightness(100%); 
+            opacity: 1;
+        }
+        
+        .client-name {
+            font-family: var(--font-head);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--accent-gold);
+            letter-spacing: 0.5px;
+        }
 
         /* Footer */
         footer {
@@ -465,6 +547,7 @@
                 height: 50vh; 
             }
             .grid-2, .grid-4 { grid-template-columns: 1fr; }
+            .video-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
         }
     </style>
@@ -551,6 +634,40 @@
             </div>
         </div>
     </section>
+    
+    <section id="youtube-insights">
+        <div class="container">
+            <h2 class="fade-up">Latest Insights</h2>
+            <p class="fade-up">Expert analysis and strategic outlooks from the Geoeconomic Strategy Unit.</p>
+
+            <div class="video-grid fade-up delay-1">
+                <div class="video-wrapper">
+                    <iframe
+                        src="https://www.youtube.com/embed/HGa1Xbx7IjQ?rel=0&modestbranding=1"
+                        title="GSU Insight Video"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="video-wrapper">
+                    <iframe
+                        src="https://www.youtube.com/embed/X2YzPP2MAt8?rel=0&modestbranding=1"
+                        title="GSU Insight Video"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;" class="fade-up">
+                <a href="https://www.youtube.com/@GeoeconomicStrategyUnit" target="_blank" class="btn">Visit Our Channel</a>
+            </div>
+        </div>
+    </section>
 
     <section id="team">
         <div class="container">
@@ -568,7 +685,7 @@
                     <div class="team-card">
                         <img src="brian.png" alt="Dr. Brian O. Reuben" class="team-photo">
                         <div class="team-header">
-                            <span class="team-role">Founder, The Sixteenth Council</span>
+                            <span class="team-role">Founder, 16th Council</span>
                             <div class="team-name-row">
                                 <span class="team-name">Dr. Brian O. Reuben</span>
                             </div>
@@ -615,7 +732,7 @@
                                 </a>
                             </div>
                         </div>
-                        <p class="team-bio">Leads the development of quantitative frameworks and data analysis. His work focuses on financial governance, and emerging technologies, supported by his research at King's College London.</p>
+                        <p class="team-bio">Leads the development of quantitative frameworks, focusing on monetary policy, financial governance, and emerging technologies at King's College London.</p>
                     </div>
 
                     <div class="team-card">
@@ -731,6 +848,33 @@
                         <li><svg class="icon-diamond" viewBox="0 0 24 24"><path d="M12 2L2 12l10 10 10-10L12 2z"/></svg>Actionable playbooks for recurring risk patterns</li>
                         <li><svg class="icon-diamond" viewBox="0 0 24 24"><path d="M12 2L2 12l10 10 10-10L12 2z"/></svg>Data-driven analysis optimizing supply chains</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="clients">
+        <div class="container">
+            <div class="fade-up" style="text-align: center; margin-bottom: 4rem;">
+                <h2>Our Clients</h2>
+                <p>We are trusted by leaders across industries to navigate complexity.</p>
+            </div>
+            
+            <div class="grid-2 fade-up delay-1">
+                <div class="client-card">
+                    <a href="https://ksrmarine.com/" target="_blank">
+                        <img src="ksr-logo.svg" alt="KSR Marine Services" class="client-logo">
+                        <div class="client-name">KSR Marine Services</div>
+                        <p style="font-size: 1rem;">A leader in maritime logistics, providing robust supply chain solutions that navigate the complexities of global trade routes and marine engineering.</p>
+                    </a>
+                </div>
+                
+                <div class="client-card">
+                    <a href="https://tcaglobal.in/" target="_blank">
+                        <img src="tca-logo.png" alt="Compounding Advantage India" class="client-logo">
+                        <div class="client-name">Compounding Advantage India</div>
+                        <p style="font-size: 1rem;">A premier strategic advisory firm facilitating cross-border investment, corporate governance, and trade dynamics across emerging markets.</p>
+                    </a>
                 </div>
             </div>
         </div>
