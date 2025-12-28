@@ -19,7 +19,7 @@
             --secondary-bg: #1f283b;
             --text-white: #ffffff;
             --accent-gold: #cba84e;
-            --bright-gray: #eeeeee; /* New hover outline color */
+            --bright-gray: #eeeeee;
             --font-head: 'Playfair Display', serif;
             --font-body: 'EB Garamond', serif;
             --easing: cubic-bezier(0.23, 1, 0.32, 1);
@@ -55,6 +55,15 @@
             background-color: var(--accent-gold);
         }
 
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-white);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
         h4 {
             font-size: 1.1rem;
             color: var(--accent-gold);
@@ -63,16 +72,27 @@
             margin-bottom: 1rem;
         }
 
-        /* Centered Header Text - Single Column */
+        /* Layout Utilities */
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
+        
         .header-content {
             text-align: center;
             max-width: 900px;
             margin: 0 auto 3rem auto;
         }
 
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Text Styling */
         p {
             font-size: 1.15rem;
             opacity: 0.9;
+            margin-bottom: 1rem;
         }
 
         a { text-decoration: none; color: inherit; transition: 0.3s ease; }
@@ -93,7 +113,6 @@
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
         .logo img { height: 50px; width: auto; display: block; }
         .nav-links a { font-family: var(--font-head); font-size: 0.9rem; letter-spacing: 1px; margin-left: 2rem; opacity: 0.7; }
         .nav-links a:hover { opacity: 1; color: var(--accent-gold); }
@@ -103,19 +122,32 @@
 
         #map-container {
             width: 100%;
-            /* 2:1 aspect ratio minimizes whitespace around the map */
             aspect-ratio: 2 / 1; 
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 5rem;
+            margin-bottom: 4rem;
             border-radius: 4px;
             overflow: hidden;
             position: relative;
         }
 
+        /* Definition Cards */
+        .regime-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-left: 3px solid var(--accent-gold);
+        }
+
+        .regime-title {
+            color: var(--accent-gold);
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
         /* --- Custom Map Styling --- */
-        
-        /* 1. Tooltip Container - REMOVED OPACITY HACK */
         div.google-visualization-tooltip {
             background-color: var(--secondary-bg) !important;
             border: 1px solid var(--accent-gold) !important;
@@ -123,12 +155,10 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
             padding: 0 !important;
             z-index: 1000 !important;
-            /* Ensure it is visible */
             visibility: visible !important; 
             opacity: 1 !important;
         }
 
-        /* 2. Tooltip Content */
         .tooltip-custom {
             font-family: var(--font-body);
             color: white;
@@ -148,15 +178,15 @@
         .tooltip-row { font-size: 1rem; margin: 5px 0; display: flex; justify-content: space-between; }
         .tooltip-row strong { opacity: 0.6; font-weight: 400; margin-right: 1rem; }
 
-        /* 3. Bolder Bright Gray Country Outline on Hover */
+        /* Hover Outline */
         #regions_div svg g g path {
             transition: stroke 0.1s ease, stroke-width 0.1s ease;
-            stroke: #1f283b; /* Default border */
+            stroke: #1f283b; 
             stroke-width: 1px;
         }
 
         #regions_div svg g g path:hover {
-            stroke: var(--bright-gray) !important; /* Bright Light Gray */
+            stroke: var(--bright-gray) !important; 
             stroke-width: 2px !important;
             fill-opacity: 1 !important;
             z-index: 999;
@@ -190,6 +220,7 @@
         @media (max-width: 900px) {
             .nav-links { display: none; }
             #map-container { height: 50vh; aspect-ratio: auto; }
+            .grid-2 { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -224,6 +255,34 @@
             <div id="regions_div" style="width: 100%; height: 100%;"></div>
         </div>
 
+        <div class="fade-up" style="max-width: 1000px; margin: 0 auto 4rem auto;">
+            <h3>Regime Classifications</h3>
+            <p>Countries are classified into RAO regimes based on their level of opportunity (measured by the mean RAO score) and the stability of outcomes (measured by volatility and downside risk). There are four primary regimes:</p>
+            
+            <div class="grid-2">
+                <div class="regime-card">
+                    <span class="regime-title">Robust Opportunity</span>
+                    <p style="margin-bottom:0; font-size:1rem;">Countries with positive mean scores and low volatility. Opportunity is high and outcomes are stable.</p>
+                </div>
+                <div class="regime-card">
+                    <span class="regime-title">Fragile Opportunity</span>
+                    <p style="margin-bottom:0; font-size:1rem;">Countries with high mean scores but elevated volatility or downside risk. Opportunity exists but is exposed to shocks.</p>
+                </div>
+                <div class="regime-card">
+                    <span class="regime-title">Stable but Low Opportunity</span>
+                    <p style="margin-bottom:0; font-size:1rem;">Countries with low volatility but weak or negative mean scores. Conditions are stable but growth potential is limited.</p>
+                </div>
+                <div class="regime-card">
+                    <span class="regime-title">Structural Risk</span>
+                    <p style="margin-bottom:0; font-size:1rem;">Countries with negative mean scores and material downside risk. Fragility dominates opportunity.</p>
+                </div>
+            </div>
+
+            <p style="font-size: 0.95rem; opacity: 0.6; font-style: italic;">
+                Note: Countries are slotted into regimes using thresholds derived from the empirical distribution of scores rather than fixed global cut-offs. This allows the classification to adapt as the global environment changes.
+            </p>
+        </div>
+
         <div style="text-align: center;">
             <a href="index.html" class="btn">Return to Home</a>
         </div>
@@ -249,159 +308,148 @@
     </footer>
 
     <script type="text/javascript">
-    // 1. Initialize Google Charts
-    google.charts.load('current', {
-        'packages':['geochart']
-    });
+        // 1. Initialize Google Charts
+        google.charts.load('current', {
+            'packages':['geochart']
+        });
 
-    google.charts.setOnLoadCallback(fetchDataAndDraw);
+        google.charts.setOnLoadCallback(fetchDataAndDraw);
 
-    // 2. Fetch CSV Data
-    async function fetchDataAndDraw() {
-        try {
-            const response = await fetch('rao.csv');
-            if (!response.ok) throw new Error('Failed to load CSV data');
-            
-            const csvText = await response.text();
-            parseCSVAndDraw(csvText);
-            
-        } catch (error) {
-            console.error('Error loading map data:', error);
-            document.getElementById('regions_div').innerHTML = 
-                '<p style="text-align:center; padding-top:20%; opacity:0.6;">Unable to load map data. Please ensure rao.csv is available.</p>';
-        }
-    }
-
-    // 3. Name Normalizer: Converts CSV names to Google GeoChart standard names
-    function normalizeCountryName(name) {
-        const mapping = {
-            "Russian Federation": "Russia",
-            "Korea, Rep.": "South Korea",
-            "Egypt, Arab Rep.": "Egypt",
-            "Iran, Islamic Rep.": "Iran",
-            "Slovak Republic": "Slovakia",
-            "Congo, Dem. Rep.": "Democratic Republic of the Congo",
-            "Congo, Rep.": "Republic of the Congo",
-            "Yemen, Rep.": "Yemen",
-            "Venezuela, RB": "Venezuela",
-            "Syrian Arab Republic": "Syria",
-            "Kyrgyz Republic": "Kyrgyzstan",
-            "Lao PDR": "Laos",
-            "Bahamas, The": "The Bahamas",
-            "Gambia, The": "The Gambia",
-            "Turkiye": "Turkey", // GeoChart sometimes prefers the English spelling
-            "Viet Nam": "Vietnam",
-            "Brunei Darussalam": "Brunei"
-        };
-        return mapping[name] || name;
-    }
-
-    // 4. Parse CSV
-    function parseCSVAndDraw(csvText) {
-        
-        // --- CLEANING STEP ---
-        // 1. Remove tags and the newlines they might create
-        // This regex finds standard newlines followed by the source tag and replaces them with a space
-        const sourcePattern = new RegExp('(\\r\\n|\\n|\\r)\\\\s*', 'g');
-        let cleanText = csvText.replace(sourcePattern, " ");
-
-        // 2. Clean source tags if they appear at the very start
-        const startPattern = new RegExp('^\\\\s*', 'g');
-        cleanText = cleanText.replace(startPattern, "");
-        
-        // --- PARSING STEP ---
-        const rows = cleanText.trim().split(/\r?\n/);
-        const dataTable = new google.visualization.DataTable();
-        
-        // Define Columns
-        dataTable.addColumn('string', 'Country');
-        dataTable.addColumn('number', 'RAO Score');
-        dataTable.addColumn({type: 'string', role: 'tooltip', p: {html: true}});
-
-        // Regex to split by comma ONLY if not inside quotes
-        const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-
-        for (let i = 1; i < rows.length; i++) {
-            let row = rows[i];
-            if (!row || row.trim() === '') continue;
-
-            // Split columns
-            let columns = row.split(csvRegex);
-            
-            // Safety check for malformed rows
-            if (columns.length < 2) continue;
-
-            // Clean Data
-            let rawName = columns[0] ? columns[0].replace(/^"|"$/g, '').trim() : '';
-            let score = columns[1] ? parseFloat(columns[1]) : 0;
-            let regime = columns[2] ? columns[2].replace(/^"|"$/g, '').trim() : '';
-
-            if (rawName === '' || isNaN(score)) continue;
-
-            // Normalize the name so Google recognizes it
-            let countryName = normalizeCountryName(rawName);
-
-            dataTable.addRow([
-                countryName,
-                score,
-                createCustomTooltip(rawName, score, regime) // Keep original name in tooltip
-            ]);
-        }
-
-        drawMap(dataTable);
-    }
-
-    // 5. Tooltip Generator
-    function createCustomTooltip(country, score, regime) {
-        return `
-            <div class="tooltip-custom">
-                <div class="tooltip-title">${country}</div>
-                <div class="tooltip-row"><strong>RAO Score:</strong> ${score}</div>
-                <div class="tooltip-row"><strong>Regime:</strong> ${regime}</div>
-            </div>
-        `;
-    }
-
-    // 6. Draw Map
-    function drawMap(data) {
-        var options = {
-            magnifyingGlass: { enable: false, zoomFactor: 7.5 },
-            keepAspectRatio: true,
-            
-            // Colors: Dark Blue -> Mid -> Gold
-            colorAxis: {
-                colors: ['#2e3b55', '#4d5d7e', '#cba84e'], 
-                minValue: 0,
-                maxValue: 10
-            },
-            
-            backgroundColor: '#192030', 
-            datalessRegionColor: '#252e42',
-            
-            chartArea: { left: 0, top: 0, width: '100%', height: '100%' }, 
-            
-            legend: {
-                textStyle: { 
-                    color: '#ffffff', 
-                    fontName: 'EB Garamond', 
-                    fontSize: 14,
-                    bold: false
-                }
-            },
-            
-            tooltip: { 
-                isHtml: true, 
-                showTitle: false 
+        // 2. Fetch CSV Data
+        async function fetchDataAndDraw() {
+            try {
+                const response = await fetch('rao.csv');
+                if (!response.ok) throw new Error('Failed to load CSV data');
+                
+                const csvText = await response.text();
+                parseCSVAndDraw(csvText);
+                
+            } catch (error) {
+                console.error('Error loading map data:', error);
+                document.getElementById('regions_div').innerHTML = 
+                    '<p style="text-align:center; padding-top:20%; opacity:0.6;">Unable to load map data. Please ensure rao.csv is available.</p>';
             }
-        };
+        }
 
-        var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
-        chart.draw(data, options);
-    }
+        // 3. Name Normalizer
+        function normalizeCountryName(name) {
+            const mapping = {
+                "Russian Federation": "Russia",
+                "Korea, Rep.": "South Korea",
+                "Egypt, Arab Rep.": "Egypt",
+                "Iran, Islamic Rep.": "Iran",
+                "Slovak Republic": "Slovakia",
+                "Congo, Dem. Rep.": "Democratic Republic of the Congo",
+                "Congo, Rep.": "Republic of the Congo",
+                "Yemen, Rep.": "Yemen",
+                "Venezuela, RB": "Venezuela",
+                "Syrian Arab Republic": "Syria",
+                "Kyrgyz Republic": "Kyrgyzstan",
+                "Lao PDR": "Laos",
+                "Bahamas, The": "The Bahamas",
+                "Gambia, The": "The Gambia",
+                "Turkiye": "Turkey",
+                "Viet Nam": "Vietnam",
+                "Brunei Darussalam": "Brunei"
+            };
+            return mapping[name] || name;
+        }
 
-    window.addEventListener('resize', () => {
-        fetchDataAndDraw();
-    });
-</script>
+        // 4. Parse CSV
+        function parseCSVAndDraw(csvText) {
+            
+            // Clean specific artifacts 
+            const sourcePattern = new RegExp('(\\r\\n|\\n|\\r)\\\\s*', 'g');
+            let cleanText = csvText.replace(sourcePattern, " ");
+
+            const startPattern = new RegExp('^\\\\s*', 'g');
+            cleanText = cleanText.replace(startPattern, "");
+            
+            const rows = cleanText.trim().split(/\r?\n/);
+            const dataTable = new google.visualization.DataTable();
+            
+            dataTable.addColumn('string', 'Country');
+            dataTable.addColumn('number', 'RAO Score');
+            dataTable.addColumn({type: 'string', role: 'tooltip', p: {html: true}});
+
+            const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+
+            for (let i = 1; i < rows.length; i++) {
+                let row = rows[i];
+                if (!row || row.trim() === '') continue;
+
+                let columns = row.split(csvRegex);
+                if (columns.length < 2) continue;
+
+                let rawName = columns[0] ? columns[0].replace(/^"|"$/g, '').trim() : '';
+                let score = columns[1] ? parseFloat(columns[1]) : 0;
+                let regime = columns[2] ? columns[2].replace(/^"|"$/g, '').trim() : '';
+
+                if (rawName === '' || isNaN(score)) continue;
+
+                // Normalize name for Google to match "Russian Federation" -> "Russia"
+                let countryName = normalizeCountryName(rawName);
+
+                dataTable.addRow([
+                    countryName,
+                    score,
+                    createCustomTooltip(rawName, score, regime)
+                ]);
+            }
+
+            drawMap(dataTable);
+        }
+
+        // 5. Tooltip Generator
+        function createCustomTooltip(country, score, regime) {
+            return `
+                <div class="tooltip-custom">
+                    <div class="tooltip-title">${country}</div>
+                    <div class="tooltip-row"><strong>RAO Score:</strong> ${score}</div>
+                    <div class="tooltip-row"><strong>Regime:</strong> ${regime}</div>
+                </div>
+            `;
+        }
+
+        // 6. Draw Map
+        function drawMap(data) {
+            var options = {
+                magnifyingGlass: { enable: false, zoomFactor: 7.5 },
+                keepAspectRatio: true,
+                
+                colorAxis: {
+                    colors: ['#2e3b55', '#4d5d7e', '#cba84e'], 
+                    minValue: 0,
+                    maxValue: 10
+                },
+                
+                backgroundColor: '#192030', 
+                datalessRegionColor: '#252e42',
+                
+                chartArea: { left: 0, top: 0, width: '100%', height: '100%' }, 
+                
+                legend: {
+                    textStyle: { 
+                        color: '#ffffff', 
+                        fontName: 'EB Garamond', 
+                        fontSize: 14,
+                        bold: false
+                    }
+                },
+                
+                tooltip: { 
+                    isHtml: true, 
+                    showTitle: false 
+                }
+            };
+
+            var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+            chart.draw(data, options);
+        }
+
+        window.addEventListener('resize', () => {
+            fetchDataAndDraw();
+        });
+    </script>
 </body>
 </html>
