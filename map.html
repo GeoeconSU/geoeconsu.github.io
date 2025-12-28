@@ -19,6 +19,7 @@
             --secondary-bg: #1f283b;
             --text-white: #ffffff;
             --accent-gold: #cba84e;
+            --bright-gray: #eeeeee; /* New hover outline color */
             --font-head: 'Playfair Display', serif;
             --font-body: 'EB Garamond', serif;
             --easing: cubic-bezier(0.23, 1, 0.32, 1);
@@ -102,8 +103,8 @@
 
         #map-container {
             width: 100%;
-            /* Adjust height to match World Map aspect ratio approx 2:1 to reduce padding */
-            aspect-ratio: 2 / 1.1; 
+            /* 2:1 aspect ratio minimizes whitespace around the map */
+            aspect-ratio: 2 / 1; 
             background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.05);
             margin-bottom: 5rem;
@@ -114,30 +115,17 @@
 
         /* --- Custom Map Styling --- */
         
-        /* 1. Smooth Tooltip Animation */
+        /* 1. Tooltip Container - REMOVED OPACITY HACK */
         div.google-visualization-tooltip {
             background-color: var(--secondary-bg) !important;
             border: 1px solid var(--accent-gold) !important;
             border-radius: 4px !important;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-            padding: 0 !important; /* Let inner content handle padding */
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s var(--easing), transform 0.3s var(--easing), top 0.2s ease, left 0.2s ease; 
-            pointer-events: none;
-        }
-
-        /* When the library makes it visible, we set opacity to 1 via inline styles, 
-           but we can force the transition behavior by ensuring the library's display:block 
-           doesn't break the fade. Note: Google toggles display:none/block, which kills transitions. 
-           We use a CSS animation keyframe fallback for the 'block' appearance if needed, 
-           but styling the state often works well enough. 
-        */
-
-        /* Force opacity 1 when the tooltip is active (JS sets inline visibility) */
-        div.google-visualization-tooltip[style*="visibility: visible"] {
+            padding: 0 !important;
+            z-index: 1000 !important;
+            /* Ensure it is visible */
+            visibility: visible !important; 
             opacity: 1 !important;
-            transform: translateY(0) !important;
         }
 
         /* 2. Tooltip Content */
@@ -160,18 +148,15 @@
         .tooltip-row { font-size: 1rem; margin: 5px 0; display: flex; justify-content: space-between; }
         .tooltip-row strong { opacity: 0.6; font-weight: 400; margin-right: 1rem; }
 
-        /* 3. Bolder Country Outline on Hover via CSS 
-           Targeting SVG paths. Note: This depends on the SVG structure Google generates.
-           g g path usually targets the map regions.
-        */
+        /* 3. Bolder Bright Gray Country Outline on Hover */
         #regions_div svg g g path {
-            transition: stroke 0.2s ease, stroke-width 0.2s ease, fill 0.3s ease;
-            stroke: #1f283b; /* Default border color */
+            transition: stroke 0.1s ease, stroke-width 0.1s ease;
+            stroke: #1f283b; /* Default border */
             stroke-width: 1px;
         }
 
         #regions_div svg g g path:hover {
-            stroke: #cba84e !important;
+            stroke: var(--bright-gray) !important; /* Bright Light Gray */
             stroke-width: 2px !important;
             fill-opacity: 1 !important;
             z-index: 999;
@@ -264,126 +249,159 @@
     </footer>
 
     <script type="text/javascript">
-        // 1. Initialize Google Charts
-        google.charts.load('current', {
-            'packages':['geochart']
-        });
+    // 1. Initialize Google Charts
+    google.charts.load('current', {
+        'packages':['geochart']
+    });
 
-        google.charts.setOnLoadCallback(fetchDataAndDraw);
+    google.charts.setOnLoadCallback(fetchDataAndDraw);
 
-        // 2. Fetch CSV Data
-        async function fetchDataAndDraw() {
-            try {
-                const response = await fetch('rao.csv');
-                if (!response.ok) throw new Error('Failed to load CSV data');
-                
-                const csvText = await response.text();
-                parseCSVAndDraw(csvText);
-                
-            } catch (error) {
-                console.error('Error loading map data:', error);
-                document.getElementById('regions_div').innerHTML = 
-                    '<p style="text-align:center; padding-top:20%; opacity:0.6;">Unable to load map data. Please ensure rao.csv is available.</p>';
-            }
-        }
-
-        // 3. Parse CSV and Draw Map
-        function parseCSVAndDraw(csvText) {
-            const rows = csvText.trim().split('\n');
-            const dataTable = new google.visualization.DataTable();
+    // 2. Fetch CSV Data
+    async function fetchDataAndDraw() {
+        try {
+            const response = await fetch('rao.csv');
+            if (!response.ok) throw new Error('Failed to load CSV data');
             
-            // Define Columns
-            dataTable.addColumn('string', 'Country');
-            dataTable.addColumn('number', 'RAO Score');
-            dataTable.addColumn({type: 'string', role: 'tooltip', p: {html: true}});
+            const csvText = await response.text();
+            parseCSVAndDraw(csvText);
+            
+        } catch (error) {
+            console.error('Error loading map data:', error);
+            document.getElementById('regions_div').innerHTML = 
+                '<p style="text-align:center; padding-top:20%; opacity:0.6;">Unable to load map data. Please ensure rao.csv is available.</p>';
+        }
+    }
 
-            // Regex to handle CSV lines with quoted commas (e.g. "Korea, Rep.")
-            const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+    // 3. Name Normalizer: Converts CSV names to Google GeoChart standard names
+    function normalizeCountryName(name) {
+        const mapping = {
+            "Russian Federation": "Russia",
+            "Korea, Rep.": "South Korea",
+            "Egypt, Arab Rep.": "Egypt",
+            "Iran, Islamic Rep.": "Iran",
+            "Slovak Republic": "Slovakia",
+            "Congo, Dem. Rep.": "Democratic Republic of the Congo",
+            "Congo, Rep.": "Republic of the Congo",
+            "Yemen, Rep.": "Yemen",
+            "Venezuela, RB": "Venezuela",
+            "Syrian Arab Republic": "Syria",
+            "Kyrgyz Republic": "Kyrgyzstan",
+            "Lao PDR": "Laos",
+            "Bahamas, The": "The Bahamas",
+            "Gambia, The": "The Gambia",
+            "Turkiye": "Turkey", // GeoChart sometimes prefers the English spelling
+            "Viet Nam": "Vietnam",
+            "Brunei Darussalam": "Brunei"
+        };
+        return mapping[name] || name;
+    }
 
-            // Start loop at 1 to skip header
-            for (let i = 1; i < rows.length; i++) {
-                let row = rows[i];
-                if (!row) continue;
+    // 4. Parse CSV
+    function parseCSVAndDraw(csvText) {
+        
+        // --- CLEANING STEP ---
+        // 1. Remove tags and the newlines they might create
+        // This regex finds standard newlines followed by the source tag and replaces them with a space
+        const sourcePattern = new RegExp('(\\r\\n|\\n|\\r)\\\\s*', 'g');
+        let cleanText = csvText.replace(sourcePattern, " ");
 
-                // Split by comma, respecting quotes
-                let columns = row.split(csvRegex);
-                
-                // Clean quotes from strings (e.g. "Korea, Rep." -> Korea, Rep.)
-                let country = columns[0] ? columns[0].replace(/^"|"$/g, '').trim() : '';
-                let score = columns[1] ? parseFloat(columns[1]) : 0;
-                let regime = columns[2] ? columns[2].replace(/^"|"$/g, '').trim() : '';
+        // 2. Clean source tags if they appear at the very start
+        const startPattern = new RegExp('^\\\\s*', 'g');
+        cleanText = cleanText.replace(startPattern, "");
+        
+        // --- PARSING STEP ---
+        const rows = cleanText.trim().split(/\r?\n/);
+        const dataTable = new google.visualization.DataTable();
+        
+        // Define Columns
+        dataTable.addColumn('string', 'Country');
+        dataTable.addColumn('number', 'RAO Score');
+        dataTable.addColumn({type: 'string', role: 'tooltip', p: {html: true}});
 
-                // Handle sources text if present (skipping lines that are just source info)
-                if (country.includes('[source') || country === '') continue;
+        // Regex to split by comma ONLY if not inside quotes
+        const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
 
-                dataTable.addRow([
-                    country,
-                    score,
-                    createCustomTooltip(country, score, regime)
-                ]);
+        for (let i = 1; i < rows.length; i++) {
+            let row = rows[i];
+            if (!row || row.trim() === '') continue;
+
+            // Split columns
+            let columns = row.split(csvRegex);
+            
+            // Safety check for malformed rows
+            if (columns.length < 2) continue;
+
+            // Clean Data
+            let rawName = columns[0] ? columns[0].replace(/^"|"$/g, '').trim() : '';
+            let score = columns[1] ? parseFloat(columns[1]) : 0;
+            let regime = columns[2] ? columns[2].replace(/^"|"$/g, '').trim() : '';
+
+            if (rawName === '' || isNaN(score)) continue;
+
+            // Normalize the name so Google recognizes it
+            let countryName = normalizeCountryName(rawName);
+
+            dataTable.addRow([
+                countryName,
+                score,
+                createCustomTooltip(rawName, score, regime) // Keep original name in tooltip
+            ]);
+        }
+
+        drawMap(dataTable);
+    }
+
+    // 5. Tooltip Generator
+    function createCustomTooltip(country, score, regime) {
+        return `
+            <div class="tooltip-custom">
+                <div class="tooltip-title">${country}</div>
+                <div class="tooltip-row"><strong>RAO Score:</strong> ${score}</div>
+                <div class="tooltip-row"><strong>Regime:</strong> ${regime}</div>
+            </div>
+        `;
+    }
+
+    // 6. Draw Map
+    function drawMap(data) {
+        var options = {
+            magnifyingGlass: { enable: false, zoomFactor: 7.5 },
+            keepAspectRatio: true,
+            
+            // Colors: Dark Blue -> Mid -> Gold
+            colorAxis: {
+                colors: ['#2e3b55', '#4d5d7e', '#cba84e'], 
+                minValue: 0,
+                maxValue: 10
+            },
+            
+            backgroundColor: '#192030', 
+            datalessRegionColor: '#252e42',
+            
+            chartArea: { left: 0, top: 0, width: '100%', height: '100%' }, 
+            
+            legend: {
+                textStyle: { 
+                    color: '#ffffff', 
+                    fontName: 'EB Garamond', 
+                    fontSize: 14,
+                    bold: false
+                }
+            },
+            
+            tooltip: { 
+                isHtml: true, 
+                showTitle: false 
             }
+        };
 
-            drawMap(dataTable);
-        }
+        var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+        chart.draw(data, options);
+    }
 
-        // 4. HTML Tooltip Generator
-        function createCustomTooltip(country, score, regime) {
-            return `
-                <div class="tooltip-custom">
-                    <div class="tooltip-title">${country}</div>
-                    <div class="tooltip-row"><strong>RAO Score:</strong> ${score}</div>
-                    <div class="tooltip-row"><strong>Regime:</strong> ${regime}</div>
-                </div>
-            `;
-        }
-
-        // 5. Draw Map with Styling
-        function drawMap(data) {
-            var options = {
-                // Remove Default "Magnifying Glass" to allow our CSS stroke to shine
-                magnifyingGlass: { enable: false, zoomFactor: 7.5 },
-                
-                // Colors
-                colorAxis: {
-                    colors: ['#2e3b55', '#4d5d7e', '#cba84e'], // Dark Blue -> Mid -> Gold
-                    minValue: 0,
-                    maxValue: 10
-                },
-                backgroundColor: '#192030', 
-                datalessRegionColor: '#252e42', // Subtle difference for no-data
-                
-                // Layout - Maximize space to reduce padding around Russia
-                chartArea: { left: 0, top: 0, width: '100%', height: '100%' }, 
-                
-                // Legend Styling
-                legend: {
-                    textStyle: { 
-                        color: '#ffffff', 
-                        fontName: 'EB Garamond', // Enforce serif font
-                        fontSize: 14 
-                    }
-                },
-                
-                // Tooltip
-                tooltip: { 
-                    isHtml: true, 
-                    showTitle: false // Prevents the default duplicate title
-                },
-                
-                // Aspect Ratio
-                keepAspectRatio: true
-            };
-
-            var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
-            chart.draw(data, options);
-        }
-
-        // Handle Window Resize
-        window.addEventListener('resize', () => {
-            // Re-drawing requires re-fetching or storing the data globally. 
-            // For simplicity, we just reload the fetch function which is fast for local csv.
-            fetchDataAndDraw();
-        });
-    </script>
+    window.addEventListener('resize', () => {
+        fetchDataAndDraw();
+    });
+</script>
 </body>
 </html>
