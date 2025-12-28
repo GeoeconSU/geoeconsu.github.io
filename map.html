@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global RAO Heatmap | GSU</title>
+    
+    <link rel="icon" type="image/x-icon" href="gsu.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <style>
+        :root {
+            --primary-bg: #192030;
+            --secondary-bg: #1f283b;
+            --text-white: #ffffff;
+            --accent-gold: #cba84e;
+            --font-head: 'Playfair Display', serif;
+            --font-body: 'EB Garamond', serif;
+            --easing: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        html { scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 400; }
+        
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 40px;
+            height: 1px;
+            background-color: var(--accent-gold);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        /* Centered Header Text - Single Column */
+        .header-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto 3rem auto;
+        }
+
+        p {
+            font-size: 1.15rem;
+            opacity: 0.9;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s ease; }
+
+        /* Navigation */
+        nav {
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(25, 32, 48, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
+        .logo img { height: 50px; width: auto; display: block; }
+        .nav-links a { font-family: var(--font-head); font-size: 0.9rem; letter-spacing: 1px; margin-left: 2rem; opacity: 0.7; }
+        .nav-links a:hover { opacity: 1; color: var(--accent-gold); }
+
+        /* Map Section */
+        #map-header { padding-top: 150px; padding-bottom: 3rem; }
+
+        #map-container {
+            width: 100%;
+            /* Adjust height to match World Map aspect ratio approx 2:1 to reduce padding */
+            aspect-ratio: 2 / 1.1; 
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 5rem;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Custom Map Styling --- */
+        
+        /* 1. Smooth Tooltip Animation */
+        div.google-visualization-tooltip {
+            background-color: var(--secondary-bg) !important;
+            border: 1px solid var(--accent-gold) !important;
+            border-radius: 4px !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+            padding: 0 !important; /* Let inner content handle padding */
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s var(--easing), transform 0.3s var(--easing), top 0.2s ease, left 0.2s ease; 
+            pointer-events: none;
+        }
+
+        /* When the library makes it visible, we set opacity to 1 via inline styles, 
+           but we can force the transition behavior by ensuring the library's display:block 
+           doesn't break the fade. Note: Google toggles display:none/block, which kills transitions. 
+           We use a CSS animation keyframe fallback for the 'block' appearance if needed, 
+           but styling the state often works well enough. 
+        */
+
+        /* Force opacity 1 when the tooltip is active (JS sets inline visibility) */
+        div.google-visualization-tooltip[style*="visibility: visible"] {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        /* 2. Tooltip Content */
+        .tooltip-custom {
+            font-family: var(--font-body);
+            color: white;
+            padding: 1rem 1.2rem;
+            min-width: 200px;
+        }
+
+        .tooltip-title {
+            font-family: var(--font-head);
+            font-size: 1.3rem;
+            color: var(--accent-gold);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .tooltip-row { font-size: 1rem; margin: 5px 0; display: flex; justify-content: space-between; }
+        .tooltip-row strong { opacity: 0.6; font-weight: 400; margin-right: 1rem; }
+
+        /* 3. Bolder Country Outline on Hover via CSS 
+           Targeting SVG paths. Note: This depends on the SVG structure Google generates.
+           g g path usually targets the map regions.
+        */
+        #regions_div svg g g path {
+            transition: stroke 0.2s ease, stroke-width 0.2s ease, fill 0.3s ease;
+            stroke: #1f283b; /* Default border color */
+            stroke-width: 1px;
+        }
+
+        #regions_div svg g g path:hover {
+            stroke: #cba84e !important;
+            stroke-width: 2px !important;
+            fill-opacity: 1 !important;
+            z-index: 999;
+        }
+
+        /* Button */
+        .btn {
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 1rem 2.5rem;
+            font-family: var(--font-head);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            margin-top: 1rem;
+            transition: all 0.4s var(--easing);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.1);
+        }
+
+        /* Footer */
+        footer { padding: 5rem 0; background: #151a28; font-size: 0.95rem; margin-top: auto; }
+        .footer-grid { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 3rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 3rem; }
+
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            #map-container { height: 50vh; aspect-ratio: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="container">
+        <div class="logo">
+            <a href="index.html"><img src="gsu.png" alt="GSU Logo"></a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#about">About</a>
+            <a href="index.html#barometer">Barometer</a>
+            <a href="index.html#services">Services</a>
+            <a href="index.html#rao-engine">RAO Engine</a>
+            <a href="index.html#team">Our Team</a>
+            <a href="mailto:geoecon@16thcouncil.uk">Contact</a>
+        </div>
+    </nav>
+
+    <section class="container" id="map-header">
+        <div class="header-content fade-up">
+            <h4>Live Intelligence</h4>
+            <h2>Global RAO Heatmap</h2>
+            <p>
+                Interactive visualization of our Risk-Adjusted Opportunity scores. 
+                Darker regions indicate structural risks, while gold highlights areas of high opportunity.
+                Hover over a country to view its specific regime classification.
+            </p>
+        </div>
+
+        <div id="map-container">
+            <div id="regions_div" style="width: 100%; height: 100%;"></div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="index.html" class="btn">Return to Home</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <strong style="color:var(--accent-gold); text-transform:uppercase; letter-spacing:1px;">The Sixteenth Council</strong><br>
+                    <span style="opacity:0.7;">Office 5336<br>182-184 High Street North<br>East Ham London, E6 2JA<br>United Kingdom</span>
+                </div>
+                <div style="text-align: right;">
+                    <a href="mailto:geoecon@16thcouncil.uk" style="border-bottom: 1px solid var(--accent-gold);">geoecon@16thcouncil.uk</a><br>
+                    <span style="opacity:0.7;">+44 7881 1644457</span><br>
+                    <a href="http://www.16thcouncil.uk" target="_blank" style="opacity:0.7;">www.16thcouncil.uk</a>
+                </div>
+            </div>
+            <div style="margin-top: 2rem; opacity: 0.4; font-size: 0.8rem; text-align: center;">
+                &copy; 2025 Sixteenth Council Geoeconomic Strategic Unit. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script type="text/javascript">
+        // 1. Initialize Google Charts
+        google.charts.load('current', {
+            'packages':['geochart']
+        });
+
+        google.charts.setOnLoadCallback(fetchDataAndDraw);
+
+        // 2. Fetch CSV Data
+        async function fetchDataAndDraw() {
+            try {
+                const response = await fetch('rao.csv');
+                if (!response.ok) throw new Error('Failed to load CSV data');
+                
+                const csvText = await response.text();
+                parseCSVAndDraw(csvText);
+                
+            } catch (error) {
+                console.error('Error loading map data:', error);
+                document.getElementById('regions_div').innerHTML = 
+                    '<p style="text-align:center; padding-top:20%; opacity:0.6;">Unable to load map data. Please ensure rao.csv is available.</p>';
+            }
+        }
+
+        // 3. Parse CSV and Draw Map
+        function parseCSVAndDraw(csvText) {
+            const rows = csvText.trim().split('\n');
+            const dataTable = new google.visualization.DataTable();
+            
+            // Define Columns
+            dataTable.addColumn('string', 'Country');
+            dataTable.addColumn('number', 'RAO Score');
+            dataTable.addColumn({type: 'string', role: 'tooltip', p: {html: true}});
+
+            // Regex to handle CSV lines with quoted commas (e.g. "Korea, Rep.")
+            const csvRegex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+
+            // Start loop at 1 to skip header
+            for (let i = 1; i < rows.length; i++) {
+                let row = rows[i];
+                if (!row) continue;
+
+                // Split by comma, respecting quotes
+                let columns = row.split(csvRegex);
+                
+                // Clean quotes from strings (e.g. "Korea, Rep." -> Korea, Rep.)
+                let country = columns[0] ? columns[0].replace(/^"|"$/g, '').trim() : '';
+                let score = columns[1] ? parseFloat(columns[1]) : 0;
+                let regime = columns[2] ? columns[2].replace(/^"|"$/g, '').trim() : '';
+
+                // Handle sources text if present (skipping lines that are just source info)
+                if (country.includes('[source') || country === '') continue;
+
+                dataTable.addRow([
+                    country,
+                    score,
+                    createCustomTooltip(country, score, regime)
+                ]);
+            }
+
+            drawMap(dataTable);
+        }
+
+        // 4. HTML Tooltip Generator
+        function createCustomTooltip(country, score, regime) {
+            return `
+                <div class="tooltip-custom">
+                    <div class="tooltip-title">${country}</div>
+                    <div class="tooltip-row"><strong>RAO Score:</strong> ${score}</div>
+                    <div class="tooltip-row"><strong>Regime:</strong> ${regime}</div>
+                </div>
+            `;
+        }
+
+        // 5. Draw Map with Styling
+        function drawMap(data) {
+            var options = {
+                // Remove Default "Magnifying Glass" to allow our CSS stroke to shine
+                magnifyingGlass: { enable: false, zoomFactor: 7.5 },
+                
+                // Colors
+                colorAxis: {
+                    colors: ['#2e3b55', '#4d5d7e', '#cba84e'], // Dark Blue -> Mid -> Gold
+                    minValue: 0,
+                    maxValue: 10
+                },
+                backgroundColor: '#192030', 
+                datalessRegionColor: '#252e42', // Subtle difference for no-data
+                
+                // Layout - Maximize space to reduce padding around Russia
+                chartArea: { left: 0, top: 0, width: '100%', height: '100%' }, 
+                
+                // Legend Styling
+                legend: {
+                    textStyle: { 
+                        color: '#ffffff', 
+                        fontName: 'EB Garamond', // Enforce serif font
+                        fontSize: 14 
+                    }
+                },
+                
+                // Tooltip
+                tooltip: { 
+                    isHtml: true, 
+                    showTitle: false // Prevents the default duplicate title
+                },
+                
+                // Aspect Ratio
+                keepAspectRatio: true
+            };
+
+            var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+            chart.draw(data, options);
+        }
+
+        // Handle Window Resize
+        window.addEventListener('resize', () => {
+            // Re-drawing requires re-fetching or storing the data globally. 
+            // For simplicity, we just reload the fetch function which is fast for local csv.
+            fetchDataAndDraw();
+        });
+    </script>
+</body>
+</html>
