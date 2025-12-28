@@ -42,7 +42,7 @@
         }
 
         /* Typography */
-        h1, h2, h3, h4 {
+        h1, h2, h3, h4, h5 {
             font-family: var(--font-head);
             font-weight: 400;
         }
@@ -236,10 +236,129 @@
             align-items: start;
         }
 
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
         .grid-4 {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 2rem;
+        }
+
+        /* Service Cards */
+        .service-card {
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s var(--easing);
+            height: 100%;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            border-color: rgba(203, 168, 78, 0.3);
+        }
+
+        .service-card h3 {
+            font-size: 1.4rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .service-list {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .service-list li {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .service-list li::before {
+            content: '•';
+            color: var(--accent-gold);
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        /* RAO Flowchart */
+        .rao-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .flowchart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+            padding: 2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .flow-step {
+            background: var(--secondary-bg);
+            border: 1px solid rgba(203, 168, 78, 0.3);
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            transition: 0.3s;
+            z-index: 2;
+        }
+
+        .flow-step:hover {
+            border-color: var(--accent-gold);
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(203, 168, 78, 0.1);
+        }
+
+        .flow-step h5 {
+            font-family: var(--font-head);
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+
+        .flow-step p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            opacity: 0.8;
+        }
+
+        .arrow-down {
+            width: 2px;
+            height: 1.5rem;
+            background: linear-gradient(to bottom, var(--accent-gold), rgba(255,255,255,0.1));
+        }
+
+        .human-check-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--accent-gold);
+            color: var(--primary-bg);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 2px;
         }
 
         /* Cards */
@@ -546,8 +665,9 @@
                 width: 100%; 
                 height: 50vh; 
             }
-            .grid-2, .grid-4 { grid-template-columns: 1fr; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
             .video-grid { grid-template-columns: 1fr; }
+            .rao-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
         }
     </style>
@@ -561,6 +681,8 @@
         <div class="nav-links">
             <a href="#about">About</a>
             <a href="#barometer">Barometer</a>
+            <a href="#services">Services</a>
+            <a href="#rao-engine">RAO Engine</a>
             <a href="#team">Our Team</a>
             <a href="mailto:geoecon@16thcouncil.uk?subject=Inquiry regarding Strategic Advice">Contact</a>
         </div>
@@ -634,7 +756,117 @@
             </div>
         </div>
     </section>
-    
+
+    <section id="services">
+        <div class="container">
+            <div class="fade-up" style="margin-bottom: 3rem;">
+                <h4>How We Work With You</h4>
+                <h2>Engagement Models</h2>
+            </div>
+
+            <div class="grid-3 fade-up delay-1">
+                <div class="service-card">
+                    <h3>Insight Packages</h3>
+                    <p>Quarterly overview of where execution is most feasible in the near and medium term.</p>
+                    <ul class="service-list">
+                        <li>Quarterly Risk Barometer</li>
+                        <li>Country Briefs</li>
+                        <li>Corridor views & "triggers to watch"</li>
+                        <li>Interim alerts on material changes</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <h3>Strategic Advisory</h3>
+                    <p>Direct engagement with your leadership to translate insights into governance steps.</p>
+                    <ul class="service-list">
+                        <li>C-suite and board briefings</li>
+                        <li>Market entry & expansion playbooks</li>
+                        <li>Scenario workshops and offsites</li>
+                        <li>Risk-mitigation design</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <h3>Commissioned Research</h3>
+                    <p>Bespoke deep-dives for specific deals, corridors, or investment decisions.</p>
+                    <ul class="service-list">
+                        <li>Pre-deal market insights</li>
+                        <li>Early-warning checks</li>
+                        <li>Sequencing decisions & investments</li>
+                        <li>Structural resilience planning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="rao-engine">
+        <div class="container">
+            <div class="fade-up" style="margin-bottom: 3rem; max-width: 100%;">
+                <h4>Our Engine</h4>
+                <h2>The Automated RAO System</h2>
+                <p style="max-width: 100%;">We are transforming the Barometer from a quarterly report into a living intelligence platform. By leveraging Large Language Models (LLMs), we process global economic signals to deliver <strong>Risk-Adjusted Opportunity</strong> scores in real-time.</p>
+            </div>
+
+            <div class="rao-grid">
+                <div class="fade-up">
+                    <div class="card" style="margin-bottom: 2rem;">
+                        <h3>The 60/40 Weighting</h3>
+                        <p>Our proprietary algorithm balances two competing forces to calculate a composite RAO score (0-10):</p>
+                        <ul style="list-style: none; margin-top: 1rem;">
+                            <li style="margin-bottom: 1rem;">
+                                <strong style="color:var(--accent-gold); font-size:1.2rem;">60% Opportunity</strong><br>
+                                <span style="font-size:0.95rem; opacity:0.7;">Analyzes GDP growth, trade balances, policy incentives, and market entry feasibility.</span>
+                            </li>
+                            <li>
+                                <strong style="color:var(--accent-gold); font-size:1.2rem;">40% Fragility</strong><br>
+                                <span style="font-size:0.95rem; opacity:0.7;">Weighs sovereign spreads, currency volatility, conflict risks, and regulatory shifts.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <h3>Bespoke Sector Analysis</h3>
+                    <p>Beyond country-level data, our system allows for <strong>on-demand, sector-specific scoring</strong>. Whether you are in Fintech, Renewable Energy, or Mining, we filter data to isolate the regulatory environments and supply chain risks that matter specifically to your industry.</p>
+                    <div style="margin-top: 2rem;">
+                        <a href="map.html" class="btn">View RAO Heatmap</a>
+                    </div>
+                </div>
+
+                <div class="flowchart-container fade-up delay-1">
+
+                    <div class="flow-step">
+                        <h5>1. Global Data Ingestion</h5>
+                        <p>Continuous monitoring of World Bank data, Central Bank feeds, and global news outlets.</p>
+                    </div>
+
+                    <div class="arrow-down"></div>
+
+                    <div class="flow-step">
+                        <h5>2. LLM Analysis Engine</h5>
+                        <p>AI evaluates data against Opportunity & Fragility variables to identify material changes.</p>
+                    </div>
+
+                    <div class="arrow-down"></div>
+
+                    <div class="flow-step">
+                        <h5>3. Dynamic Scoring</h5>
+                        <p>Calculation of updated RAO scores using our weighted 60/40 methodology.</p>
+                    </div>
+
+                    <div class="arrow-down"></div>
+
+                    <div class="flow-step">
+                        <div class="human-check-badge">Crucial Step</div>
+                        <h5>4. Analyst Quality Control</h5>
+                        <p>Significant score movements trigger a mandatory review by our human experts to ensure accuracy.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="youtube-insights">
         <div class="container">
             <h2 class="fade-up">Latest Insights</h2>
