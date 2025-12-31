@@ -138,6 +138,13 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
+        .btn-group {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
         /* Navigation */
         nav {
             padding: 2rem 0;
@@ -345,7 +352,8 @@
         .arrow-down {
             width: 2px;
             height: 1.5rem;
-            background: linear-gradient(to bottom, var(--accent-gold), rgba(255,255,255,0.1));
+            /* Inverted gradient: starts transparent/light, ends gold */
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), var(--accent-gold));
         }
 
         .human-check-badge {
@@ -669,6 +677,7 @@
             .video-grid { grid-template-columns: 1fr; }
             .rao-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
+            .btn-group { justify-content: center; }
         }
     </style>
 </head>
@@ -692,10 +701,11 @@
         <div class="hero-layout">
             <div class="hero-text fade-up">
                 <h4>Geoeconomic Strategy Unit</h4>
-                <h1>Mapping the next moves of <br><span style="color:var(--accent-gold); font-style:italic;">capital</span> and <span style="color:var(--accent-gold); font-style:italic;">power</span>.</h1>
+                <h1>Researching <span style="color:var(--accent-gold); font-style:italic;">power</span>. Mapping <span style="color:var(--accent-gold); font-style:italic;">markets</span>.</h1>
                 <p>A practitioner-led intelligence and advisory platform guiding decision-making on critical issues in today’s volatile business environment.</p>
-                <div style="margin-top: 2rem;">
+                <div class="btn-group">
                     <a href="#barometer" class="btn">View The Risk Barometer</a>
+                    <a href="map.html" class="btn">View RAO Heatmap</a>
                 </div>
             </div>
             
@@ -806,7 +816,7 @@
             <div class="fade-up" style="margin-bottom: 3rem; max-width: 100%;">
                 <h4>Our Engine</h4>
                 <h2>The Automated RAO System</h2>
-                <p style="max-width: 100%;">We are transforming the Barometer from a quarterly report into a living intelligence platform. By leveraging Large Language Models (LLMs), we process global economic signals to deliver <strong>Risk-Adjusted Opportunity</strong> scores in real-time.</p>
+                <p style="max-width: 100%;">A quantitative analytical tool designed to understand investment potential around the world at a glance. By leveraging Large Language Models (LLMs), we process global economic signals to deliver <strong>Risk-Adjusted Opportunity</strong> scores in real-time.</p>
             </div>
 
             <div class="rao-grid">
@@ -857,9 +867,15 @@
                     <div class="arrow-down"></div>
 
                     <div class="flow-step">
-                        <div class="human-check-badge">Crucial Step</div>
                         <h5>4. Analyst Quality Control</h5>
                         <p>Significant score movements trigger a mandatory review by our human experts to ensure accuracy.</p>
+                    </div>
+
+                    <div class="arrow-down"></div>
+
+                    <div class="flow-step" style="border-color: #fff;">
+                        <h5>5. Client Dashboard</h5>
+                        <p>Delivery of daily updates, trend indicators, and decision-grade briefings.</p>
                     </div>
 
                 </div>
@@ -901,7 +917,7 @@
         </div>
     </section>
 
-    <section id="team">
+       <section id="team">
         <div class="container">
             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
                 <h2 class="fade-up">Our Team</h2>
@@ -1048,6 +1064,28 @@
                         <p class="team-bio">Holds a BSc in Business Administration. She contributes to research and strategic analysis, with a strong interest in tracking development trends across emerging markets.</p>
                     </div>
 
+                    <div class="team-card">
+                        <img src="bhuvanya.jpeg" alt="Bhuvanya" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Bhuvanya</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">MSc in Politics and International Relations from SOAS. Focuses on the political dynamics of South Asia, conflict analysis, and rights.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="shubhangi.jpeg" alt="Shubhangi" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Shubhangi</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">International Relations and Economics student at Ashoka University. Specializes in policy research, market analysis, and crafting insight-driven narratives.</p>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -1105,7 +1143,7 @@
                     <a href="https://tcaglobal.in/" target="_blank">
                         <img src="tca-logo.png" alt="Compounding Advantage India" class="client-logo">
                         <div class="client-name">Compounding Advantage India</div>
-                        <p style="font-size: 1rem;">A premier strategic advisory firm facilitating cross-border investment, corporate governance, and trade dynamics across emerging markets.</p>
+                        <p style="font-size: 1rem;">A mutual fund distributor and investment advisory service, helping clients navigate complex financial landscapes to build long-term wealth.</p>
                     </a>
                 </div>
             </div>
