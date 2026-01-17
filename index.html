@@ -254,20 +254,6 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 2rem;
         }
-        
-        /* Whitepaper Section Layout */
-        .whitepaper-layout {
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            gap: 3rem;
-        }
-
-        .whitepaper-card-link {
-            text-decoration: none; 
-            flex-shrink: 0; 
-            width: 50%;
-        }
 
         /* Service Cards */
         .service-card {
@@ -692,15 +678,6 @@
             .rao-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
             .btn-group { justify-content: center; }
-            
-            .whitepaper-layout {
-                flex-direction: column;
-                gap: 2rem;
-            }
-            
-            .whitepaper-card-link {
-                width: 100%;
-            }
         }
     </style>
 </head>
@@ -753,13 +730,13 @@
 
     <section id="whitepaper">
         <div class="container">
-            <div class="fade-up whitepaper-layout">
+            <div class="fade-up" style="display: flex; justify-content: space-between; align-items: center; gap: 3rem;">
                 <div style="flex: 1;">
                     <h4>Strategic White Paper</h4>
                     <h2 style="margin-bottom: 1rem;">Thinking Geopolitically</h2>
                     <h3 style="color:var(--accent-gold); margin-bottom: 1.5rem;">Navigating Today's Volatile World Order</h3>
                 </div>
-                <a href="Thinking Geopolitically.pdf" target="_blank" class="whitepaper-card-link">
+                <a href="Thinking Geopolitically.pdf" target="_blank" style="text-decoration: none; flex-shrink: 0; width: 50%;">
                     <div class="card" style="height: 100%; transition: all 0.3s ease; cursor: pointer;">
                         <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">STRATEGIC RESEARCH</h4>
                         <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem; font-size: 1.8rem;">Thinking Geopolitically</h3>
@@ -930,31 +907,15 @@
             </div>
 
             <div class="grid-2 fade-up delay-1">
-                
                 <a href="Venezuela Crisis 2026.pdf" target="_blank" style="text-decoration: none;">
                     <div class="card" style="height: 100%; transition: all 0.3s ease; cursor: pointer;">
                         <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">CRISIS RESPONSE</h4>
                         <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem; font-size: 1.8rem;">Venezuela in Limbo</h3>
-                        <p style="font-style: italic; opacity: 0.8; margin-bottom: 0.5rem;">U.S. Intervention & Geoeconomics of Oil</p>
-                        <span style="display:block; font-size: 0.85rem; color: var(--accent-gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">By Bhuvanya</span>
-                        
+                        <p style="font-style: italic; opacity: 0.8; margin-bottom: 1rem;">U.S. Intervention & Geoeconomics of Oil</p>
                         <p style="font-size: 0.95rem;">Analysis of the January 3, 2026 military operation, the return of overt interventionism, and the resulting fragmentation of global energy markets.</p>
                         <span style="color: var(--accent-gold); font-size: 0.9rem; margin-top: 1rem; display: inline-block;">Read Brief &rarr;</span>
                     </div>
                 </a>
-
-                <a href="Rare Earth Chokepoint.pdf" target="_blank" style="text-decoration: none;">
-                    <div class="card" style="height: 100%; transition: all 0.3s ease; cursor: pointer;">
-                        <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">SUPPLY CHAIN RISK</h4>
-                        <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem; font-size: 1.8rem;">Rare Earth Chokepoint</h3>
-                        <p style="font-style: italic; opacity: 0.8; margin-bottom: 0.5rem;">China's Export Curbs & Japan's Risk</p>
-                        <span style="display:block; font-size: 0.85rem; color: var(--accent-gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">By Shiva Dang</span>
-
-                        <p style="font-size: 0.95rem;">Analysis of China's new export restrictions on dual-use items to Japan. We explore the geopolitical triggers, the parallels to 2010, and the urgent need for supply chain diversification in high-tech manufacturing.</p>
-                        <span style="color: var(--accent-gold); font-size: 0.9rem; margin-top: 1rem; display: inline-block;">Read Brief &rarr;</span>
-                    </div>
-                </a>
-
             </div>
 
             <div class="fade-up" style="margin-top: 4rem; margin-bottom: 2rem;">
@@ -1209,7 +1170,7 @@
                 <p>We are trusted by leaders across industries to navigate complexity.</p>
             </div>
             
-            <div class="grid-2 fade-up delay-1">
+            <div class="grid-3 fade-up delay-1">
                 <div class="client-card">
                     <a href="https://ksrmarine.com/" target="_blank">
                         <img src="ksr-logo.svg" alt="KSR Marine Services" class="client-logo">
@@ -1223,6 +1184,14 @@
                         <img src="tca-logo.png" alt="Compounding Advantage India" class="client-logo">
                         <div class="client-name">Compounding Advantage India</div>
                         <p style="font-size: 1rem;">A mutual fund distributor and investment advisory service, helping clients navigate complex financial landscapes to build long-term wealth.</p>
+                    </a>
+                </div>
+
+                <div class="client-card">
+                    <a href="https://www.altmin.in/" target="_blank">
+                        <img src="altmin.avif" alt="Altmin" class="client-logo">
+                        <div class="client-name">Altmin</div>
+                        <p style="font-size: 1rem;">A leading producer of next-generation battery materials, developing indigenous Lithium-ion chemistries and supply chains to enable the world's future energy requirements.</p>
                     </a>
                 </div>
             </div>
