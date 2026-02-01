@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGPL Africa Swing 2026 | Sponsorship Strategy</title>
+    <link rel="icon" type="image/x-icon" href="GSU.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* GSU Color Palette */
+            --primary-bg: #192030;
+            --secondary-bg: #1f283b;
+            --tertiary-bg: #252f45;
+            --accent-gold: #cba84e;
+            --accent-gold-dim: rgba(203, 168, 78, 0.3);
+            --text-white: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --gradient-igpl: linear-gradient(135deg, var(--accent-gold) 0%, #dbb95f 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-white);
+            font-family: 'EB Garamond', serif;
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
+
+        h2 {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 1rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 2px;
+            background-color: var(--accent-gold);
+            transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        section:hover h2::after {
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Button Styling */
+        .btn {
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 1rem 2.5rem;
+            font-family: 'Playfair Display', serif;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            margin-top: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Hero Section */
+        header {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at top right, rgba(203, 168, 78, 0.08), transparent),
+                        radial-gradient(circle at bottom left, rgba(203, 168, 78, 0.05), transparent);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 8rem 2rem 5rem;
+            position: relative;
+        }
+
+        .logo-box {
+            margin-bottom: 3rem;
+            border-left: 4px solid var(--accent-gold);
+            padding-left: 2rem;
+        }
+
+        .gsu-title {
+            font-size: 0.75rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .main-brand {
+            font-size: 7rem;
+            font-weight: 700;
+            background: var(--gradient-igpl);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .subtitle {
+            font-size: 1.75rem;
+            font-weight: 300;
+            color: var(--text-muted);
+            margin-top: 2rem;
+            letter-spacing: 1px;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+        }
+
+        .scroll-indicator::after {
+            content: '↓';
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Section Styling */
+        section {
+            padding: 8rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        section:nth-child(even) {
+            background-color: var(--secondary-bg);
+        }
+
+        .section-tag {
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            color: var(--accent-gold);
+            margin-bottom: 2rem;
+            display: block;
+            font-weight: 600;
+        }
+
+        section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--text-white);
+            line-height: 1.2;
+        }
+
+        section p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            opacity: 0.95;
+        }
+
+        section strong {
+            color: var(--text-white);
+            font-weight: 600;
+        }
+
+        /* Executive Summary */
+        .exec-summary {
+            text-align: center;
+            font-size: 1.35rem;
+            color: var(--text-muted);
+            line-height: 1.9;
+            max-width: 900px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        .exec-summary-title {
+            font-size: 2.5rem;
+            color: var(--text-white);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+        }
+
+        /* Market Cards */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: var(--tertiary-bg);
+            padding: 3rem;
+            border-radius: 2px;
+            border: 1px solid var(--border-subtle);
+            border-left: 3px solid var(--accent-gold);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            background: rgba(203, 168, 78, 0.05);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-left-color: #dbb95f;
+        }
+
+        .card h3 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--text-white);
+            line-height: 1.3;
+        }
+
+        .card h4 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-gold);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .card p {
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 1.25rem;
+        }
+
+        .card strong {
+            color: var(--text-white);
+            font-weight: 600;
+        }
+
+        /* Flight Categorization */
+        .flight-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .flight-item {
+            display: flex;
+            background: var(--tertiary-bg);
+            padding: 3rem 3.5rem;
+            border-radius: 2px;
+            border-left: 4px solid var(--accent-gold);
+            align-items: flex-start;
+            transition: all 0.3s ease;
+        }
+
+        .flight-item:hover {
+            background: rgba(203, 168, 78, 0.05);
+            transform: translateX(8px);
+        }
+
+        .flight-number {
+            font-family: 'Playfair Display';
+            font-size: 4rem;
+            margin-right: 3rem;
+            background: var(--gradient-igpl);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            line-height: 1;
+            min-width: 80px;
+        }
+
+        .flight-item h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-white);
+        }
+
+        /* Tiers Table */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 3rem;
+            background: var(--tertiary-bg);
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        th {
+            text-align: left;
+            padding: 1.75rem 2.5rem;
+            background: var(--gradient-igpl);
+            color: var(--primary-bg);
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 2rem 2.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: rgba(203, 168, 78, 0.05);
+        }
+
+        td strong {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        /* List Items */
+        ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        li {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+            position: relative;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        li:hover {
+            color: var(--text-white);
+        }
+
+        li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent-gold);
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        li:hover::before {
+            transform: translateX(5px);
+        }
+
+        hr {
+            margin: 2rem 0;
+            border: 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* Navigation */
+        nav {
+            padding: 1.5rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(25, 32, 48, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-subtle);
+            transition: padding 0.3s ease;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            letter-spacing: 2px;
+        }
+
+        footer {
+            padding: 5rem 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            background-color: var(--secondary-bg);
+        }
+
+        /* Section Number Badge */
+        .section-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--accent-gold);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--accent-gold);
+            margin-right: 1rem;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            nav {
+                padding: 1rem 0;
+            }
+
+            .nav-logo img {
+                height: 32px;
+            }
+
+            .nav-title {
+                font-size: 0.75rem;
+            }
+
+            header {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .logo-box {
+                padding-left: 1.5rem;
+            }
+
+            .main-brand {
+                font-size: 4rem;
+            }
+
+            .subtitle {
+                font-size: 1.25rem;
+            }
+
+            .scroll-indicator {
+                display: none;
+            }
+
+            section {
+                padding: 5rem 0;
+            }
+
+            section h2 {
+                font-size: 2rem;
+            }
+
+            .exec-summary {
+                font-size: 1.15rem;
+            }
+
+            .exec-summary-title {
+                font-size: 2rem;
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .card {
+                padding: 2rem;
+            }
+
+            .flight-item {
+                flex-direction: column;
+                padding: 2rem;
+            }
+
+            .flight-number {
+                margin-right: 0;
+                margin-bottom: 1.5rem;
+                font-size: 3rem;
+            }
+
+            th, td {
+                padding: 1.25rem 1.5rem;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container">
+            <div class="nav-logo">
+                <img src="gsu.png" alt="GSU Logo">
+            </div>
+            <div class="nav-title">IGPL AFRICA SWING 2026</div>
+        </div>
+    </nav>
+
+    <header>
+        <div class="logo-box">
+            <div class="gsu-title">GEOECONOMIC STRATEGY UNIT</div>
+            <h1 class="main-brand">IGPL</h1>
+        </div>
+        <div class="subtitle">AFRICA SWING 2026</div>
+        <p style="margin-top: 2.5rem; letter-spacing: 3px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">SPONSORSHIP STRATEGY</p>
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+        </div>
+    </header>
+
+    <section>
+        <div class="container">
+            <span class="section-tag">Overview</span>
+            <h2 class="exec-summary-title">Executive Summary</h2>
+            <div class="exec-summary">
+                <p>The IGPL Africa Swing 2026 represents a strategic opportunity to position elite golf as a platform for high-value commercial partnerships, diplomatic engagement, and market development across three distinct African markets. This strategy identifies three distinct sponsor archetypes—Legitimacy Builders, Premium Market Brands, and CSR/Development Funders—and tailors engagement approaches to each market's unique characteristics.</p>
+                <p>South Africa and Mauritius offer mature golf ecosystems with sophisticated corporate sponsorship markets, prioritizing premium brands seeking HNI/UHNI access. The Republic of Congo, by contrast, presents a symbolic elite market where legitimacy-building partnerships with state-linked entities and extractive industries take precedence. Success will be measured through sponsor quality and fit, commercial outcomes, and long-term sponsor satisfaction and renewal rates.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <span class="section-tag">Geography</span>
+            <h2>TARGET MARKETS</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <h3>South Africa</h3>
+                    <p><strong>Market Status:</strong> Mature elite golf market with a sophisticated corporate sponsorship ecosystem</p>
+                    <p><strong>Challenge:</strong> differentiation from other leagues and tournaments</p>
+                </div>
+                <div class="card">
+                    <h3>Mauritius</h3>
+                    <p><strong>Market Status:</strong> Mature elite golf market with a sophisticated corporate sponsorship ecosystem</p>
+                    <p><strong>Challenge:</strong> differentiation from other leagues and tournaments</p>
+                </div>
+                <div class="card">
+                    <h3>Republic of Congo</h3>
+                    <p><strong>Market Status:</strong> Symbolic elite market with concentrated political-corporate power</p>
+                    <p><strong>Challenge:</strong> little to no golf culture and limited domestic sponsorship market.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <span class="section-tag">Segmentation</span>
+            <h2>Sponsor Categorization</h2>
+            <p style="margin-bottom: 1rem; max-width: 800px;">Identification of three "flights" to target sponsors accordingly.</p>
+            
+            <div class="flight-container">
+                <div class="flight-item">
+                    <div class="flight-number">01</div>
+                    <div>
+                        <h3>Legitimacy Builders</h3>
+                        <ul>
+                            <li>Provide policy and institutional cover.</li>
+                            <li>They are a reputational bolster as they are embedded in political networks</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flight-item">
+                    <div class="flight-number">02</div>
+                    <div>
+                        <h3>Premium Market Brands</h3>
+                        <ul>
+                            <li>Global and Regional brands wanting to expand in Africa.</li>
+                            <li>Target HNIs/UHNIs and avoid brand dilution</li>
+                            <li>Value relationship building and close networking</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flight-item">
+                    <div class="flight-number">03</div>
+                    <div>
+                        <h3>CSR/Development Funders</h3>
+                        <ul>
+                            <li>IFIs/donors/foundations leveraging sports for community development.</li>
+                            <li>Current target areas: youth, environmental conservation, and sustainable tourism</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <span class="section-tag">Implementation</span>
+            <h2>Sponsor Prioritization & Potential</h2>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <h4>South Africa / Mauritius</h4>
+                    <p>Flight 2 (premium market brands) > Flight 1 (legitimacy builders) > Flight 3 (CSR/development funders)</p>
+                    <hr>
+                    <p><strong>Potential Sponsors:</strong></p>
+                    <ul>
+                        <li>Nomads Golf Club</li>
+                        <li>South African Golf Association</li>
+                        <li>Investec</li>
+                        <li>Nedbank</li>
+                        <li>TaylorMade</li>
+                        <li>Avis iLease</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Republic of Congo</h4>
+                    <p>Flight 1 (legitimacy builders) > Flight 3 (CSR/development funders) > Flight 2 (premium market brands)</p>
+                    <hr>
+                    <p><strong>Potential Sponsors:</strong></p>
+                    <ul>
+                        <li>Total Energies</li>
+                        <li>ENI</li>
+                        <li>SNPC</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <span class="section-tag">Packages</span>
+            <h2>Tiered Sponsorship Packages</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tier</th>
+                        <th>Best for:</th>
+                        <th>Delivers:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Gold</strong></td>
+                        <td>Global enterprises/anchor sponsors</td>
+                        <td>Naming rights, CEO access, and premium hospitality</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Silver</strong></td>
+                        <td>Regional champions/category leaders</td>
+                        <td>Category exclusivity + on-course visibility</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bronze</strong></td>
+                        <td>Domestic firms/SMEs</td>
+                        <td>Local visibility + networking access</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <span class="section-tag">Measurement</span>
+            <h2>KPIs and Success Measures</h2>
+            <div class="grid-3">
+                <div>
+                    <h3>Sponsor Quality and Fit</h3>
+                    <ul>
+                        <li>1 anchor per market</li>
+                        <li>Flight mix matches market priority</li>
+                        <li>Sponsor mix fits IGPL's and Board of Directors primary and secondary objectives.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Commercial Outcomes</h3>
+                    <ul>
+                        <li>Contracted value vs target</li>
+                        <li>3-5 major partners (South Africa and Mauritius)</li>
+                        <li>Pipeline conversion rate tracked</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Sponsor Experience</h3>
+                    <ul>
+                        <li>Maintain post-event sponsor satisfaction</li>
+                        <li>Contract renewal and engagement expansion intent</li>
+                        <li>Executive interactions and interaction opportunities delivered</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            GEOECONOMIC STRATEGY UNIT &copy; 2026 | IGPL AFRICA SWING
+        </div>
+    </footer>
+
+</body>
+</html>
