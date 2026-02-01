@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAO Developer Console | GSU</title>
+    <link rel="icon" type="image/x-icon" href="GSU.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;600&family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #192030;
+            --secondary-bg: #1f283b;
+            --tertiary-bg: #252f45;
+            --text-white: #ffffff;
+            --text-muted: rgba(255,255,255,0.7);
+            --accent-gold: #cba84e;
+            --accent-gold-dim: rgba(203, 168, 78, 0.3);
+            --accent-green: #4ade80;
+            --accent-red: #f87171;
+            --accent-blue: #60a5fa;
+            --font-head: 'Playfair Display', serif;
+            --font-body: 'EB Garamond', serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --easing: cubic-bezier(0.23, 1, 0.32, 1);
+            --border-subtle: rgba(255,255,255,0.05);
+            --border-hover: rgba(203, 168, 78, 0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+        h1, h2, h3, h4, h5 { font-family: var(--font-head); font-weight: 400; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--primary-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-gold-dim); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+
+        .header {
+            background: rgba(25, 32, 48, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left { display: flex; align-items: center; gap: 1.5rem; }
+        .logo {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .logo-icon {
+            width: 32px; height: 32px;
+            object-fit: contain;
+        }
+        .header-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+        .header-actions { display: flex; gap: 0.75rem; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 0.6rem 1.2rem;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            transition: all 0.3s var(--easing);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+        .btn:hover {
+            border-color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.1);
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            background: var(--accent-gold);
+            color: var(--primary-bg);
+            border-color: var(--accent-gold);
+        }
+        .btn-primary:hover { background: #dbb95f; border-color: #dbb95f; }
+        .btn-danger { border-color: var(--accent-red); color: var(--accent-red); }
+        .btn-danger:hover { background: rgba(248, 113, 113, 0.1); }
+        .btn-small { padding: 0.4rem 0.8rem; font-size: 0.65rem; }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 380px 1fr 400px;
+            gap: 1px;
+            background: var(--border-subtle);
+            min-height: calc(100vh - 70px);
+        }
+        .panel {
+            background: var(--primary-bg);
+            overflow-y: auto;
+            max-height: calc(100vh - 70px);
+        }
+        .panel-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--secondary-bg);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .panel-title {
+            font-family: var(--font-head);
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .panel-content { padding: 1.5rem; }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--secondary-bg);
+        }
+        .tab {
+            padding: 0.9rem 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .tab:hover { color: var(--text-white); background: rgba(255,255,255,0.02); }
+        .tab.active { color: var(--accent-gold); }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 0; right: 0;
+            height: 2px;
+            background: var(--accent-gold);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .weight-section { margin-bottom: 1rem; }
+        .weight-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .weight-section-header:hover { border-color: var(--border-hover); }
+        .weight-section-header.expanded { border-bottom-color: transparent; }
+        .weight-section-title {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .weight-section-body {
+            border: 1px solid var(--border-subtle);
+            border-top: none;
+            padding: 1rem;
+            display: none;
+            background: rgba(31, 40, 59, 0.5);
+        }
+        .weight-section-body.expanded { display: block; }
+        .chevron { transition: transform 0.3s ease; }
+        .weight-section-header.expanded .chevron { transform: rotate(180deg); }
+
+        .slider-group { margin-bottom: 1rem; }
+        .slider-group:last-child { margin-bottom: 0; }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .slider-name {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .slider-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-gold);
+            min-width: 45px;
+            text-align: right;
+        }
+        .slider-input {
+            width: 60px;
+            padding: 0.25rem 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: var(--tertiary-bg);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-white);
+            border-radius: 2px;
+            text-align: center;
+        }
+        .slider-input:focus { outline: none; border-color: var(--accent-gold); }
+
+        .slider-track {
+            position: relative;
+            height: 6px;
+            background: var(--tertiary-bg);
+            border-radius: 3px;
+        }
+        .slider-fill {
+            position: absolute;
+            left: 0; top: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-gold-dim), var(--accent-gold));
+            border-radius: 3px;
+            transition: width 0.1s ease;
+        }
+        .slider-fill.negative {
+            background: linear-gradient(90deg, var(--accent-red), rgba(248, 113, 113, 0.3));
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: transparent;
+            position: absolute;
+            top: 0; left: 0;
+            margin: 0;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        input[type="range"]::-moz-range-thumb {
+            width: 16px; height: 16px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .lock-btn {
+            width: 24px; height: 24px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 0.7rem;
+        }
+        .lock-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .lock-btn.locked {
+            background: var(--accent-gold);
+            color: var(--primary-bg);
+            border-color: var(--accent-gold);
+        }
+
+        .main-weight-display {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .main-weight-bar {
+            display: flex;
+            height: 40px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .main-weight-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .main-weight-segment.opportunity {
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #8b7355 100%);
+            color: var(--primary-bg);
+        }
+        .main-weight-segment.stability {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #3b82f6 100%);
+            color: var(--primary-bg);
+        }
+        .main-weight-sliders {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .scale-control {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .scale-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .scale-info {
+            font-size: 0.65rem;
+            color: var(--accent-gold);
+            cursor: help;
+        }
+
+        .normalize-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .weight-sum { font-family: var(--font-mono); font-size: 0.8rem; }
+        .weight-sum.valid { color: var(--accent-green); }
+        .weight-sum.invalid { color: var(--accent-red); }
+
+        .results-table-container { overflow-x: auto; }
+        .results-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .results-table th {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--secondary-bg);
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+        .results-table th:hover { color: var(--accent-gold); }
+        .results-table th.sorted-asc::after { content: ' ↑'; color: var(--accent-gold); }
+        .results-table th.sorted-desc::after { content: ' ↓'; color: var(--accent-gold); }
+        .results-table td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.2s ease;
+        }
+        .results-table tr:hover td { background: rgba(203, 168, 78, 0.05); }
+        .results-table tr.highlighted td {
+            background: rgba(203, 168, 78, 0.1);
+            border-left: 3px solid var(--accent-gold);
+        }
+        .rank-cell { font-family: var(--font-mono); font-weight: 500; color: var(--accent-gold); }
+        .country-cell { font-weight: 500; }
+        .score-cell { font-family: var(--font-mono); }
+        .delta-cell { font-family: var(--font-mono); font-size: 0.75rem; }
+        .delta-positive { color: var(--accent-green); }
+        .delta-negative { color: var(--accent-red); }
+        .delta-neutral { color: var(--text-muted); }
+
+        .score-bar { display: flex; align-items: center; gap: 0.5rem; }
+        .score-bar-track {
+            flex: 1;
+            height: 4px;
+            background: var(--tertiary-bg);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .score-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s ease; }
+        .score-bar-fill.high { background: var(--accent-green); }
+        .score-bar-fill.medium { background: var(--accent-gold); }
+        .score-bar-fill.low { background: var(--accent-red); }
+
+        .movers-section { margin-bottom: 1.5rem; }
+        .movers-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .movers-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .mover-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--secondary-bg);
+            border-left: 3px solid;
+            font-size: 0.85rem;
+        }
+        .mover-item.winner { border-color: var(--accent-green); }
+        .mover-item.loser { border-color: var(--accent-red); }
+        .mover-delta { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 500; }
+
+        .distribution-chart {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .distribution-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .histogram {
+            display: flex;
+            align-items: flex-end;
+            height: 100px;
+            gap: 2px;
+        }
+        .histogram-bar {
+            flex: 1;
+            background: var(--accent-gold);
+            border-radius: 2px 2px 0 0;
+            transition: height 0.3s ease;
+            position: relative;
+            cursor: pointer;
+            min-width: 8px;
+        }
+        .histogram-bar:hover { background: #dbb95f; }
+        .histogram-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .spotlight-search {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-white);
+            border-radius: 2px;
+            margin-bottom: 0.75rem;
+        }
+        .spotlight-search:focus { outline: none; border-color: var(--accent-gold); }
+        .spotlight-search::placeholder { color: var(--text-muted); }
+        .selected-countries { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .selected-country-tag {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.75rem;
+            background: var(--accent-gold);
+            color: var(--primary-bg);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            border-radius: 2px;
+        }
+        .remove-country { cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease; }
+        .remove-country:hover { opacity: 1; }
+        .country-suggestions {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            display: none;
+            background: var(--primary-bg);
+        }
+        .country-suggestions.active { display: block; }
+        .country-suggestion {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 0.85rem;
+        }
+        .country-suggestion:hover { background: var(--secondary-bg); color: var(--accent-gold); }
+
+        .waterfall-chart {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .waterfall-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .waterfall-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+        .waterfall-label {
+            width: 120px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .waterfall-bar-container {
+            flex: 1;
+            height: 20px;
+            background: var(--tertiary-bg);
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        .waterfall-bar {
+            position: absolute;
+            height: 100%;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--primary-bg);
+            transition: all 0.3s ease;
+        }
+        .waterfall-bar.opportunity { background: linear-gradient(90deg, var(--accent-gold-dim), var(--accent-gold)); }
+        .waterfall-bar.stability { background: linear-gradient(90deg, rgba(96, 165, 250, 0.3), var(--accent-blue)); }
+        .waterfall-bar.total { background: linear-gradient(90deg, rgba(74, 222, 128, 0.3), var(--accent-green)); }
+
+        .heatmap-container { overflow-x: auto; padding: 1rem 0; }
+        .heatmap-grid { display: inline-block; }
+        .heatmap-row { display: flex; }
+        .heatmap-cell {
+            width: 45px; height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            border-radius: 2px;
+            margin: 1px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .heatmap-cell:hover { transform: scale(1.1); z-index: 1; }
+        .heatmap-header {
+            background: var(--secondary-bg);
+            color: var(--text-muted);
+            font-size: 0.5rem;
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            height: 70px;
+            width: 45px;
+            padding: 0.25rem;
+        }
+        .heatmap-row-header {
+            background: var(--secondary-bg);
+            color: var(--text-muted);
+            width: 100px;
+            font-size: 0.6rem;
+            text-align: right;
+            padding-right: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .data-search { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+        .data-search input {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-white);
+            border-radius: 2px;
+        }
+        .data-search input:focus { outline: none; border-color: var(--accent-gold); }
+        .data-search select {
+            padding: 0.6rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-white);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .variable-histogram {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .variable-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .stat-item { text-align: center; }
+        .stat-value { font-family: var(--font-mono); font-size: 1.1rem; color: var(--accent-gold); }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .outlier-tag {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 2px;
+            margin-left: 0.5rem;
+        }
+        .outlier-tag.high { background: rgba(74, 222, 128, 0.2); color: var(--accent-green); }
+        .outlier-tag.low { background: rgba(248, 113, 113, 0.2); color: var(--accent-red); }
+
+        .file-input-wrapper { position: relative; margin-bottom: 1rem; }
+        .file-input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 2rem;
+            border: 2px dashed var(--border-subtle);
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-input-label:hover { border-color: var(--accent-gold); background: rgba(203, 168, 78, 0.05); }
+        .file-input-label.has-file { border-color: var(--accent-green); background: rgba(74, 222, 128, 0.05); }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--primary-bg);
+            border: 1px solid var(--border-subtle);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 4px;
+        }
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title { font-family: var(--font-head); font-size: 1.2rem; color: var(--accent-gold); }
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-close:hover { color: var(--text-white); }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .baseline-control {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-subtle);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .baseline-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .baseline-options { display: flex; gap: 0.75rem; }
+        .baseline-option {
+            flex: 1;
+            padding: 0.5rem;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            border: 1px solid var(--border-subtle);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .baseline-option:hover { border-color: var(--accent-gold); }
+        .baseline-option.active {
+            background: var(--accent-gold);
+            color: var(--primary-bg);
+            border-color: var(--accent-gold);
+        }
+
+        .pillar-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+        @media (max-width: 1400px) { .main-container { grid-template-columns: 320px 1fr 340px; } }
+        @media (max-width: 1100px) { .main-container { grid-template-columns: 1fr; } .panel { max-height: none; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="logo"><img src="gsu.png" alt="GSU Logo" class="logo-icon"></div>
+            <span class="header-title">RAO Developer Console</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn" onclick="importConfig()">↓ Import</button>
+            <button class="btn" onclick="exportConfig()">↑ Export</button>
+            <button class="btn btn-primary" onclick="downloadCSV()">⬇ CSV</button>
+            <button class="btn btn-danger" onclick="resetToDefaults()">↺ Reset</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Left Panel -->
+        <div class="panel" id="weights-panel">
+            <div class="panel-header"><h2 class="panel-title">⚙ Weight Configuration</h2></div>
+            <div class="panel-content">
+                <div class="scale-control">
+                    <div class="scale-label">Score Scaling Factor <span class="scale-info" title="Higher values push scores toward extremes (0 or 10)">ⓘ</span></div>
+                    <div class="slider-group">
+                        <div class="slider-track">
+                            <div class="slider-fill" id="scale-fill" style="width: 0%;"></div>
+                            <input type="range" min="1" max="3" step="0.1" value="1" id="scale-slider" oninput="updateScale(this.value)">
+                        </div>
+                        <div class="slider-label" style="margin-top: 0.5rem;">
+                            <span class="slider-name">Linear (1.0) → Extreme (3.0)</span>
+                            <span class="slider-value" id="scale-value">1.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="main-weight-display">
+                    <div class="main-weight-bar">
+                        <div class="main-weight-segment opportunity" id="opp-segment" style="width: 55%;">Opportunity 55%</div>
+                        <div class="main-weight-segment stability" id="stab-segment" style="width: 45%;">Stability 45%</div>
+                    </div>
+                    <div class="main-weight-sliders">
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span class="slider-name">Opportunity</span>
+                                <input type="number" class="slider-input" value="0.55" step="0.01" min="-1" max="2" id="opp-input" onchange="updateMainWeight('opportunity', this.value)">
+                            </div>
+                            <div class="slider-track">
+                                <div class="slider-fill" id="opp-fill" style="width: 51.67%;"></div>
+                                <input type="range" min="-1" max="2" step="0.01" value="0.55" id="opp-slider" oninput="updateMainWeight('opportunity', this.value)">
+                            </div>
+                        </div>
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <span class="slider-name">Stability</span>
+                                <input type="number" class="slider-input" value="0.45" step="0.01" min="-1" max="2" id="stab-input" onchange="updateMainWeight('stability', this.value)">
+                            </div>
+                            <div class="slider-track">
+                                <div class="slider-fill" id="stab-fill" style="width: 48.33%;"></div>
+                                <input type="range" min="-1" max="2" step="0.01" value="0.45" id="stab-slider" oninput="updateMainWeight('stability', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="normalize-row">
+                        <span class="weight-sum valid" id="main-weight-sum">Sum: 1.00</span>
+                        <button class="btn btn-small" onclick="normalizeMainWeights()">Normalize</button>
+                    </div>
+                </div>
+
+                <h4 style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-gold); margin-bottom: 1rem;">Opportunity Pillars</h4>
+                <div id="opportunity-pillars"></div>
+
+                <h4 style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-blue); margin: 1.5rem 0 1rem;">Stability Pillars</h4>
+                <div id="fragility-pillars"></div>
+
+                <div class="normalize-row" style="margin-top: 1.5rem;">
+                    <div>
+                        <span class="weight-sum valid" id="opp-pillar-sum">Opp: 1.00</span>
+                        <span class="weight-sum valid" id="frag-pillar-sum" style="margin-left: 1rem;">Stab: 1.00</span>
+                    </div>
+                    <button class="btn btn-small" onclick="normalizePillarWeights()">Normalize All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel -->
+        <div class="panel" id="results-panel">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('rankings')">Rankings</button>
+                <button class="tab" onclick="switchTab('distribution')">Distribution</button>
+                <button class="tab" onclick="switchTab('data')">Raw Data</button>
+            </div>
+
+            <div class="tab-content active" id="rankings-tab">
+                <div class="panel-content">
+                    <div class="baseline-control">
+                        <div class="baseline-label">Comparison Baseline</div>
+                        <div class="baseline-options">
+                            <div class="baseline-option active" onclick="setBaseline('original')">Original Weights</div>
+                            <div class="baseline-option" onclick="setBaseline('custom')">Set Custom Baseline</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="movers-section">
+                            <div class="movers-title">📈 Top Gainers</div>
+                            <div class="movers-list" id="top-gainers"></div>
+                        </div>
+                        <div class="movers-section">
+                            <div class="movers-title">📉 Top Losers</div>
+                            <div class="movers-list" id="top-losers"></div>
+                        </div>
+                    </div>
+                    <div class="results-table-container">
+                        <table class="results-table" id="results-table">
+                            <thead>
+                                <tr>
+                                    <th onclick="sortTable('rank')">Rank</th>
+                                    <th onclick="sortTable('country')">Country</th>
+                                    <th onclick="sortTable('rao')">RAO Score</th>
+                                    <th onclick="sortTable('opportunity')">Opportunity</th>
+                                    <th onclick="sortTable('stability')">Stability</th>
+                                    <th onclick="sortTable('delta')">Δ Rank</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="distribution-tab">
+                <div class="panel-content">
+                    <div class="distribution-chart">
+                        <div class="distribution-title">RAO Score Distribution</div>
+                        <div class="histogram" id="rao-histogram"></div>
+                        <div class="histogram-labels"><span>0</span><span>2</span><span>4</span><span>6</span><span>8</span><span>10</span></div>
+                    </div>
+                    <div class="variable-stats">
+                        <div class="stat-item"><div class="stat-value" id="stat-mean">-</div><div class="stat-label">Mean</div></div>
+                        <div class="stat-item"><div class="stat-value" id="stat-median">-</div><div class="stat-label">Median</div></div>
+                        <div class="stat-item"><div class="stat-value" id="stat-min">-</div><div class="stat-label">Min</div></div>
+                        <div class="stat-item"><div class="stat-value" id="stat-max">-</div><div class="stat-label">Max</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="data-tab">
+                <div class="panel-content">
+                    <div class="data-search">
+                        <input type="text" placeholder="Search countries..." id="data-search-input" oninput="filterDataTable()">
+                        <select id="variable-select" onchange="updateVariableHistogram()">
+                            <option value="">Select variable</option>
+                        </select>
+                    </div>
+                    <div class="variable-histogram" id="variable-histogram-container" style="display: none;">
+                        <div class="distribution-title" id="variable-histogram-title">Variable Distribution</div>
+                        <div class="histogram" id="variable-histogram"></div>
+                        <div class="histogram-labels" id="variable-histogram-labels"></div>
+                        <div class="variable-stats" id="variable-stats"></div>
+                    </div>
+                    <div class="results-table-container" style="margin-top: 1rem;">
+                        <table class="results-table" id="data-table">
+                            <thead id="data-table-head"></thead>
+                            <tbody id="data-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="panel" id="analysis-panel">
+            <div class="tabs">
+                <button class="tab active" onclick="switchAnalysisTab('spotlight')">Spotlight</button>
+                <button class="tab" onclick="switchAnalysisTab('sensitivity')">Sensitivity</button>
+            </div>
+
+            <div class="tab-content active" id="spotlight-tab">
+                <div class="panel-content">
+                    <div class="spotlight-selector">
+                        <input type="text" class="spotlight-search" placeholder="Search countries (max 5)..." id="spotlight-search" oninput="showCountrySuggestions()" onfocus="showCountrySuggestions()">
+                        <div class="country-suggestions" id="country-suggestions"></div>
+                        <div class="selected-countries" id="selected-countries"></div>
+                    </div>
+                    <div id="spotlight-content"><div style="text-align: center; padding: 2rem; color: var(--text-muted);">Select countries to view breakdown</div></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="sensitivity-tab">
+                <div class="panel-content">
+                    <div class="baseline-label">Weight Sensitivity Heat Map</div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Shows score sensitivity to pillar weight changes. Darker = more sensitive.</p>
+                    <div class="heatmap-container" id="sensitivity-heatmap"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="import-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Import Configuration</h3>
+                <button class="modal-close" onclick="closeModal('import-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="import-json" style="width: 100%; height: 200px; font-family: var(--font-mono); font-size: 0.8rem; background: var(--secondary-bg); border: 1px solid var(--border-subtle); color: var(--text-white); padding: 1rem;" placeholder="Paste JSON configuration..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('import-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="applyImportedConfig()">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="export-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Export Configuration</h3>
+                <button class="modal-close" onclick="closeModal('export-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="export-json" style="width: 100%; height: 200px; font-family: var(--font-mono); font-size: 0.8rem; background: var(--secondary-bg); border: 1px solid var(--border-subtle); color: var(--text-white); padding: 1rem;" readonly></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('export-modal')">Close</button>
+                <button class="btn btn-primary" onclick="copyExportJson()">Copy</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ===== CONFIGURATION =====
+const DEFAULT_CONFIG = {
+    rao_weights: { opportunity: 0.55, stability: 0.45 },
+    opportunity_weights: {
+        pillar_A_market_access: { total_weight: 0.16, variables: { trade_openness: 0.10, high_tech_export_intensity: 0.03, foreign_investment_attractiveness: 0.03 } },
+        pillar_B_capital_environment: { total_weight: 0.18, variables: { domestic_capital_formation: 0.07, financial_market_depth: 0.06, capital_openness: 0.05 } },
+        pillar_C_trade_infrastructure: { total_weight: 0.12, variables: { customs_efficiency: 0.06, logistics_infrastructure_quality: 0.06 } },
+        pillar_D_digital_economy: { total_weight: 0.20, variables: { ict_service_export_competitiveness: 0.06, digital_commerce_readiness: 0.08, frontier_technology_readiness: 0.06 } },
+        pillar_E_business_environment: { total_weight: 0.10, variables: { regulatory_quality_for_business: 0.10 } },
+        pillar_F_innovation_and_market_characteristics: { total_weight: 0.24, variables: { economic_dynamism: 0.06, market_sophistication: 0.06, labor_force_scale: 0.06, productive_capacities_index: 0.06 } }
+    },
+    fragility_weights: {
+        pillar_A_external_vulnerability: { total_weight: 0.20, variables: { current_account_imbalance: 0.07, external_asset_position: 0.05, export_product_concentration: 0.08 } },
+        pillar_B_fiscal_health: { total_weight: 0.18, variables: { government_debt_burden: 0.11, fiscal_balance_trajectory: 0.07 } },
+        pillar_C_monetary_and_price_stability: { total_weight: 0.13, variables: { inflation_pressure: 0.09, labor_market_stress: 0.04 } },
+        pillar_D_labor_market_quality: { total_weight: 0.14, variables: { skills_mismatch: 0.07, labor_informality: 0.07 } },
+        pillar_E_market_structure: { total_weight: 0.10, variables: { market_concentration_risk: 0.10 } },
+        pillar_F_institutional_quality: { total_weight: 0.25, variables: { political_stability: 0.09, corruption_perceptions: 0.16 } }
+    },
+    scale_factor: 1.0
+};
+
+const PILLAR_NAMES = {
+    pillar_A_market_access: 'A: Market Access', pillar_B_capital_environment: 'B: Capital Environment',
+    pillar_C_trade_infrastructure: 'C: Trade Infrastructure', pillar_D_digital_economy: 'D: Digital Economy',
+    pillar_E_business_environment: 'E: Business Environment', pillar_F_innovation_and_market_characteristics: 'F: Innovation & Market',
+    pillar_A_external_vulnerability: 'A: External Vulnerability', pillar_B_fiscal_health: 'B: Fiscal Health',
+    pillar_C_monetary_and_price_stability: 'C: Monetary Stability', pillar_D_labor_market_quality: 'D: Labor Market',
+    pillar_E_market_structure: 'E: Market Structure', pillar_F_institutional_quality: 'F: Institutional Quality'
+};
+
+const VARIABLE_NAMES = {
+    trade_openness: 'Trade Openness', high_tech_export_intensity: 'High-Tech Exports', foreign_investment_attractiveness: 'FDI Attractiveness',
+    domestic_capital_formation: 'Domestic Capital', financial_market_depth: 'Financial Depth', capital_openness: 'Capital Openness',
+    customs_efficiency: 'Customs Efficiency', logistics_infrastructure_quality: 'Logistics Quality',
+    ict_service_export_competitiveness: 'ICT Exports', digital_commerce_readiness: 'Digital Commerce', frontier_technology_readiness: 'Frontier Tech',
+    regulatory_quality_for_business: 'Regulatory Quality', economic_dynamism: 'Economic Dynamism', market_sophistication: 'Market Sophistication',
+    labor_force_scale: 'Labor Force Scale', productive_capacities_index: 'Productive Capacities',
+    current_account_imbalance: 'Current Account', external_asset_position: 'External Assets', export_product_concentration: 'Export Concentration',
+    government_debt_burden: 'Debt Burden', fiscal_balance_trajectory: 'Fiscal Balance', inflation_pressure: 'Inflation', labor_market_stress: 'Labor Stress',
+    skills_mismatch: 'Skills Mismatch', labor_informality: 'Informality', market_concentration_risk: 'Market Concentration',
+    political_stability: 'Political Stability', corruption_perceptions: 'Corruption'
+};
+
+const PILLAR_COLORS = { A: '#f87171', B: '#fb923c', C: '#facc15', D: '#4ade80', E: '#60a5fa', F: '#a78bfa' };
+
+// ===== STATE =====
+let currentConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+let baselineConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+let rawData = [], calculatedData = [], baselineData = [];
+let lockedWeights = new Set();
+let selectedCountries = [];
+let sortColumn = 'rank', sortDirection = 'asc';
+let baselineMode = 'original';
+
+// ===== INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', () => {
+    initializePillarControls();
+    initializeVariableSelect();
+    loadDefaultCSV();
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.spotlight-selector')) document.getElementById('country-suggestions').classList.remove('active');
+    });
+});
+
+function loadDefaultCSV() {
+    fetch('rao3.csv')
+        .then(response => response.text())
+        .then(text => {
+            parseCSV(text);
+        })
+        .catch(error => {
+            console.error('Error loading rao3.csv:', error);
+            alert('Error loading data file. Please ensure rao3.csv is in the same directory.');
+        });
+}
+
+function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',');
+    rawData = [];
+    for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',');
+        const row = {};
+        headers.forEach((h, idx) => {
+            const val = values[idx];
+            row[h.trim()] = val === '' || val === undefined ? null : (isNaN(parseFloat(val)) ? val : parseFloat(val));
+        });
+        rawData.push(row);
+    }
+    calculateScores();
+    updateAllDisplays();
+}
+
+function initializePillarControls() {
+    const oppContainer = document.getElementById('opportunity-pillars');
+    const fragContainer = document.getElementById('fragility-pillars');
+    Object.entries(currentConfig.opportunity_weights).forEach(([k, v]) => { oppContainer.innerHTML += createPillarSection(k, v, 'opportunity'); });
+    Object.entries(currentConfig.fragility_weights).forEach(([k, v]) => { fragContainer.innerHTML += createPillarSection(k, v, 'fragility'); });
+}
+
+function createPillarSection(pillarKey, pillarData, type) {
+    const letter = pillarKey.split('_')[1].toUpperCase();
+    const name = PILLAR_NAMES[pillarKey] || pillarKey;
+    const color = PILLAR_COLORS[letter];
+    let varsHtml = '';
+    Object.entries(pillarData.variables).forEach(([vk, w]) => {
+        const vn = VARIABLE_NAMES[vk] || vk;
+        varsHtml += `<div class="slider-group">
+            <div class="slider-label">
+                <span class="slider-name"><button class="lock-btn" onclick="toggleLock('${type}','${pillarKey}','${vk}')" id="lock-${type}-${pillarKey}-${vk}">🔓</button>${vn}</span>
+                <input type="number" class="slider-input" value="${w.toFixed(2)}" step="0.01" min="-1" max="1" id="input-${type}-${pillarKey}-${vk}" onchange="updateVariableWeight('${type}','${pillarKey}','${vk}',this.value)">
+            </div>
+            <div class="slider-track">
+                <div class="slider-fill" id="fill-${type}-${pillarKey}-${vk}" style="width:${Math.abs(w)*100}%;"></div>
+                <input type="range" min="-1" max="1" step="0.01" value="${w}" id="slider-${type}-${pillarKey}-${vk}" oninput="updateVariableWeight('${type}','${pillarKey}','${vk}',this.value)">
+            </div>
+        </div>`;
+    });
+    return `<div class="weight-section">
+        <div class="weight-section-header" onclick="toggleSection(this)">
+            <span class="weight-section-title"><span class="pillar-dot" style="background:${color};"></span>${name}</span>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <input type="number" class="slider-input" value="${pillarData.total_weight.toFixed(2)}" step="0.01" min="-1" max="1" id="pillar-input-${type}-${pillarKey}" onclick="event.stopPropagation()" onchange="updatePillarWeight('${type}','${pillarKey}',this.value)">
+                <span class="chevron">▼</span>
+            </div>
+        </div>
+        <div class="weight-section-body" id="body-${type}-${pillarKey}">${varsHtml}</div>
+    </div>`;
+}
+
+function initializeVariableSelect() {
+    const select = document.getElementById('variable-select');
+    const allVars = [...Object.keys(VARIABLE_NAMES)];
+    allVars.forEach(v => { select.innerHTML += `<option value="${v}">${VARIABLE_NAMES[v]}</option>`; });
+}
+
+function toggleSection(header) {
+    header.classList.toggle('expanded');
+    header.nextElementSibling.classList.toggle('expanded');
+}
+
+function toggleLock(type, pillarKey, varKey) {
+    const lockId = `${type}-${pillarKey}-${varKey}`;
+    const btn = document.getElementById(`lock-${lockId}`);
+    if (lockedWeights.has(lockId)) { lockedWeights.delete(lockId); btn.classList.remove('locked'); btn.textContent = '🔓'; }
+    else { lockedWeights.add(lockId); btn.classList.add('locked'); btn.textContent = '🔒'; }
+}
+
+// ===== WEIGHT UPDATES =====
+function updateMainWeight(type, value) {
+    value = parseFloat(value);
+    currentConfig.rao_weights[type] = value;
+    const prefix = type === 'opportunity' ? 'opp' : 'stab';
+    document.getElementById(`${prefix}-slider`).value = value;
+    document.getElementById(`${prefix}-input`).value = value.toFixed(2);
+    document.getElementById(`${prefix}-fill`).style.width = `${((value + 1) / 3) * 100}%`;
+    updateMainWeightDisplay();
+    recalculateAndUpdate();
+}
+
+function updateMainWeightDisplay() {
+    const opp = currentConfig.rao_weights.opportunity;
+    const stab = currentConfig.rao_weights.stability;
+    const total = Math.abs(opp) + Math.abs(stab);
+    const oppPct = total > 0 ? (Math.abs(opp) / total * 100) : 50;
+    document.getElementById('opp-segment').style.width = `${oppPct}%`;
+    document.getElementById('opp-segment').textContent = `Opportunity ${(opp * 100).toFixed(0)}%`;
+    document.getElementById('stab-segment').style.width = `${100 - oppPct}%`;
+    document.getElementById('stab-segment').textContent = `Stability ${(stab * 100).toFixed(0)}%`;
+    const sum = opp + stab;
+    const sumEl = document.getElementById('main-weight-sum');
+    sumEl.textContent = `Sum: ${sum.toFixed(2)}`;
+    sumEl.className = `weight-sum ${Math.abs(sum - 1) < 0.01 ? 'valid' : 'invalid'}`;
+}
+
+function updatePillarWeight(type, pillarKey, value) {
+    value = parseFloat(value);
+    const weights = type === 'opportunity' ? currentConfig.opportunity_weights : currentConfig.fragility_weights;
+    weights[pillarKey].total_weight = value;
+    document.getElementById(`pillar-input-${type}-${pillarKey}`).value = value.toFixed(2);
+    updatePillarSums();
+    recalculateAndUpdate();
+}
+
+function updateVariableWeight(type, pillarKey, varKey, value) {
+    value = parseFloat(value);
+    const weights = type === 'opportunity' ? currentConfig.opportunity_weights : currentConfig.fragility_weights;
+    weights[pillarKey].variables[varKey] = value;
+    document.getElementById(`slider-${type}-${pillarKey}-${varKey}`).value = value;
+    document.getElementById(`input-${type}-${pillarKey}-${varKey}`).value = value.toFixed(2);
+    const fill = document.getElementById(`fill-${type}-${pillarKey}-${varKey}`);
+    fill.style.width = `${Math.abs(value) * 100}%`;
+    fill.classList.toggle('negative', value < 0);
+    recalculateAndUpdate();
+}
+
+function updateScale(value) {
+    currentConfig.scale_factor = parseFloat(value);
+    document.getElementById('scale-value').textContent = parseFloat(value).toFixed(2);
+    document.getElementById('scale-fill').style.width = `${((value - 1) / 2) * 100}%`;
+    recalculateAndUpdate();
+}
+
+function updatePillarSums() {
+    let oppSum = 0, fragSum = 0;
+    Object.values(currentConfig.opportunity_weights).forEach(p => oppSum += p.total_weight);
+    Object.values(currentConfig.fragility_weights).forEach(p => fragSum += p.total_weight);
+    const oppEl = document.getElementById('opp-pillar-sum');
+    const fragEl = document.getElementById('frag-pillar-sum');
+    oppEl.textContent = `Opp: ${oppSum.toFixed(2)}`;
+    oppEl.className = `weight-sum ${Math.abs(oppSum - 1) < 0.01 ? 'valid' : 'invalid'}`;
+    fragEl.textContent = `Stab: ${fragSum.toFixed(2)}`;
+    fragEl.className = `weight-sum ${Math.abs(fragSum - 1) < 0.01 ? 'valid' : 'invalid'}`;
+}
+
+function normalizeMainWeights() {
+    const total = currentConfig.rao_weights.opportunity + currentConfig.rao_weights.stability;
+    if (total === 0) return;
+    currentConfig.rao_weights.opportunity /= total;
+    currentConfig.rao_weights.stability /= total;
+    updateMainWeight('opportunity', currentConfig.rao_weights.opportunity);
+    updateMainWeight('stability', currentConfig.rao_weights.stability);
+}
+
+function normalizePillarWeights() {
+    let oppTotal = 0, fragTotal = 0;
+    Object.values(currentConfig.opportunity_weights).forEach(p => oppTotal += p.total_weight);
+    Object.values(currentConfig.fragility_weights).forEach(p => fragTotal += p.total_weight);
+    if (oppTotal > 0) Object.keys(currentConfig.opportunity_weights).forEach(k => {
+        currentConfig.opportunity_weights[k].total_weight /= oppTotal;
+        document.getElementById(`pillar-input-opportunity-${k}`).value = currentConfig.opportunity_weights[k].total_weight.toFixed(2);
+    });
+    if (fragTotal > 0) Object.keys(currentConfig.fragility_weights).forEach(k => {
+        currentConfig.fragility_weights[k].total_weight /= fragTotal;
+        document.getElementById(`pillar-input-fragility-${k}`).value = currentConfig.fragility_weights[k].total_weight.toFixed(2);
+    });
+    updatePillarSums();
+    recalculateAndUpdate();
+}
+
+// ===== SCORE CALCULATION =====
+function calculateScores() {
+    if (rawData.length === 0) return;
+    calculatedData = rawData.map(country => {
+        const oppScore = calculateOpportunityScore(country);
+        const fragScore = calculateFragilityScore(country);
+        const stabScore = 10 - fragScore;
+        let raoScore = currentConfig.rao_weights.opportunity * oppScore + currentConfig.rao_weights.stability * stabScore;
+        if (currentConfig.scale_factor !== 1) raoScore = applyScaling(raoScore, currentConfig.scale_factor);
+        raoScore = Math.max(0, Math.min(10, raoScore));
+        return { ...country, calculated_opportunity: oppScore, calculated_stability: stabScore, calculated_fragility: fragScore, calculated_rao: raoScore };
+    });
+    calculatedData.sort((a, b) => b.calculated_rao - a.calculated_rao);
+    calculatedData.forEach((c, i) => c.calculated_rank = i + 1);
+    calculateBaselineScores();
+    calculatedData.forEach(country => {
+        const baseline = baselineData.find(b => b.country === country.country);
+        country.rank_delta = baseline ? baseline.calculated_rank - country.calculated_rank : 0;
+        country.score_delta = baseline ? country.calculated_rao - baseline.calculated_rao : 0;
+    });
+}
+
+function calculateBaselineScores() {
+    const config = baselineMode === 'original' ? DEFAULT_CONFIG : baselineConfig;
+    baselineData = rawData.map(country => {
+        const oppScore = calculateOpportunityScoreWithConfig(country, config);
+        const fragScore = calculateFragilityScoreWithConfig(country, config);
+        const stabScore = 10 - fragScore;
+        let raoScore = config.rao_weights.opportunity * oppScore + config.rao_weights.stability * stabScore;
+        if (config.scale_factor !== 1) raoScore = applyScaling(raoScore, config.scale_factor);
+        return { country: country.country, country_name: country.country_name, calculated_rao: Math.max(0, Math.min(10, raoScore)) };
+    });
+    baselineData.sort((a, b) => b.calculated_rao - a.calculated_rao);
+    baselineData.forEach((c, i) => c.calculated_rank = i + 1);
+}
+
+function calculateOpportunityScore(country) { return calculateOpportunityScoreWithConfig(country, currentConfig); }
+function calculateOpportunityScoreWithConfig(country, config) {
+    let totalScore = 0, totalWeight = 0;
+    Object.entries(config.opportunity_weights).forEach(([pk, pd]) => {
+        let pillarScore = 0, pillarVarWeight = 0;
+        Object.entries(pd.variables).forEach(([vk, w]) => {
+            const val = country[vk];
+            if (val !== null && val !== undefined && !isNaN(val)) { pillarScore += val * w; pillarVarWeight += Math.abs(w); }
+        });
+        if (pillarVarWeight > 0) { totalScore += (pillarScore / pillarVarWeight) * pd.total_weight; totalWeight += pd.total_weight; }
+    });
+    return totalWeight > 0 ? (totalScore / totalWeight) * 10 : 0;
+}
+
+function calculateFragilityScore(country) { return calculateFragilityScoreWithConfig(country, currentConfig); }
+function calculateFragilityScoreWithConfig(country, config) {
+    let totalScore = 0, totalWeight = 0;
+    Object.entries(config.fragility_weights).forEach(([pk, pd]) => {
+        let pillarScore = 0, pillarVarWeight = 0;
+        Object.entries(pd.variables).forEach(([vk, w]) => {
+            const val = country[vk];
+            if (val !== null && val !== undefined && !isNaN(val)) { pillarScore += val * w; pillarVarWeight += Math.abs(w); }
+        });
+        if (pillarVarWeight > 0) { totalScore += (pillarScore / pillarVarWeight) * pd.total_weight; totalWeight += pd.total_weight; }
+    });
+    return totalWeight > 0 ? (totalScore / totalWeight) * 10 : 0;
+}
+
+function applyScaling(score, factor) {
+    const midpoint = 5;
+    const normalized = (score - midpoint) / midpoint;
+    const scaled = Math.sign(normalized) * Math.pow(Math.abs(normalized), 1 / factor);
+    return midpoint + scaled * midpoint;
+}
+
+function recalculateAndUpdate() { calculateScores(); updateAllDisplays(); }
+
+// ===== DISPLAY UPDATES =====
+function updateAllDisplays() {
+    updateResultsTable();
+    updateTopMovers();
+    updateDistribution();
+    updateDataTable();
+    updateSpotlight();
+    updateSensitivityHeatmap();
+    updateMainWeightDisplay();
+    updatePillarSums();
+}
+
+function updateResultsTable() {
+    const tbody = document.getElementById('results-body');
+    if (!tbody || calculatedData.length === 0) return;
+    let sorted = [...calculatedData];
+    sorted.sort((a, b) => {
+        let av, bv;
+        switch (sortColumn) {
+            case 'rank': av = a.calculated_rank; bv = b.calculated_rank; break;
+            case 'country': av = a.country_name; bv = b.country_name; break;
+            case 'rao': av = a.calculated_rao; bv = b.calculated_rao; break;
+            case 'opportunity': av = a.calculated_opportunity; bv = b.calculated_opportunity; break;
+            case 'stability': av = a.calculated_stability; bv = b.calculated_stability; break;
+            case 'delta': av = a.rank_delta; bv = b.rank_delta; break;
+            default: av = a.calculated_rank; bv = b.calculated_rank;
+        }
+        if (typeof av === 'string') return sortDirection === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+        return sortDirection === 'asc' ? av - bv : bv - av;
+    });
+    tbody.innerHTML = sorted.map(c => {
+        const hl = selectedCountries.includes(c.country);
+        const sc = c.calculated_rao >= 6 ? 'high' : c.calculated_rao >= 4 ? 'medium' : 'low';
+        const dc = c.rank_delta > 0 ? 'delta-positive' : c.rank_delta < 0 ? 'delta-negative' : 'delta-neutral';
+        const ds = c.rank_delta > 0 ? '↑' : c.rank_delta < 0 ? '↓' : '—';
+        return `<tr class="${hl ? 'highlighted' : ''}" onclick="toggleCountrySelection('${c.country}')">
+            <td class="rank-cell">${c.calculated_rank}</td>
+            <td class="country-cell">${c.country_name}</td>
+            <td><div class="score-bar"><span class="score-cell">${c.calculated_rao.toFixed(2)}</span><div class="score-bar-track"><div class="score-bar-fill ${sc}" style="width:${c.calculated_rao * 10}%;"></div></div></div></td>
+            <td class="score-cell">${c.calculated_opportunity.toFixed(2)}</td>
+            <td class="score-cell">${c.calculated_stability.toFixed(2)}</td>
+            <td class="delta-cell ${dc}">${ds} ${Math.abs(c.rank_delta)}</td>
+        </tr>`;
+    }).join('');
+}
+
+function sortTable(column) {
+    if (sortColumn === column) sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    else { sortColumn = column; sortDirection = column === 'rank' ? 'asc' : 'desc'; }
+    document.querySelectorAll('.results-table th').forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
+    updateResultsTable();
+}
+
+function updateTopMovers() {
+    const gainers = document.getElementById('top-gainers');
+    const losers = document.getElementById('top-losers');
+    if (!gainers || calculatedData.length === 0) return;
+    const sorted = [...calculatedData].sort((a, b) => b.rank_delta - a.rank_delta);
+    const top5 = sorted.slice(0, 5).filter(c => c.rank_delta > 0);
+    const bottom5 = sorted.slice(-5).reverse().filter(c => c.rank_delta < 0);
+    gainers.innerHTML = top5.map(c => `<div class="mover-item winner"><span>${c.country_name}</span><span class="mover-delta delta-positive">↑${c.rank_delta}</span></div>`).join('') || '<div style="color:var(--text-muted);font-size:0.8rem;">No gainers</div>';
+    losers.innerHTML = bottom5.map(c => `<div class="mover-item loser"><span>${c.country_name}</span><span class="mover-delta delta-negative">↓${Math.abs(c.rank_delta)}</span></div>`).join('') || '<div style="color:var(--text-muted);font-size:0.8rem;">No losers</div>';
+}
+
+function updateDistribution() {
+    if (calculatedData.length === 0) return;
+    const scores = calculatedData.map(c => c.calculated_rao);
+    const bins = Array(20).fill(0);
+    scores.forEach(s => { const idx = Math.min(Math.floor(s / 0.5), 19); bins[idx]++; });
+    const maxBin = Math.max(...bins);
+    const histogram = document.getElementById('rao-histogram');
+    histogram.innerHTML = bins.map((count, i) => `<div class="histogram-bar" style="height:${maxBin > 0 ? (count / maxBin * 100) : 0}%;" title="${(i * 0.5).toFixed(1)}-${((i + 1) * 0.5).toFixed(1)}: ${count}"></div>`).join('');
+    const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const sortedScores = [...scores].sort((a, b) => a - b);
+    const median = sortedScores[Math.floor(sortedScores.length / 2)];
+    document.getElementById('stat-mean').textContent = mean.toFixed(2);
+    document.getElementById('stat-median').textContent = median.toFixed(2);
+    document.getElementById('stat-min').textContent = Math.min(...scores).toFixed(2);
+    document.getElementById('stat-max').textContent = Math.max(...scores).toFixed(2);
+}
+
+function updateDataTable() {
+    if (rawData.length === 0) return;
+    const searchTerm = document.getElementById('data-search-input').value.toLowerCase();
+    const filtered = calculatedData.filter(c => c.country_name.toLowerCase().includes(searchTerm) || c.country.toLowerCase().includes(searchTerm));
+    const thead = document.getElementById('data-table-head');
+    const tbody = document.getElementById('data-table-body');
+    const cols = ['country_name', 'calculated_rao', 'calculated_opportunity', 'calculated_stability'];
+    thead.innerHTML = `<tr>${cols.map(c => `<th>${c.replace('calculated_', '').replace('_', ' ')}</th>`).join('')}</tr>`;
+    tbody.innerHTML = filtered.slice(0, 50).map(row => `<tr>${cols.map(c => `<td class="${c.includes('calculated') ? 'score-cell' : ''}">${typeof row[c] === 'number' ? row[c].toFixed(2) : row[c] || '-'}</td>`).join('')}</tr>`).join('');
+}
+
+function filterDataTable() { updateDataTable(); }
+
+function updateVariableHistogram() {
+    const varName = document.getElementById('variable-select').value;
+    const container = document.getElementById('variable-histogram-container');
+    if (!varName || rawData.length === 0) { container.style.display = 'none'; return; }
+    container.style.display = 'block';
+    document.getElementById('variable-histogram-title').textContent = VARIABLE_NAMES[varName] || varName;
+    const values = rawData.map(r => r[varName]).filter(v => v !== null && !isNaN(v));
+    if (values.length === 0) { container.style.display = 'none'; return; }
+    const min = Math.min(...values), max = Math.max(...values);
+    const range = max - min || 1;
+    const bins = Array(15).fill(0);
+    values.forEach(v => { const idx = Math.min(Math.floor((v - min) / range * 15), 14); bins[idx]++; });
+    const maxBin = Math.max(...bins);
+    document.getElementById('variable-histogram').innerHTML = bins.map((c, i) => `<div class="histogram-bar" style="height:${maxBin > 0 ? (c / maxBin * 100) : 0}%;"></div>`).join('');
+    document.getElementById('variable-histogram-labels').innerHTML = `<span>${min.toFixed(1)}</span><span>${((min + max) / 2).toFixed(1)}</span><span>${max.toFixed(1)}</span>`;
+    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+    const std = Math.sqrt(values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length);
+    document.getElementById('variable-stats').innerHTML = `
+        <div class="stat-item"><div class="stat-value">${mean.toFixed(2)}</div><div class="stat-label">Mean</div></div>
+        <div class="stat-item"><div class="stat-value">${std.toFixed(2)}</div><div class="stat-label">Std Dev</div></div>
+        <div class="stat-item"><div class="stat-value">${min.toFixed(2)}</div><div class="stat-label">Min</div></div>
+        <div class="stat-item"><div class="stat-value">${max.toFixed(2)}</div><div class="stat-label">Max</div></div>`;
+}
+
+// ===== SPOTLIGHT =====
+function showCountrySuggestions() {
+    const input = document.getElementById('spotlight-search').value.toLowerCase();
+    const suggestions = document.getElementById('country-suggestions');
+    if (!input || calculatedData.length === 0) { suggestions.classList.remove('active'); return; }
+    const matches = calculatedData.filter(c => (c.country_name.toLowerCase().includes(input) || c.country.toLowerCase().includes(input)) && !selectedCountries.includes(c.country)).slice(0, 8);
+    if (matches.length === 0) { suggestions.classList.remove('active'); return; }
+    suggestions.innerHTML = matches.map(c => `<div class="country-suggestion" onclick="addCountryToSpotlight('${c.country}')">${c.country_name}</div>`).join('');
+    suggestions.classList.add('active');
+}
+
+function addCountryToSpotlight(code) {
+    if (selectedCountries.length >= 5 || selectedCountries.includes(code)) return;
+    selectedCountries.push(code);
+    document.getElementById('spotlight-search').value = '';
+    document.getElementById('country-suggestions').classList.remove('active');
+    updateSelectedCountriesTags();
+    updateSpotlight();
+    updateResultsTable();
+}
+
+function removeCountryFromSpotlight(code) {
+    selectedCountries = selectedCountries.filter(c => c !== code);
+    updateSelectedCountriesTags();
+    updateSpotlight();
+    updateResultsTable();
+}
+
+function toggleCountrySelection(code) {
+    if (selectedCountries.includes(code)) removeCountryFromSpotlight(code);
+    else if (selectedCountries.length < 5) addCountryToSpotlight(code);
+}
+
+function updateSelectedCountriesTags() {
+    const container = document.getElementById('selected-countries');
+    container.innerHTML = selectedCountries.map(code => {
+        const country = calculatedData.find(c => c.country === code);
+        return `<div class="selected-country-tag">${country ? country.country_name : code}<span class="remove-country" onclick="removeCountryFromSpotlight('${code}')">×</span></div>`;
+    }).join('');
+}
+
+function updateSpotlight() {
+    const content = document.getElementById('spotlight-content');
+    if (selectedCountries.length === 0 || calculatedData.length === 0) {
+        content.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);">Select countries to view breakdown</div>';
+        return;
+    }
+    content.innerHTML = selectedCountries.map(code => {
+        const c = calculatedData.find(x => x.country === code);
+        if (!c) return '';
+        const oppContrib = currentConfig.rao_weights.opportunity * c.calculated_opportunity;
+        const stabContrib = currentConfig.rao_weights.stability * c.calculated_stability;
+        return `<div class="waterfall-chart">
+            <div class="waterfall-title">${c.country_name} (Rank #${c.calculated_rank})</div>
+            <div class="waterfall-row"><div class="waterfall-label">Opportunity</div><div class="waterfall-bar-container"><div class="waterfall-bar opportunity" style="width:${c.calculated_opportunity * 10}%;">${c.calculated_opportunity.toFixed(2)}</div></div></div>
+            <div class="waterfall-row"><div class="waterfall-label">× Weight (${(currentConfig.rao_weights.opportunity * 100).toFixed(0)}%)</div><div class="waterfall-bar-container"><div class="waterfall-bar opportunity" style="width:${oppContrib * 10}%;">${oppContrib.toFixed(2)}</div></div></div>
+            <div class="waterfall-row"><div class="waterfall-label">Stability</div><div class="waterfall-bar-container"><div class="waterfall-bar stability" style="width:${c.calculated_stability * 10}%;">${c.calculated_stability.toFixed(2)}</div></div></div>
+            <div class="waterfall-row"><div class="waterfall-label">× Weight (${(currentConfig.rao_weights.stability * 100).toFixed(0)}%)</div><div class="waterfall-bar-container"><div class="waterfall-bar stability" style="width:${stabContrib * 10}%;">${stabContrib.toFixed(2)}</div></div></div>
+            <div class="waterfall-row" style="margin-top:0.5rem;border-top:1px solid var(--border-subtle);padding-top:0.5rem;"><div class="waterfall-label"><strong>RAO Score</strong></div><div class="waterfall-bar-container"><div class="waterfall-bar total" style="width:${c.calculated_rao * 10}%;">${c.calculated_rao.toFixed(2)}</div></div></div>
+        </div>`;
+    }).join('');
+}
+
+// ===== SENSITIVITY HEATMAP =====
+function updateSensitivityHeatmap() {
+    const container = document.getElementById('sensitivity-heatmap');
+    if (calculatedData.length === 0) { container.innerHTML = '<div style="color:var(--text-muted);">Load data to see heatmap</div>'; return; }
+    const pillars = [...Object.keys(currentConfig.opportunity_weights), ...Object.keys(currentConfig.fragility_weights)];
+    const countries = calculatedData.slice(0, 15);
+    const sensitivities = {};
+    countries.forEach(c => {
+        sensitivities[c.country] = {};
+        pillars.forEach(p => { sensitivities[c.country][p] = calculateSensitivity(c, p); });
+    });
+    let maxSens = 0;
+    Object.values(sensitivities).forEach(cs => Object.values(cs).forEach(v => { if (Math.abs(v) > maxSens) maxSens = Math.abs(v); }));
+    let html = '<div class="heatmap-grid">';
+    html += '<div class="heatmap-row"><div class="heatmap-row-header"></div>';
+    pillars.forEach(p => { html += `<div class="heatmap-header">${PILLAR_NAMES[p] || p}</div>`; });
+    html += '</div>';
+    countries.forEach(c => {
+        html += `<div class="heatmap-row"><div class="heatmap-row-header">${c.country_name}</div>`;
+        pillars.forEach(p => {
+            const sens = sensitivities[c.country][p];
+            const intensity = maxSens > 0 ? Math.abs(sens) / maxSens : 0;
+            const color = sens >= 0 ? `rgba(74,222,128,${intensity})` : `rgba(248,113,113,${intensity})`;
+            html += `<div class="heatmap-cell" style="background:${color};" title="${c.country_name}: ${sens.toFixed(3)}">${sens.toFixed(2)}</div>`;
+        });
+        html += '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function calculateSensitivity(country, pillarKey) {
+    const delta = 0.05;
+    const isOpp = pillarKey in currentConfig.opportunity_weights;
+    const weights = isOpp ? currentConfig.opportunity_weights : currentConfig.fragility_weights;
+    const original = weights[pillarKey].total_weight;
+    weights[pillarKey].total_weight = original + delta;
+    const scoreUp = isOpp ? calculateOpportunityScore(country) : 10 - calculateFragilityScore(country);
+    weights[pillarKey].total_weight = original - delta;
+    const scoreDown = isOpp ? calculateOpportunityScore(country) : 10 - calculateFragilityScore(country);
+    weights[pillarKey].total_weight = original;
+    return (scoreUp - scoreDown) / (2 * delta);
+}
+
+// ===== TABS =====
+function switchTab(tabName) {
+    document.querySelectorAll('#results-panel .tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#results-panel .tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelector(`#results-panel .tab:nth-child(${tabName === 'rankings' ? 1 : tabName === 'distribution' ? 2 : 3})`).classList.add('active');
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+}
+
+function switchAnalysisTab(tabName) {
+    document.querySelectorAll('#analysis-panel .tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#analysis-panel .tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelector(`#analysis-panel .tab:nth-child(${tabName === 'spotlight' ? 1 : 2})`).classList.add('active');
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+}
+
+// ===== BASELINE =====
+function setBaseline(mode) {
+    baselineMode = mode;
+    document.querySelectorAll('.baseline-option').forEach(o => o.classList.remove('active'));
+    document.querySelector(`.baseline-option:nth-child(${mode === 'original' ? 1 : 2})`).classList.add('active');
+    if (mode === 'custom') baselineConfig = JSON.parse(JSON.stringify(currentConfig));
+    recalculateAndUpdate();
+}
+
+// ===== IMPORT/EXPORT =====
+function importConfig() { document.getElementById('import-modal').classList.add('active'); }
+function exportConfig() {
+    document.getElementById('export-json').value = JSON.stringify(currentConfig, null, 2);
+    document.getElementById('export-modal').classList.add('active');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function applyImportedConfig() {
+    try {
+        const config = JSON.parse(document.getElementById('import-json').value);
+        currentConfig = config;
+        location.reload();
+    } catch (e) { alert('Invalid JSON'); }
+}
+function copyExportJson() {
+    navigator.clipboard.writeText(document.getElementById('export-json').value);
+    alert('Copied to clipboard');
+}
+
+function downloadCSV() {
+    if (calculatedData.length === 0) { alert('No data to export'); return; }
+    const headers = ['country', 'country_name', 'calculated_rank', 'calculated_rao', 'calculated_opportunity', 'calculated_stability', 'rank_delta'];
+    let csv = headers.join(',') + '\n';
+    calculatedData.forEach(row => { csv += headers.map(h => row[h] ?? '').join(',') + '\n'; });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rao_recalculated_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+}
+
+function resetToDefaults() {
+    if (!confirm('Reset all weights to defaults?')) return;
+    currentConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+    location.reload();
+}
+</script>
+</body>
+</html>
