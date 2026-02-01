@@ -1241,13 +1241,21 @@ function normalizePillarWeights() {
 function calculateScores() {
     if (rawData.length === 0) return;
     calculatedData = rawData.map(country => {
-        const oppScore = calculateOpportunityScore(country);
-        const fragScore = calculateFragilityScore(country);
-        const stabScore = 10 - fragScore;
+        // Use pre-calculated scores from CSV if available, otherwise calculate
+        let oppScore, stabScore;
+        if (country.opportunity_score !== null && country.opportunity_score !== undefined) {
+            oppScore = country.opportunity_score;
+            stabScore = country.stability_score;
+        } else {
+            oppScore = calculateOpportunityScore(country);
+            const fragScore = calculateFragilityScore(country);
+            stabScore = 10 - fragScore;
+        }
+
         let raoScore = currentConfig.rao_weights.opportunity * oppScore + currentConfig.rao_weights.stability * stabScore;
         if (currentConfig.scale_factor !== 1) raoScore = applyScaling(raoScore, currentConfig.scale_factor);
         raoScore = Math.max(0, Math.min(10, raoScore));
-        return { ...country, calculated_opportunity: oppScore, calculated_stability: stabScore, calculated_fragility: fragScore, calculated_rao: raoScore };
+        return { ...country, calculated_opportunity: oppScore, calculated_stability: stabScore, calculated_fragility: 10 - stabScore, calculated_rao: raoScore };
     });
     calculatedData.sort((a, b) => b.calculated_rao - a.calculated_rao);
     calculatedData.forEach((c, i) => c.calculated_rank = i + 1);
@@ -1294,11 +1302,17 @@ function calculateOpportunityScoreWithConfig(country, config) {
         let pillarScore = 0, pillarVarWeight = 0;
         Object.entries(pd.variables).forEach(([vk, w]) => {
             const val = country[vk];
-            if (val !== null && val !== undefined && !isNaN(val)) { pillarScore += val * w; pillarVarWeight += Math.abs(w); }
+            if (val !== null && val !== undefined && !isNaN(val)) {
+                pillarScore += val * w;
+                pillarVarWeight += Math.abs(w);
+            }
         });
-        if (pillarVarWeight > 0) { totalScore += (pillarScore / pillarVarWeight) * pd.total_weight; totalWeight += pd.total_weight; }
+        if (pillarVarWeight > 0) {
+            totalScore += (pillarScore / pillarVarWeight) * pd.total_weight;
+            totalWeight += Math.abs(pd.total_weight);
+        }
     });
-    return totalWeight > 0 ? (totalScore / totalWeight) * 10 : 0;
+    return totalWeight > 0 ? totalScore / totalWeight : 0;
 }
 
 function calculateFragilityScore(country) { return calculateFragilityScoreWithConfig(country, currentConfig); }
@@ -1308,11 +1322,17 @@ function calculateFragilityScoreWithConfig(country, config) {
         let pillarScore = 0, pillarVarWeight = 0;
         Object.entries(pd.variables).forEach(([vk, w]) => {
             const val = country[vk];
-            if (val !== null && val !== undefined && !isNaN(val)) { pillarScore += val * w; pillarVarWeight += Math.abs(w); }
+            if (val !== null && val !== undefined && !isNaN(val)) {
+                pillarScore += val * w;
+                pillarVarWeight += Math.abs(w);
+            }
         });
-        if (pillarVarWeight > 0) { totalScore += (pillarScore / pillarVarWeight) * pd.total_weight; totalWeight += pd.total_weight; }
+        if (pillarVarWeight > 0) {
+            totalScore += (pillarScore / pillarVarWeight) * pd.total_weight;
+            totalWeight += Math.abs(pd.total_weight);
+        }
     });
-    return totalWeight > 0 ? (totalScore / totalWeight) * 10 : 0;
+    return totalWeight > 0 ? totalScore / totalWeight : 0;
 }
 
 function applyScaling(score, factor) {
