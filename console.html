@@ -1260,17 +1260,31 @@ function calculateScores() {
 }
 
 function calculateBaselineScores() {
-    const config = baselineMode === 'original' ? DEFAULT_CONFIG : baselineConfig;
-    baselineData = rawData.map(country => {
-        const oppScore = calculateOpportunityScoreWithConfig(country, config);
-        const fragScore = calculateFragilityScoreWithConfig(country, config);
-        const stabScore = 10 - fragScore;
-        let raoScore = config.rao_weights.opportunity * oppScore + config.rao_weights.stability * stabScore;
-        if (config.scale_factor !== 1) raoScore = applyScaling(raoScore, config.scale_factor);
-        return { country: country.country, country_name: country.country_name, calculated_rao: Math.max(0, Math.min(10, raoScore)) };
-    });
-    baselineData.sort((a, b) => b.calculated_rao - a.calculated_rao);
-    baselineData.forEach((c, i) => c.calculated_rank = i + 1);
+    if (baselineMode === 'original') {
+        // Use the original scores from the CSV
+        baselineData = rawData.map(country => ({
+            country: country.country,
+            country_name: country.country_name,
+            calculated_rao: country.rao_score || 0,
+            calculated_rank: country.rao_rank || 0
+        }));
+        // Sort by score to ensure ranks are correct
+        baselineData.sort((a, b) => b.calculated_rao - a.calculated_rao);
+        baselineData.forEach((c, i) => c.calculated_rank = i + 1);
+    } else {
+        // Use custom baseline config
+        const config = baselineConfig;
+        baselineData = rawData.map(country => {
+            const oppScore = calculateOpportunityScoreWithConfig(country, config);
+            const fragScore = calculateFragilityScoreWithConfig(country, config);
+            const stabScore = 10 - fragScore;
+            let raoScore = config.rao_weights.opportunity * oppScore + config.rao_weights.stability * stabScore;
+            if (config.scale_factor !== 1) raoScore = applyScaling(raoScore, config.scale_factor);
+            return { country: country.country, country_name: country.country_name, calculated_rao: Math.max(0, Math.min(10, raoScore)) };
+        });
+        baselineData.sort((a, b) => b.calculated_rao - a.calculated_rao);
+        baselineData.forEach((c, i) => c.calculated_rank = i + 1);
+    }
 }
 
 function calculateOpportunityScore(country) { return calculateOpportunityScoreWithConfig(country, currentConfig); }
