@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSU Proposal | Angel One Expansion</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-bg: #192030;
+            --secondary-bg: #1f283b;
+            --text-white: #ffffff;
+            --accent-gold: #cba84e;
+            --font-head: 'Playfair Display', serif;
+            --font-body: 'EB Garamond', serif;
+            --easing: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5 { font-family: var(--font-head); font-weight: 400; }
+
+        h1 {
+            font-size: 3.8rem;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 40px;
+            height: 1px;
+            background-color: var(--accent-gold);
+            transition: width 0.6s var(--easing);
+        }
+
+        section:hover h2::after { width: 100%; }
+
+        h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-white); }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.15rem;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+            opacity: 0.9;
+            max-width: 65ch;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s ease; }
+
+        /* Utility */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 1rem 2.5rem;
+            font-family: var(--font-head);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            margin-top: 1rem;
+            transition: all 0.4s var(--easing);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Hero Section */
+        #hero {
+            min-height: 95vh;
+            display: flex;
+            align-items: center;
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+            position: relative;
+        }
+
+        .hero-layout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .hero-text {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            z-index: 5;
+        }
+
+        .hero-text p {
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .hero-logos img {
+            height: 80px;
+            width: auto;
+        }
+
+        .hero-logos span {
+            font-size: 2rem;
+            color: var(--accent-gold);
+            font-weight: 300;
+        }
+
+        /* Layout Grids */
+        section { padding: 7rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        section:nth-child(even) { background-color: var(--secondary-bg); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+
+        /* Cards & Stats */
+        .card {
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.4s var(--easing), box-shadow 0.4s var(--easing), border 0.4s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            border-color: rgba(203, 168, 78, 0.3);
+        }
+
+        .stat-value {
+            font-family: var(--font-head);
+            font-size: 3rem;
+            color: var(--accent-gold);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+            margin-bottom: 1rem;
+        }
+
+        .stat-context {
+            font-size: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+
+        /* Visual Bar for Stats */
+        .bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            margin-top: 1rem;
+            position: relative;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            background: var(--accent-gold);
+            width: 0%;
+            transition: width 1.5s var(--easing);
+        }
+
+        /* Service List / Prerequisites */
+        .service-card {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid rgba(203, 168, 78, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-left-color: var(--accent-gold);
+            padding-left: 2.5rem; 
+        }
+
+        .service-card h3 { font-size: 1.3rem; color: var(--accent-gold); margin-bottom: 0.5rem; }
+        .service-card p { font-size: 1rem; margin-bottom: 0; opacity: 0.8; }
+
+        /* Animation */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s var(--easing), transform 0.8s var(--easing);
+        }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 2rem; }
+
+            #hero {
+                min-height: 80vh;
+                padding-top: 3rem;
+            }
+
+            .hero-text { width: 100%; padding: 0 1rem; }
+
+            .hero-logos {
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .hero-logos img { height: 60px; }
+
+            .hero-logos span { font-size: 1.5rem; }
+
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 2rem; }
+            footer > div > div { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="hero" class="container">
+        <div class="hero-layout">
+            <div class="hero-text fade-up">
+                <div class="hero-logos">
+                    <img src="gsu.png" alt="GSU Logo">
+                    <span>×</span>
+                    <img src="angelone.png" alt="Angel One Logo">
+                </div>
+                <h1>Accelerating <span style="color:var(--accent-gold); font-style:italic;">Angel One</span> in Telangana.</h1>
+                <p>Angel One seeks to expand its sub-broker network in Telangana to capture growth in India's eighth-largest demat account market. GSU offers the analytical infrastructure and local intelligence to accelerate that deployment.</p>
+            </div>
+        </div>
+    </header>
+
+    <section id="about">
+        <div class="container grid-2">
+            <div class="fade-up">
+                <h4>Who We Are</h4>
+                <h2>Local Roots, Global Reach</h2>
+                <p>GSU is a strategic-advisory firm with its roots deeply embedded in Telangana. We provide our clientele with advice on high-stakes issues and enhanced stakeholder engagement, uniquely combining global analytical standards with local access.</p>
+            </div>
+            <div class="fade-up delay-1">
+                <div class="card" style="border-left: 3px solid var(--accent-gold);">
+                    <h3>Sector Experience</h3>
+                    <p>GSU advises a mutual fund distribution firm on market entry strategy, providing direct familiarity with retail investor acquisition and compliance frameworks applicable to Angel One's model. Our team prioritizes actionable intelligence over theoretical strategy documents, with senior analyst continuity throughout engagement.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="market">
+        <div class="container">
+            <div class="fade-up" style="margin-bottom: 3rem;">
+                <h4>Market Barometer</h4>
+                <h2>Why Telangana</h2>
+                <p>Telangana's GSDP of ₹16.12 lakh crore grows at 10% annually, with 2.6 million MSMEs and $3 billion in annual FDI creating a pipeline of Angel One's core target segments. With 41.1 million new demat accounts opened nationally in FY25 (60% from non-metro regions) and only 8% of Telangana's population holding demat accounts, the state presents significant penetration upside for structured sub-broker deployment.</p>
+            </div>
+
+            <div class="grid-4 fade-up delay-1">
+                <div class="card">
+                    <span class="stat-label">Economic Engine (FY25)</span>
+                    <span class="stat-value">₹16.12L</span>
+                    <p style="font-size:0.9rem; margin-bottom:0;">Crore GSDP</p>
+                    <div class="stat-context">
+                        Growing at <strong>10% Annually</strong>, signaling robust economic health.
+                        <div class="bar-container"><div class="bar-fill" style="width: 100%;"></div></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="stat-label">Affluence</span>
+                    <span class="stat-value">₹3.79L</span>
+                    <p style="font-size:0.9rem; margin-bottom:0;">Per Capita Income</p>
+                    <div class="stat-context">
+                        <strong>70% Above</strong> the national average, boosting the middle class.
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 100%; background: linear-gradient(90deg, var(--accent-gold) 70%, #555 70%);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="stat-label">Market Size</span>
+                    <span class="stat-value">1.02 Cr</span>
+                    <p style="font-size:0.9rem; margin-bottom:0;">Demat Accounts</p>
+                    <div class="stat-context">
+                        Represents a <strong>6% National Share</strong>. An established yet growing base.
+                        <div class="bar-container"><div class="bar-fill" style="width: 60%;"></div></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="stat-label">The Opportunity</span>
+                    <span class="stat-value">92%</span>
+                    <p style="font-size:0.9rem; margin-bottom:0;">Untapped Population</p>
+                    <div class="stat-context">
+                        Only 8% hold demat accounts despite <strong>47.6% Urban Pop</strong>.
+                        <div class="bar-container"><div class="bar-fill" style="width: 92%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="strategy">
+        <div class="container">
+            <div class="fade-up" style="max-width: 800px; margin-bottom: 4rem;">
+                <h4>Strategic Roadmap</h4>
+                <h2>Expansion Pre-requisites</h2>
+                <p>To capture the potential of Tier 2/3 cities, a structured deployment is required. GSU identifies five critical pillars for market entry.</p>
+            </div>
+
+            <div class="grid-3 fade-up delay-1">
+                <div class="service-card">
+                    <h3>01. Stakeholder Mapping</h3>
+                    <p>Locate key voices in the sector, including policymakers, industry analysts, and the media to control the narrative.</p>
+                </div>
+                <div class="service-card">
+                    <h3>02. Optimal Entry Points</h3>
+                    <p>Identification of high-yield entry points specifically within Tier 2 and Tier 3 cities where growth is fastest.</p>
+                </div>
+                <div class="service-card">
+                    <h3>03. Regulatory Risk</h3>
+                    <p>Comprehensive assessment for SEBI compliance across district-level operations to ensure friction-free scaling.</p>
+                </div>
+                <div class="service-card">
+                    <h3>04. Sectoral Trends</h3>
+                    <p>Monitoring trends in wealth management and fintech to develop a product strategy that fits the local palate.</p>
+                </div>
+                <div class="service-card">
+                    <h3>05. Competitor Analysis</h3>
+                    <p>Identifying common hurdles, pain points, and mistakes made by competitors to avoid capital wastage.</p>
+                </div>
+                <div class="service-card" style="border-left-color: var(--text-white); opacity: 0.5;">
+                    <h3>Strategic Synthesis</h3>
+                    <p>Combining these elements into a coherent deployment plan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="methodology">
+        <div class="container">
+            <div class="grid-2">
+                <div class="fade-up">
+                    <h4>The GSU Edge</h4>
+                    <h2>Why GSU?</h2>
+                    <p>GSU's district heat map and stakeholder profiling compress Angel One's sub-broker identification cycle, enabling faster deployment across high-potential clusters. Our Hyderabad base provides real-time regulatory intelligence and local network access that remote consultancies cannot replicate.</p>
+                    <p>The result is <strong>reduced time-to-market</strong>, <strong>lower recruitment costs</strong>, and <strong>higher-quality partner selection</strong> aligned with Angel One's goal of deploying 500+ sub-brokers to capture Telangana's expanding investor base.</p>
+                </div>
+
+                <div class="fade-up delay-1">
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+
+                        <div class="card" style="display: flex; flex-direction: row; align-items: center; padding: 2rem; gap: 1.5rem;">
+                            <div style="flex-shrink: 0; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(203, 168, 78, 0.1); border-radius: 8px;">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cba84e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 0.4rem;">District-Wise Heat Map</h3>
+                                <p style="font-size: 0.95rem; margin-bottom: 0; opacity: 0.8;">Telangana-specific scoring on income distribution, demat density, and competitor presence to identify top 10-15 priority clusters, eliminating trial-and-error market testing.</p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; flex-direction: row; align-items: center; padding: 2rem; gap: 1.5rem;">
+                            <div style="flex-shrink: 0; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(203, 168, 78, 0.1); border-radius: 8px;">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cba84e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 0.4rem;">Stakeholder Profiling</h3>
+                                <p style="font-size: 0.95rem; margin-bottom: 0; opacity: 0.8;">Detailed profiles of potential sub-broker candidates with existing client bases, sector expertise, and network reach. Pre-vetted pipeline accelerates partner identification from months to weeks.</p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; flex-direction: row; align-items: center; padding: 2rem; gap: 1.5rem;">
+                            <div style="flex-shrink: 0; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(203, 168, 78, 0.1); border-radius: 8px;">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cba84e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 0.4rem;">Regulatory Intelligence</h3>
+                                <p style="font-size: 0.95rem; margin-bottom: 0; opacity: 0.8;">Monitoring SEBI guidelines, state financial sector policies, and compliance framework changes. Event-based alerts enable proactive adjustment before enforcement actions.</p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; flex-direction: row; align-items: center; padding: 2rem; gap: 1.5rem;">
+                            <div style="flex-shrink: 0; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(203, 168, 78, 0.1); border-radius: 8px;">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cba84e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 0.4rem;">Applied Methodology</h3>
+                                <p style="font-size: 0.95rem; margin-bottom: 0; opacity: 0.8;">Unlike legacy consultancies delivering generic frameworks, GSU applies data mining, quantitative analysis, and stakeholder mapping directly to project execution with senior analyst continuity.</p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="display: flex; flex-direction: row; align-items: center; padding: 2rem; gap: 1.5rem;">
+                            <div style="flex-shrink: 0; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(203, 168, 78, 0.1); border-radius: 8px;">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cba84e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 0.4rem;">Proven Track Record</h3>
+                                <p style="font-size: 0.95rem; margin-bottom: 0; opacity: 0.8;">Advising a mutual fund distribution firm on market entry strategy, providing direct familiarity with retail investor acquisition and compliance frameworks.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="background: #151a28; padding: 3rem 0; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div style="text-align: center; max-width: 600px; margin: 0 auto; padding: 0 2rem;">
+            <p style="opacity: 0.7; font-size: 0.95rem; margin: 0 auto 0.5rem auto;">Geoeconomic Strategy Unit</p>
+            <p style="opacity: 0.5; font-size: 0.85rem; margin: 0 auto 2rem auto;">Practitioner-led intelligence and advisory platform.</p>
+            <p style="opacity: 0.5; font-size: 0.85rem; margin: 0 auto;">&copy; 2026 Geoeconomic Strategy Unit. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- SCROLL ANIMATIONS ---
+        const observerOptions = { root: null, threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
