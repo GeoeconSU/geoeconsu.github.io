@@ -3,777 +3,633 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IGPL Africa Swing 2026 | Sponsorship Strategy</title>
-    <link rel="icon" type="image/x-icon" href="GSU.ico">
+    <title>GSU | IGPL Africa Swing 2026</title>
+    <link rel="icon" type="image/x-icon" href="gsu.ico">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            /* GSU Color Palette */
             --primary-bg: #192030;
             --secondary-bg: #1f283b;
-            --tertiary-bg: #252f45;
-            --accent-gold: #cba84e;
-            --accent-gold-dim: rgba(203, 168, 78, 0.3);
             --text-white: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.7);
-            --border-subtle: rgba(255, 255, 255, 0.1);
-            --gradient-igpl: linear-gradient(135deg, var(--accent-gold) 0%, #dbb95f 100%);
+            --accent-gold: #cba84e;
+            --font-head: 'Playfair Display', serif;
+            --font-body: 'EB Garamond', serif;
+            --easing: cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        html { scroll-behavior: smooth; }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background-color: var(--primary-bg);
             color: var(--text-white);
-            font-family: 'EB Garamond', serif;
-            line-height: 1.7;
+            font-family: var(--font-body);
+            line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3, h4, h5 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 400;
+        /* Typography */
+        h1, h2, h3, h4, h5 { font-family: var(--font-head); font-weight: 400; }
+
+        h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            margin-bottom: 1.5rem;
         }
 
         h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-white);
             position: relative;
             display: inline-block;
-            padding-bottom: 1rem;
         }
 
         h2::after {
             content: '';
             position: absolute;
             left: 0;
-            bottom: 0;
-            width: 60px;
-            height: 2px;
+            bottom: -5px;
+            width: 40px;
+            height: 1px;
             background-color: var(--accent-gold);
-            transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: width 0.6s var(--easing);
         }
 
-        section:hover h2::after {
-            width: 100%;
+        section:hover h2::after { width: 100%; }
+
+        h3 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--text-white); }
+
+        h4 {
+            font-size: 1rem;
+            color: var(--accent-gold);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            font-family: var(--font-head);
         }
 
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+            opacity: 0.85;
+            max-width: 65ch;
+        }
+
+        a { text-decoration: none; color: inherit; transition: 0.3s ease; }
+
+        /* Utility */
         .container {
-            max-width: 1280px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
             position: relative;
             z-index: 2;
         }
 
-        /* Button Styling */
-        .btn {
-            display: inline-block;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 1rem 2.5rem;
-            font-family: 'Playfair Display', serif;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.15em;
-            margin-top: 1.5rem;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            background: transparent;
-            color: white;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .btn:hover {
-            border-color: var(--accent-gold);
-            background: rgba(203, 168, 78, 0.1);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
         /* Hero Section */
-        header {
-            min-height: 100vh;
+        #hero {
+            min-height: 90vh;
             display: flex;
-            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            align-items: center;
+            padding: 6rem 0;
+        }
+
+        .hero-text {
             text-align: center;
-            background: radial-gradient(circle at top right, rgba(203, 168, 78, 0.08), transparent),
-                        radial-gradient(circle at bottom left, rgba(203, 168, 78, 0.05), transparent);
-            border-bottom: 1px solid var(--border-subtle);
-            padding: 8rem 2rem 5rem;
-            position: relative;
-        }
-
-        .logo-box {
-            margin-bottom: 3rem;
-            border-left: 4px solid var(--accent-gold);
-            padding-left: 2rem;
-        }
-
-        .gsu-title {
-            font-size: 0.75rem;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            color: var(--accent-gold);
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-        }
-
-        .main-brand {
-            font-size: 7rem;
-            font-weight: 700;
-            background: var(--gradient-igpl);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 0;
-            line-height: 1;
-        }
-
-        .subtitle {
-            font-size: 1.75rem;
-            font-weight: 300;
-            color: var(--text-muted);
-            margin-top: 2rem;
-            letter-spacing: 1px;
-        }
-
-        /* Scroll Indicator */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            opacity: 0.5;
-            animation: bounce 2s infinite;
-        }
-
-        .scroll-indicator span {
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--accent-gold);
-        }
-
-        .scroll-indicator::after {
-            content: '↓';
-            font-size: 1.5rem;
-            color: var(--accent-gold);
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
-        }
-
-        /* Section Styling */
-        section {
-            padding: 8rem 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        section:nth-child(even) {
-            background-color: var(--secondary-bg);
-        }
-
-        .section-tag {
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            letter-spacing: 4px;
-            color: var(--accent-gold);
-            margin-bottom: 2rem;
-            display: block;
-            font-weight: 600;
-        }
-
-        section h2 {
-            font-size: 3rem;
-            margin-bottom: 3rem;
-            color: var(--text-white);
-            line-height: 1.2;
-        }
-
-        section p {
-            font-size: 1.15rem;
-            color: var(--text-muted);
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-            opacity: 0.95;
-        }
-
-        section strong {
-            color: var(--text-white);
-            font-weight: 600;
-        }
-
-        /* Executive Summary */
-        .exec-summary {
-            text-align: center;
-            font-size: 1.35rem;
-            color: var(--text-muted);
-            line-height: 1.9;
             max-width: 900px;
-            margin: 0 auto;
-            font-weight: 400;
+            z-index: 5;
         }
 
-        .exec-summary-title {
-            font-size: 2.5rem;
-            color: var(--text-white);
+        .hero-logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
             margin-bottom: 2.5rem;
-            font-style: italic;
         }
 
-        /* Market Cards */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2.5rem;
-            margin-top: 3rem;
-        }
+        .hero-logos img { height: 70px; width: auto; opacity: 0.9; }
+        .hero-logos span { font-size: 1.5rem; color: var(--accent-gold); opacity: 0.6; }
 
+        /* Layout Grids */
+        section { padding: 6rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        section:nth-child(even) { background-color: var(--secondary-bg); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+
+        /* Cards */
         .card {
-            background: var(--tertiary-bg);
-            padding: 3rem;
-            border-radius: 2px;
-            border: 1px solid var(--border-subtle);
-            border-left: 3px solid var(--accent-gold);
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--accent-gold);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .card:hover::before {
-            transform: scaleX(1);
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s var(--easing);
+            height: 100%;
         }
 
         .card:hover {
-            background: rgba(203, 168, 78, 0.05);
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border-left-color: #dbb95f;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            border-color: rgba(203, 168, 78, 0.3);
         }
 
-        .card h3 {
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            color: var(--text-white);
-            line-height: 1.3;
+        /* Strategic Pillars (The 3 Flights) */
+        .pillar-card {
+            padding: 2.5rem;
+            border-top: 3px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.02);
+        }
+        
+        .pillar-card:hover { border-top-color: var(--accent-gold); }
+        
+        .pillar-num {
+            font-size: 3rem; 
+            color: var(--accent-gold); 
+            opacity: 0.2; 
+            font-family: var(--font-head);
+            line-height: 1;
+            margin-bottom: 1rem;
         }
 
-        .card h4 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--accent-gold);
-            font-family: 'Playfair Display', serif;
+        /* Sponsor Links */
+        .sponsor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
-        .card p {
-            font-size: 1rem;
-            line-height: 1.8;
-            margin-bottom: 1.25rem;
-        }
-
-        .card strong {
-            color: var(--text-white);
-            font-weight: 600;
-        }
-
-        /* Flight Categorization */
-        .flight-container {
+        .sponsor-card {
             display: flex;
             flex-direction: column;
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .flight-item {
-            display: flex;
-            background: var(--tertiary-bg);
-            padding: 3rem 3.5rem;
-            border-radius: 2px;
-            border-left: 4px solid var(--accent-gold);
-            align-items: flex-start;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
             transition: all 0.3s ease;
+            text-align: center;
+            height: 100%;
+            text-decoration: none;
         }
 
-        .flight-item:hover {
-            background: rgba(203, 168, 78, 0.05);
-            transform: translateX(8px);
+        .sponsor-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: var(--accent-gold);
+            transform: translateY(-3px);
         }
 
-        .flight-number {
-            font-family: 'Playfair Display';
-            font-size: 4rem;
-            margin-right: 3rem;
-            background: var(--gradient-igpl);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 700;
-            line-height: 1;
-            min-width: 80px;
+        .sponsor-logo {
+            height: 50px;
+            width: auto;
+            max-width: 100%;
+            margin-bottom: 1rem;
+            filter: grayscale(100%) brightness(1.5);
+            transition: 0.3s;
         }
 
-        .flight-item h3 {
-            font-size: 1.75rem;
-            margin-bottom: 1.5rem;
+        .sponsor-card:hover .sponsor-logo {
+            filter: grayscale(0%) brightness(1);
+        }
+
+        .sponsor-name {
+            font-family: var(--font-head);
+            font-size: 1.1rem;
             color: var(--text-white);
         }
 
-        /* Tiers Table */
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 3rem;
-            background: var(--tertiary-bg);
-            border: 1px solid var(--border-subtle);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        th {
-            text-align: left;
-            padding: 1.75rem 2.5rem;
-            background: var(--gradient-igpl);
-            color: var(--primary-bg);
-            font-size: 1.1rem;
+        .flight-label {
+            font-size: 0.9rem;
+            opacity: 0.95;
+            margin-top: 0.5rem;
+            color: var(--accent-gold);
             font-weight: 600;
             letter-spacing: 0.5px;
         }
 
-        td {
-            padding: 2rem 2.5rem;
-            border-bottom: 1px solid var(--border-subtle);
-            font-size: 1.05rem;
-            line-height: 1.8;
-        }
-
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        tbody tr:hover {
-            background: rgba(203, 168, 78, 0.05);
-        }
-
-        td strong {
-            color: var(--accent-gold);
-            font-weight: 600;
-        }
-
-        /* List Items */
-        ul {
-            list-style: none;
-            margin-top: 1rem;
-        }
-
-        li {
-            margin-bottom: 1rem;
-            padding-left: 2rem;
+        /* Tier Packages */
+        .package-card {
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: 0.4s;
             position: relative;
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: var(--text-muted);
-            transition: color 0.3s ease;
+            overflow: hidden;
         }
 
-        li:hover {
-            color: var(--text-white);
+        .package-card.gold { border-color: var(--accent-gold); background: rgba(203, 168, 78, 0.05); }
+        .package-card:hover { transform: scale(1.02); }
+
+        .tier-name {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: block;
+            font-family: var(--font-head);
         }
 
-        li::before {
-            content: "→";
+        .tier-desc { font-size: 0.95rem; opacity: 0.7; margin-bottom: 2rem; }
+
+        .tier-list {
+            list-style: none;
+            text-align: left;
+            margin: 0 auto;
+            display: inline-block;
+        }
+        
+        .tier-list li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .tier-list li::before {
+            content: '•';
+            color: var(--accent-gold);
             position: absolute;
             left: 0;
-            color: var(--accent-gold);
-            font-weight: 600;
-            font-size: 1.2rem;
-            transition: transform 0.3s ease;
         }
 
-        li:hover::before {
-            transform: translateX(5px);
-        }
-
-        hr {
-            margin: 2rem 0;
-            border: 0;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        /* Navigation */
-        nav {
-            padding: 1.5rem 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            background: rgba(25, 32, 48, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-subtle);
-            transition: padding 0.3s ease;
-        }
-
-        nav .container {
+        /* KPI List */
+        .kpi-row {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            align-items: baseline;
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-
-        .nav-logo img {
-            height: 40px;
-            width: auto;
-        }
-
-        .nav-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
+        
+        .kpi-row:last-child { border-bottom: none; }
+        
+        .kpi-label {
+            min-width: 200px;
+            font-family: var(--font-head);
+            font-size: 1.2rem;
             color: var(--accent-gold);
-            letter-spacing: 2px;
         }
 
-        footer {
-            padding: 5rem 0;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            background-color: var(--secondary-bg);
+        /* Animation Classes */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s var(--easing), transform 0.8s var(--easing);
         }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
 
-        /* Section Number Badge */
-        .section-number {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--accent-gold);
-            border-radius: 50%;
-            text-align: center;
-            line-height: 36px;
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            color: var(--accent-gold);
-            margin-right: 1rem;
-            font-size: 1.1rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 1.5rem;
-            }
-
-            nav {
-                padding: 1rem 0;
-            }
-
-            .nav-logo img {
-                height: 32px;
-            }
-
-            .nav-title {
-                font-size: 0.75rem;
-            }
-
-            header {
-                padding: 6rem 1.5rem 3rem;
-            }
-
-            .logo-box {
-                padding-left: 1.5rem;
-            }
-
-            .main-brand {
-                font-size: 4rem;
-            }
-
-            .subtitle {
-                font-size: 1.25rem;
-            }
-
-            .scroll-indicator {
-                display: none;
-            }
-
-            section {
-                padding: 5rem 0;
-            }
-
-            section h2 {
-                font-size: 2rem;
-            }
-
-            .exec-summary {
-                font-size: 1.15rem;
-            }
-
-            .exec-summary-title {
-                font-size: 2rem;
-            }
-
-            .grid-3 {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .card {
-                padding: 2rem;
-            }
-
-            .flight-item {
-                flex-direction: column;
-                padding: 2rem;
-            }
-
-            .flight-number {
-                margin-right: 0;
-                margin-bottom: 1.5rem;
-                font-size: 3rem;
-            }
-
-            th, td {
-                padding: 1.25rem 1.5rem;
-                font-size: 0.95rem;
-            }
+        /* Responsive */
+        @media (max-width: 900px) {
+            h1 { font-size: 2.5rem; }
+            .hero-logos img { height: 50px; }
+            .grid-2, .grid-3, .grid-4, .sponsor-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .kpi-row { flex-direction: column; gap: 0.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="container">
-            <div class="nav-logo">
+    <header id="hero" class="container">
+        <div class="hero-text fade-up">
+            <div class="hero-logos">
                 <img src="gsu.png" alt="GSU Logo">
+                <span>×</span>
+                <img src="igpl.png" alt="IGPL Logo">
             </div>
-            <div class="nav-title">IGPL AFRICA SWING 2026</div>
-        </div>
-    </nav>
-
-    <header>
-        <div class="logo-box">
-            <div class="gsu-title">GEOECONOMIC STRATEGY UNIT</div>
-            <h1 class="main-brand">IGPL</h1>
-        </div>
-        <div class="subtitle">AFRICA SWING 2026</div>
-        <p style="margin-top: 2.5rem; letter-spacing: 3px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">SPONSORSHIP STRATEGY</p>
-        <div class="scroll-indicator">
-            <span>Scroll</span>
+            <h4>Sponsorship Strategy</h4>
+            <h1><span style="color:var(--accent-gold); font-style:italic;">IGPL</span> Africa Swing 2026</h1>
+            <p>A strategic roadmap for the Indian Golf Premier League's expansion into South Africa, Republic of Congo, and Mauritius. Leveraging regional networks to secure high-value partnerships.</p>
         </div>
     </header>
 
-    <section>
+    <section id="strategy">
         <div class="container">
-            <span class="section-tag">Overview</span>
-            <h2 class="exec-summary-title">Executive Summary</h2>
-            <div class="exec-summary">
-                <p>The IGPL Africa Swing 2026 represents a strategic opportunity to position elite golf as a platform for high-value commercial partnerships, diplomatic engagement, and market development across three distinct African markets. This strategy identifies three distinct sponsor archetypes—Legitimacy Builders, Premium Market Brands, and CSR/Development Funders—and tailors engagement approaches to each market's unique characteristics.</p>
-                <p>South Africa and Mauritius offer mature golf ecosystems with sophisticated corporate sponsorship markets, prioritizing premium brands seeking HNI/UHNI access. The Republic of Congo, by contrast, presents a symbolic elite market where legitimacy-building partnerships with state-linked entities and extractive industries take precedence. Success will be measured through sponsor quality and fit, commercial outcomes, and long-term sponsor satisfaction and renewal rates.</p>
+            <div class="fade-up" style="text-align: center; margin-bottom: 4rem;">
+                <h4>The Approach</h4>
+                <h2>Sponsor Categorization: The "Three Flights"</h2>
+                <p style="margin: 0 auto;">To ensure market penetration and brand legitimacy, we categorize potential partners into three distinct strategic "flights."</p>
             </div>
-        </div>
-    </section>
 
-    <section>
-        <div class="container">
-            <span class="section-tag">Geography</span>
-            <h2>TARGET MARKETS</h2>
-            <div class="grid-3">
-                <div class="card">
-                    <h3>South Africa</h3>
-                    <p><strong>Market Status:</strong> Mature elite golf market with a sophisticated corporate sponsorship ecosystem</p>
-                    <p><strong>Challenge:</strong> differentiation from other leagues and tournaments</p>
+            <div class="grid-3 fade-up delay-1">
+                <div class="pillar-card">
+                    <div class="pillar-num">01</div>
+                    <h3>Legitimacy Builders</h3>
+                    <p>Institutional actors that provide policy cover. These partners bolster reputation as they are deeply embedded in local political networks.</p>
                 </div>
-                <div class="card">
-                    <h3>Mauritius</h3>
-                    <p><strong>Market Status:</strong> Mature elite golf market with a sophisticated corporate sponsorship ecosystem</p>
-                    <p><strong>Challenge:</strong> differentiation from other leagues and tournaments</p>
+                <div class="pillar-card">
+                    <div class="pillar-num">02</div>
+                    <h3>Premium Market Brands</h3>
+                    <p>Global and regional brands seeking African expansion. These targets prioritize HNI/UHNI access and exclusivity to avoid brand dilution.</p>
                 </div>
-                <div class="card">
-                    <h3>Republic of Congo</h3>
-                    <p><strong>Market Status:</strong> Symbolic elite market with concentrated political-corporate power</p>
-                    <p><strong>Challenge:</strong> little to no golf culture and limited domestic sponsorship market.</p>
+                <div class="pillar-card">
+                    <div class="pillar-num">03</div>
+                    <h3>CSR & Development</h3>
+                    <p>Donors, foundations, and IFIs leveraging sports for community development. Focus areas: Youth, Environment, and Tourism.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section>
+    <section id="south-africa">
         <div class="container">
-            <span class="section-tag">Segmentation</span>
-            <h2>Sponsor Categorization</h2>
-            <p style="margin-bottom: 1rem; max-width: 800px;">Identification of three "flights" to target sponsors accordingly.</p>
-            
-            <div class="flight-container">
-                <div class="flight-item">
-                    <div class="flight-number">01</div>
-                    <div>
-                        <h3>Legitimacy Builders</h3>
-                        <ul>
-                            <li>Provide policy and institutional cover.</li>
-                            <li>They are a reputational bolster as they are embedded in political networks</li>
-                        </ul>
+            <div class="grid-2">
+                <div class="fade-up">
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                        <img src="flag_sa.png" alt="SA Flag" style="width:40px; height:auto; border-radius:4px; opacity:0.8;">
+                        <h4 style="margin:0;">Target Market</h4>
+                    </div>
+                    <h2>South Africa</h2>
+                    <p><strong>Market Status:</strong> A mature elite golf market with a sophisticated corporate sponsorship ecosystem.</p>
+                    <p><strong>The Challenge:</strong> Differentiation. In a saturated market, IGPL must offer unique value beyond just "another tournament."</p>
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(203, 168, 78, 0.1); border-left: 2px solid var(--accent-gold);">
+                        <strong>Priority Sequence:</strong><br>
+                        Flight 2 (Premium Brands) > Flight 1 (Legitimacy) > Flight 3 (CSR)
                     </div>
                 </div>
-                <div class="flight-item">
-                    <div class="flight-number">02</div>
-                    <div>
-                        <h3>Premium Market Brands</h3>
-                        <ul>
-                            <li>Global and Regional brands wanting to expand in Africa.</li>
-                            <li>Target HNIs/UHNIs and avoid brand dilution</li>
-                            <li>Value relationship building and close networking</li>
-                        </ul>
+
+                <div class="fade-up delay-1">
+                    <h3 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">Target Sponsors</h3>
+                    
+                    <div class="sponsor-grid">
+                        <a href="https://golfrsa.com" target="_blank" class="sponsor-card">
+                            <img src="golfrsa.png" alt="GolfRSA" class="sponsor-logo">
+                            <span class="sponsor-name">GolfRSA</span>
+                            <span class="flight-label">Flight 1: Legitimacy</span>
+                        </a>
+                        <a href="https://www.nomads.co.za" target="_blank" class="sponsor-card">
+                            <img src="nomads.png" alt="Nomads" class="sponsor-logo">
+                            <span class="sponsor-name">Nomads Golf Club</span>
+                            <span class="flight-label">Flight 1: Legitimacy</span>
+                        </a>
+                        <a href="https://www.investec.com/en_za.html" target="_blank" class="sponsor-card">
+                            <img src="investec.png" alt="Investec" class="sponsor-logo">
+                            <span class="sponsor-name">Investec</span>
+                            <span class="flight-label">Flight 1: Legitimacy</span>
+                        </a>
+                        <a href="https://www.tourism.gov.za" target="_blank" class="sponsor-card">
+                            <img src="satourism.png" alt="SA Tourism" class="sponsor-logo">
+                            <span class="sponsor-name">SA Tourism</span>
+                            <span class="flight-label">Flight 1: Legitimacy</span>
+                        </a>
+
+                        <a href="https://www.taylormadegolf.com" target="_blank" class="sponsor-card">
+                            <img src="taylormade.png" alt="TaylorMade" class="sponsor-logo">
+                            <span class="sponsor-name">TaylorMade</span>
+                            <span class="flight-label">Flight 2: Premium</span>
+                        </a>
+                        <a href="https://radicokhaitan.com" target="_blank" class="sponsor-card">
+                            <img src="radico.png" alt="Radico" class="sponsor-logo">
+                            <span class="sponsor-name">Radico</span>
+                            <span class="flight-label">Flight 2: Premium</span>
+                        </a>
+                        <a href="https://www.diageo.com" target="_blank" class="sponsor-card">
+                            <img src="diageo.png" alt="Diageo" class="sponsor-logo">
+                            <span class="sponsor-name">Diageo</span>
+                            <span class="flight-label">Flight 2: Premium</span>
+                        </a>
+                        <a href="https://www.drivengolf.co.za" target="_blank" class="sponsor-card">
+                            <img src="driven.png" alt="Driven" class="sponsor-logo">
+                            <span class="sponsor-name">Driven</span>
+                            <span class="flight-label">Flight 2: Premium</span>
+                        </a>
                     </div>
                 </div>
-                <div class="flight-item">
-                    <div class="flight-number">03</div>
-                    <div>
-                        <h3>CSR/Development Funders</h3>
-                        <ul>
-                            <li>IFIs/donors/foundations leveraging sports for community development.</li>
-                            <li>Current target areas: youth, environmental conservation, and sustainable tourism</li>
-                        </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="congo">
+        <div class="container">
+            <div class="grid-2">
+                <div class="fade-up">
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                        <img src="flag_congo.png" alt="Congo Flag" style="width:40px; height:auto; border-radius:4px; opacity:0.8;">
+                        <h4 style="margin:0;">Target Market</h4>
+                    </div>
+                    <h2>Republic of Congo</h2>
+                    <p><strong>Market Status:</strong> A symbolic elite market characterized by concentrated political-corporate power structures.</p>
+                    <p><strong>The Challenge:</strong> Limited domestic sponsorship market and little to no existing golf culture. Strategy relies on political legitimacy.</p>
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(203, 168, 78, 0.1); border-left: 2px solid var(--accent-gold);">
+                        <strong>Priority Sequence:</strong><br>
+                        Flight 1 (Legitimacy) > Flight 3 (CSR) > Flight 2 (Premium)
+                    </div>
+                </div>
+
+                <div class="fade-up delay-1">
+                    <h3 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">Target Sponsors</h3>
+                    
+                    <div class="sponsor-grid">
+                        <a href="https://www.snpc-group.com" target="_blank" class="sponsor-card">
+                            <img src="snpc.png" alt="SNPC" class="sponsor-logo">
+                            <span class="sponsor-name">SNPC</span>
+                            <span class="flight-label">Flight 1: State Oil</span>
+                        </a>
+                        <a href="https://republic-congo.com/en/tourism/" target="_blank" class="sponsor-card">
+                            <img src="congotourism.png" alt="Congo Tourism" class="sponsor-logo">
+                            <span class="sponsor-name">Congo Tourism</span>
+                            <span class="flight-label">Flight 1: Government</span>
+                        </a>
+
+                        <a href="https://www.eni.com" target="_blank" class="sponsor-card">
+                            <img src="eni.png" alt="Eni" class="sponsor-logo">
+                            <span class="sponsor-name">Eni</span>
+                            <span class="flight-label">Flight 2: Energy</span>
+                        </a>
+                        <a href="https://careers.theheinekencompany.com/Congo/" target="_blank" class="sponsor-card">
+                            <img src="brasco.png" alt="BRASCO" class="sponsor-logo">
+                            <span class="sponsor-name">BRASCO</span>
+                            <span class="flight-label">Flight 2: Beverage</span>
+                        </a>
+                        <a href="https://www.mtn.cg/" target="_blank" class="sponsor-card">
+                            <img src="mtn.png" alt="MTN" class="sponsor-logo">
+                            <span class="sponsor-name">MTN</span>
+                            <span class="flight-label">Flight 2: Telecom</span>
+                        </a>
+                        <a href="https://indi-1xbet.com/en" target="_blank" class="sponsor-card">
+                            <img src="1xbet.png" alt="1xBet" class="sponsor-logo">
+                            <span class="sponsor-name">1xBet</span>
+                            <span class="flight-label">Flight 2: Gaming</span>
+                        </a>
+                        <a href="https://www.airtel.cg/" target="_blank" class="sponsor-card">
+                            <img src="airtel.png" alt="Airtel" class="sponsor-logo">
+                            <span class="sponsor-name">Airtel</span>
+                            <span class="flight-label">Flight 2: Telecom</span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section>
+    <section id="mauritius">
         <div class="container">
-            <span class="section-tag">Implementation</span>
-            <h2>Sponsor Prioritization & Potential</h2>
-            
-            <div class="grid-3">
-                <div class="card">
-                    <h4>South Africa / Mauritius</h4>
-                    <p>Flight 2 (premium market brands) > Flight 1 (legitimacy builders) > Flight 3 (CSR/development funders)</p>
-                    <hr>
-                    <p><strong>Potential Sponsors:</strong></p>
-                    <ul>
-                        <li>Nomads Golf Club</li>
-                        <li>South African Golf Association</li>
-                        <li>Investec</li>
-                        <li>Nedbank</li>
-                        <li>TaylorMade</li>
-                        <li>Avis iLease</li>
+            <div class="grid-2">
+                <div class="fade-up">
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                        <img src="flag_mauritius.png" alt="Mauritius Flag" style="width:40px; height:auto; border-radius:4px; opacity:0.8;">
+                        <h4 style="margin:0;">Target Market</h4>
+                    </div>
+                    <h2>Mauritius</h2>
+                    <p><strong>Market Status:</strong> A mature elite golf market heavily integrated with high-end tourism and banking.</p>
+                    <p><strong>The Challenge:</strong> Similar to South Africa, differentiation is key in a crowded event calendar.</p>
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(203, 168, 78, 0.1); border-left: 2px solid var(--accent-gold);">
+                        <strong>Priority Sequence:</strong><br>
+                        Flight 2 (Premium Brands) > Flight 1 (Legitimacy) > Flight 3 (CSR)
+                    </div>
+                </div>
+
+                <div class="fade-up delay-1">
+                    <h3 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">Target Sponsors</h3>
+                    
+                    <div class="sponsor-grid">
+                        <a href="https://www.afrasiabank.com" target="_blank" class="sponsor-card">
+                            <img src="afrasia.png" alt="Afrasia Bank" class="sponsor-logo">
+                            <span class="sponsor-name">Afrasia Bank</span>
+                            <span class="flight-label">Flight 1: Banking</span>
+                        </a>
+                        <a href="https://mauritiussportscouncil.govmu.org/" target="_blank" class="sponsor-card">
+                            <img src="msc.png" alt="Mauritius Sports Council" class="sponsor-logo">
+                            <span class="sponsor-name">Sports Council</span>
+                            <span class="flight-label">Flight 1: Govt</span>
+                        </a>
+
+                        <a href="https://www.gmrgroup.in" target="_blank" class="sponsor-card">
+                            <img src="gmr.png" alt="GMR" class="sponsor-logo">
+                            <span class="sponsor-name">GMR</span>
+                            <span class="flight-label">Flight 2: Infrastructure</span>
+                        </a>
+                        <a href="https://www.bankofbaroda-mu.com" target="_blank" class="sponsor-card">
+                            <img src="bob.png" alt="Bank of Baroda" class="sponsor-logo">
+                            <span class="sponsor-name">Bank of Baroda</span>
+                            <span style="font-size:0.75rem; opacity:0.5; margin-top:0.5rem;">Flight 2: Banking</span>
+                        </a>
+                        <a href="https://www.oberoihotels.com/hotels-in-mauritius/" target="_blank" class="sponsor-card">
+                            <img src="oberoi.png" alt="The Oberoi" class="sponsor-logo">
+                            <span class="sponsor-name">The Oberoi</span>
+                            <span class="flight-label">Flight 2: Hospitality</span>
+                        </a>
+                        <a href="https://www.binaniindustries.com" target="_blank" class="sponsor-card">
+                            <img src="bil.png" alt="Bil Vyapar" class="sponsor-logo">
+                            <span class="sponsor-name">Bil Vyapar Ltd.</span>
+                            <span class="flight-label">Flight 2: Industrial</span>
+                        </a>
+                        <a href="https://poncini.com" target="_blank" class="sponsor-card">
+                            <img src="poncini.png" alt="Poncini" class="sponsor-logo">
+                            <span class="sponsor-name">Poncini</span>
+                            <span class="flight-label">Flight 2: Luxury</span>
+                        </a>
+                        <a href="https://www.apacmedia.in/" target="_blank" class="sponsor-card">
+                            <img src="apac.png" alt="APAC" class="sponsor-logo">
+                            <span class="sponsor-name">APAC Comm.</span>
+                            <span class="flight-label">Flight 2: Media</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="packages">
+        <div class="container">
+            <div class="fade-up" style="text-align:center; margin-bottom: 3rem;">
+                <h4>Deliverables</h4>
+                <h2>Sponsorship Tiers</h2>
+                <p style="margin: 0 auto;">Tailored engagement models designed to meet specific commercial and visibility objectives.</p>
+            </div>
+
+            <div class="grid-3 fade-up delay-1">
+                <div class="package-card">
+                    <span class="tier-name" style="color: #cd7f32;">Bronze</span>
+                    <p class="tier-desc">Domestic firms and SMEs seeking local access.</p>
+                    <ul class="tier-list">
+                        <li>Local visibility branding</li>
+                        <li>Networking access events</li>
+                        <li>Standard hospitality</li>
                     </ul>
                 </div>
-                <div class="card">
-                    <h4>Republic of Congo</h4>
-                    <p>Flight 1 (legitimacy builders) > Flight 3 (CSR/development funders) > Flight 2 (premium market brands)</p>
-                    <hr>
-                    <p><strong>Potential Sponsors:</strong></p>
-                    <ul>
-                        <li>Total Energies</li>
-                        <li>ENI</li>
-                        <li>SNPC</li>
+
+                <div class="package-card">
+                    <span class="tier-name" style="color: #c0c0c0;">Silver</span>
+                    <p class="tier-desc">Regional leaders, category dominators, and exporters.</p>
+                    <ul class="tier-list">
+                        <li>Category exclusivity</li>
+                        <li>On-course visibility (High)</li>
+                        <li>Premium hospitality access</li>
+                    </ul>
+                </div>
+
+                <div class="package-card gold">
+                    <span class="tier-name" style="color: var(--accent-gold);">Gold</span>
+                    <p class="tier-desc">Global enterprises and anchor sponsors.</p>
+                    <ul class="tier-list">
+                        <li><strong>Naming Rights</strong></li>
+                        <li>Elite Hospitality & VVIP Access</li>
+                        <li>Full media integration</li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <section>
+    <section id="kpis">
         <div class="container">
-            <span class="section-tag">Packages</span>
-            <h2>Tiered Sponsorship Packages</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tier</th>
-                        <th>Best for:</th>
-                        <th>Delivers:</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Gold</strong></td>
-                        <td>Global enterprises/anchor sponsors</td>
-                        <td>Naming rights, CEO access, and premium hospitality</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Silver</strong></td>
-                        <td>Regional champions/category leaders</td>
-                        <td>Category exclusivity + on-course visibility</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Bronze</strong></td>
-                        <td>Domestic firms/SMEs</td>
-                        <td>Local visibility + networking access</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section>
-        <div class="container">
-            <span class="section-tag">Measurement</span>
-            <h2>KPIs and Success Measures</h2>
-            <div class="grid-3">
-                <div>
-                    <h3>Sponsor Quality and Fit</h3>
-                    <ul>
-                        <li>1 anchor per market</li>
-                        <li>Flight mix matches market priority</li>
-                        <li>Sponsor mix fits IGPL's and Board of Directors primary and secondary objectives.</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>Commercial Outcomes</h3>
-                    <ul>
-                        <li>Contracted value vs target</li>
-                        <li>3-5 major partners (South Africa and Mauritius)</li>
-                        <li>Pipeline conversion rate tracked</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>Sponsor Experience</h3>
-                    <ul>
-                        <li>Maintain post-event sponsor satisfaction</li>
-                        <li>Contract renewal and engagement expansion intent</li>
-                        <li>Executive interactions and interaction opportunities delivered</li>
-                    </ul>
+            <div class="fade-up">
+                <h4>Measures of Success</h4>
+                <h2>Key Performance Indicators</h2>
+                
+                <div style="margin-top: 3rem; background: rgba(255,255,255,0.02); padding: 0 2rem; border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="kpi-row">
+                        <div class="kpi-label">Sponsor Quality</div>
+                        <div>1 Anchor per market; Flight mix matching market priority; Alignment with IGPL Board objectives.</div>
+                    </div>
+                    <div class="kpi-row">
+                        <div class="kpi-label">Commercial Outcomes</div>
+                        <div>Contracted value vs. target; 3-5 major partners secured in SA and Mauritius; Pipeline conversion rates.</div>
+                    </div>
+                    <div class="kpi-row">
+                        <div class="kpi-label">Sponsor Experience</div>
+                        <div>Post-event satisfaction scores; Contract renewal intent; Delivery of executive networking opportunities.</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer>
-        <div class="container">
-            GEOECONOMIC STRATEGY UNIT &copy; 2026 | IGPL AFRICA SWING
+    <footer style="background: #151a28; padding: 3rem 0; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div style="text-align: center; max-width: 600px; margin: 0 auto; padding: 0 2rem;">
+            <p style="opacity: 0.7; font-size: 0.95rem; margin: 0 auto 0.5rem auto;">Geoeconomic Strategy Unit</p>
+            <p style="opacity: 0.5; font-size: 0.85rem; margin: 0 auto 2rem auto;">IGPL Africa Swing 2026 Strategic Advisory.</p>
+            <p style="opacity: 0.5; font-size: 0.85rem; margin: 0 auto;">&copy; 2026 Geoeconomic Strategy Unit. All Rights Reserved.</p>
         </div>
     </footer>
 
+    <script>
+        // --- SCROLL ANIMATIONS ---
+        const observerOptions = { root: null, threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    </script>
 </body>
 </html>
