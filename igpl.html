@@ -97,11 +97,11 @@
 
         /* Hero Section */
         #hero {
-            min-height: 90vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 6rem 0;
+            padding: 8rem 0;
         }
 
         .hero-text {
@@ -118,8 +118,11 @@
             margin-bottom: 2.5rem;
         }
 
-        .hero-logos img { height: 70px; width: auto; opacity: 0.9; }
-        .hero-logos span { font-size: 1.5rem; color: var(--accent-gold); opacity: 0.6; }
+        .hero-logos img { height: 90px; width: auto; opacity: 0.9; }
+        .hero-logos span { font-size: 2rem; color: var(--accent-gold); opacity: 0.6; }
+
+        .hero-text h1 { font-size: 4rem; }
+        .hero-text p { font-size: 1.25rem; max-width: 70ch; margin: 0 auto; }
 
         /* Layout Grids */
         section { padding: 6rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
@@ -265,20 +268,82 @@
 
         /* KPI List */
         .kpi-row {
-            display: flex;
-            align-items: baseline;
-            gap: 1.5rem;
-            padding: 1.5rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
         }
-        
-        .kpi-row:last-child { border-bottom: none; }
-        
+
+        .kpi-row:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(203, 168, 78, 0.3);
+        }
+
         .kpi-label {
-            min-width: 200px;
             font-family: var(--font-head);
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             color: var(--accent-gold);
+            margin-bottom: 1rem;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-content {
+            font-size: 1.05rem;
+            opacity: 0.85;
+            line-height: 1.7;
+        }
+
+        /* Market Info Boxes */
+        .info-box {
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.03);
+            border-left: 3px solid rgba(255,255,255,0.1);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .info-box:hover {
+            background: rgba(255,255,255,0.05);
+            border-left-color: var(--accent-gold);
+        }
+
+        .info-box-label {
+            font-family: var(--font-head);
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .info-box-content {
+            font-size: 1.05rem;
+            opacity: 0.85;
+            line-height: 1.6;
+        }
+
+        .priority-box {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(203, 168, 78, 0.08) 0%, rgba(203, 168, 78, 0.03) 100%);
+            border: 1px solid rgba(203, 168, 78, 0.2);
+            border-radius: 4px;
+        }
+
+        .priority-box strong {
+            display: block;
+            font-family: var(--font-head);
+            font-size: 1.15rem;
+            color: var(--accent-gold);
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .priority-box-content {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
 
         /* Animation Classes */
@@ -294,10 +359,13 @@
 
         /* Responsive */
         @media (max-width: 900px) {
+            #hero { min-height: 90vh; padding: 6rem 0; }
             h1 { font-size: 2.5rem; }
-            .hero-logos img { height: 50px; }
+            .hero-text h1 { font-size: 2.5rem; }
+            .hero-text p { font-size: 1.1rem; }
+            .hero-logos img { height: 60px; }
+            .hero-logos span { font-size: 1.5rem; }
             .grid-2, .grid-3, .grid-4, .sponsor-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .kpi-row { flex-direction: column; gap: 0.5rem; }
         }
     </style>
 </head>
@@ -348,16 +416,25 @@
         <div class="container">
             <div class="grid-2">
                 <div class="fade-up">
-                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
                         <img src="igpl/saflag.svg" alt="SA Flag" style="width:40px; height:auto; border-radius:4px; opacity:0.8;">
                         <h4 style="margin:0;">Target Market</h4>
                     </div>
                     <h2>South Africa</h2>
-                    <p><strong>Market Status:</strong> A mature elite golf market with a sophisticated corporate sponsorship ecosystem.</p>
-                    <p><strong>The Challenge:</strong> Differentiation. In a saturated market, IGPL must offer unique value beyond just "another tournament."</p>
-                    <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(203, 168, 78, 0.1); border-left: 2px solid var(--accent-gold);">
-                        <strong>Priority Sequence:</strong><br>
-                        Flight 2 (Premium Brands) > Flight 1 (Legitimacy) > Flight 3 (CSR)
+
+                    <div class="info-box">
+                        <span class="info-box-label">Market Status</span>
+                        <p class="info-box-content">A mature elite golf market with a sophisticated corporate sponsorship ecosystem.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-box-label">The Challenge</span>
+                        <p class="info-box-content">Differentiation. In a saturated market, IGPL must offer unique value beyond just "another tournament."</p>
+                    </div>
+
+                    <div class="priority-box">
+                        <strong>Priority Sequence</strong>
+                        <div class="priority-box-content">Flight 2 (Premium Brands) > Flight 1 (Legitimacy) > Flight 3 (CSR)</div>
                     </div>
                 </div>
 
@@ -416,16 +493,25 @@
         <div class="container">
             <div class="grid-2">
                 <div class="fade-up">
-                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
                         <img src="igpl/rocflag.png" alt="Congo Flag" style="width:40px; height:auto; border-radius:4px; opacity:0.8;">
                         <h4 style="margin:0;">Target Market</h4>
                     </div>
                     <h2>Republic of Congo</h2>
-                    <p><strong>Market Status:</strong> A symbolic elite market characterized by concentrated political-corporate power structures.</p>
-                    <p><strong>The Challenge:</strong> Limited domestic sponsorship market and little to no existing golf culture. Strategy relies on political legitimacy.</p>
-                    <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(203, 168, 78, 0.1); border-left: 2px solid var(--accent-gold);">
-                        <strong>Priority Sequence:</strong><br>
-                        Flight 1 (Legitimacy) > Flight 3 (CSR) > Flight 2 (Premium)
+
+                    <div class="info-box">
+                        <span class="info-box-label">Market Status</span>
+                        <p class="info-box-content">A symbolic elite market characterized by concentrated political-corporate power structures.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-box-label">The Challenge</span>
+                        <p class="info-box-content">Limited domestic sponsorship market and little to no existing golf culture. Strategy relies on political legitimacy.</p>
+                    </div>
+
+                    <div class="priority-box">
+                        <strong>Priority Sequence</strong>
+                        <div class="priority-box-content">Flight 1 (Legitimacy) > Flight 3 (CSR) > Flight 2 (Premium)</div>
                     </div>
                 </div>
 
@@ -479,16 +565,25 @@
         <div class="container">
             <div class="grid-2">
                 <div class="fade-up">
-                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
                         <img src="igpl/mauritiusflag.png" alt="Mauritius Flag" style="width:40px; height:auto; border-radius:4px; opacity:0.8;">
                         <h4 style="margin:0;">Target Market</h4>
                     </div>
                     <h2>Mauritius</h2>
-                    <p><strong>Market Status:</strong> A mature elite golf market heavily integrated with high-end tourism and banking.</p>
-                    <p><strong>The Challenge:</strong> Similar to South Africa, differentiation is key in a crowded event calendar.</p>
-                    <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(203, 168, 78, 0.1); border-left: 2px solid var(--accent-gold);">
-                        <strong>Priority Sequence:</strong><br>
-                        Flight 2 (Premium Brands) > Flight 1 (Legitimacy) > Flight 3 (CSR)
+
+                    <div class="info-box">
+                        <span class="info-box-label">Market Status</span>
+                        <p class="info-box-content">A mature elite golf market heavily integrated with high-end tourism and banking.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-box-label">The Challenge</span>
+                        <p class="info-box-content">Similar to South Africa, differentiation is key in a crowded event calendar.</p>
+                    </div>
+
+                    <div class="priority-box">
+                        <strong>Priority Sequence</strong>
+                        <div class="priority-box-content">Flight 2 (Premium Brands) > Flight 1 (Legitimacy) > Flight 3 (CSR)</div>
                     </div>
                 </div>
 
@@ -515,7 +610,7 @@
                         <a href="https://www.bankofbaroda-mu.com" target="_blank" class="sponsor-card">
                             <img src="igpl/bob.png" alt="Bank of Baroda" class="sponsor-logo">
                             <span class="sponsor-name">Bank of Baroda</span>
-                            <span style="font-size:0.75rem; opacity:0.5; margin-top:0.5rem;">Flight 2: Banking</span>
+                            <span class="flight-label">Flight 2: Banking</span>
                         </a>
                         <a href="https://www.oberoihotels.com/hotels-in-mauritius/" target="_blank" class="sponsor-card">
                             <img src="igpl/oberoi.png" alt="The Oberoi" class="sponsor-logo">
@@ -591,18 +686,18 @@
                 <h4>Measures of Success</h4>
                 <h2>Key Performance Indicators</h2>
                 
-                <div style="margin-top: 3rem; background: rgba(255,255,255,0.02); padding: 0 2rem; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="margin-top: 3rem;">
                     <div class="kpi-row">
-                        <div class="kpi-label">Sponsor Quality</div>
-                        <div>1 Anchor per market; Flight mix matching market priority; Alignment with IGPL Board objectives.</div>
+                        <span class="kpi-label">Sponsor Quality</span>
+                        <div class="kpi-content">1 Anchor per market; Flight mix matching market priority; Alignment with IGPL Board objectives.</div>
                     </div>
                     <div class="kpi-row">
-                        <div class="kpi-label">Commercial Outcomes</div>
-                        <div>Contracted value vs. target; 3-5 major partners secured in SA and Mauritius; Pipeline conversion rates.</div>
+                        <span class="kpi-label">Commercial Outcomes</span>
+                        <div class="kpi-content">Contracted value vs. target; 3-5 major partners secured in SA and Mauritius; Pipeline conversion rates.</div>
                     </div>
                     <div class="kpi-row">
-                        <div class="kpi-label">Sponsor Experience</div>
-                        <div>Post-event satisfaction scores; Contract renewal intent; Delivery of executive networking opportunities.</div>
+                        <span class="kpi-label">Sponsor Experience</span>
+                        <div class="kpi-content">Post-event satisfaction scores; Contract renewal intent; Delivery of executive networking opportunities.</div>
                     </div>
                 </div>
             </div>
