@@ -241,6 +241,221 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
+        /* Tree Explorer Styles */
+        .tree-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .tree-root-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0;
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .tree-root-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            height: 2rem;
+            background: rgba(203, 168, 78, 0.25);
+        }
+
+        .tree-dimensions-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+            position: relative;
+            padding-top: 2rem;
+        }
+
+        .tree-dimensions-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 23.9%;
+            right: 23.9%;
+            height: 1px;
+            background: rgba(203, 168, 78, 0.25);
+        }
+
+        .dimension-node.root-node {
+            position: relative;
+        }
+
+        .dimension-node.root-node::after {
+            content: '';
+            position: absolute;
+            top: -3rem;
+            left: 50%;
+            width: 1px;
+            height: 2rem;
+            background: rgba(203, 168, 78, 0.25);
+        }
+
+        .tree-branch {
+            list-style: none;
+            padding-left: 2.5rem;
+            border-left: 1px solid rgba(203, 168, 78, 0.15);
+            margin-left: 1.2rem;
+            position: relative;
+        }
+
+        .tree-node {
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .tree-node::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 1.8rem;
+            width: 2.5rem;
+            height: 1px;
+            background: rgba(203, 168, 78, 0.15);
+        }
+
+        .node-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s var(--easing);
+            display: block;
+            width: 100%;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .dimension-node > .node-card {
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .node-card:hover {
+            border-color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .node-card h3, .node-card h4, .node-card h5 {
+            margin-bottom: 0;
+            color: var(--text-white);
+        }
+
+        .node-card p {
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            margin-bottom: 0;
+            opacity: 0.6;
+        }
+
+        .root-card {
+            border-color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.1);
+            text-align: center;
+            width: 320px;
+            cursor: default;
+        }
+        
+        .root-node::before {
+            display: none;
+        }
+
+        .dimension-node > .node-card {
+            border-left: 3px solid var(--accent-gold);
+            cursor: default;
+        }
+
+        .pillar-node > .node-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.8rem 1.5rem;
+        }
+        
+        .pillar-node > .node-card h5 {
+            color: var(--accent-gold);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .variable-node > .node-card {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: default;
+            padding: 0.6rem 1.2rem;
+        }
+        
+        .variable-node > .node-card:hover {
+            transform: none;
+            background: transparent;
+            border-color: rgba(203, 168, 78, 0.2);
+        }
+
+        .node-content {
+            display: none;
+            overflow: hidden;
+        }
+
+        .node-content.active {
+            display: block;
+            animation: slideDown 0.4s var(--easing);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toggle-icon {
+            position: absolute;
+            right: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon::before, .toggle-icon::after {
+            content: '';
+            position: absolute;
+            background: var(--accent-gold);
+        }
+
+        .toggle-icon::before {
+            width: 100%;
+            height: 2px;
+            top: 4px;
+            left: 0;
+        }
+
+        .toggle-icon::after {
+            width: 2px;
+            height: 100%;
+            top: 0;
+            left: 4px;
+        }
+
+        .expanded .toggle-icon::after {
+            display: none;
+        }
+
+        @media (max-width: 800px) {
+            .tree-dimensions-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .pillar-card h5 {
             color: var(--accent-gold);
             font-size: 1.1rem;
@@ -387,109 +602,159 @@
         </div>
     </section>
 
-    <section id="opportunity-breakdown">
+    <section id="rao-explorer">
         <div class="container">
-            <h2 class="fade-up">The Opportunity Dimension</h2>
-            <p class="fade-up">Evaluates a country's attractiveness through six distinct pillars comprising 15 variables.</p>
-            
-            <div class="pillar-grid fade-up delay-1">
-                <div class="pillar-card">
-                    <h5>Market Access</h5>
-                    <ul>
-                        <li>Trade Openness</li>
-                        <li>High-Tech Export Intensity</li>
-                    </ul>
-                </div>
-                <div class="pillar-card">
-                    <h5>Capital Environment</h5>
-                    <ul>
-                        <li>Foreign Investment Attractiveness</li>
-                        <li>Domestic Capital Formation</li>
-                        <li>Financial Market Depth</li>
-                    </ul>
-                </div>
-                <div class="pillar-card">
-                    <h5>Trade Infrastructure</h5>
-                    <ul>
-                        <li>Customs Efficiency</li>
-                        <li>Logistics Infrastructure Quality</li>
-                    </ul>
-                </div>
-                <div class="pillar-card">
-                    <h5>Digital Economy</h5>
-                    <ul>
-                        <li>ICT Service Export Competitiveness</li>
-                        <li>Digital Commerce Readiness</li>
-                        <li>Frontier Technology Readiness Index (FTRI)</li>
-                    </ul>
-                </div>
-                <div class="pillar-card">
-                    <h5>Business Environment</h5>
-                    <ul>
-                        <li>Regulatory Quality for Business (B-Ready Score)</li>
-                    </ul>
-                </div>
-                <div class="pillar-card">
-                    <h5>Innovation & Characteristics</h5>
-                    <ul>
-                        <li>Economic Dynamism</li>
-                        <li>Market Sophistication</li>
-                        <li>Labor Force Scale</li>
-                        <li>Productive Capacities Index (PCI)</li>
-                    </ul>
-                </div>
+            <div class="fade-up" style="text-align: center; margin-bottom: 4rem;">
+                <h2>What the RAO comprises of</h2>
+                <p style="margin: 0 auto;">Explore the underlying dimensions, pillars, and variables of the RAO methodology.</p>
             </div>
-        </div>
-    </section>
 
-    <section id="fragility-breakdown">
-        <div class="container">
-            <h2 class="fade-up">The Fragility Dimension</h2>
-            <p class="fade-up">Evaluates vulnerabilities that could undermine investment returns through six pillars comprising 13 variables.</p>
-            
-            <div class="pillar-grid fade-up delay-1">
-                <div class="pillar-card">
-                    <h5>External Vulnerability</h5>
-                    <ul>
-                        <li>Current Account Imbalance</li>
-                        <li>External Asset Position</li>
-                        <li>Export Partner Concentration</li>
-                        <li>Export Product Concentration</li>
-                    </ul>
+            <div class="tree-container fade-up delay-1">
+                <!-- Root: RAO -->
+                <div class="tree-root-wrapper">
+                    <div class="node-card root-card">
+                        <h3>RAO SCORE</h3>
+                        <p>Risk-Adjusted Opportunity</p>
+                    </div>
                 </div>
-                <div class="pillar-card">
-                    <h5>Fiscal Health</h5>
-                    <ul>
-                        <li>Government Debt Burden</li>
-                        <li>Fiscal Balance Trajectory</li>
-                    </ul>
-                </div>
-                <div class="pillar-card">
-                    <h5>Monetary & Price Stability</h5>
-                    <ul>
-                        <li>Inflation Pressure</li>
-                        <li>Labor Market Stress</li>
-                    </ul>
-                </div>
-                <div class="pillar-card">
-                    <h5>Labor Market Quality</h5>
-                    <ul>
-                        <li>Skills Mismatch</li>
-                        <li>Labor Informality</li>
-                    </ul>
-                </div>
-                <div class="pillar-card">
-                    <h5>Market Structure</h5>
-                    <ul>
-                        <li>Market Concentration Risk (HHI Index)</li>
-                    </ul>
-                </div>
-                <div class="pillar-card">
-                    <h5>Institutional Quality</h5>
-                    <ul>
-                        <li>Political Stability</li>
-                        <li>Corruption Perceptions (CPI)</li>
-                    </ul>
+                
+                <div class="tree-dimensions-wrapper">
+                    <!-- Opportunity Dimension -->
+                    <div class="tree-node dimension-node root-node">
+                        <div class="node-card">
+                            <h4>Opportunity Dimension</h4>
+                            <p>6 Pillars, 15 Variables</p>
+                        </div>
+                        <div class="node-content active"> <!-- Dimension content always visible -->
+                            <div class="tree-branch">
+                                <!-- Opportunity Pillars -->
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Market Access</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Trade Openness</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">High-Tech Export Intensity</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Capital Environment</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Foreign Investment Attractiveness</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Domestic Capital Formation</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Financial Market Depth</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Trade Infrastructure</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Customs Efficiency</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Logistics Infrastructure Quality</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Digital Economy</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">ICT Service Export Competitiveness</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Digital Commerce Readiness</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Frontier Technology Readiness Index (FTRI)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Business Environment</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Regulatory Quality for Business (B-Ready)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Innovation & Characteristics</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Economic Dynamism</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Market Sophistication</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Labor Force Scale</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Productive Capacities Index (PCI)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fragility Dimension -->
+                    <div class="tree-node dimension-node root-node">
+                        <div class="node-card">
+                            <h4>Fragility Dimension</h4>
+                            <p>6 Pillars, 13 Variables</p>
+                        </div>
+                        <div class="node-content active"> <!-- Dimension content always visible -->
+                            <div class="tree-branch">
+                                <!-- Fragility Pillars -->
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>External Vulnerability</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Current Account Imbalance</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">External Asset Position</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Export Partner Concentration</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Export Product Concentration</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Fiscal Health</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Government Debt Burden</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Fiscal Balance Trajectory</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Monetary & Price Stability</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Inflation Pressure</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Labor Market Stress</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Labor Market Quality</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Skills Mismatch</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Labor Informality</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Market Structure</h5><div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Market Concentration Risk (HHI)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Institutional Quality</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Political Stability</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Corruption Perceptions (CPI)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -577,6 +842,22 @@
     </footer>
 
     <script>
+        // --- Tree Explorer Logic ---
+        function toggleNode(element) {
+            const content = element.nextElementSibling;
+            if (!content) return;
+            
+            const isVisible = content.classList.contains('active');
+            
+            if (isVisible) {
+                content.classList.remove('active');
+                element.classList.remove('expanded');
+            } else {
+                content.classList.add('active');
+                element.classList.add('expanded');
+            }
+        }
+
         // --- Standard UI Fade Logic ---
         const observerOptions = { root: null, threshold: 0.1 };
         const observer = new IntersectionObserver((entries) => {
