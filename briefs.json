@@ -1,6 +1,56 @@
 {
   "briefs": [
     {
+      "category": "SUPPLY CHAIN RISK",
+      "title": "Rare Earth Chokepoint",
+      "subtitle": "China’s Export Curbs Raise Japan’s Supply Chain Risk.",
+      "author": "Shiva Dang",
+      "description": "China's rare earth export curbs, driven by geopolitical tensions, highlight Japan's continued supply chain vulnerability despite diversification ef...",
+      "filename": "Rare Earth Chokepoint.pdf",
+      "href": "insights/Rare Earth Chokepoint.pdf",
+      "processed_date": "2026-02-06T19:28:47.494136"
+    },
+    {
+      "category": "GEOPOLITICAL OUTLOOK",
+      "title": "Venezuela in Limbo",
+      "subtitle": "This document analyzes the U.S. military intervention in Venezuela, focusing on its geoeconomic drivers and broader implications for global power dynamics and spheres of influence.",
+      "author": "GSU Research Team",
+      "description": "Analysis of the US military intervention in Venezuela, driven by oil and hemispheric dominance, and its global implications for international norms.",
+      "filename": "Venezuela Crisis 2026.pdf",
+      "href": "insights/Venezuela Crisis 2026.pdf",
+      "processed_date": "2026-02-06T19:28:52.043999"
+    },
+    {
+      "category": "GEOPOLITICAL OUTLOOK",
+      "title": "Davos 2026 Geopolitical Outlook",
+      "subtitle": "The World Economic Forum in Davos 2026 convenes leaders amidst severe geopolitical tensions and the fracturing of the world order.",
+      "author": "Lauren Mason",
+      "description": "Davos 2026 gathers world leaders to tackle critical geopolitical tensions, a fractured world order, and escalating conflicts, notably the Greenland...",
+      "filename": "davos.pdf",
+      "href": "insights/davos.pdf",
+      "processed_date": "2026-02-06T19:28:54.819668"
+    },
+    {
+      "category": "MARKET ACCESS",
+      "title": "The Tale of Two Giants",
+      "subtitle": "An analysis of the India-EU Free Trade Agreement, detailing its economic benefits, sectoral impacts, and strategic geopolitical context.",
+      "author": "Bhuvanya Ranjan",
+      "description": "This brief analyzes the India-EU FTA, detailing economic benefits, geopolitical positioning, and sectoral impacts like auto tariffs and India's pha...",
+      "filename": "The Tale of Two Giants.pdf",
+      "href": "insights/The Tale of Two Giants.pdf",
+      "processed_date": "2026-02-06T19:28:58.696319"
+    },
+    {
+      "category": "MARKET ACCESS",
+      "title": "Saudi Market Access Expands",
+      "subtitle": "Saudi Arabia's financial markets will open to all foreign investors from February 1, 2026, removing key barriers under Vision 2030 reforms.",
+      "author": "Niamh Allen",
+      "description": "Saudi Arabia opens its financial markets to all foreign investors from Feb 1, 2026, eliminating key barriers to boost liquidity and global economic...",
+      "filename": "SaudiArabiaForeignInvestment.pdf",
+      "href": "insights/SaudiArabiaForeignInvestment.pdf",
+      "processed_date": "2026-02-06T19:29:03.313043"
+    },
+    {
       "category": "GEOPOLITICAL OUTLOOK",
       "title": "Davos 2026",
       "subtitle": "A \"Spirit of Dialogue\" in a World on the Brink",
