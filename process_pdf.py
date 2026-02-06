@@ -138,6 +138,9 @@ def process_new_pdfs():
     processed_files = load_processed_files()
     briefs_data = load_briefs_json()
 
+    # Get list of already processed filenames from briefs.json
+    existing_filenames = {brief.get('filename') for brief in briefs_data.get('briefs', [])}
+
     # Find all PDFs in pdfs/ directory
     pdf_files = list(Path(PDF_DIR).glob("*.pdf"))
 
@@ -151,7 +154,12 @@ def process_new_pdfs():
         filename = pdf_path.name
         file_hash = get_file_hash(pdf_path)
 
-        # Skip if already processed
+        # Skip if already in briefs.json (primary check)
+        if filename in existing_filenames:
+            print(f"⏭️  Skipping {filename} (already in briefs.json)")
+            continue
+
+        # Skip if already processed (secondary check via file hash)
         if file_hash in processed_files.values():
             print(f"⏭️  Skipping {filename} (already processed)")
             continue
