@@ -3692,14 +3692,14 @@ document.addEventListener('click', (e) => {
 
 // ===== FILE HANDLING =====
 function loadDefaultCSV() {
-    fetch('rao4.csv')
+    fetch('data/rao4.csv')
         .then(response => response.text())
         .then(text => {
             parseMainCSV(text);
         })
         .catch(error => {
             console.error('Error loading rao4.csv:', error);
-            alert('Error loading data file. Please ensure rao4.csv is in the same directory.');
+            alert('Error loading data file. Please ensure rao4.csv is in the data directory.');
         });
 }
 

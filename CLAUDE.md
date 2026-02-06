@@ -1,0 +1,215 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Repository Overview
+
+This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU), hosted at `geoecon.solutions`. The site showcases geopolitical intelligence services, risk analysis tools, and strategic advisory capabilities.
+
+**Repository**: `https://github.com/GeoeconSU/geoeconsu.github.io.git`
+**Branch**: `main`
+**Domain**: geoecon.solutions (via CNAME)
+
+## Architecture
+
+### Static Site Structure
+- **No build process** - pure HTML/CSS/JavaScript served directly
+- **Client-side rendering** - all interactivity via vanilla JavaScript
+- **CDN dependencies** - Three.js, Google Charts, fonts from external sources
+- **GitHub Pages deployment** - changes pushed to main branch deploy automatically
+
+### Core Pages
+- `index.html` - Main landing page with 3D globe, team carousel, service offerings
+- `dashboard.html` - RAO (Risk-Adjusted Opportunity) insights dashboard with data visualizations
+- `map.html` - Interactive global RAO heatmap using Google GeoChart
+- `rao.html` - RAO scoring visualization and analysis
+- `console.html` - Internal console/tools interface
+- `igpl.html` - IGPL (likely institutional) specific page
+- `angelone.html` - Client-specific proposal page (Angel One expansion)
+
+### Directory Structure
+
+```
+/
+├── index.html, dashboard.html, map.html, etc. (HTML files remain in root)
+├── data/                  - RAO CSV datasets
+│   ├── rao.csv
+│   ├── rao2.csv
+│   ├── rao3.csv
+│   └── rao4.csv
+├── logos/                 - Client logos
+│   ├── ksr-logo.svg
+│   ├── tca-logo.png
+│   ├── altmin1.avif
+│   └── altmin.avif
+├── team/                  - Team member photos
+│   ├── brian.png
+│   ├── ishan.png
+│   ├── adip.png
+│   └── ... (12 total)
+├── insights/              - Strategic brief PDFs
+│   ├── davos.pdf
+│   ├── SaudiArabiaForeignInvestment.pdf
+│   ├── Venezuela Crisis 2026.pdf
+│   └── Rare Earth Chokepoint.pdf
+├── igpl/                  - IGPL-specific assets (30 files)
+├── gsu.ico, gsu.png       - Brand icons
+├── world_alpha_mini.jpg   - Globe texture
+├── angelone.png           - Client-specific asset
+├── GRB Q4 2025.pdf        - Quarterly barometer report
+├── Thinking Geopolitically.pdf  - Main whitepaper
+└── CNAME, .gitignore, CLAUDE.md - Config files
+```
+
+### Data Files
+- **Location**: `data/` directory
+- `rao.csv`, `rao2.csv`, `rao3.csv`, `rao4.csv` - RAO scoring data for countries
+  - Format: `country_name,rao_score_1_10,rao_regime`
+  - Scores range 0-10, regimes categorize risk/opportunity levels
+- CSV data is loaded client-side for visualizations
+- Referenced in:
+  - `map.html` → `data/rao2.csv`
+  - `console.html` → `data/rao3.csv`
+  - `dashboard.html` → `data/rao4.csv`
+
+### Assets
+- **Team Photos**: `team/` directory (12 member photos)
+- **Client Logos**: `logos/` directory (4 logos)
+- **Strategic Briefs**: `insights/` directory (4 PDF research briefs)
+- **Brand Icons**: `gsu.ico`, `gsu.png` in root
+- **Core PDFs**: `GRB Q4 2025.pdf`, `Thinking Geopolitically.pdf` in root
+- **igpl/**: Subdirectory with additional client/project assets
+
+## Design System
+
+### Color Palette (CSS Variables)
+- `--primary-bg: #192030` - Dark navy background
+- `--secondary-bg: #1f283b` - Slightly lighter navy
+- `--accent-gold: #cba84e` - Signature gold accent
+- `--text-white: #ffffff` - Primary text color
+
+### Typography
+- **Headings**: Playfair Display (serif, elegant)
+- **Body**: EB Garamond (serif, readable)
+- **Code/Data**: JetBrains Mono (monospace, dashboard only)
+
+### Key UI Patterns
+- **Glass morphism**: Blurred backgrounds with `backdrop-filter: blur()`
+- **Fade-up animations**: IntersectionObserver-based scroll reveals
+- **Responsive grids**: CSS Grid for layouts (`.grid-2`, `.grid-3`, `.grid-4`)
+- **Card hover effects**: Subtle transforms and shadows on interactive elements
+
+## Technology Stack
+
+### Frontend Libraries (CDN)
+- **Three.js** (v0.128.0 via Skypack) - 3D globe visualization on homepage
+- **OrbitControls** - Interactive camera controls for globe
+- **Google Charts API** - GeoChart for RAO heatmap
+- **Remix Icon** - Icon library (dashboard)
+
+### Key JavaScript Features
+- Custom shader materials for globe rendering (vertex/fragment shaders)
+- Lat/lon to 3D vector conversion for globe dots
+- Animated trade route lines using Bézier curves
+- Team carousel with horizontal scrolling
+- CSV parsing for data visualization
+- Dynamic RAO score color coding
+
+## Development Workflow
+
+### Local Development
+```bash
+# Serve locally (Python)
+python3 -m http.server 8000
+
+# Or use any static server
+npx serve .
+```
+
+### Making Changes
+1. Edit HTML/CSS/JavaScript files directly
+2. Test changes locally
+3. Stage changes: `git add <files>`
+4. Commit using the provided script: `./commit.sh "Commit message"`
+5. Push to deploy: `git push origin main`
+
+**Important**: The `commit.sh` script is for convenience and is gitignored. All commits should be made manually or via the script.
+
+### Deployment
+- Changes pushed to `main` branch automatically deploy to GitHub Pages
+- CDN-cached assets may take time to propagate
+- CNAME file must remain for custom domain
+
+## Common Tasks
+
+### Updating RAO Data
+1. Edit files in `data/` directory: `rao.csv`, `rao2.csv`, etc.
+2. Format: `country_name,rao_score_1_10,rao_regime`
+3. Changes reflect immediately on `map.html` and `dashboard.html`
+
+### Adding Team Members
+1. Add photo to `team/` directory (100x100px, PNG/JPEG)
+2. In `index.html`, add a new `.team-card` div inside `#teamCarousel`
+3. Update image path: `src="team/filename.png"`
+4. Include role, name, LinkedIn link (optional), bio text (~2-3 sentences)
+
+### Adding Research Briefs
+1. Upload PDF to `insights/` directory
+2. Add card in `index.html` under `#youtube-insights` Strategic Briefs section
+3. Update href: `href="insights/filename.pdf"`
+4. Follow existing card pattern with title, author, description
+
+### Updating Client Logos
+1. Add logo image to `logos/` directory
+2. Update `#clients` section in `index.html`
+3. Update image path: `src="logos/filename.svg"`
+4. Logos use grayscale filter that removes on hover
+
+## File Conventions
+
+### Naming
+- Lowercase for standard pages (`index.html`, `dashboard.html`)
+- Client-specific pages use client name (`angelone.html`)
+- CSV files use descriptive names (`rao.csv`, `rao2.csv`)
+- Images use descriptive names, lowercase preferred
+
+### Structure
+- Root directory contains only HTML files, core config files, and essential assets
+- Organized subdirectories:
+  - `data/` - All RAO CSV files
+  - `logos/` - All client logos
+  - `team/` - All team member photos
+  - `insights/` - Strategic brief PDFs
+  - `igpl/` - Client/project-specific assets
+- Core PDFs (barometer, whitepaper) remain in root for easy linking
+- All dependencies via CDN - no node_modules or build artifacts
+
+## Performance Considerations
+
+- **Globe rendering**: Computationally intensive, uses WebGL shaders
+- **Image optimization**: Team photos and logos can be large (1-2MB)
+- **CSV loading**: Client-side parsing, keep datasets manageable
+- **Mobile optimization**: Globe scales down, grids collapse to single column
+
+## GitHub Pages Specific
+
+- **Custom domain**: `CNAME` file contains `geoecon.solutions`
+- **No Jekyll**: Pure static site, no build process
+- **Asset paths**: Relative paths only (no `/` prefix needed)
+- **HTTPS**: Enforced by GitHub Pages
+
+## Gotchas
+
+1. **Three.js imports**: Must use Skypack CDN with specific version
+2. **Globe image path**: `world_alpha_mini.jpg` hardcoded, must exist in root
+3. **CSV parsing**: No header validation, ensure consistent format
+4. **Shader errors**: WebGL context issues on some browsers/devices
+5. **Scroll behavior**: `scroll-behavior: smooth` may conflict with Safari
+6. **Responsive breakpoint**: 900px is the main mobile threshold
+
+## Contact & Ownership
+
+- **Organization**: The Sixteenth Council / Geoeconomic Strategy Unit
+- **Contact**: geoecon@16thcouncil.uk
+- **Website**: www.16thcouncil.uk
+- **Location**: London, United Kingdom

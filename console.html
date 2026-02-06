@@ -1062,14 +1062,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadDefaultCSV() {
-    fetch('rao3.csv')
+    fetch('data/rao3.csv')
         .then(response => response.text())
         .then(text => {
             parseCSV(text);
         })
         .catch(error => {
             console.error('Error loading rao3.csv:', error);
-            alert('Error loading data file. Please ensure rao3.csv is in the same directory.');
+            alert('Error loading data file. Please ensure rao3.csv is in the data directory.');
         });
 }
 
