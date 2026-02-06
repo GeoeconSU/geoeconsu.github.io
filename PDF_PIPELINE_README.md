@@ -4,7 +4,7 @@ This repository includes an automated content pipeline that processes PDF strate
 
 ## 🎯 How It Works
 
-1. **Upload PDF** → Drop a PDF file into the `/pdfs/` folder
+1. **Upload PDF** → Drop a PDF file into the `/insights/` folder
 2. **Auto-Process** → GitHub Actions extracts text and generates metadata using Gemini AI
 3. **Auto-Update** → `briefs.json` is updated with the new brief
 4. **Auto-Display** → Website automatically shows the new brief (no code changes needed!)
@@ -12,8 +12,7 @@ This repository includes an automated content pipeline that processes PDF strate
 ## 📁 Directory Structure
 
 ```
-/pdfs/               - Upload new PDF briefs here
-/insights/           - Legacy PDF location (for existing briefs)
+/insights/           - All PDF briefs (existing + new uploads)
 briefs.json          - Metadata file (auto-generated, don't edit manually)
 .processed_pdfs.json - Tracking file (auto-generated, gitignored)
 process_pdf.py       - Python script that processes PDFs
@@ -59,11 +58,11 @@ python process_pdf.py
 
 2. **Upload the PDF**
    ```bash
-   # Add your PDF to the pdfs folder
-   cp /path/to/your-brief.pdf pdfs/
+   # Add your PDF to the insights folder
+   cp /path/to/your-brief.pdf insights/
 
    # Commit and push
-   git add pdfs/your-brief.pdf
+   git add insights/your-brief.pdf
    git commit -m "Add new strategic brief: Your Title"
    git push
    ```
@@ -104,7 +103,7 @@ The `briefs.json` file has this structure:
       "author": "Niamh Allen",
       "description": "Saudi Arabia removes key barriers to foreign investment...",
       "filename": "market-analysis.pdf",
-      "href": "pdfs/market-analysis.pdf",
+      "href": "insights/market-analysis.pdf",
       "processed_date": "2026-02-06T20:30:00.000000"
     }
   ]
@@ -124,7 +123,7 @@ The `load-briefs.js` script:
 **GitHub Action:** `.github/workflows/update_briefs.yml`
 
 **Triggers:**
-- Push to `pdfs/*.pdf`
+- Push to `insights/*.pdf`
 - Manual trigger via Actions tab
 
 **Steps:**
@@ -175,8 +174,8 @@ The `load-briefs.js` script:
 # Process specific PDF
 python process_pdf.py
 
-# The script automatically finds new PDFs in pdfs/ folder
-# and skips already-processed files
+# The script automatically finds new PDFs in insights/ folder
+# and skips already-processed files (tracked in .processed_pdfs.json)
 ```
 
 ### Reprocessing All PDFs

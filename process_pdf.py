@@ -13,8 +13,7 @@ from pathlib import Path
 from datetime import datetime
 
 # Configuration
-PDF_DIR = "pdfs"
-INSIGHTS_DIR = "insights"
+PDF_DIR = "insights"  # All PDFs (existing + new) in one folder
 BRIEFS_JSON = "briefs.json"
 PROCESSED_LOG = ".processed_pdfs.json"
 GEMINI_MODEL = "gemini-2.5-flash"
@@ -181,7 +180,7 @@ def process_new_pdfs():
             "author": metadata['author'],
             "description": metadata['description'],
             "filename": filename,
-            "href": f"pdfs/{filename}",
+            "href": f"insights/{filename}",
             "processed_date": datetime.now().isoformat()
         }
 
