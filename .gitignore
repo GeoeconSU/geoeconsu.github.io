@@ -1,0 +1,38 @@
+
+# Local commit script
+commit.sh
+
+# Claude Code documentation
+CLAUDE.md
+
+# Claude Code project files
+.claude/
+
+# PDF Pipeline tracking
+.processed_pdfs.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
