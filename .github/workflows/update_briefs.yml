@@ -36,7 +36,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "🤖 Auto-update briefs.json from PDF upload"
-          file_pattern: "briefs.json .processed_pdfs.json"
+          file_pattern: "briefs.json"
           commit_user_name: "GSU Bot"
           commit_user_email: "bot@geoecon.solutions"
           commit_author: "GSU Bot <bot@geoecon.solutions>"
