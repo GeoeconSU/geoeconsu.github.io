@@ -8,7 +8,7 @@ import os
 import json
 import hashlib
 import fitz  # PyMuPDF
-import google.generativeai as genai
+from google import genai
 from pathlib import Path
 from datetime import datetime
 
@@ -63,8 +63,7 @@ def extract_metadata_with_gemini(text, filename):
     if not api_key:
         raise ValueError("GEMINI_API_KEY environment variable not set")
 
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(GEMINI_MODEL)
+    client = genai.Client(api_key=api_key)
 
     prompt = f"""You are analyzing a strategic brief document. Extract the following metadata and return ONLY a valid JSON object with no additional text or markdown formatting.
 
@@ -81,7 +80,10 @@ Return a JSON object with these exact fields:
 Return ONLY the JSON object, no other text:"""
 
     try:
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=prompt
+        )
         result_text = response.text.strip()
 
         # Clean up response - remove markdown code blocks if present
