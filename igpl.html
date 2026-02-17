@@ -3,27 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GSU | IGPL Africa Swing 2026</title>
+    <title>IGPL Africa Swing Sponsorship Strategy | GSU</title>
     <link rel="icon" type="image/x-icon" href="gsu.ico">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    
+
     <style>
+        /* GSU Design System */
         :root {
             --primary-bg: #192030;
             --secondary-bg: #1f283b;
             --text-white: #ffffff;
             --accent-gold: #cba84e;
+            --accent-silver: #c0c0c0;
+            --accent-bronze: #cd7f32;
             --font-head: 'Playfair Display', serif;
             --font-body: 'EB Garamond', serif;
             --easing: cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             background-color: var(--primary-bg);
@@ -35,21 +41,25 @@
         }
 
         /* Typography */
-        h1, h2, h3, h4, h5 { font-family: var(--font-head); font-weight: 400; }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-head);
+            font-weight: 400;
+        }
 
         h1 {
             font-size: 3.5rem;
-            line-height: 1.1;
+            line-height: 1.2;
             letter-spacing: -0.01em;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.2rem;
         }
 
         h2 {
             font-size: 2.2rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-white);
+            margin-bottom: 2rem;
             position: relative;
             display: inline-block;
+            color: var(--text-white);
         }
 
         h2::after {
@@ -63,82 +73,207 @@
             transition: width 0.6s var(--easing);
         }
 
-        section:hover h2::after { width: 100%; }
+        section:hover h2::after {
+            width: 100%;
+        }
 
-        h3 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--text-white); }
+        h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--accent-gold);
+        }
+
+        h3.silver-heading {
+            color: var(--accent-silver);
+        }
+
+        h3.bronze-heading {
+            color: var(--accent-bronze);
+        }
+
+        h4.silver-heading {
+            color: var(--accent-silver);
+        }
+
+        h4.bronze-heading {
+            color: var(--accent-bronze);
+        }
 
         h4 {
             font-size: 1rem;
             color: var(--accent-gold);
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             text-transform: uppercase;
             margin-bottom: 1rem;
-            font-family: var(--font-head);
+            opacity: 0.8;
+        }
+
+        h5 {
+            font-size: 0.95rem;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+            font-family: var(--font-body);
+            font-weight: 600;
+        }
+
+        h6 {
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         p {
             font-size: 1.1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             font-weight: 400;
-            opacity: 0.85;
-            max-width: 65ch;
+            opacity: 0.9;
         }
 
-        a { text-decoration: none; color: inherit; transition: 0.3s ease; }
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s ease;
+        }
+
+        ul {
+            list-style: none;
+        }
 
         /* Utility */
         .container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             padding: 0 2rem;
             position: relative;
             z-index: 2;
         }
 
-        /* Hero Section */
-        #hero {
-            min-height: 100vh;
+        /* Navigation */
+        nav {
+            padding: 1.5rem 0;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            padding: 8rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(25, 32, 48, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .hero-text {
-            text-align: center;
-            max-width: 900px;
-            z-index: 5;
+        .logo img {
+            height: 45px;
+            width: auto;
+            padding-top: 0.5rem;
         }
 
-        .hero-logos {
+        .nav-links {
             display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 2rem;
-            margin-bottom: 2.5rem;
+            align-items: center;
         }
 
-        .hero-logos img { height: 90px; width: auto; opacity: 0.9; }
-        .hero-logos span { font-size: 2rem; color: var(--accent-gold); opacity: 0.6; }
+        .nav-links a {
+            font-family: var(--font-head);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
 
-        .hero-text h1 { font-size: 4rem; }
-        .hero-text p { font-size: 1.25rem; max-width: 70ch; margin: 0 auto; }
+        .nav-links a:hover {
+            opacity: 1;
+            color: var(--accent-gold);
+        }
 
-        /* Layout Grids */
-        section { padding: 6rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        section:nth-child(even) { background-color: var(--secondary-bg); }
+        /* Hero Section - Enhanced visual appeal */
+        #hero {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 100px;
+            padding-bottom: 3rem;
+            background: linear-gradient(135deg, rgba(203, 168, 78, 0.08) 0%, var(--primary-bg) 50%, rgba(31, 40, 59, 0.9) 100%);
+            overflow: hidden;
+        }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(203, 168, 78, 0.03), transparent);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            position: relative;
+            z-index: 2;
+            padding-left: 3rem;
+        }
+
+        .hero-content h1 {
+            background: linear-gradient(135deg, #ffffff 0%, rgba(203, 168, 78, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .report-meta {
+            margin-top: 2.5rem;
+            background: linear-gradient(135deg, rgba(203, 168, 78, 0.08) 0%, rgba(31, 40, 59, 0.15) 100%);
+            padding: 1.5rem 2rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .report-meta strong {
+            color: var(--accent-gold);
+            font-family: var(--font-head);
+            font-size: 0.9rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        section:nth-child(even) {
+            background-color: var(--secondary-bg);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: start;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
 
         /* Cards */
         .card {
-            padding: 2rem;
+            padding: 2.5rem;
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.4s var(--easing);
-            height: 100%;
         }
 
         .card:hover {
@@ -147,584 +282,2428 @@
             border-color: rgba(203, 168, 78, 0.3);
         }
 
-        /* Strategic Pillars (The 3 Flights) */
-        .pillar-card {
-            padding: 2.5rem;
-            border-top: 3px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.02);
+        /* Highlight Boxes */
+        .highlight-box {
+            background: rgba(203, 168, 78, 0.05);
+            border: 1px solid var(--accent-gold);
+            padding: 2rem;
+            margin-top: 2rem;
         }
-        
-        .pillar-card:hover { border-top-color: var(--accent-gold); }
-        
-        .pillar-num {
-            font-size: 3rem; 
-            color: var(--accent-gold); 
-            opacity: 0.2; 
+
+        .note-box {
+            background: rgba(203, 168, 78, 0.05);
+            border-left: 3px solid var(--accent-gold);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .approach-list li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.8rem;
+        }
+
+        .approach-list li::before {
+            content: '◆';
+            color: var(--accent-gold);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Tier Cards */
+        .tier-card {
+            border-top: 4px solid;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 2rem;
+            transition: all 0.4s var(--easing);
+        }
+
+        .tier-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .tier-gold { border-top-color: #cba84e; }
+        .tier-silver { border-top-color: #c0c0c0; }
+        .tier-bronze { border-top-color: #cd7f32; }
+
+        .tier-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .tier-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        .tier-profile {
+            font-style: italic;
+            opacity: 0.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .benefit-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .benefit-list li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .benefit-list li::before {
+            content: '◆';
+            color: var(--accent-gold);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Tabs */
+        .country-tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 3rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.6);
+            padding: 1rem 2rem;
             font-family: var(--font-head);
-            line-height: 1;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+
+        .tab-btn:hover {
+            color: var(--accent-gold);
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Thesis Box */
+        .thesis-box {
+            background: rgba(203, 168, 78, 0.05);
+            border: 1px solid var(--accent-gold);
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .thesis-box strong {
+            color: var(--accent-gold);
+        }
+
+        /* Company Cards */
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .company-grid {
+            max-height: 10000px;
+            opacity: 1;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.4s ease;
+        }
+
+        .company-grid.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .company-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            padding-right: 5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .company-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(203, 168, 78, 0.3);
+        }
+
+        .company-card h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text-white);
+            text-transform: none;
+            font-size: 1.3rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.3;
+        }
+
+        .company-description {
+            font-size: 1rem;
+            opacity: 0.8;
             margin-bottom: 1rem;
         }
 
-        /* Sponsor Links */
-        .sponsor-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        .company-meta {
+            font-size: 0.95rem;
+            opacity: 0.7;
+        }
+
+        .strategic-fit {
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .tier-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.58rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 1px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-family: var(--font-head);
+            letter-spacing: 1.3px;
+        }
+
+        .tier-badge.gold {
+            background: rgba(203, 168, 78, 0.2);
+            color: #cba84e;
+            border: 1px solid #cba84e;
+        }
+
+        .tier-badge.silver {
+            background: rgba(192, 192, 192, 0.2);
+            color: #c0c0c0;
+            border: 1px solid #c0c0c0;
+        }
+
+        .tier-badge.bronze {
+            background: rgba(205, 127, 50, 0.2);
+            color: #cd7f32;
+            border: 1px solid #cd7f32;
+        }
+
+        /* Expand Buttons - Subtle with tier-specific colors */
+        .expand-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 0.75rem 2rem;
+            cursor: pointer;
+            margin: 1.5rem 0;
+            transition: all 0.3s ease, transform 0.2s ease;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .expand-btn:active {
+            transform: scale(0.98);
+        }
+
+        .expand-btn:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+
+        .expand-btn.gold-btn {
+            border-color: rgba(203, 168, 78, 0.3);
+            color: rgba(203, 168, 78, 0.8);
+        }
+
+        .expand-btn.gold-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.05);
+        }
+
+        .expand-btn.silver-btn {
+            border-color: rgba(192, 192, 192, 0.3);
+            color: rgba(192, 192, 192, 0.8);
+        }
+
+        .expand-btn.silver-btn:hover {
+            border-color: var(--accent-silver);
+            color: var(--accent-silver);
+            background: rgba(192, 192, 192, 0.05);
+        }
+
+        .expand-btn.bronze-btn {
+            border-color: rgba(205, 127, 50, 0.3);
+            color: rgba(205, 127, 50, 0.8);
+        }
+
+        .expand-btn.bronze-btn:hover {
+            border-color: var(--accent-bronze);
+            color: var(--accent-bronze);
+            background: rgba(205, 127, 50, 0.05);
+        }
+
+        /* Engagement Box */
+        .engagement-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .engagement-box strong {
+            color: var(--accent-gold);
+        }
+
+        /* Category Sections */
+        .category-section {
+            margin-bottom: 2rem;
+        }
+
+        .category-header {
+            width: 100%;
+            background: var(--secondary-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease, background 0.3s ease;
+            margin-bottom: 0;
+            color: white;
+            text-align: left;
+        }
+
+        .category-header.expanded {
+            background: rgba(31, 40, 59, 0.8);
+            border-color: rgba(203, 168, 78, 0.3);
+        }
+
+        .category-header:hover {
+            border-color: var(--accent-gold);
+            background: rgba(31, 40, 59, 0.8);
+        }
+
+        .category-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+            text-transform: none;
+            letter-spacing: 0;
+            font-family: var(--font-body);
+        }
+
+        .company-count {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            opacity: 0.6;
+        }
+
+        .category-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.4s ease, padding 0.3s ease;
+            padding: 0;
+        }
+
+        .category-content.expanded {
+            max-height: 20000px;
+            opacity: 1;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-top: none;
+        }
+
+        .category-rationale,
+        .pitch-box {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .category-rationale h5,
+        .pitch-box h5 {
+            font-family: var(--font-body);
+            font-weight: 600;
+        }
+
+        .category-rationale p,
+        .pitch-box p {
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+        }
+
+        .pitch-box {
+            background: rgba(203, 168, 78, 0.05);
+            border-left: 3px solid var(--accent-gold);
+        }
+
+        /* Tier Groups within Categories */
+        .tier-group {
+            margin-bottom: 3rem;
+        }
+
+        .tier-group h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .tier-group .company-grid {
+            max-height: 10000px;
+            opacity: 1;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.4s ease;
+        }
+
+        .tier-group.collapsed .company-grid {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Flowchart */
+        .flowchart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 1.5rem;
             margin-top: 2rem;
         }
 
-        .sponsor-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .flow-step {
+            background: var(--secondary-bg);
+            border: 1px solid rgba(203, 168, 78, 0.3);
             padding: 2rem;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.3s ease;
-            text-align: center;
-            height: 100%;
-            text-decoration: none;
-        }
-
-        .sponsor-card:hover {
-            background: rgba(255,255,255,0.06);
-            border-color: var(--accent-gold);
-            transform: translateY(-3px);
-        }
-
-        .sponsor-logo {
-            height: 50px;
-            width: auto;
-            max-width: 100%;
-            margin-bottom: 1rem;
-            filter: grayscale(100%) brightness(1.5);
+            width: 100%;
+            max-width: 900px;
+            position: relative;
             transition: 0.3s;
         }
 
-        .sponsor-card:hover .sponsor-logo {
-            filter: grayscale(0%) brightness(1);
+        .flow-step:hover {
+            border-color: var(--accent-gold);
+            transform: scale(1.01);
+            box-shadow: 0 0 15px rgba(203, 168, 78, 0.1);
         }
 
-        .sponsor-name {
+        .flow-step h5 {
             font-family: var(--font-head);
-            font-size: 1.1rem;
-            color: var(--text-white);
-        }
-
-        .flight-label {
-            font-size: 0.9rem;
-            opacity: 0.95;
-            margin-top: 0.5rem;
-            color: var(--accent-gold);
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        /* Tier Packages */
-        .package-card {
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 3rem 2rem;
-            text-align: center;
-            transition: 0.4s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .package-card.gold { border-color: var(--accent-gold); background: rgba(203, 168, 78, 0.05); }
-        .package-card:hover { transform: scale(1.02); }
-
-        .tier-name {
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 1.2rem;
             margin-bottom: 1rem;
-            display: block;
-            font-family: var(--font-head);
         }
 
-        .tier-desc { font-size: 0.95rem; opacity: 0.7; margin-bottom: 2rem; }
-
-        .tier-list {
-            list-style: none;
-            text-align: left;
-            margin: 0 auto;
-            display: inline-block;
+        .arrow-down {
+            width: 2px;
+            height: 1.5rem;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), var(--accent-gold));
         }
-        
-        .tier-list li {
-            margin-bottom: 0.8rem;
+
+        .checklist {
+            margin-top: 1rem;
+        }
+
+        .checklist-item {
+            padding: 0.5rem 0;
             padding-left: 1.5rem;
             position: relative;
+        }
+
+        .checklist-item::before {
+            content: '✓';
+            color: var(--accent-gold);
+            position: absolute;
+            left: 0;
+        }
+
+        .priority-targets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .target-group h6 {
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .target-group ul {
+            list-style: none;
+        }
+
+        .target-group li {
+            padding: 0.3rem 0;
             font-size: 0.95rem;
         }
 
-        .tier-list li::before {
+        .bronze-menus {
+            margin-top: 2rem;
+        }
+
+        .bronze-menus h6 {
+            margin-bottom: 1rem;
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+        }
+
+        .menu-card h6 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Decision Cards */
+        .decision-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--accent-gold);
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .decision-card:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .decision-card ul {
+            margin-top: 1rem;
+        }
+
+        .decision-card li {
+            padding-left: 1.5rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .decision-card li::before {
             content: '•';
             color: var(--accent-gold);
             position: absolute;
             left: 0;
         }
 
-        /* KPI List */
-        .kpi-row {
-            padding: 2rem;
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        .data-table th {
+            background: var(--secondary-bg);
+            color: var(--accent-gold);
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--accent-gold);
+            font-family: var(--font-head);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .data-table tr:hover {
             background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
         }
 
-        .kpi-row:hover {
-            background: rgba(255,255,255,0.04);
-            border-color: rgba(203, 168, 78, 0.3);
-        }
-
-        .kpi-label {
-            font-family: var(--font-head);
-            font-size: 1.3rem;
-            color: var(--accent-gold);
-            margin-bottom: 1rem;
-            display: block;
-            letter-spacing: 0.5px;
-        }
-
-        .kpi-content {
-            font-size: 1.05rem;
-            opacity: 0.85;
-            line-height: 1.7;
-        }
-
-        /* Market Info Boxes */
-        .info-box {
-            padding: 1.5rem;
-            background: rgba(255,255,255,0.03);
-            border-left: 3px solid rgba(255,255,255,0.1);
-            margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .info-box:hover {
-            background: rgba(255,255,255,0.05);
-            border-left-color: var(--accent-gold);
-        }
-
-        .info-box-label {
-            font-family: var(--font-head);
-            font-size: 1.1rem;
-            color: var(--accent-gold);
-            margin-bottom: 0.5rem;
-            display: block;
-            letter-spacing: 0.5px;
-        }
-
-        .info-box-content {
-            font-size: 1.05rem;
-            opacity: 0.85;
-            line-height: 1.6;
-        }
-
-        .priority-box {
-            margin-top: 2rem;
+        .success-metrics {
+            background: rgba(203, 168, 78, 0.05);
+            border: 1px solid var(--accent-gold);
             padding: 2rem;
-            background: linear-gradient(135deg, rgba(203, 168, 78, 0.08) 0%, rgba(203, 168, 78, 0.03) 100%);
+            margin-top: 3rem;
+        }
+
+        .success-metrics h4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(203, 168, 78, 0.2);
-            border-radius: 4px;
+            padding: 1rem;
+            transition: all 0.3s;
         }
 
-        .priority-box strong {
-            display: block;
-            font-family: var(--font-head);
-            font-size: 1.15rem;
+        .metric-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+
+        .metric-card h6 {
             color: var(--accent-gold);
-            margin-bottom: 0.75rem;
-            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+            font-size: 0.75rem;
         }
 
-        .priority-box-content {
-            font-size: 1.1rem;
-            opacity: 0.9;
+        .metric-card p {
+            font-size: 0.85rem;
+            margin: 0;
+            opacity: 0.8;
+            line-height: 1.3;
         }
 
-        /* Animation Classes */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s var(--easing), transform 0.8s var(--easing);
+        /* Footer */
+        footer {
+            padding: 5rem 0;
+            background: #151a28;
         }
-        .fade-up.visible { opacity: 1; transform: translateY(0); }
-        .delay-1 { transition-delay: 0.1s; }
-        .delay-2 { transition-delay: 0.2s; }
-        .delay-3 { transition-delay: 0.3s; }
+
+        .footer-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 3rem;
+        }
+
+        /* Print Styles */
+        @media print {
+            nav {
+                display: none !important;
+            }
+
+            .tab-panel {
+                display: block !important;
+                page-break-before: always;
+            }
+
+            .category-content {
+                max-height: none !important;
+                display: block !important;
+            }
+
+            .company-grid.collapsed,
+            .tier-group.collapsed .company-grid {
+                max-height: 10000px !important;
+                opacity: 1 !important;
+            }
+
+            .company-card {
+                page-break-inside: avoid;
+            }
+
+            .expand-btn {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            h1, h2, h3 {
+                color: #192030;
+            }
+        }
 
         /* Responsive */
         @media (max-width: 900px) {
-            #hero { min-height: 90vh; padding: 6rem 0; }
             h1 { font-size: 2.5rem; }
-            .hero-text h1 { font-size: 2.5rem; }
-            .hero-text p { font-size: 1.1rem; }
-            .hero-logos img { height: 60px; }
-            .hero-logos span { font-size: 1.5rem; }
-            .grid-2, .grid-3, .grid-4, .sponsor-grid { grid-template-columns: 1fr; gap: 2rem; }
+            h2 { font-size: 2rem; }
+
+            .nav-links {
+                display: none;
+            }
+
+            #hero {
+                height: auto;
+                min-height: 60vh;
+            }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .company-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .country-tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+                text-align: left;
+            }
+
+            .priority-targets {
+                grid-template-columns: 1fr;
+            }
+
+            .report-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            section {
+                padding: 3rem 0;
+            }
+
+            .category-content.expanded {
+                padding: 1rem;
+            }
+
+            .company-card {
+                padding-right: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
 
+    <nav class="container">
+        <div class="logo">
+            <img src="gsu.png" alt="GSU Logo">
+        </div>
+        <div class="nav-links">
+            <a href="#executive-summary">Summary</a>
+            <a href="#tiers">Tiers</a>
+            <a href="#countries">Countries</a>
+            <a href="#categories">Categories</a>
+            <a href="#outreach">Outreach</a>
+            <a href="#decisions">Decisions</a>
+        </div>
+    </nav>
+
     <header id="hero" class="container">
-        <div class="hero-text fade-up">
-            <div class="hero-logos">
-                <img src="gsu.png" alt="GSU Logo">
-                <span>×</span>
-                <img src="igpl/igpl.png" alt="IGPL Logo">
+        <div class="hero-content">
+            <h4>Partnership Blueprint</h4>
+            <h1>IGPL Africa Swing <br><span style="color:var(--accent-gold); font-style:italic;">Sponsorship Strategy</span></h1>
+            <p>A comprehensive framework for securing cash and in-kind partners by aligning tournament legs with sponsor business objectives across the India-Africa corridor.</p>
+
+            <div class="report-meta">
+                <strong>Countries:</strong> South Africa • Mauritius • Republic of the Congo
+                <span style="margin: 0 1.5rem; opacity: 0.3;">|</span>
+                <strong>Prepared By:</strong> GSU | Geoeconomic Strategy Unit
             </div>
-            <h4>Sponsorship Strategy</h4>
-            <h1><span style="color:var(--accent-gold); font-style:italic;">IGPL</span> Africa Swing 2026</h1>
-            <p>A strategic roadmap for the Indian Golf Premier League's expansion into South Africa, Republic of Congo, and Mauritius. Leveraging regional networks to secure high-value partnerships.</p>
         </div>
     </header>
 
-    <section id="strategy">
+    <section id="executive-summary">
         <div class="container">
-            <div class="fade-up" style="text-align: center; margin-bottom: 4rem;">
-                <h4>The Approach</h4>
-                <h2>Sponsor Categorization: The "Three Flights"</h2>
-                <p style="margin: 0 auto;">To ensure market penetration and brand legitimacy, we categorize potential partners into three distinct strategic "flights."</p>
-            </div>
+            <h2>Executive Summary</h2>
 
-            <div class="grid-3 fade-up delay-1">
-                <div class="pillar-card">
-                    <div class="pillar-num">01</div>
-                    <h3>Legitimacy Builders</h3>
-                    <p>Institutional actors that provide policy cover. These partners bolster reputation as they are deeply embedded in local political networks.</p>
-                </div>
-                <div class="pillar-card">
-                    <div class="pillar-num">02</div>
-                    <h3>Premium Market Brands</h3>
-                    <p>Global and regional brands seeking African expansion. These targets prioritize HNI/UHNI access and exclusivity to avoid brand dilution.</p>
-                </div>
-                <div class="pillar-card">
-                    <div class="pillar-num">03</div>
-                    <h3>CSR & Development</h3>
-                    <p>Donors, foundations, and IFIs leveraging sports for community development. Focus areas: Youth, Environment, and Tourism.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="south-africa">
-        <div class="container">
             <div class="grid-2">
-                <div class="fade-up">
-                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
-                        <img src="igpl/saflag.svg" alt="SA Flag" style="width:40px; height:auto; border-radius:4px; opacity:0.8;">
-                        <h4 style="margin:0;">Target Market</h4>
-                    </div>
-                    <h2>South Africa</h2>
+                <div>
+                    <h4>Objective</h4>
+                    <p>Secure a mix of cash + in-kind partners by aligning each tournament leg with the sponsor categories most likely to pay for it, and running a focused, country-wise outreach sprint.</p>
 
-                    <div class="info-box">
-                        <span class="info-box-label">Market Status</span>
-                        <p class="info-box-content">A mature elite golf market with a sophisticated corporate sponsorship ecosystem.</p>
-                    </div>
-
-                    <div class="info-box">
-                        <span class="info-box-label">The Challenge</span>
-                        <p class="info-box-content">Differentiation. In a saturated market, IGPL must offer unique value beyond just "another tournament."</p>
-                    </div>
-
-                    <div class="priority-box">
-                        <strong>Priority Sequence</strong>
-                        <div class="priority-box-content">Flight 2 (Premium Brands) > Flight 1 (Legitimacy) > Flight 3 (CSR)</div>
+                    <div class="highlight-box">
+                        <h4>Top Priority</h4>
+                        <p>Companies with big budgets that can write a check for IGPL.</p>
                     </div>
                 </div>
 
-                <div class="fade-up delay-1">
-                    <h3 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">Target Sponsors</h3>
-                    
-                    <div class="sponsor-grid">
-                        <a href="https://golfrsa.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/golfrsa.png" alt="GolfRSA" class="sponsor-logo">
-                            <span class="sponsor-name">GolfRSA</span>
-                            <span class="flight-label">Flight 1: Legitimacy</span>
-                        </a>
-                        <a href="https://www.nomads.co.za" target="_blank" class="sponsor-card">
-                            <img src="igpl/nomads.webp" alt="Nomads" class="sponsor-logo">
-                            <span class="sponsor-name">Nomads Golf Club</span>
-                            <span class="flight-label">Flight 1: Legitimacy</span>
-                        </a>
-                        <a href="https://www.investec.com/en_za.html" target="_blank" class="sponsor-card">
-                            <img src="igpl/investec.png" alt="Investec" class="sponsor-logo">
-                            <span class="sponsor-name">Investec</span>
-                            <span class="flight-label">Flight 1: Legitimacy</span>
-                        </a>
-                        <a href="https://www.laureus.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/laureus.png" alt="Laureus" class="sponsor-logo">
-                            <span class="sponsor-name">Laureus Sport</span>
-                            <span class="flight-label">Flight 1: Legitimacy</span>
-                        </a>
-
-                        <a href="https://www.taylormadegolf.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/TaylorMade.svg" alt="TaylorMade" class="sponsor-logo">
-                            <span class="sponsor-name">TaylorMade</span>
-                            <span class="flight-label">Flight 2: Premium</span>
-                        </a>
-                        <a href="https://radicokhaitan.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/radico.png" alt="Radico" class="sponsor-logo">
-                            <span class="sponsor-name">Radico</span>
-                            <span class="flight-label">Flight 2: Premium</span>
-                        </a>
-                        <a href="https://www.diageo.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/Diageo-Logo.png" alt="Diageo" class="sponsor-logo">
-                            <span class="sponsor-name">Diageo</span>
-                            <span class="flight-label">Flight 2: Premium</span>
-                        </a>
-                        <a href="https://www.drivengolf.co.za" target="_blank" class="sponsor-card">
-                            <img src="igpl/driven.jpg" alt="Driven" class="sponsor-logo">
-                            <span class="sponsor-name">Driven</span>
-                            <span class="flight-label">Flight 2: Premium</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="congo">
-        <div class="container">
-            <div class="grid-2">
-                <div class="fade-up">
-                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
-                        <img src="igpl/rocflag.png" alt="Congo Flag" style="width:40px; height:auto; border-radius:4px; opacity:0.8;">
-                        <h4 style="margin:0;">Target Market</h4>
-                    </div>
-                    <h2>Republic of Congo</h2>
-
-                    <div class="info-box">
-                        <span class="info-box-label">Market Status</span>
-                        <p class="info-box-content">A symbolic elite market characterized by concentrated political-corporate power structures.</p>
-                    </div>
-
-                    <div class="info-box">
-                        <span class="info-box-label">The Challenge</span>
-                        <p class="info-box-content">Limited domestic sponsorship market and little to no existing golf culture. Strategy relies on political legitimacy.</p>
-                    </div>
-
-                    <div class="priority-box">
-                        <strong>Priority Sequence</strong>
-                        <div class="priority-box-content">Flight 1 (Legitimacy) > Flight 3 (CSR) > Flight 2 (Premium)</div>
-                    </div>
-                </div>
-
-                <div class="fade-up delay-1">
-                    <h3 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">Target Sponsors</h3>
-                    
-                    <div class="sponsor-grid">
-                        <a href="https://www.snpc-group.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/snpc.png" alt="SNPC" class="sponsor-logo">
-                            <span class="sponsor-name">SNPC</span>
-                            <span class="flight-label">Flight 1: State Oil</span>
-                        </a>
-                        <a href="https://republic-congo.com/en/tourism/" target="_blank" class="sponsor-card">
-                            <img src="igpl/roctourism.png" alt="Congo Tourism" class="sponsor-logo">
-                            <span class="sponsor-name">Congo Tourism</span>
-                            <span class="flight-label">Flight 1: Government</span>
-                        </a>
-
-                        <a href="https://www.eni.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/eni.svg" alt="Eni" class="sponsor-logo">
-                            <span class="sponsor-name">Eni</span>
-                            <span class="flight-label">Flight 2: Energy</span>
-                        </a>
-                        <a href="https://careers.theheinekencompany.com/Congo/" target="_blank" class="sponsor-card">
-                            <img src="igpl/brasco.webp" alt="BRASCO" class="sponsor-logo">
-                            <span class="sponsor-name">BRASCO</span>
-                            <span class="flight-label">Flight 2: Beverage</span>
-                        </a>
-                        <a href="https://www.mtn.cg/" target="_blank" class="sponsor-card">
-                            <img src="igpl/mtn.png" alt="MTN" class="sponsor-logo">
-                            <span class="sponsor-name">MTN</span>
-                            <span class="flight-label">Flight 2: Telecom</span>
-                        </a>
-                        <a href="https://indi-1xbet.com/en" target="_blank" class="sponsor-card">
-                            <img src="igpl/1XBET.png" alt="1xBet" class="sponsor-logo">
-                            <span class="sponsor-name">1xBet</span>
-                            <span class="flight-label">Flight 2: Gaming</span>
-                        </a>
-                        <a href="https://www.airtel.cg/" target="_blank" class="sponsor-card">
-                            <img src="igpl/airtel.svg" alt="Airtel" class="sponsor-logo">
-                            <span class="sponsor-name">Airtel</span>
-                            <span class="flight-label">Flight 2: Telecom</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="mauritius">
-        <div class="container">
-            <div class="grid-2">
-                <div class="fade-up">
-                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
-                        <img src="igpl/mauritiusflag.png" alt="Mauritius Flag" style="width:40px; height:auto; border-radius:4px; opacity:0.8;">
-                        <h4 style="margin:0;">Target Market</h4>
-                    </div>
-                    <h2>Mauritius</h2>
-
-                    <div class="info-box">
-                        <span class="info-box-label">Market Status</span>
-                        <p class="info-box-content">A mature elite golf market heavily integrated with high-end tourism and banking.</p>
-                    </div>
-
-                    <div class="info-box">
-                        <span class="info-box-label">The Challenge</span>
-                        <p class="info-box-content">Similar to South Africa, differentiation is key in a crowded event calendar.</p>
-                    </div>
-
-                    <div class="priority-box">
-                        <strong>Priority Sequence</strong>
-                        <div class="priority-box-content">Flight 2 (Premium Brands) > Flight 1 (Legitimacy) > Flight 3 (CSR)</div>
-                    </div>
-                </div>
-
-                <div class="fade-up delay-1">
-                    <h3 style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">Target Sponsors</h3>
-                    
-                    <div class="sponsor-grid">
-                        <a href="https://www.afrasiabank.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/afrasia.webp" alt="Afrasia Bank" class="sponsor-logo">
-                            <span class="sponsor-name">Afrasia Bank</span>
-                            <span class="flight-label">Flight 1: Banking</span>
-                        </a>
-                        <a href="https://mauritiussportscouncil.govmu.org/" target="_blank" class="sponsor-card">
-                            <img src="igpl/msc.png" alt="Mauritius Sports Council" class="sponsor-logo">
-                            <span class="sponsor-name">Sports Council</span>
-                            <span class="flight-label">Flight 1: Govt</span>
-                        </a>
-
-                        <a href="https://www.gmrgroup.in" target="_blank" class="sponsor-card">
-                            <img src="igpl/gmr.png" alt="GMR" class="sponsor-logo">
-                            <span class="sponsor-name">GMR</span>
-                            <span class="flight-label">Flight 2: Infrastructure</span>
-                        </a>
-                        <a href="https://www.bankofbaroda-mu.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/bob.png" alt="Bank of Baroda" class="sponsor-logo">
-                            <span class="sponsor-name">Bank of Baroda</span>
-                            <span class="flight-label">Flight 2: Banking</span>
-                        </a>
-                        <a href="https://www.oberoihotels.com/hotels-in-mauritius/" target="_blank" class="sponsor-card">
-                            <img src="igpl/oberoi.png" alt="The Oberoi" class="sponsor-logo">
-                            <span class="sponsor-name">The Oberoi</span>
-                            <span class="flight-label">Flight 2: Hospitality</span>
-                        </a>
-                        <a href="https://www.binaniindustries.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/vyapar.png" alt="Bil Vyapar" class="sponsor-logo">
-                            <span class="sponsor-name">Bil Vyapar Ltd.</span>
-                            <span class="flight-label">Flight 2: Industrial</span>
-                        </a>
-                        <a href="https://poncini.com" target="_blank" class="sponsor-card">
-                            <img src="igpl/poncini.png" alt="Poncini" class="sponsor-logo">
-                            <span class="sponsor-name">Poncini</span>
-                            <span class="flight-label">Flight 2: Luxury</span>
-                        </a>
-                        <a href="https://www.apacmedia.in/" target="_blank" class="sponsor-card">
-                            <img src="igpl/apac.webp" alt="APAC" class="sponsor-logo">
-                            <span class="sponsor-name">APAC Comm.</span>
-                            <span class="flight-label">Flight 2: Media</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="packages">
-        <div class="container">
-            <div class="fade-up" style="text-align:center; margin-bottom: 3rem;">
-                <h4>Deliverables</h4>
-                <h2>Sponsorship Tiers</h2>
-                <p style="margin: 0 auto;">Tailored engagement models designed to meet specific commercial and visibility objectives.</p>
-            </div>
-
-            <div class="grid-3 fade-up delay-1">
-                <div class="package-card">
-                    <span class="tier-name" style="color: #cd7f32;">Bronze</span>
-                    <p class="tier-desc">Domestic firms and SMEs seeking local access.</p>
-                    <ul class="tier-list">
-                        <li>Local visibility branding</li>
-                        <li>Networking access events</li>
-                        <li>Standard hospitality</li>
-                    </ul>
-                </div>
-
-                <div class="package-card">
-                    <span class="tier-name" style="color: #c0c0c0;">Silver</span>
-                    <p class="tier-desc">Regional leaders, category dominators, and exporters.</p>
-                    <ul class="tier-list">
-                        <li>Category exclusivity</li>
-                        <li>On-course visibility (High)</li>
-                        <li>Premium hospitality access</li>
-                    </ul>
-                </div>
-
-                <div class="package-card gold">
-                    <span class="tier-name" style="color: var(--accent-gold);">Gold</span>
-                    <p class="tier-desc">Global enterprises and anchor sponsors.</p>
-                    <ul class="tier-list">
-                        <li><strong>Naming Rights</strong></li>
-                        <li>Elite Hospitality & VVIP Access</li>
-                        <li>Full media integration</li>
+                <div>
+                    <h4>Strategic Approach</h4>
+                    <ul class="approach-list">
+                        <li>Sell each leg with a different "reason to buy"</li>
+                        <li>Anchor the tour with 2-3 Gold partners</li>
+                        <li>Use one consistent tiering framework (Gold/Silver/Bronze)</li>
+                        <li>Run outreach in two waves (Anchor → Co-sponsors)</li>
+                        <li>Make the ask concrete (hospitality inventory + brand assets)</li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="kpis">
+    <section id="tiers">
         <div class="container">
-            <div class="fade-up">
-                <h4>Measures of Success</h4>
-                <h2>Key Performance Indicators</h2>
-                
-                <div style="margin-top: 3rem;">
-                    <div class="kpi-row">
-                        <span class="kpi-label">Sponsor Quality</span>
-                        <div class="kpi-content">1 Anchor per market; Flight mix matching market priority; Alignment with IGPL Board objectives.</div>
+            <h2>Sponsorship Architecture</h2>
+            <p>Three-tier framework with clear benefits at each level</p>
+
+            <div class="grid-3">
+                <div class="tier-card tier-gold">
+                    <div class="tier-header">
+                        <h3>Gold</h3>
+                        <p class="tier-subtitle">Anchor Partners</p>
                     </div>
-                    <div class="kpi-row">
-                        <span class="kpi-label">Commercial Outcomes</span>
-                        <div class="kpi-content">Contracted value vs. target; 3-5 major partners secured in SA and Mauritius; Pipeline conversion rates.</div>
+                    <div class="tier-body">
+                        <p class="tier-profile">Largest cheque / highest certainty impact</p>
+                        <h5>What They Get:</h5>
+                        <ul class="benefit-list">
+                            <li>Naming rights ("IGPL presented by...")</li>
+                            <li>Hosted Pro-Am entries, VIP tables, private dinners</li>
+                            <li>3-5 premium content deliverables</li>
+                            <li>Category exclusivity</li>
+                        </ul>
                     </div>
-                    <div class="kpi-row">
-                        <span class="kpi-label">Sponsor Experience</span>
-                        <div class="kpi-content">Post-event satisfaction scores; Contract renewal intent; Delivery of executive networking opportunities.</div>
+                </div>
+
+                <div class="tier-card tier-silver">
+                    <div class="tier-header">
+                        <h3 class="silver-heading">Silver</h3>
+                        <p class="tier-subtitle">Category Co-Sponsors</p>
+                    </div>
+                    <div class="tier-body">
+                        <p class="tier-profile">Strong fit, controlled spend</p>
+                        <h5>What They Get:</h5>
+                        <ul class="benefit-list">
+                            <li>Category naming + branded lounge</li>
+                            <li>Hospitality block (VIP seats + sponsor client day)</li>
+                            <li>Co-branded content + lead-gen hooks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tier-card tier-bronze">
+                    <div class="tier-header">
+                        <h3 class="bronze-heading">Bronze</h3>
+                        <p class="tier-subtitle">Activation Partners</p>
+                    </div>
+                    <div class="tier-body">
+                        <p class="tier-profile">Volume pipeline; fast closes</p>
+                        <h5>What They Get:</h5>
+                        <ul class="benefit-list">
+                            <li>On-ground branding + 1 activation</li>
+                            <li>Social content bundle + photo rights</li>
+                            <li>Prize sponsorship opportunities</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-box">
+                <h5>Important Note on Alcohol Partnerships</h5>
+                <p>Keep alcohol partnerships experience-led (VIP dinners/tastings) and run them only within local compliance and IGPL brand guidelines.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="countries">
+        <div class="container">
+            <h2>Country-Specific Strategies</h2>
+
+            <div class="country-tabs">
+                <button class="tab-btn active" data-country="south-africa">South Africa</button>
+                <button class="tab-btn" data-country="mauritius">Mauritius</button>
+                <button class="tab-btn" data-country="congo">Republic of Congo</button>
+            </div>
+
+            <!-- South Africa Tab -->
+            <div id="south-africa" class="tab-panel active">
+                <div class="thesis-box">
+                    <h4>Sponsorship Thesis</h4>
+                    <p>South Africa is best positioned as the <strong>private wealth + corporate networking leg</strong>. Private banks sponsor golf because it directly supports HNWI client acquisition, retention, and hospitality-led relationship management.</p>
+                </div>
+
+                <div class="targets-section">
+                    <h3>Gold Targets (Anchor)</h3>
+                    <button class="expand-btn gold-btn" onclick="toggleSection('sa-gold')">Hide Gold Targets ▲</button>
+                    <div class="company-grid" id="sa-gold">
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Investec Private Banking</h4>
+                            <p class="company-description">One of the strongest lifestyle-marketing private banks in Africa. Long history of golf, polo, and premium sponsorships.</p>
+                            <div class="company-meta">
+                                <span class="strategic-fit">Cross-border wealth clients and corporate hospitality focus</span>
+                            </div>
+                        </div>
+
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Nedbank Private Wealth</h4>
+                            <p class="company-description">Major sports sponsor (Nedbank Golf Challenge). Proven ability to monetise golf hospitality and corporate networking.</p>
+                        </div>
+
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Standard Bank</h4>
+                            <p class="company-description">Large corporate and private bank with national sports sponsorship history. Corporate banking + trade finance + large marketing budgets.</p>
+                        </div>
+
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>DHL</h4>
+                            <p class="company-description">Global sports sponsor (F1, rugby, football), massive Africa network.</p>
+                        </div>
+
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>DP World</h4>
+                            <p class="company-description">Ports, logistics and trade infrastructure giant, major sports sponsor.</p>
+                        </div>
+
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Maersk</h4>
+                            <p class="company-description">One of the world's largest shipping and supply chain companies.</p>
+                        </div>
+
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>MSC</h4>
+                            <p class="company-description">Major shipping line with extensive Africa operations.</p>
+                        </div>
+
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>CMA CGM</h4>
+                            <p class="company-description">Global shipping company with strong Africa routes.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="silver-heading">Silver Targets</h3>
+                    <button class="expand-btn silver-btn" onclick="toggleSection('sa-silver')">Show Silver Targets ▼</button>
+                    <div class="company-grid collapsed" id="sa-silver">
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>Absa Wealth / Absa Private Bank</h4>
+                            <p class="company-description">Strong regional golf sponsorship footprint across Africa. Pan-African wealth brand aligned with IGPL geography.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>RMB Private Bank (FirstRand)</h4>
+                            <p class="company-description">Focus on entrepreneurs and affluent professionals.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>FNB Private Clients / Wealth</h4>
+                            <p class="company-description">Large marketing footprint and sports sponsorship history.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>CEVA Logistics</h4>
+                            <p class="company-description">Global freight forwarder.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>DSV</h4>
+                            <p class="company-description">Global freight forwarder.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>DB Schenker</h4>
+                            <p class="company-description">Global freight forwarder.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>Aramex</h4>
+                            <p class="company-description">Middle East–Africa logistics giant.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>Grindrod</h4>
+                            <p class="company-description">Major African shipping & port logistics company.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>Transnet</h4>
+                            <p class="company-description">South Africa's port, rail and pipeline operator.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="bronze-heading">Bronze Targets</h3>
+                    <button class="expand-btn bronze-btn" onclick="toggleSection('sa-bronze')">Show Bronze Targets ▼</button>
+                    <div class="company-grid collapsed" id="sa-bronze">
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>RCL Foods</h4>
+                            <p class="company-description">Major consumer food producer with strong retail penetration.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Clover SA</h4>
+                            <p class="company-description">Leading dairy and beverage brand in Southern Africa.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>AVI Ltd</h4>
+                            <p class="company-description">Branded snacks and personal-care group.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Allcargo Logistics</h4>
+                            <p class="company-description">India-Africa trade specialist.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>TVS Supply Chain Solutions</h4>
+                            <p class="company-description">India-Africa trade specialist.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Adani Ports</h4>
+                            <p class="company-description">India-Africa trade specialist.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Mahindra Logistics</h4>
+                            <p class="company-description">India-Africa trade specialist.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="engagement-box">
+                    <h4>South Africa Engagement Strategy</h4>
+                    <p><strong>Primary Offer:</strong> "Official Bank" or "Series Private Wealth Partner" + Pro-Am client day + private sponsor dinner</p>
+                    <p><strong>Best Hook:</strong> "A controlled environment to host top clients and originate new relationships"</p>
+                    <p><strong>Fast Close Tactic:</strong> Sell fixed hospitality inventory with clear branding placements</p>
+                </div>
+            </div>
+
+            <!-- Mauritius Tab -->
+            <div id="mauritius" class="tab-panel">
+                <div class="thesis-box">
+                    <h4>Sponsorship Thesis</h4>
+                    <p>Mauritius is the <strong>highest-probability hospitality leg</strong>: resorts already sponsor golf events to attract luxury travellers, host VIPs, and sell golf tourism packages—and IGPL gives them access to HNI exposure and Indian outbound tourism.</p>
+                </div>
+
+                <div class="targets-section">
+                    <h3>Gold Targets (Anchor Resorts & Host Bank)</h3>
+                    <button class="expand-btn gold-btn" onclick="toggleSection('maur-gold')">Hide Gold Targets ▲</button>
+                    <div class="company-grid" id="maur-gold">
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Four Seasons Resort Mauritius at Anahita</h4>
+                            <p class="company-description">Luxury resort with Ernie Els championship golf course. Already positioned as a golf destination.</p>
+                            <div class="company-meta">
+                                <span class="strategic-fit">Official Host Resort / Title Hospitality Partner</span>
+                            </div>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Anahita Golf & Spa Resort</h4>
+                            <p class="company-description">Luxury golf resort and major golf tourism destination.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Heritage Le Telfair Golf & Wellness Resort</h4>
+                            <p class="company-description">Home to Heritage Golf Club, a major tournament venue.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Constance Belle Mare Plage</h4>
+                            <p class="company-description">Two championship golf courses and long golf heritage.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Shangri-La Le Touessrok Mauritius</h4>
+                            <p class="company-description">Private island golf course (Ile aux Cerfs).</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>MCB Private Wealth</h4>
+                            <p class="company-description">Largest bank in Mauritius with dominant local HNWI presence. Natural "Host Bank" for Mauritius leg.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>AfrAsia Bank</h4>
+                            <p class="company-description">Specialist private bank with strong "Gateway to Africa" positioning. Existing golf sponsorship (Mauritius Open).</p>
+                        </div>
+                    </div>
+
+                    <h3 class="silver-heading">Silver Targets</h3>
+                    <button class="expand-btn silver-btn" onclick="toggleSection('maur-silver')">Show Silver Targets ▼</button>
+                    <div class="company-grid collapsed" id="maur-silver">
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>One&Only Le Saint Géran</h4>
+                            <p class="company-description">Ultra-luxury flagship Mauritius resort.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>The Oberoi Beach Resort Mauritius</h4>
+                            <p class="company-description">Indian luxury brand with strong India travel audience fit.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>JW Marriott Mauritius Resort</h4>
+                            <p class="company-description">Global luxury brand with golf clientele.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>LUX* Grand Gaube</h4>
+                            <p class="company-description">Popular luxury lifestyle resort brand.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>InterContinental Mauritius Resort</h4>
+                            <p class="company-description">Large international hospitality brand.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>SBM Private Wealth</h4>
+                            <p class="company-description">Premium private-banking proposition targeting HNW clients.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>HSBC Private Banking (Mauritius)</h4>
+                            <p class="company-description">Global private bank serving cross-border HNWIs.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>Investec Bank (Mauritius)</h4>
+                            <p class="company-description">Global private bank using lifestyle and golf for client engagement.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="bronze-heading">Bronze Targets</h3>
+                    <button class="expand-btn bronze-btn" onclick="toggleSection('maur-bronze')">Show Bronze Targets ▼</button>
+                    <div class="company-grid collapsed" id="maur-bronze">
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Long Beach Mauritius</h4>
+                            <p class="company-description">Can sponsor packages, prizes and hospitality experiences.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Trou aux Biches Beachcomber Golf Resort & Spa</h4>
+                            <p class="company-description">Golf Resort & Spa.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Sugar Beach Mauritius</h4>
+                            <p class="company-description">Hospitality experiences.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Bank One</h4>
+                            <p class="company-description">Asia–Africa trade partner potential.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>ABC Banking</h4>
+                            <p class="company-description">Asia–Africa trade partner potential.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Bank of China Mauritius</h4>
+                            <p class="company-description">Asia–Africa trade partner potential.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="engagement-box">
+                    <h4>Mauritius Engagement Strategy</h4>
+                    <p><strong>Primary Offer:</strong> "Official Host Resort" + "VIP Accommodation Partner" + co-branded golf tourism packages</p>
+                    <p><strong>Activation Menu:</strong> Influencer/HNI travel campaign, Corporate golf retreat bundles</p>
+                    <p><strong>Fast Close Tactic:</strong> Bundle room-night inventory + course access + VIP passes into a sponsor-controlled "IGPL Golf Week" product</p>
+                </div>
+            </div>
+
+            <!-- Congo Tab -->
+            <div id="congo" class="tab-panel">
+                <div class="thesis-box">
+                    <h4>Sponsorship Thesis</h4>
+                    <p>Congo should be sold explicitly as a <strong>premium business and networking platform</strong> (not only sport), tailored to an oil economy where corporate sponsorship supports government relations, CSR visibility, and stakeholder engagement.</p>
+                </div>
+
+                <div class="targets-section">
+                    <h3>Gold / Upper Silver Targets (Anchor Energy Partners)</h3>
+                    <button class="expand-btn gold-btn" onclick="toggleSection('congo-gold')">Hide Gold Targets ▲</button>
+                    <div class="company-grid" id="congo-gold">
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Halliburton</h4>
+                            <p class="company-description">One of the world's largest oilfield-services companies. Long-term operations across African oil markets.</p>
+                            <div class="company-meta">
+                                <span class="strategic-fit">Government engagement, CSR visibility, client hospitality</span>
+                            </div>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Schlumberger (SLB)</h4>
+                            <p class="company-description">The world's largest oilfield services company. Extensive African footprint.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>Baker Hughes</h4>
+                            <p class="company-description">Global energy technology company. Strong presence in African oil markets.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge gold">GOLD</span>
+                            <h4>SPIE Oil & Gas Services</h4>
+                            <p class="company-description">International engineering and industrial-services company. Local African contracts.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="silver-heading">Silver / Bronze Targets (Country Energy Partners)</h3>
+                    <button class="expand-btn" onclick="toggleSection('congo-silver')">Show Silver Targets ▼</button>
+                    <div class="company-grid collapsed" id="congo-silver">
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>Bourbon Offshore</h4>
+                            <p class="company-description">Marine logistics and offshore support company serving oil operators.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge silver">SILVER</span>
+                            <h4>Caroil Congo</h4>
+                            <p class="company-description">Regional drilling contractor operating in Congolese oil sector.</p>
+                        </div>
+                    </div>
+
+                    <h3 class="bronze-heading">Bronze Targets (Supporting Industry Partners)</h3>
+                    <button class="expand-btn bronze-btn" onclick="toggleSection('congo-bronze')">Show Bronze Targets ▼</button>
+                    <div class="company-grid collapsed" id="congo-bronze">
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Congo Oilfield Services</h4>
+                            <p class="company-description">Local activation or community partnership.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Welltec Africa</h4>
+                            <p class="company-description">Local activation or community partnership.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>Travaux Sous-Marins (TSMC)</h4>
+                            <p class="company-description">Local activation or community partnership.</p>
+                        </div>
+                        <div class="company-card">
+                            <span class="tier-badge bronze">BRONZE</span>
+                            <h4>SOTRINC</h4>
+                            <p class="company-description">Local activation or community partnership.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="engagement-box">
+                    <h4>Congo Engagement Strategy</h4>
+                    <p><strong>Primary Offer:</strong> "Energy & Infrastructure Partner" + stakeholder reception + "operator–supplier networking evening"</p>
+                    <p><strong>CSR Hook:</strong> Give sponsors a visible, structured CSR moment (community spotlight + local partner engagement) aligned with what oil & gas sponsors tend to fund</p>
+                    <p><strong>Key Hooks:</strong> Government and stakeholder engagement, Corporate hospitality and client entertainment, CSR and community development visibility</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="categories">
+        <div class="container">
+            <h2>Series-Wide Sponsor Categories</h2>
+            <p>Eight sponsor categories with companies organized by tier (Gold/Silver/Bronze)</p>
+
+            <!-- PAYMENTS & FINTECH -->
+            <div class="category-section">
+                <button class="category-header" onclick="toggleCategory('payments')">
+                    <div>
+                        <h3>Payments & Fintech</h3>
+                        <p class="category-subtitle">Merchant acquisition and remittance growth across India-Africa corridor</p>
+                    </div>
+                    <span class="company-count">(11 companies)</span>
+                </button>
+                <div id="payments" class="category-content">
+                    <div class="category-rationale">
+                        <h5>Category Rationale</h5>
+                        <p>Strong strategic fit for multi-country sports league providing merchant acquisition, remittance growth, and brand trust across the India–Africa corridor.</p>
+                    </div>
+                    <div class="pitch-box">
+                        <h5>How to Pitch</h5>
+                        <p>"Official Payments Partner" tied to: Merchant acquisition, Cross-border payments credibility, Trust-building across India–Africa corridor</p>
+                    </div>
+
+                    <div class="tier-group">
+                        <h4>Gold Sponsors</h4>
+                        <button class="expand-btn gold-btn" onclick="toggleTierGroup(this)">Hide Gold Sponsors ▲</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Pine Labs</h4>
+                                <p class="company-description">Large merchant payments and POS fintech with active international expansion strategy.</p>
+                                <div class="company-meta">Strategic fit: Sports sponsorship provides merchant acquisition and payment-usage visibility</div>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Razorpay</h4>
+                                <p class="company-description">Major payment gateway expanding cross-border payment services.</p>
+                                <div class="company-meta">IGPL provides platform to showcase international merchant capabilities</div>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Paytm</h4>
+                                <p class="company-description">Large consumer fintech with remittance and international payments ambitions.</p>
+                                <div class="company-meta">India–Africa corridor strongly aligns with IGPL's audience</div>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>PhonePe</h4>
+                                <p class="company-description">Major payments platform with international exploration and large marketing budgets.</p>
+                                <div class="company-meta">User-acquisition channel and merchant outreach platform</div>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Juspay</h4>
+                                <p class="company-description">Global payment orchestration company expanding in cross-border markets.</p>
+                                <div class="company-meta">Enterprise credibility and merchant acquisition opportunities</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="silver-heading">Silver Sponsors</h4>
+                        <button class="expand-btn silver-btn" onclick="toggleTierGroup(this)">Show Silver Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Instamojo</h4>
+                                <p class="company-description">SME payments and commerce platform.</p>
+                                <div class="company-meta">Access to African merchant and small business ecosystems</div>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>BillDesk</h4>
+                                <p class="company-description">Large and established payment infrastructure firm, primarily B2B.</p>
+                                <div class="company-meta">Enterprise and institutional networking opportunities</div>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Capital Float (Axio)</h4>
+                                <p class="company-description">BNPL and SME lender with strong backing.</p>
+                                <div class="company-meta">Expansion into emerging markets aligns with IGPL exposure</div>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Indifi</h4>
+                                <p class="company-description">SME and trade finance platform.</p>
+                                <div class="company-meta">Visibility among exporters, traders, and small businesses operating in Africa</div>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Kissht</h4>
+                                <p class="company-description">Digital lending platform with consumer focus.</p>
+                                <div class="company-meta">Potential fit for market entry pilots</div>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Rupeek</h4>
+                                <p class="company-description">Gold-loan fintech.</p>
+                                <div class="company-meta">Relevance to markets where gold collateral lending is common</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SPORTS TOURISM -->
+            <div class="category-section">
+                <button class="category-header" onclick="toggleCategory('sports-tourism')">
+                    <div>
+                        <h3>Sports Tourism & Luxury Travel</h3>
+                        <p class="category-subtitle">Premium travel experiences and golf tourism packages</p>
+                    </div>
+                    <span class="company-count">(13 companies)</span>
+                </button>
+                <div id="sports-tourism" class="category-content">
+                    <div class="category-rationale">
+                        <h5>Category Rationale</h5>
+                        <p>These brands directly benefit from IGPL's target audience of affluent Indian travellers, corporate clients, and HNIs. The league creates opportunities for curated travel packages, hospitality experiences, and premium sports tourism offerings in Africa.</p>
+                    </div>
+                    <div class="pitch-box">
+                        <h5>How to Pitch</h5>
+                        <p>"Official Sports Travel Partner" with rights to sell: IGPL travel packages, VIP hospitality, Curated itineraries</p>
+                    </div>
+
+                    <div class="tier-group">
+                        <h4>Gold Sponsors</h4>
+                        <button class="expand-btn gold-btn" onclick="toggleTierGroup(this)">Hide Gold Sponsors ▲</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>DreamSetGo</h4>
+                                <p class="company-description">India's leading sports travel platform with existing partnerships across major global sports properties.</p>
+                                <div class="company-meta">Direct opportunity to sell match travel packages, corporate hospitality, premium fan travel</div>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Thomas Cook India</h4>
+                                <p class="company-description">Major outbound travel company with strong Africa and luxury travel portfolios.</p>
+                                <div class="company-meta">Platform to promote premium Africa tourism packages</div>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Abercrombie & Kent India</h4>
+                                <p class="company-description">Luxury safari and experiential travel specialist targeting ultra-high-net-worth travellers.</p>
+                                <div class="company-meta">Premium audience and Africa positioning strongly align</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="silver-heading">Silver Sponsors</h4>
+                        <button class="expand-btn silver-btn" onclick="toggleTierGroup(this)">Show Silver Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>SOTC Travel</h4>
+                                <p class="company-description">Established outbound travel brand with premium offerings.</p>
+                                <div class="company-meta">Opportunity to promote African travel packages to affluent travellers</div>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Kesari Tours</h4>
+                                <p class="company-description">Large outbound tour operator. May test Africa travel segment at mid-tier.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Veena World</h4>
+                                <p class="company-description">Premium international tour operator targeting upper-middle and affluent travellers.</p>
+                                <div class="company-meta">Exposure to relevant audience for curated Africa travel packages</div>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Cutting Edge Events</h4>
+                                <p class="company-description">Premium sports hospitality and event travel company with strong B2B client base.</p>
+                                <div class="company-meta">Could sell corporate travel packages, VIP hospitality, Golf/pro-am travel</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="bronze-heading">Bronze Sponsors</h4>
+                        <button class="expand-btn bronze-btn" onclick="toggleTierGroup(this)">Show Bronze Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>PickYourTrail</h4>
+                                <p class="company-description">Customised international travel platform targeting young affluent travellers.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Thrillophilia</h4>
+                                <p class="company-description">Experiential and adventure travel platform with Africa adventure offerings.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Trailblazers India</h4>
+                                <p class="company-description">Adventure and experiential travel brand.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>SportsKonnect</h4>
+                                <p class="company-description">Sports travel and event management company.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>TraveloSports</h4>
+                                <p class="company-description">Sports travel platform offering international sports tours. Can package IGPL travel experiences.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOGISTICS -->
+            <div class="category-section">
+                <button class="category-header" onclick="toggleCategory('logistics')">
+                    <div>
+                        <h3>Logistics</h3>
+                        <p class="category-subtitle">Trade credibility and operational synergy for India-Africa corridor</p>
+                    </div>
+                    <span class="company-count">(21 companies)</span>
+                </button>
+                <div id="logistics" class="category-content">
+                    <div class="category-rationale">
+                        <h5>Category Rationale</h5>
+                        <p>Logistics companies provide trade credibility and operational synergy for an India-Africa golf tour.</p>
+                    </div>
+
+                    <div class="tier-group">
+                        <h4>Gold Sponsors (Global Logistics Giants)</h4>
+                        <button class="expand-btn gold-btn" onclick="toggleTierGroup(this)">Hide Gold Sponsors ▲</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>DHL</h4>
+                                <p class="company-description">Global sports sponsor (F1, rugby, football), massive Africa network.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>DP World</h4>
+                                <p class="company-description">Ports, logistics and trade infrastructure giant, major sports sponsor.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Maersk</h4>
+                                <p class="company-description">One of the world's largest shipping and supply chain companies.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>MSC Mediterranean Shipping Company</h4>
+                                <p class="company-description">Major shipping line with extensive Africa operations.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>CMA CGM</h4>
+                                <p class="company-description">Global shipping company with strong Africa routes.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>UPS</h4>
+                                <p class="company-description">Major international logistics and freight company.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="silver-heading">Silver Sponsors (Global Freight Forwarders)</h4>
+                        <button class="expand-btn silver-btn" onclick="toggleTierGroup(this)">Show Silver Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>CEVA Logistics</h4>
+                                <p class="company-description">Global freight forwarder.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>DSV</h4>
+                                <p class="company-description">Global freight forwarder.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>DB Schenker</h4>
+                                <p class="company-description">Global freight forwarder.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Kuehne+Nagel</h4>
+                                <p class="company-description">Global freight forwarder.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Expeditors</h4>
+                                <p class="company-description">Global freight forwarder.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Nippon Express</h4>
+                                <p class="company-description">Global freight forwarder.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="bronze-heading">Bronze Sponsors (India-Africa Trade Specialists)</h4>
+                        <button class="expand-btn bronze-btn" onclick="toggleTierGroup(this)">Show Bronze Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Allcargo Logistics</h4>
+                                <p class="company-description">India-Africa trade specialist.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>TVS Supply Chain Solutions</h4>
+                                <p class="company-description">India-Africa trade specialist.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Adani Ports</h4>
+                                <p class="company-description">India-Africa trade specialist.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Gateway Distriparks</h4>
+                                <p class="company-description">India-Africa trade specialist.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Mahindra Logistics</h4>
+                                <p class="company-description">India-Africa trade specialist.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Hapag-Lloyd</h4>
+                                <p class="company-description">Global shipping line.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>ONE (Ocean Network Express)</h4>
+                                <p class="company-description">Global shipping line.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>ZIM Integrated Shipping Services</h4>
+                                <p class="company-description">Global shipping line.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>COSCO Shipping</h4>
+                                <p class="company-description">Global shipping line.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALCOHOL & DISTILLERIES -->
+            <div class="category-section">
+                <button class="category-header" onclick="toggleCategory('alcohol')">
+                    <div>
+                        <h3>Alcohol & Distilleries</h3>
+                        <p class="category-subtitle">Premium experience-led partnerships (VIP dinners/tastings)</p>
+                    </div>
+                    <span class="company-count">(11 companies)</span>
+                </button>
+                <div id="alcohol" class="category-content">
+                    <div class="note-box">
+                        <h5>Important Compliance Note</h5>
+                        <p>Keep alcohol partnerships <strong>experience-led</strong> (VIP dinners/tastings) and run them only within local compliance and IGPL brand guidelines.</p>
+                    </div>
+
+                    <div class="tier-group">
+                        <h4>Gold Sponsors</h4>
+                        <button class="expand-btn gold-btn" onclick="toggleTierGroup(this)">Hide Gold Sponsors ▲</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>United Spirits (Diageo-backed)</h4>
+                                <p class="company-description">Global group with exports and big marketing budgets. Best for title/category head / large multi-country deals.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Allied Blenders & Distillers (ABDL)</h4>
+                                <p class="company-description">Explicitly expanding into Africa. Pushing premium launches (Zoya, etc.).</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Radico Khaitan</h4>
+                                <p class="company-description">Strong premium and export focus. Rampur single malt; recent premium moves.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Tilaknagar Industries</h4>
+                                <p class="company-description">Explicitly lists Africa as an export market. Has the scale (Imperial Blue moves).</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>SOM Distilleries & Breweries</h4>
+                                <p class="company-description">Notes exports to Africa. Has beer and spirits lines.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="silver-heading">Silver Sponsors</h4>
+                        <button class="expand-btn silver-btn" onclick="toggleTierGroup(this)">Show Silver Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Jagatjit Industries</h4>
+                                <p class="company-description">Exports to multiple African states (including Congo).</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Piccadilly Distilleries</h4>
+                                <p class="company-description">Large distillery/export infrastructure.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Globus Spirits</h4>
+                                <p class="company-description">Established manufacturer with export capacity.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="bronze-heading">Bronze Sponsors (Boutique / HNI / Hospitality Fit)</h4>
+                        <button class="expand-btn bronze-btn" onclick="toggleTierGroup(this)">Show Bronze Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Paul John</h4>
+                                <p class="company-description">Already available in South Africa. Good for premium hospitality activations, HNI tastings.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Rampur Distillery</h4>
+                                <p class="company-description">Rampur single malt fits premium tastings & hospitality activations.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Amrut Distilleries</h4>
+                                <p class="company-description">Internationally-known single malt. Great for premium events and HNI tastings.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FMCG PRODUCTS -->
+            <div class="category-section">
+                <button class="category-header" onclick="toggleCategory('fmcg')">
+                    <div>
+                        <h3>FMCG Products</h3>
+                        <p class="category-subtitle">Mass-market visibility, sampling opportunities, and regional distribution</p>
+                    </div>
+                    <span class="company-count">(13 companies)</span>
+                </button>
+                <div id="fmcg" class="category-content">
+                    <div class="category-rationale">
+                        <h5>Category Rationale</h5>
+                        <p>FMCG brands provide mass-market visibility, sampling opportunities, and strong regional distribution across African markets.</p>
+                    </div>
+
+                    <div class="tier-group">
+                        <h4>Gold Sponsors (Anchor Sponsors)</h4>
+                        <button class="expand-btn gold-btn" onclick="toggleTierGroup(this)">Hide Gold Sponsors ▲</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Tiger Brands</h4>
+                                <p class="company-description">One of Africa's largest branded food companies. Products distributed in over 20 African countries.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Bidco Africa</h4>
+                                <p class="company-description">Diversified FMCG group with 40+ brands. Food, personal care and home care products.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Bakhresa Group</h4>
+                                <p class="company-description">Large Indian-origin conglomerate operating across Indian Ocean and East Africa.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>East African Breweries Limited (EABL)</h4>
+                                <p class="company-description">East Africa's leading alcoholic and non-alcoholic beverage company.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Dangote Group</h4>
+                                <p class="company-description">Africa's largest indigenous conglomerate with strong consumer-goods presence.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Promasidor</h4>
+                                <p class="company-description">Pan-African food and beverage company operating in over 30 African markets.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>SABC – Brasseries du Cameroun</h4>
+                                <p class="company-description">Major Central African beverage manufacturer with extensive regional distribution.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="silver-heading">Silver Sponsors</h4>
+                        <button class="expand-btn silver-btn" onclick="toggleTierGroup(this)">Show Silver Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>RCL Foods (South Africa)</h4>
+                                <p class="company-description">Major consumer food producer with strong retail penetration.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Clover SA</h4>
+                                <p class="company-description">Leading dairy and beverage brand in Southern Africa.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>AVI Ltd</h4>
+                                <p class="company-description">Branded snacks and personal-care group.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Flour Mills of Nigeria</h4>
+                                <p class="company-description">Major listed consumer food manufacturer with strong West African presence.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Brookside Dairy (Kenya)</h4>
+                                <p class="company-description">Major East African dairy processor.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Fan Milk (Danone Africa)</h4>
+                                <p class="company-description">Well-known dairy and frozen dessert brand.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRIVATE WEALTH & INVESTMENT BANKS -->
+            <div class="category-section">
+                <button class="category-header" onclick="toggleCategory('private-wealth')">
+                    <div>
+                        <h3>Private Wealth & Investment Banks</h3>
+                        <p class="category-subtitle">HNWI client acquisition and premium lifestyle positioning</p>
+                    </div>
+                    <span class="company-count">(20 companies)</span>
+                </button>
+                <div id="private-wealth" class="category-content">
+                    <div class="category-rationale">
+                        <h5>Category Rationale</h5>
+                        <p>Private banks, wealth managers, and investment institutions are among the most consistent sponsors of golf, hospitality, and premium lifestyle events. Their core business depends on client acquisition and retention among HNWIs and UHNWI families, corporate hospitality, cross-border wealth relationships, and thought-leadership positioning in growth markets.</p>
+                    </div>
+                    <div class="pitch-box">
+                        <h5>How to Pitch</h5>
+                        <p>"Official Private Banking Partner" or "Series Wealth Partner" with exclusive HNWI client entertainment, Pro-Am access, and thought-leadership positioning.</p>
+                    </div>
+
+                    <div class="tier-group">
+                        <h4>Gold Sponsors (Anchor Sponsors)</h4>
+                        <button class="expand-btn gold-btn" onclick="toggleTierGroup(this)">Hide Gold Sponsors ▲</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Investec Private Banking</h4>
+                                <p class="company-description">One of the strongest lifestyle-marketing private banks in Africa. Long history of golf, polo, and premium sponsorships.</p>
+                                <div class="company-meta">Series Private Wealth Partner / Title option</div>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Nedbank Private Wealth</h4>
+                                <p class="company-description">Major sports sponsor (Nedbank Golf Challenge). Proven ability to monetise golf hospitality and corporate networking.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Standard Bank (Private & Corporate)</h4>
+                                <p class="company-description">Large corporate and private bank with national sports sponsorship history. Corporate banking + trade finance + large marketing budgets.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Absa Wealth / Absa Private Bank</h4>
+                                <p class="company-description">Strong regional golf sponsorship footprint across Africa. Pan-African wealth brand aligned with IGPL geography.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>MCB Private Wealth</h4>
+                                <p class="company-description">Largest bank in Mauritius with dominant local HNWI presence. Natural "Host Bank" for Mauritius leg.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>AfrAsia Bank</h4>
+                                <p class="company-description">Specialist private bank with strong "Gateway to Africa" positioning. Existing golf sponsorship (Mauritius Open).</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Investec Bank (Mauritius)</h4>
+                                <p class="company-description">Global private bank using lifestyle and golf for client engagement. Cross-border wealth clients and corporate hospitality focus.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="silver-heading">Silver Sponsors (Priority Co-Sponsors)</h4>
+                        <button class="expand-btn silver-btn" onclick="toggleTierGroup(this)">Show Silver Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>RMB Private Bank (FirstRand)</h4>
+                                <p class="company-description">Focus on entrepreneurs and affluent professionals.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>FNB Private Clients / Wealth</h4>
+                                <p class="company-description">Large marketing footprint and sports sponsorship history.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>HSBC Private Banking (South Africa)</h4>
+                                <p class="company-description">Cross-border HNWI client base with global golf engagement.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>SBM Private Wealth</h4>
+                                <p class="company-description">Premium private-banking proposition targeting HNW clients in Mauritius.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>HSBC Private Banking (Mauritius)</h4>
+                                <p class="company-description">Global private bank serving cross-border HNWIs.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="bronze-heading">Bronze Sponsors (Boutique Wealth & Advisory Firms)</h4>
+                        <button class="expand-btn bronze-btn" onclick="toggleTierGroup(this)">Show Bronze Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Ninety One</h4>
+                                <p class="company-description">Large global investment manager with strong Africa growth narrative.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Coronation Fund Managers</h4>
+                                <p class="company-description">Institutional asset manager with strong marketing presence.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Sanlam Investments</h4>
+                                <p class="company-description">Active in lifestyle and mass-participation sports.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Old Mutual Wealth</h4>
+                                <p class="company-description">Long history of sponsorships across sports and lifestyle properties.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Warwyck Private Bank</h4>
+                                <p class="company-description">Boutique UHNWI private bank.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>PSG Wealth</h4>
+                                <p class="company-description">Strong adviser network and affluent client base.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Allan Gray</h4>
+                                <p class="company-description">Highly trusted investment manager.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Bank One</h4>
+                                <p class="company-description">Asia–Africa trade partner potential (Mauritius).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OIL & MINERALS (CONGO) -->
+            <div class="category-section">
+                <button class="category-header" onclick="toggleCategory('oil-minerals')">
+                    <div>
+                        <h3>Oil & Minerals (Congo)</h3>
+                        <p class="category-subtitle">Corporate diplomacy and stakeholder engagement in oil economies</p>
+                    </div>
+                    <span class="company-count">(10 companies)</span>
+                </button>
+                <div id="oil-minerals" class="category-content">
+                    <div class="category-rationale">
+                        <h5>Category Rationale</h5>
+                        <p>The Republic of Congo is a hydrocarbon-driven economy where oil & gas companies play a central role in government relations, corporate social responsibility, community development, and client/partner hospitality. For IGPL, the Congo leg should be positioned as a premium business and networking platform, not purely as a sports property.</p>
+                    </div>
+                    <div class="pitch-box">
+                        <h5>How to Pitch</h5>
+                        <p>"Energy & Infrastructure Partner" with exclusive stakeholder receptions, operator-supplier networking events, and structured CSR visibility moments.</p>
+                    </div>
+
+                    <div class="tier-group">
+                        <h4>Gold / Upper Silver (Anchor Energy Partners)</h4>
+                        <button class="expand-btn gold-btn" onclick="toggleTierGroup(this)">Hide Gold Sponsors ▲</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Halliburton</h4>
+                                <p class="company-description">One of the world's largest oilfield-services companies with long-term operations across African oil markets.</p>
+                                <div class="company-meta">Government engagement, CSR visibility, client hospitality</div>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Schlumberger (SLB)</h4>
+                                <p class="company-description">The world's largest oilfield services company with extensive African footprint.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Baker Hughes</h4>
+                                <p class="company-description">Global energy technology company with strong presence in African oil markets.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>SPIE Oil & Gas Services</h4>
+                                <p class="company-description">International engineering and industrial-services company with local African contracts.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="silver-heading">Silver / Bronze (Country Energy Partners)</h4>
+                        <button class="expand-btn silver-btn" onclick="toggleTierGroup(this)">Show Silver & Bronze Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Bourbon Offshore</h4>
+                                <p class="company-description">Marine logistics and offshore support company serving oil operators.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>Caroil Congo</h4>
+                                <p class="company-description">Regional drilling contractor operating in Congolese oil sector.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Congo Oilfield Services</h4>
+                                <p class="company-description">Local activation or community partnership.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Welltec Africa</h4>
+                                <p class="company-description">Local activation or community partnership.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Travaux Sous-Marins (TSMC)</h4>
+                                <p class="company-description">Local activation or community partnership.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>SOTRINC</h4>
+                                <p class="company-description">Local activation or community partnership.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAURITIUS HOSPITALITY & RESORTS -->
+            <div class="category-section">
+                <button class="category-header" onclick="toggleCategory('mauritius-hospitality')">
+                    <div>
+                        <h3>Mauritius-Focused Hospitality & Resorts</h3>
+                        <p class="category-subtitle">Luxury golf tourism and VIP accommodation partners</p>
+                    </div>
+                    <span class="company-count">(13 companies)</span>
+                </button>
+                <div id="mauritius-hospitality" class="category-content">
+                    <div class="category-rationale">
+                        <h5>Category Rationale</h5>
+                        <p>Hotels sponsor golf events to attract luxury travellers, host VIPs & corporate clients, promote golf tourism packages, and increase international visibility. IGPL gives them HNI exposure, India outbound tourism, and access to the corporate golf travel market.</p>
+                    </div>
+                    <div class="pitch-box">
+                        <h5>How to Pitch</h5>
+                        <p>"Official Host Resort" or "VIP Accommodation Partner" with co-branded golf tourism packages, influencer/HNI travel campaigns, and corporate golf retreats.</p>
+                    </div>
+
+                    <div class="tier-group">
+                        <h4>Gold Sponsors (Anchor Resort Sponsors)</h4>
+                        <button class="expand-btn gold-btn" onclick="toggleTierGroup(this)">Hide Gold Sponsors ▲</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Four Seasons Resort Mauritius at Anahita</h4>
+                                <p class="company-description">Luxury resort with Ernie Els championship golf course. Already positioned as a golf destination.</p>
+                                <div class="company-meta">Official Host Resort / Title Hospitality Partner</div>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Anahita Golf & Spa Resort</h4>
+                                <p class="company-description">Luxury golf resort and major golf tourism destination.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Heritage Le Telfair Golf & Wellness Resort</h4>
+                                <p class="company-description">Home to Heritage Golf Club, a major tournament venue.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Constance Belle Mare Plage</h4>
+                                <p class="company-description">Two championship golf courses and long golf heritage.</p>
+                            </div>
+                            <div class="company-card" data-tier="gold">
+                                <span class="tier-badge gold">GOLD</span>
+                                <h4>Shangri-La Le Touessrok Mauritius</h4>
+                                <p class="company-description">Private island golf course (Ile aux Cerfs).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="silver-heading">Silver Sponsors (Luxury Resort Co-Sponsors)</h4>
+                        <button class="expand-btn silver-btn" onclick="toggleTierGroup(this)">Show Silver Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>One&Only Le Saint Géran</h4>
+                                <p class="company-description">Ultra-luxury flagship Mauritius resort.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>The Oberoi Beach Resort Mauritius</h4>
+                                <p class="company-description">Indian luxury brand with strong India travel audience fit.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>JW Marriott Mauritius Resort</h4>
+                                <p class="company-description">Global luxury brand with golf clientele.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>LUX* Grand Gaube</h4>
+                                <p class="company-description">Popular luxury lifestyle resort brand.</p>
+                            </div>
+                            <div class="company-card" data-tier="silver">
+                                <span class="tier-badge silver">SILVER</span>
+                                <h4>InterContinental Mauritius Resort</h4>
+                                <p class="company-description">Large international hospitality brand.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tier-group collapsed">
+                        <h4 class="bronze-heading">Bronze Sponsors (Country Hospitality Partners)</h4>
+                        <button class="expand-btn bronze-btn" onclick="toggleTierGroup(this)">Show Bronze Sponsors ▼</button>
+                        <div class="company-grid">
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Long Beach Mauritius</h4>
+                                <p class="company-description">Can sponsor packages, prizes and hospitality experiences.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Trou aux Biches Beachcomber Golf Resort & Spa</h4>
+                                <p class="company-description">Golf Resort & Spa.</p>
+                            </div>
+                            <div class="company-card" data-tier="bronze">
+                                <span class="tier-badge bronze">BRONZE</span>
+                                <h4>Sugar Beach Mauritius</h4>
+                                <p class="company-description">Hospitality experiences.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="outreach">
+        <div class="container">
+            <h2>Outreach Plan</h2>
+            <p>A simple operating system IGPL can run</p>
+
+            <div class="flowchart-container">
+                <div class="flow-step">
+                    <h5>Step 1: Materials</h5>
+                    <div class="checklist">
+                        <div class="checklist-item">One Sponsor Deck (series story + 3 country one-pagers)</div>
+                        <div class="checklist-item">Rate Card (Gold/Silver/Bronze packages)</div>
+                        <div class="checklist-item">Target Tracker (decision-maker names, relationship owner)</div>
+                    </div>
+                </div>
+
+                <div class="arrow-down"></div>
+
+                <div class="flow-step">
+                    <h5>Step 2: Wave 1 - Anchor Closes</h5>
+                    <p>Approach top Gold targets first</p>
+                    <div class="priority-targets">
+                        <div class="target-group">
+                            <h6>South Africa Priority</h6>
+                            <ul>
+                                <li>Investec Private Banking</li>
+                                <li>Nedbank Private Wealth</li>
+                                <li>Standard Bank</li>
+                            </ul>
+                        </div>
+                        <div class="target-group">
+                            <h6>Mauritius Priority</h6>
+                            <ul>
+                                <li>Four Seasons/Anahita/Heritage</li>
+                                <li>MCB Private Wealth</li>
+                                <li>AfrAsia Bank</li>
+                            </ul>
+                        </div>
+                        <div class="target-group">
+                            <h6>Congo Priority</h6>
+                            <ul>
+                                <li>Halliburton</li>
+                                <li>Schlumberger (SLB)</li>
+                                <li>Baker Hughes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-down"></div>
+
+                <div class="flow-step">
+                    <h5>Step 3: Wave 2 - Stack Sponsors</h5>
+                    <p>Add category partners: Payments, Sports Tourism, Logistics, FMCG, Activation brands</p>
+                    <div class="bronze-menus">
+                        <h6>Standardized Bronze Offerings:</h6>
+                        <div class="grid-3">
+                            <div class="menu-card">
+                                <h6>Prize Sponsor Menu</h6>
+                                <p>Closest-to-pin, longest-drive, trophy night</p>
+                            </div>
+                            <div class="menu-card">
+                                <h6>Lounge Sponsor Menu</h6>
+                                <p>Branded activation zone + hospitality</p>
+                            </div>
+                            <div class="menu-card">
+                                <h6>In-kind Partner Menu</h6>
+                                <p>Logistics, travel, sampling support</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer style="background: #151a28; padding: 3rem 0; font-size: 0.9rem; border-top: 1px solid rgba(255,255,255,0.05);">
-        <div style="text-align: center; max-width: 600px; margin: 0 auto; padding: 0 2rem;">
-            <p style="opacity: 0.7; font-size: 0.95rem; margin: 0 auto 0.5rem auto;">Geoeconomic Strategy Unit</p>
-            <p style="opacity: 0.5; font-size: 0.85rem; margin: 0 auto 2rem auto;">IGPL Africa Swing 2026 Strategic Advisory.</p>
-            <p style="opacity: 0.5; font-size: 0.85rem; margin: 0 auto;">&copy; 2026 Geoeconomic Strategy Unit. All Rights Reserved.</p>
+    <section id="decisions">
+        <div class="container">
+            <h2>Key Decisions Required</h2>
+            <p>What IGPL leadership needs to decide this week to unlock execution</p>
+
+            <div class="grid-2">
+                <div class="decision-card">
+                    <h4>1. Approve a Rate Card</h4>
+                    <ul>
+                        <li>Gold/Silver/Bronze tier definitions</li>
+                        <li>Which rights are negotiable vs fixed</li>
+                        <li>Pricing structure</li>
+                    </ul>
+                </div>
+
+                <div class="decision-card">
+                    <h4>2. Confirm Alcohol Sponsorship Policy</h4>
+                    <ul>
+                        <li>Will IGPL accept alcohol sponsorship?</li>
+                        <li>What are the compliance guardrails?</li>
+                        <li>Which markets/activations are appropriate?</li>
+                    </ul>
+                </div>
+
+                <div class="decision-card">
+                    <h4>3. Nominate Country Sponsor Owners</h4>
+                    <ul>
+                        <li>South Africa Owner: _______</li>
+                        <li>Mauritius Owner: _______</li>
+                        <li>Republic of Congo Owner: _______</li>
+                    </ul>
+                </div>
+
+                <div class="decision-card">
+                    <h4>4. Share Existing Relationships</h4>
+                    <ul>
+                        <li>Any existing relationships with banks, resorts, energy companies</li>
+                        <li>Enable warm introductions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="priority">
+        <div class="container">
+            <h2>Priority Targets Dashboard</h2>
+            <p>Top 11 Gold anchor sponsors across all categories</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Category</th>
+                        <th>Geographic Focus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Investec Private Banking</td>
+                        <td>Private Banking</td>
+                        <td>South Africa / Series</td>
+                    </tr>
+                    <tr>
+                        <td>Nedbank Private Wealth</td>
+                        <td>Private Banking</td>
+                        <td>South Africa</td>
+                    </tr>
+                    <tr>
+                        <td>MCB Private Wealth</td>
+                        <td>Private Banking</td>
+                        <td>Mauritius</td>
+                    </tr>
+                    <tr>
+                        <td>AfrAsia Bank</td>
+                        <td>Private Banking</td>
+                        <td>Mauritius</td>
+                    </tr>
+                    <tr>
+                        <td>DHL</td>
+                        <td>Logistics</td>
+                        <td>Series-wide</td>
+                    </tr>
+                    <tr>
+                        <td>DP World</td>
+                        <td>Logistics</td>
+                        <td>Series-wide</td>
+                    </tr>
+                    <tr>
+                        <td>Four Seasons Mauritius</td>
+                        <td>Resort</td>
+                        <td>Mauritius</td>
+                    </tr>
+                    <tr>
+                        <td>Halliburton</td>
+                        <td>Energy</td>
+                        <td>Congo</td>
+                    </tr>
+                    <tr>
+                        <td>Schlumberger (SLB)</td>
+                        <td>Energy</td>
+                        <td>Congo</td>
+                    </tr>
+                    <tr>
+                        <td>Pine Labs</td>
+                        <td>Fintech</td>
+                        <td>Series-wide</td>
+                    </tr>
+                    <tr>
+                        <td>DreamSetGo</td>
+                        <td>Sports Travel</td>
+                        <td>Series-wide</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="success-metrics">
+                <h4>Key Success Metrics</h4>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h6>Gold Sponsors Secured</h6>
+                        <p>Target: 2-3 per leg minimum</p>
+                    </div>
+                    <div class="metric-card">
+                        <h6>Total Sponsorship Value</h6>
+                        <p>Cash + In-kind contributions</p>
+                    </div>
+                    <div class="metric-card">
+                        <h6>Category Exclusivity</h6>
+                        <p>Exclusive deals closed</p>
+                    </div>
+                    <div class="metric-card">
+                        <h6>Hospitality Inventory</h6>
+                        <p>Pro-Am slots, VIP tables sold</p>
+                    </div>
+                    <div class="metric-card">
+                        <h6>Speed to Close</h6>
+                        <p>Days from contact to agreement</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <strong style="color:var(--accent-gold);">GSU | Geoeconomic Strategy Unit</strong><br>
+                    <span style="opacity:0.7;">geoecon@16thcouncil.uk</span>
+                </div>
+                <div style="text-align: right;">
+                    <span style="opacity:0.7;">© 2026 IGPL Africa Swing Strategy</span>
+                </div>
+            </div>
         </div>
     </footer>
 
     <script>
-        // --- SCROLL ANIMATIONS ---
-        const observerOptions = { root: null, threshold: 0.1 };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
+        // Tab Switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+                this.classList.add('active');
+                const country = this.dataset.country;
+                document.getElementById(country).classList.add('active');
+            });
+        });
+
+        // Toggle Sections (Silver/Bronze) in Country tabs
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const btn = event.target;
+
+            section.classList.toggle('collapsed');
+
+            // Update button text
+            if (section.classList.contains('collapsed')) {
+                btn.innerHTML = btn.innerHTML.replace('▲', '▼').replace('Hide', 'Show');
+            } else {
+                btn.innerHTML = btn.innerHTML.replace('▼', '▲').replace('Show', 'Hide');
+            }
+        }
+
+        // Toggle Category Accordion
+        function toggleCategory(categoryId) {
+            const content = document.getElementById(categoryId);
+            const header = content.previousElementSibling;
+            content.classList.toggle('expanded');
+            header.classList.toggle('expanded');
+        }
+
+        // Toggle Tier Groups within Categories
+        function toggleTierGroup(btn) {
+            const tierGroup = btn.closest('.tier-group');
+            tierGroup.classList.toggle('collapsed');
+
+            // Update button text
+            if (tierGroup.classList.contains('collapsed')) {
+                btn.innerHTML = btn.innerHTML.replace('▲', '▼').replace('Hide', 'Show');
+            } else {
+                btn.innerHTML = btn.innerHTML.replace('▼', '▲').replace('Show', 'Hide');
+            }
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        });
     </script>
+
 </body>
 </html>
