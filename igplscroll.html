@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IGPL Mauritius 2026 — Partnership Opportunity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --surface:#f5f3f0;
+  --border:rgba(0,0,0,0.09);
+  --text:#0c0c14;
+  --muted:rgba(12,12,20,0.52);
+  --dim:rgba(12,12,20,0.3);
+  --coral:#f04e35;
+  --magenta:#e8196b;
+  --amber:#f5a623;
+  --teal:#00b5b0;
+  --sky:#38b6ff;
+  --green:#29c97e;
+  --fire:linear-gradient(135deg,#f04e35 0%,#e8196b 60%,#f5a623 100%);
+  --ocean:linear-gradient(135deg,#00b5b0 0%,#38b6ff 100%);
+  --display:'Montserrat',sans-serif;
+  --body:'DM Sans',sans-serif;
+  --r:14px;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+
+html{scroll-behavior:smooth;overscroll-behavior:none}
+body{background:#000;font-family:var(--body);font-size:16px;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+
+/* ═══════════════════════════════════
+   VIDEO CANVAS
+═══════════════════════════════════ */
+#video-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0}
+
+#canvas-scrim{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 60% 100% at 5% 60%,rgba(0,0,0,0.45) 0%,transparent 65%), linear-gradient(to right, transparent 28%, rgba(0,0,0,0.45) 100%);
+}
+
+/* ═══════════════════════════════════
+   HERO OVERLAYS
+═══════════════════════════════════ */
+#hero-overlays{position:fixed;inset:0;z-index:20;pointer-events:none}
+
+/* Loader */
+#loader{position:absolute;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity 0.6s ease;pointer-events:auto}
+#loader-bar-track{width:200px;height:2px;background:rgba(255,255,255,0.12);border-radius:2px;overflow:hidden}
+#loader-bar{height:100%;width:0%;background:#fff;border-radius:2px;transition:width 0.08s linear}
+#loader-label{font-size:0.68rem;letter-spacing:0.24em;color:rgba(255,255,255,0.38);text-transform:uppercase;font-family:var(--display)}
+
+/* IGPL mark */
+#igpl-mark{
+  position:absolute;top:24px;left:28px;
+  display:flex;align-items:center;gap:11px;pointer-events:none;
+  opacity:0;animation:markFadeIn 0.8s 1.2s ease both;
+}
+@keyframes markFadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.igpl-badge{width:36px;height:36px;background:linear-gradient(135deg,#f04e35 0%,#e8196b 60%,#f5a623 100%);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:11px;font-weight:900;color:#fff;letter-spacing:-0.02em;flex-shrink:0}
+.igpl-brand-text{display:flex;flex-direction:column;gap:2px}
+.igpl-brand-name{font-family:var(--display);font-size:11px;font-weight:700;color:rgba(255,255,255,0.82);letter-spacing:0.04em;line-height:1}
+.igpl-brand-sub{font-size:9px;color:rgba(255,255,255,0.38);letter-spacing:0.12em;text-transform:uppercase;line-height:1}
+
+/* Minimal slide overlay — bottom-left, for intro & CTA checkpoints */
+#slide-overlay{
+  position:absolute;top:0;right:0;
+  width:62%;height:100%;
+  display:flex;gap:22px;align-items:center;
+  padding:0 56px 0 52px;
+  opacity:0;transition:opacity 0.45s ease-in-out;
+  pointer-events:none;
+}
+#slide-accent{width:4px;border-radius:2px;flex-shrink:0;align-self:center;height:260px;order:2;background:linear-gradient(180deg,#f04e35,#e8196b 55%,#f5a623)}
+#slide-content{flex:1;text-align:right;order:1}
+#slide-eyebrow{display:block;font-family:var(--display);font-size:0.6rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px}
+#slide-title{font-family:var(--display);font-size:clamp(2.8rem,5.5vw,5rem);font-weight:900;letter-spacing:-0.03em;line-height:1;margin:0 0 14px 0;color:#fff;text-shadow:0 2px 28px rgba(0,0,0,0.55)}
+#slide-body{font-family:var(--body);font-size:1rem;font-weight:300;line-height:1.75;color:rgba(255,255,255,0.7);text-shadow:0 1px 6px rgba(0,0,0,0.65);max-width:400px;margin-left:auto}
+#slide-cta{display:none;margin-top:28px;pointer-events:auto;gap:12px;flex-wrap:wrap}
+.slide-btn-p{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:linear-gradient(135deg,#f04e35,#e8196b 60%,#f5a623);color:#fff;text-decoration:none;font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:0.02em;border-radius:100px;box-shadow:0 8px 28px rgba(240,78,53,0.38);transition:transform 0.25s,box-shadow 0.25s}
+.slide-btn-p:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(240,78,53,0.5)}
+.slide-btn-g{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:100px;color:rgba(255,255,255,0.85);font-family:var(--body);font-size:13px;text-decoration:none;transition:background 0.25s,border-color 0.25s;pointer-events:auto}
+.slide-btn-g:hover{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.45)}
+
+/* ═══════════════════════════════════
+   RIGHT CONTENT PANEL
+═══════════════════════════════════ */
+#content-panel{
+  position:absolute;top:0;right:0;
+  width:62%;height:100%;
+  overflow-y:auto;overflow-x:hidden;
+  padding:44px 56px 44px 52px;
+  display:flex;flex-direction:column;justify-content:center;
+  opacity:0;transform:translateX(28px);
+  transition:opacity 0.5s var(--ease),transform 0.5s var(--ease);
+  pointer-events:none;
+  scrollbar-width:none;
+}
+#content-panel::-webkit-scrollbar{display:none}
+#content-panel.visible{opacity:1;transform:translateX(0);pointer-events:auto}
+
+/* Panel header */
+#panel-header{margin-bottom:28px}
+#panel-eyebrow{display:block;font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;background:linear-gradient(135deg,#f04e35,#e8196b 60%,#f5a623);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#panel-title{font-family:var(--display);font-size:clamp(24px,2.8vw,38px);font-weight:900;letter-spacing:-0.025em;line-height:1.05;color:#fff;margin-bottom:8px}
+#panel-sub{font-size:14px;color:rgba(255,255,255,0.85);font-weight:300;line-height:1.6;margin-bottom:20px}
+.panel-divider{height:1px;background:rgba(255,255,255,0.15);margin-bottom:28px}
+
+/* Panel sections */
+.cp-section{display:none}
+.cp-section.active{display:block}
+
+/* ── Typography ── */
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;letter-spacing:-0.025em;line-height:1.05}
+.grad-fire{background:var(--fire);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-ocean{background:var(--ocean);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tag{display:inline-block;font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:3px 8px;border-radius:100px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5)}
+
+/* ── Glassmorphic base (all cards) ── */
+.sstat,.pillar,.mcard,.tier-card,.del-card,.tour-map{
+  background:rgba(255,255,255,0.10);
+  backdrop-filter:blur(18px) saturate(130%);
+  -webkit-backdrop-filter:blur(18px) saturate(130%);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:0 4px 24px rgba(0,0,0,0.22),inset 0 1px 0 rgba(255,255,255,0.18);
+}
+
+/* ── Situation cards ── */
+.sstat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.sstat{border-radius:var(--r);padding:28px;position:relative;overflow:hidden;cursor:default;transition:transform 0.3s var(--ease),border-color 0.3s,box-shadow 0.3s}
+.sstat:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.32);box-shadow:0 14px 40px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.24)}
+.sstat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)}
+.sstat-num{font-family:var(--display);font-size:clamp(40px,4.5vw,58px);font-weight:900;line-height:1;margin-bottom:8px}
+.sstat-label{font-size:13px;color:#e8e8f0;font-weight:400;line-height:1.5}
+.sstat-detail{opacity:0;pointer-events:none;position:absolute;inset:0;background:rgba(10,14,30,0.88);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:22px;border-radius:var(--r);transition:opacity 0.25s;text-align:center;font-size:13px;color:#fff;line-height:1.65;font-weight:300}
+.sstat:hover .sstat-detail{opacity:1;pointer-events:auto}
+
+/* ── Pillar cards ── */
+.pillars-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pillar{border-radius:16px;padding:26px;position:relative;overflow:hidden;cursor:default;transition:transform 0.35s var(--ease),border-color 0.35s,box-shadow 0.35s}
+.pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)}
+.pillar:hover{transform:translateY(-4px)}
+.pillar.p-fire:hover{border-color:rgba(240,78,53,0.5);box-shadow:0 14px 40px rgba(0,0,0,0.3),0 0 36px rgba(240,78,53,0.2)}
+.pillar.p-ocean:hover{border-color:rgba(0,181,176,0.5);box-shadow:0 14px 40px rgba(0,0,0,0.3),0 0 36px rgba(0,181,176,0.2)}
+.pillar.p-amber:hover{border-color:rgba(245,166,35,0.5);box-shadow:0 14px 40px rgba(0,0,0,0.3),0 0 36px rgba(245,166,35,0.2)}
+.pillar-row{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.pillar-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.p-fire .pillar-icon{background:rgba(240,78,53,0.22)}
+.p-ocean .pillar-icon{background:rgba(0,181,176,0.22)}
+.p-amber .pillar-icon{background:rgba(245,166,35,0.22)}
+.pillar-big{font-family:var(--display);font-size:clamp(28px,3.2vw,42px);font-weight:900;line-height:1}
+.pillar-title{font-family:var(--display);font-size:14px;font-weight:700;color:#fff;margin-top:2px}
+.pillar-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
+.pillar-hover{opacity:0;max-height:0;overflow:hidden;transition:opacity 0.3s,max-height 0.4s var(--ease);font-size:13px;color:#e0e0ed;font-weight:300;line-height:1.55;margin-top:0}
+.pillar:hover .pillar-hover{opacity:1;max-height:100px;margin-top:12px}
+
+/* ── Metric cards — 4-col grid ── */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mcard{border-radius:var(--r);padding:22px;position:relative;overflow:hidden;transition:transform 0.3s var(--ease),box-shadow 0.3s}
+.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)}
+.mcard:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.24)}
+.mcard-eye{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:10px;font-weight:600}
+.mcard-num{font-family:var(--display);font-size:40px;font-weight:900;line-height:1;margin-bottom:6px}
+.mcard-label{font-size:12px;color:#e0e0ed;font-weight:300;line-height:1.4}
+.mcard-sub{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.14);font-size:11px;color:rgba(255,255,255,0.65);line-height:1.4}
+
+/* ── Tier cards ── */
+.tiers-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tier-card{border-radius:16px;padding:24px 22px;position:relative;overflow:hidden;cursor:pointer;transition:transform 0.3s var(--ease),border-color 0.3s,box-shadow 0.3s}
+.tier-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)}
+.tier-card:hover,.tier-card.open{transform:translateY(-3px)}
+.tier-card.tc-title:hover,.tier-card.tc-title.open{border-color:rgba(240,78,53,0.5);box-shadow:0 10px 36px rgba(0,0,0,0.3),0 0 24px rgba(240,78,53,0.2)}
+.tier-card.tc-pres:hover,.tier-card.tc-pres.open{border-color:rgba(0,181,176,0.5);box-shadow:0 10px 36px rgba(0,0,0,0.3),0 0 24px rgba(0,181,176,0.2)}
+.tier-card.tc-assoc:hover,.tier-card.tc-assoc.open{border-color:rgba(245,166,35,0.5);box-shadow:0 10px 36px rgba(0,0,0,0.3),0 0 24px rgba(245,166,35,0.2)}
+.tier-badge{display:inline-block;font-size:8px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:3px 9px;border-radius:100px;margin-bottom:12px}
+.tb-title{background:rgba(240,78,53,0.18);color:var(--coral);border:1px solid rgba(240,78,53,0.35)}
+.tb-pres{background:rgba(0,181,176,0.18);color:var(--teal);border:1px solid rgba(0,181,176,0.35)}
+.tb-assoc{background:rgba(245,166,35,0.14);color:var(--amber);border:1px solid rgba(245,166,35,0.3)}
+.tier-row{display:flex;align-items:baseline;gap:16px;margin-bottom:10px}
+.tier-name{font-family:var(--display);font-size:18px;font-weight:800;color:#fff}
+.tier-reach{font-family:var(--display);font-size:clamp(32px,3.5vw,46px);font-weight:900;line-height:1}
+.tier-reach-label{font-size:10px;color:rgba(255,255,255,0.7);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px}
+.tier-slots-row{display:flex;gap:16px;margin-bottom:12px}
+.tier-slots{font-family:var(--display);font-size:24px;font-weight:800;line-height:1;margin-bottom:2px;color:#fff}
+.tier-slots-label{font-size:9px;color:rgba(255,255,255,0.7);letter-spacing:0.1em;text-transform:uppercase}
+.tier-ideal{font-size:12px;color:#e0e0ed;font-weight:300;line-height:1.5;padding-top:12px;border-top:1px solid rgba(255,255,255,0.14)}
+.tier-expand{max-height:0;overflow:hidden;transition:max-height 0.5s var(--ease);margin-top:0}
+.tier-card.open .tier-expand{max-height:400px;margin-top:14px}
+.tier-benefits-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.tier-benefits-list li{font-size:12px;color:#fff;font-weight:300;padding:7px 10px;background:rgba(255,255,255,0.06);border-radius:7px;border:1px solid rgba(255,255,255,0.1);display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+.tier-benefits-list li span{color:var(--green);font-size:9px;flex-shrink:0;margin-top:1px;font-weight:700}
+.tier-toggle-hint{font-size:10px;color:rgba(255,255,255,0.5);text-align:center;margin-top:12px;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s}
+.tier-card:hover .tier-toggle-hint{color:rgba(255,255,255,0.8)}
+.tier-card.open .tier-toggle-hint{opacity:0;height:0;overflow:hidden}
+
+/* ── Deliverable cards — 3-col ── */
+.del-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.del-card{border-radius:16px;padding:32px 24px;min-height:160px;position:relative;overflow:hidden;cursor:default;transition:transform 0.3s var(--ease),border-color 0.3s,box-shadow 0.3s;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.del-card:hover{transform:translateY(-5px);border-color:rgba(255,255,255,0.32);box-shadow:0 14px 40px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.24)}
+.del-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)}
+.del-icon{font-size:32px;margin-bottom:12px;display:block}
+.del-title{font-family:var(--display);font-size:13px;font-weight:700;line-height:1.3;color:#fff}
+.del-hover{opacity:0;pointer-events:none;position:absolute;inset:0;background:rgba(10,14,30,0.84);backdrop-filter:blur(16px);display:flex;flex-direction:column;padding:18px 20px;border-radius:14px;transition:opacity 0.25s;text-align:left;justify-content:center}
+.del-card:hover .del-hover{opacity:1;pointer-events:auto}
+.del-hover-head{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.del-hover-icon{font-size:16px;line-height:1}
+.del-hover-cat{font-family:var(--display);font-size:13px;font-weight:800;color:#fff}
+.del-hover-div{height:1px;background:rgba(255,255,255,0.15);margin-bottom:10px}
+.del-hover-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.del-hover-list li{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:#e8e8f0;line-height:1.5}
+.del-hover-list li span{color:var(--green);font-size:10px;flex-shrink:0;font-weight:700;margin-top:1px}
+
+/* ── Tour map ── */
+.tstat-row{display:flex;justify-content:center;gap:56px;margin-bottom:36px}
+.tstat{text-align:center}
+.tstat-num{font-family:var(--display);font-size:clamp(48px,5.5vw,72px);font-weight:900;line-height:1;margin-bottom:6px}
+.tstat-label{font-size:11px;color:#e0e0ed;letter-spacing:0.14em;text-transform:uppercase;font-weight:500}
+.tour-map{border-radius:16px;padding:24px;position:relative;overflow:hidden}
+.tour-map::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)}
+.map-svg{width:100%;height:auto;max-height:240px}
+.pin-dot{fill:var(--coral);animation:pulseDot 2.5s ease-in-out infinite}
+.pin-dot.special{fill:var(--teal);filter:drop-shadow(0 0 8px rgba(0,181,176,0.8))}
+.route-line{stroke:rgba(240,78,53,0.35);stroke-width:1.5;stroke-dasharray:4 3;animation:dashMove 2s linear infinite}
+.map-legend{display:flex;gap:18px;margin-top:16px;justify-content:center;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,0.5)}
+.legend-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* Progress dots */
+#progress-dots{position:absolute;left:28px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;pointer-events:auto}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.28);transition:background 0.3s,transform 0.3s,box-shadow 0.3s;cursor:pointer}
+.dot:hover{background:rgba(255,255,255,0.55);transform:scale(1.2)}
+.dot.active{background:#e8196b;transform:scale(1.5);box-shadow:0 0 8px rgba(232,25,107,0.65)}
+
+/* Scroll hint */
+#scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;color:rgba(255,255,255,0.45);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;font-family:var(--display);opacity:0;transition:opacity 0.6s ease;pointer-events:none}
+.scroll-hint-arrow{width:1px;height:28px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent);animation:arrowDrop 1.8s ease-in-out infinite}
+@keyframes arrowDrop{0%,100%{transform:translateY(-4px);opacity:0.35}50%{transform:translateY(4px);opacity:1}}
+
+/* Keyframes */
+@keyframes pulseDot{0%,100%{opacity:0.6;r:3}50%{opacity:1;r:5}}
+@keyframes dashMove{to{stroke-dashoffset:-28}}
+
+/* Hero scroller */
+#hero-scroller{position:relative;z-index:2}
+
+/* Plain fade-up — for text elements (tstat, nso headings, etc.) */
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(22px) scale(0.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+/* Glass fade-up — for glassmorphic cards only */
+@keyframes cardInGlass{
+  from{
+    opacity:0;
+    transform:translateY(22px) scale(0.97);
+    background:rgba(255,255,255,0);
+    backdrop-filter:blur(0px) saturate(100%);
+    -webkit-backdrop-filter:blur(0px) saturate(100%);
+    box-shadow:none;
+    border-color:rgba(255,255,255,0);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    background:rgba(255,255,255,0.10);
+    backdrop-filter:blur(18px) saturate(130%);
+    -webkit-backdrop-filter:blur(18px) saturate(130%);
+    box-shadow:0 4px 24px rgba(0,0,0,0.22),inset 0 1px 0 rgba(255,255,255,0.18);
+    border-color:rgba(255,255,255,0.18);
+  }
+}
+@keyframes panelHdrIn{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+#content-panel.visible #panel-header{animation:panelHdrIn 0.45s 0.05s var(--ease) both}
+
+.cp-section.active .sstat:nth-child(1){animation:cardInGlass 0.8s 0.03s var(--ease) both}
+.cp-section.active .sstat:nth-child(2){animation:cardInGlass 0.8s 0.11s var(--ease) both}
+.cp-section.active .sstat:nth-child(3){animation:cardInGlass 0.8s 0.19s var(--ease) both}
+
+.cp-section.active .pillar:nth-child(1){animation:cardInGlass 0.8s 0.03s var(--ease) both}
+.cp-section.active .pillar:nth-child(2){animation:cardInGlass 0.8s 0.11s var(--ease) both}
+.cp-section.active .pillar:nth-child(3){animation:cardInGlass 0.8s 0.19s var(--ease) both}
+
+.cp-section.active .mcard:nth-child(1){animation:cardInGlass 0.75s 0.02s var(--ease) both}
+.cp-section.active .mcard:nth-child(2){animation:cardInGlass 0.75s 0.08s var(--ease) both}
+.cp-section.active .mcard:nth-child(3){animation:cardInGlass 0.75s 0.14s var(--ease) both}
+.cp-section.active .mcard:nth-child(4){animation:cardInGlass 0.75s 0.20s var(--ease) both}
+.cp-section.active .mcard:nth-child(5){animation:cardInGlass 0.75s 0.26s var(--ease) both}
+.cp-section.active .mcard:nth-child(6){animation:cardInGlass 0.75s 0.32s var(--ease) both}
+.cp-section.active .mcard:nth-child(7){animation:cardInGlass 0.75s 0.38s var(--ease) both}
+.cp-section.active .mcard:nth-child(8){animation:cardInGlass 0.75s 0.44s var(--ease) both}
+
+.cp-section.active .tier-card:nth-child(1){animation:cardInGlass 0.8s 0.03s var(--ease) both}
+.cp-section.active .tier-card:nth-child(2){animation:cardInGlass 0.8s 0.11s var(--ease) both}
+.cp-section.active .tier-card:nth-child(3){animation:cardInGlass 0.8s 0.19s var(--ease) both}
+
+.cp-section.active .del-card:nth-child(1){animation:cardInGlass 0.75s 0.02s var(--ease) both}
+.cp-section.active .del-card:nth-child(2){animation:cardInGlass 0.75s 0.08s var(--ease) both}
+.cp-section.active .del-card:nth-child(3){animation:cardInGlass 0.75s 0.14s var(--ease) both}
+.cp-section.active .del-card:nth-child(4){animation:cardInGlass 0.75s 0.20s var(--ease) both}
+.cp-section.active .del-card:nth-child(5){animation:cardInGlass 0.75s 0.26s var(--ease) both}
+.cp-section.active .del-card:nth-child(6){animation:cardInGlass 0.75s 0.32s var(--ease) both}
+
+.cp-section.active .tstat:nth-child(1){animation:cardIn 0.8s 0.03s var(--ease) both}
+.cp-section.active .tstat:nth-child(2){animation:cardIn 0.8s 0.11s var(--ease) both}
+.cp-section.active .tstat:nth-child(3){animation:cardIn 0.8s 0.19s var(--ease) both}
+.cp-section.active .tour-map{animation:cardInGlass 0.8s 0.25s var(--ease) both}
+
+/* ═══════════════════════════════════
+   NEXT STEP — Full-screen CTA overlay
+═══════════════════════════════════ */
+#next-step-overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:#010608;
+  opacity:0;transition:opacity 0.55s var(--ease);
+  pointer-events:none;
+  overflow:hidden;
+  text-align:center;
+  z-index:5;
+}
+#next-step-overlay.visible{opacity:1;pointer-events:auto}
+
+/* ── Beach background layers (scoped inside NSO) ── */
+#next-step-overlay .beach-bg{
+  position:absolute;inset:0;
+  mask-image:
+    radial-gradient(ellipse 85% 60% at 25% 28%, transparent 0%, transparent 40%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.6) 70%, black 85%),
+    linear-gradient(130deg, transparent 12%, rgba(0,0,0,0.25) 28%, rgba(0,0,0,0.65) 46%, black 62%);
+  -webkit-mask-image:
+    radial-gradient(ellipse 85% 60% at 25% 28%, transparent 0%, transparent 40%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.6) 70%, black 85%),
+    linear-gradient(130deg, transparent 12%, rgba(0,0,0,0.25) 28%, rgba(0,0,0,0.65) 46%, black 62%);
+  mask-composite:add;
+  -webkit-mask-composite:source-over;
+  background:
+    radial-gradient(ellipse 70% 25% at 50% 72%, rgba(0,180,160,0.18) 0%, transparent 60%),
+    linear-gradient(180deg,
+      #010608 0%,#030c18 6%,#061428 12%,#091e3c 18%,#0c2850 24%,
+      #103468 30%,#134278 36%,#104e7a 42%,#0c5872 46%,#0a6268 50%,
+      #086858 54%,#0a7060 58%,#0e8070 63%,#149080 68%,#1ea090 73%,
+      #30b0a0 78%,#58c0b0 83%,#88cfc0 86%,#b8ddd0 89%,#d0d4b8 91%,
+      #d4c498 93%,#ccb078 95%,#c09858 97%,#b48040 100%
+    );
+}
+
+#next-step-overlay .beach-waves{position:absolute;bottom:16%;left:0;right:0;pointer-events:none}
+#next-step-overlay .beach-waves svg{width:100%;display:block}
+#next-step-overlay .beach-shore{
+  position:absolute;bottom:14%;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 5%,rgba(220,240,240,0.5) 20%,rgba(240,248,248,0.7) 50%,rgba(220,240,240,0.5) 80%,transparent 95%);
+  filter:blur(1px);
+}
+#next-step-overlay .beach-sand-layer{
+  position:absolute;bottom:0;left:0;right:0;height:16%;
+  background:linear-gradient(to top,rgba(160,110,45,0.55) 0%,rgba(180,130,60,0.25) 50%,transparent 100%);
+  pointer-events:none;
+}
+#next-step-overlay .beach-vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 100% 100% at 50% 50%,transparent 40%,rgba(0,0,0,0.55) 100%);
+  pointer-events:none;
+}
+#next-step-overlay .beach-stars{position:absolute;inset:0;pointer-events:none}
+#next-step-overlay .beach-stars .star{position:absolute;border-radius:50%;background:#fff}
+@keyframes beachWaveIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:0.3}50%{opacity:1}}
+
+#nso-inner{position:relative;z-index:2;max-width:680px;padding:0 48px}
+.nso-eyebrow{display:block;font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;margin-bottom:28px}
+.nso-heading{font-family:var(--display);font-size:clamp(44px,6.5vw,88px);font-weight:900;letter-spacing:-0.04em;line-height:0.98;color:#fff;margin-bottom:24px}
+.nso-sub{font-size:16px;color:rgba(255,255,255,0.68);font-weight:300;line-height:1.75;max-width:420px;margin:0 auto 44px}
+.nso-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:32px}
+.nso-btn-main{padding:18px 46px;font-size:15px;font-family:var(--display);font-weight:800;letter-spacing:0.01em;border-radius:100px;background:linear-gradient(135deg,#f04e35,#e8196b 60%,#f5a623);color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:10px;transition:transform 0.25s,box-shadow 0.25s;box-shadow:0 12px 44px rgba(240,78,53,0.4)}
+.nso-btn-main:hover{transform:translateY(-3px);box-shadow:0 20px 56px rgba(240,78,53,0.55)}
+.nso-btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:17px 30px;background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);border-radius:100px;color:rgba(255,255,255,0.82);font-family:var(--body);font-size:14px;text-decoration:none;transition:background 0.25s,border-color 0.25s}
+.nso-btn-ghost:hover{background:rgba(255,255,255,0.16);border-color:rgba(255,255,255,0.4)}
+.nso-note{font-size:10px;color:rgba(255,255,255,0.28);letter-spacing:0.12em;text-transform:uppercase}
+/* Staggered entrance for NSO elements */
+#next-step-overlay.visible .nso-eyebrow{animation:cardIn 0.6s 0.08s var(--ease) both}
+#next-step-overlay.visible .nso-heading{animation:cardIn 0.65s 0.16s var(--ease) both}
+#next-step-overlay.visible .nso-sub{animation:cardIn 0.6s 0.26s var(--ease) both}
+#next-step-overlay.visible .nso-actions{animation:cardIn 0.6s 0.36s var(--ease) both}
+#next-step-overlay.visible .nso-note{animation:cardIn 0.6s 0.46s var(--ease) both}
+
+/* Responsive */
+@media(max-width:1200px){
+  #content-panel{width:68%;padding:32px 36px 32px 40px}
+  #slide-overlay{width:68%;padding:0 36px 0 40px}
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  #content-panel{width:80%;padding:28px 24px}
+  #slide-overlay{width:80%;padding:0 24px}
+  .sstat-grid{grid-template-columns:1fr}
+  .pillars-col{grid-template-columns:1fr}
+  .tiers-col{grid-template-columns:1fr}
+  .del-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  #content-panel{width:100%;top:auto;bottom:0;height:60%;padding:20px 18px}
+  #slide-overlay{display:none}
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+  .del-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<canvas id="video-canvas"></canvas>
+<div id="canvas-scrim"></div>
+
+<div id="hero-overlays">
+
+  <!-- Loader -->
+  <div id="loader">
+    <div id="loader-bar-track"><div id="loader-bar"></div></div>
+    <div id="loader-label">Loading</div>
+  </div>
+
+  <!-- IGPL mark -->
+  <div id="igpl-mark">
+    <div class="igpl-badge">IGPL</div>
+    <div class="igpl-brand-text">
+      <span class="igpl-brand-name">Indian Golf Premier League</span>
+      <span class="igpl-brand-sub">Mauritius Invitational 2026</span>
+    </div>
+  </div>
+
+  <!-- Minimal slide overlay (intro + CTA only) -->
+  <div id="slide-overlay">
+    <div id="slide-accent"></div>
+    <div id="slide-content">
+      <span id="slide-eyebrow"></span>
+      <h2 id="slide-title"></h2>
+      <p id="slide-body"></p>
+      <div id="slide-cta">
+        <a href="#" class="slide-btn-p">Schedule Your Call →</a>
+        <a href="mailto:partnerships@igpl.in" class="slide-btn-g">partnerships@igpl.in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-screen Next Step overlay (checkpoint 7) -->
+  <div id="next-step-overlay">
+    <!-- Beach background layers -->
+    <div class="beach-bg"></div>
+    <div class="beach-waves">
+      <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,50 C120,34 240,66 360,50 C480,34 600,66 720,50 C840,34 960,66 1080,50 C1200,34 1320,66 1440,50 L1440,90 L0,90 Z" fill="rgba(12,90,90,0.25)"/>
+        <path d="M0,60 C180,40 300,72 480,58 C600,48 720,72 900,58 C1020,48 1200,70 1440,60 L1440,90 L0,90 Z" fill="rgba(18,110,100,0.2)"/>
+        <path d="M0,72 C80,64 180,78 300,70 C400,63 520,77 640,70 C760,63 880,77 1000,70 C1100,64 1260,75 1440,70" stroke="rgba(200,235,235,0.45)" stroke-width="1.5" fill="none"/>
+        <path d="M0,78 C100,70 200,84 360,76 C480,70 600,82 760,76 C880,70 1060,80 1200,75 C1280,71 1360,78 1440,75" stroke="rgba(210,240,238,0.3)" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+    <div class="beach-shore"></div>
+    <div class="beach-sand-layer"></div>
+    <div class="beach-vignette"></div>
+    <div class="beach-stars" id="nsoBeachStars"></div>
+    <div id="nso-inner">
+      <span class="nso-eyebrow grad-fire">The Next Step</span>
+      <h2 class="nso-heading">Let's Build Something<br><span class="grad-fire">Extraordinary.</span></h2>
+      <p class="nso-sub">20 minutes. No obligation. Just a conversation about what's possible.</p>
+      <div class="nso-actions">
+        <a href="#" class="nso-btn-main">Schedule Your Call →</a>
+        <a href="mailto:partnerships@igpl.in" class="nso-btn-ghost">partnerships@igpl.in</a>
+      </div>
+      <p class="nso-note">Prepared exclusively for you · IGPL Mauritius 2026 · Confidential</p>
+    </div>
+  </div>
+
+  <!-- Rich content panel (right side) -->
+  <div id="content-panel">
+    <div id="panel-header">
+      <span id="panel-eyebrow"></span>
+      <h2 id="panel-title"></h2>
+      <p id="panel-sub"></p>
+      <div class="panel-divider"></div>
+    </div>
+
+    <!-- MARKET (checkpoint 1) -->
+    <div class="cp-section" id="panel-market">
+      <div class="sstat-grid">
+        <div class="sstat">
+          <div class="sstat-num grad-fire">19.8M</div>
+          <div class="sstat-label">Affluent Indian audience built across IGPL platforms</div>
+          <div class="sstat-detail">India's golfing demographic — high-net-worth individuals, C-suite professionals, and luxury travellers who research and book premium experiences.</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-num grad-ocean">32%</div>
+          <div class="sstat-label">Growth in Indian luxury travel to Mauritius, 2024–25</div>
+          <div class="sstat-detail">The market is accelerating. Indian outbound luxury tourism to Mauritius grew 32% YoY — making 2026 the perfect moment to establish category leadership.</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-num" style="color:var(--amber)">74%</div>
+          <div class="sstat-label">Of affluent Indians research destinations on social first</div>
+          <div class="sstat-detail">Trust, social proof, and authentic storytelling drive HNI booking decisions — not banner ads. Sports-led content is the deepest engagement format available.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHY IGPL (checkpoint 2) -->
+    <div class="cp-section" id="panel-why">
+      <div class="pillars-col">
+        <div class="pillar p-fire">
+          <div class="pillar-row">
+            <div class="pillar-icon">🎯</div>
+            <div><div class="pillar-big grad-fire">74M+</div><div class="pillar-title">Proven Reach</div></div>
+          </div>
+          <div class="pillar-hover">Built direct access to India's affluent golfing demographic through 10 successful events — with data to prove it.</div>
+          <div class="pillar-tags"><span class="tag">19.8M Reach</span><span class="tag">257K+ Interactions</span><span class="tag">3.8M Top Video</span></div>
+        </div>
+        <div class="pillar p-ocean">
+          <div class="pillar-row">
+            <div class="pillar-icon">🌐</div>
+            <div><div class="pillar-big grad-ocean">2026</div><div class="pillar-title">Perfect Timing</div></div>
+          </div>
+          <div class="pillar-hover">Mauritius is IGPL's strategic first step into Africa. Early partners become category leaders in a story the world is about to watch.</div>
+          <div class="pillar-tags"><span class="tag">15 Cities</span><span class="tag">5 Countries</span><span class="tag">First Africa Event</span></div>
+        </div>
+        <div class="pillar p-amber">
+          <div class="pillar-row">
+            <div class="pillar-icon">🤝</div>
+            <div><div class="pillar-big" style="color:var(--amber)">Active</div><div class="pillar-title">Authentic Engagement</div></div>
+          </div>
+          <div class="pillar-hover">Not passive logo placement — active content creation, VIP experiences, and brand storytelling woven into every match day.</div>
+          <div class="pillar-tags"><span class="tag">Co-Ed Format</span><span class="tag">Pro-Am Access</span><span class="tag">Content Rights</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- METRICS (checkpoint 3) -->
+    <div class="cp-section" id="panel-metrics">
+      <div class="metrics-grid">
+        <div class="mcard">
+          <div class="mcard-eye">Video Views</div>
+          <div class="mcard-num grad-fire">74M+</div>
+          <div class="mcard-label">Total across all IGPL platforms</div>
+          <div class="mcard-sub">Entirely organic — zero paid amplification</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-eye">Total Reach</div>
+          <div class="mcard-num grad-ocean">19.8M</div>
+          <div class="mcard-label">India's affluent golf audience</div>
+          <div class="mcard-sub">India's highest-earning demographic</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-eye">Top Video</div>
+          <div class="mcard-num" style="color:var(--amber)">3.8M</div>
+          <div class="mcard-label">Single best-performing video</div>
+          <div class="mcard-sub">Single piece, no boost</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-eye">Interactions</div>
+          <div class="mcard-num grad-ocean">257K+</div>
+          <div class="mcard-label">Total engagements across content</div>
+          <div class="mcard-sub">Likes, shares, comments, saves</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-eye">Press Coverage</div>
+          <div class="mcard-num grad-fire">3,790+</div>
+          <div class="mcard-label">Placements across media</div>
+          <div class="mcard-sub">PTI · ANI · TOI · The Hindu + 26</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-eye">Media Houses</div>
+          <div class="mcard-num" style="color:var(--green)">30+</div>
+          <div class="mcard-label">Covered IGPL events</div>
+          <div class="mcard-sub">National TV + digital publications</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-eye">Events Run</div>
+          <div class="mcard-num grad-ocean">10</div>
+          <div class="mcard-label">Successful events to date</div>
+          <div class="mcard-sub">100% organic growth track record</div>
+        </div>
+        <div class="mcard">
+          <div class="mcard-eye">Static Content</div>
+          <div class="mcard-num grad-fire">264K</div>
+          <div class="mcard-label">Views on top static post</div>
+          <div class="mcard-sub">Instagram &amp; Facebook organic</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIERS (checkpoint 4) -->
+    <div class="cp-section" id="panel-tiers">
+      <div class="tiers-col">
+
+        <div class="tier-card tc-title" onclick="toggleTier(this)">
+          <span class="tier-badge tb-title">Flagship · Max Presence</span>
+          <div class="tier-name">Title Partner</div>
+          <div class="tier-reach grad-fire">5M+</div>
+          <div class="tier-reach-label">Impressions per event</div>
+          <div class="tier-slots-row">
+            <div><div class="tier-slots grad-fire">50</div><div class="tier-slots-label">Pro-Am Slots</div></div>
+            <div><div class="tier-slots" style="color:var(--amber)">4+8</div><div class="tier-slots-label">Posts + Stories</div></div>
+          </div>
+          <div class="tier-ideal">Market leaders seeking full category exclusivity.</div>
+          <div class="tier-expand">
+            <ul class="tier-benefits-list">
+              <li><span>✓</span>Primary event title rights &amp; lead branding</li>
+              <li><span>✓</span>50 Pro-Am slots for client entertainment</li>
+              <li><span>✓</span>4 feed posts + 8 stories/shorts per event</li>
+              <li><span>✓</span>Lead presence in all branded reels &amp; influencer content</li>
+              <li><span>✓</span>Maximum VIP hospitality &amp; MP passes</li>
+              <li><span>✓</span>Priority press/media &amp; exclusive merch rights</li>
+              <li><span>✓</span>Fan zone challenges, prize distributions &amp; MVP awards</li>
+            </ul>
+          </div>
+          <div class="tier-toggle-hint">Click to expand ↓</div>
+        </div>
+
+        <div class="tier-card tc-pres" onclick="toggleTier(this)">
+          <span class="tier-badge tb-pres">Strong Integration</span>
+          <div class="tier-name">Presenting Partner</div>
+          <div class="tier-reach grad-ocean">2M+</div>
+          <div class="tier-reach-label">Impressions per event</div>
+          <div class="tier-slots-row">
+            <div><div class="tier-slots grad-ocean">30</div><div class="tier-slots-label">Pro-Am Slots</div></div>
+            <div><div class="tier-slots" style="color:var(--sky)">3+4</div><div class="tier-slots-label">Posts + Stories</div></div>
+          </div>
+          <div class="tier-ideal">Strong visibility without full category exclusivity.</div>
+          <div class="tier-expand">
+            <ul class="tier-benefits-list">
+              <li><span>✓</span>Select event branding across key venue touchpoints</li>
+              <li><span>✓</span>30 Pro-Am slots for client &amp; stakeholder entertainment</li>
+              <li><span>✓</span>3 feed posts + 4 stories/shorts per event</li>
+              <li><span>✓</span>Included in branded reels and video bytes</li>
+              <li><span>✓</span>Moderate in-event hospitality &amp; VIP passes</li>
+              <li><span>✓</span>Limited influencer collaborations</li>
+              <li><span>✓</span>Mentioned in Pro-Am giveaways and media/press</li>
+            </ul>
+          </div>
+          <div class="tier-toggle-hint">Click to expand ↓</div>
+        </div>
+
+        <div class="tier-card tc-assoc" onclick="toggleTier(this)">
+          <span class="tier-badge tb-assoc">Strategic Entry</span>
+          <div class="tier-name">Associate Partner</div>
+          <div class="tier-reach" style="color:var(--amber)">800K+</div>
+          <div class="tier-reach-label">Impressions per event</div>
+          <div class="tier-slots-row">
+            <div><div class="tier-slots" style="color:var(--amber)">12</div><div class="tier-slots-label">Pro-Am Slots</div></div>
+            <div><div class="tier-slots" style="color:var(--amber)">1–2</div><div class="tier-slots-label">Feed Posts</div></div>
+          </div>
+          <div class="tier-ideal">Ideal entry point to assess fit before deeper commitment.</div>
+          <div class="tier-expand">
+            <ul class="tier-benefits-list">
+              <li><span>✓</span>Selective event branding rights</li>
+              <li><span>✓</span>12 Pro-Am slots for key client relationships</li>
+              <li><span>✓</span>1–2 feed posts + 2 stories per event</li>
+              <li><span>✓</span>Standard social media &amp; merchandise branding</li>
+              <li><span>✓</span>Limited hospitality passes</li>
+              <li><span>✓</span>General challenges &amp; prize distribution</li>
+              <li><span>✓</span>Optional presence in reels and video content</li>
+            </ul>
+          </div>
+          <div class="tier-toggle-hint">Click to expand ↓</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DELIVERABLES (checkpoint 5) -->
+    <div class="cp-section" id="panel-deliverables">
+      <div class="del-grid">
+
+        <div class="del-card">
+          <span class="del-icon">🏟️</span>
+          <div class="del-title">Event Branding &amp; Visibility</div>
+          <div class="del-hover">
+            <div class="del-hover-head"><span class="del-hover-icon">🏟️</span><div class="del-hover-cat">Event Branding</div></div>
+            <div class="del-hover-div"></div>
+            <ul class="del-hover-list">
+              <li><span>✓</span>Naming rights &amp; lead branding</li>
+              <li><span>✓</span>Venue signage, leaderboard &amp; flag pins</li>
+              <li><span>✓</span>Scoreboard &amp; broadcast overlay</li>
+              <li><span>✓</span>Merchandise &amp; product integration</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="del-card">
+          <span class="del-icon">📱</span>
+          <div class="del-title">Social Media &amp; Content</div>
+          <div class="del-hover">
+            <div class="del-hover-head"><span class="del-hover-icon">📱</span><div class="del-hover-cat">Content Creation</div></div>
+            <div class="del-hover-div"></div>
+            <ul class="del-hover-list">
+              <li><span>✓</span>Up to 4 feed posts per event</li>
+              <li><span>✓</span>Up to 8 stories &amp; shorts</li>
+              <li><span>✓</span>Branded reels &amp; behind-the-scenes</li>
+              <li><span>✓</span>Influencer collaborations</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="del-card">
+          <span class="del-icon">🏌️</span>
+          <div class="del-title">VIP &amp; Pro-Am Access</div>
+          <div class="del-hover">
+            <div class="del-hover-head"><span class="del-hover-icon">🏌️</span><div class="del-hover-cat">Hospitality</div></div>
+            <div class="del-hover-div"></div>
+            <ul class="del-hover-list">
+              <li><span>✓</span>12–50 Pro-Am slots by tier</li>
+              <li><span>✓</span>VIP tent with premium F&amp;B</li>
+              <li><span>✓</span>Tournament passes &amp; MP access</li>
+              <li><span>✓</span>Private player meet &amp; greet</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="del-card">
+          <span class="del-icon">🤝</span>
+          <div class="del-title">Client Entertainment</div>
+          <div class="del-hover">
+            <div class="del-hover-head"><span class="del-hover-icon">🤝</span><div class="del-hover-cat">Networking</div></div>
+            <div class="del-hover-div"></div>
+            <ul class="del-hover-list">
+              <li><span>✓</span>Hosted client evenings &amp; Tour Village</li>
+              <li><span>✓</span>Access to IGPL's HNI guest network</li>
+              <li><span>✓</span>Award ceremonies &amp; prize events</li>
+              <li><span>✓</span>Branded fan zone activations</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="del-card">
+          <span class="del-icon">🎬</span>
+          <div class="del-title">Content Library &amp; Rights</div>
+          <div class="del-hover">
+            <div class="del-hover-head"><span class="del-hover-icon">🎬</span><div class="del-hover-cat">Content Rights</div></div>
+            <div class="del-hover-div"></div>
+            <ul class="del-hover-list">
+              <li><span>✓</span>Full event photo library rights</li>
+              <li><span>✓</span>Video footage &amp; b-roll usage</li>
+              <li><span>✓</span>Branded social media templates</li>
+              <li><span>✓</span>Press &amp; media placement reports</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="del-card">
+          <span class="del-icon">📊</span>
+          <div class="del-title">Reporting &amp; Analytics</div>
+          <div class="del-hover">
+            <div class="del-hover-head"><span class="del-hover-icon">📊</span><div class="del-hover-cat">Analytics</div></div>
+            <div class="del-hover-div"></div>
+            <ul class="del-hover-list">
+              <li><span>✓</span>Post-event performance summary</li>
+              <li><span>✓</span>Reach, impressions &amp; engagement data</li>
+              <li><span>✓</span>Press clipping &amp; media value report</li>
+              <li><span>✓</span>ROI benchmarking against industry norms</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TOUR (checkpoint 6) -->
+    <div class="cp-section" id="panel-tour">
+      <div class="tstat-row">
+        <div class="tstat"><div class="tstat-num grad-fire">15</div><div class="tstat-label">Cities</div></div>
+        <div class="tstat"><div class="tstat-num grad-ocean">5</div><div class="tstat-label">Countries</div></div>
+        <div class="tstat"><div class="tstat-num" style="color:var(--amber)">2</div><div class="tstat-label">Continents</div></div>
+      </div>
+      <div class="tour-map">
+        <svg class="map-svg" viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <ellipse cx="560" cy="180" rx="50" ry="65" stroke="rgba(255,255,255,0.05)" stroke-width="1" fill="rgba(255,255,255,0.015)"/>
+          <ellipse cx="380" cy="220" rx="60" ry="80" stroke="rgba(255,255,255,0.05)" stroke-width="1" fill="rgba(255,255,255,0.015)"/>
+          <ellipse cx="480" cy="255" rx="90" ry="45" stroke="rgba(0,181,176,0.05)" stroke-width="1" fill="rgba(0,181,176,0.015)"/>
+          <path d="M545 205 C520 230 492 248 460 260" class="route-line"/>
+          <circle cx="545" cy="175" r="5" class="pin-dot"/>
+          <circle cx="558" cy="198" r="4" class="pin-dot" style="animation-delay:0.3s"/>
+          <circle cx="537" cy="192" r="4" class="pin-dot" style="animation-delay:0.6s"/>
+          <circle cx="552" cy="165" r="3" class="pin-dot" style="animation-delay:0.9s"/>
+          <circle cx="570" cy="186" r="3" class="pin-dot" style="animation-delay:1.2s"/>
+          <circle cx="460" cy="263" r="8" class="pin-dot special"/>
+          <circle cx="460" cy="263" r="16" stroke="rgba(0,181,176,0.3)" stroke-width="1" fill="none" style="animation:pulseDot 2s ease-in-out infinite"/>
+          <circle cx="460" cy="263" r="26" stroke="rgba(0,181,176,0.12)" stroke-width="1" fill="none" style="animation:pulseDot 2s 0.5s ease-in-out infinite"/>
+          <text x="562" y="155" fill="rgba(255,255,255,0.75)" font-size="11" font-family="DM Sans,sans-serif">India (10 cities)</text>
+          <text x="430" y="290" fill="rgba(0,181,176,0.9)" font-size="12" font-family="DM Sans,sans-serif" font-weight="600">Mauritius ★</text>
+          <path d="M350,295 C380,285 410,305 440,295 C470,285 500,305 530,295" stroke="rgba(0,181,176,0.15)" stroke-width="1" fill="none"/>
+          <path d="M360,308 C390,298 420,318 450,308 C480,298 510,318 540,308" stroke="rgba(56,182,255,0.08)" stroke-width="1" fill="none"/>
+        </svg>
+        <div class="map-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--coral)"></div>India Tour Stops</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Mauritius — First Africa Event</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content-panel -->
+
+  <!-- Progress dots -->
+  <div id="progress-dots"></div>
+
+  <!-- Scroll hint -->
+  <div id="scroll-hint">
+    <span>Scroll to begin</span>
+    <div class="scroll-hint-arrow"></div>
+  </div>
+
+</div><!-- /hero-overlays -->
+
+<div id="hero-scroller"></div>
+
+<script>document.write('<scr'+'ipt src="igpl-config.js?t='+Date.now()+'"></scr'+'ipt>');</script>
+<script>
+// ─── State (declared first) ────────────────────────────────────────────────
+let virtualProgress = 0;
+let targetProgress  = 0;
+let isSnapping      = false;
+const TOTAL_FRAMES  = 192;
+const frames        = new Array(TOTAL_FRAMES).fill(null);
+
+// ─── Config ───────────────────────────────────────────────────────────────
+const checkpoints = IGPL_CONFIG.checkpoints.map(cp => ({
+  ...cp,
+  progress: cp.time / IGPL_CONFIG.videoDuration,
+}));
+
+// Which checkpoint index shows which panel (others show slide-overlay)
+const PANEL_MAP = { 1:'market', 2:'why', 3:'metrics', 4:'tiers', 5:'deliverables', 6:'tour' };
+
+// ─── Canvas ───────────────────────────────────────────────────────────────
+const canvas = document.getElementById('video-canvas');
+const ctx    = canvas.getContext('2d');
+function resizeCanvas() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  drawCurrentFrame();
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// ─── Hero scroller ────────────────────────────────────────────────────────
+const heroScroller = document.getElementById('hero-scroller');
+heroScroller.style.height = IGPL_CONFIG.scrollHeightVh + 'vh';
+
+// ─── Frame loading ────────────────────────────────────────────────────────
+const loaderBar = document.getElementById('loader-bar');
+const loader    = document.getElementById('loader');
+
+function loadFrames() {
+  return new Promise(resolve => {
+    let completed = 0;
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      const num = String(i + 1).padStart(3, '0');
+      fetch(`frames/frame_${num}.jpg`)
+        .then(r => r.blob())
+        .then(blob => createImageBitmap(blob))
+        .then(bitmap => {
+          frames[i] = bitmap;
+          completed++;
+          loaderBar.style.width = (completed / TOTAL_FRAMES * 100) + '%';
+          if (completed === TOTAL_FRAMES) resolve();
+        });
+    }
+  });
+}
+
+function drawFrame(index) {
+  const i = Math.round(Math.max(0, Math.min(TOTAL_FRAMES - 1, index)));
+  const frame = frames[i];
+  if (!frame) return;
+  const scale = Math.max(canvas.width / frame.width, canvas.height / frame.height);
+  const w = frame.width * scale, h = frame.height * scale;
+  ctx.drawImage(frame, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+}
+
+function drawCurrentFrame() { drawFrame(virtualProgress * (TOTAL_FRAMES - 1)); }
+
+// ─── State (cont.) ────────────────────────────────────────────────────────
+let currentCPIdx = 0;
+
+// ─── DOM refs ─────────────────────────────────────────────────────────────
+const slideOverlay    = document.getElementById('slide-overlay');
+const slideEyebrow    = document.getElementById('slide-eyebrow');
+const slideTitle      = document.getElementById('slide-title');
+const slideBody       = document.getElementById('slide-body');
+const contentPanel    = document.getElementById('content-panel');
+const nextStepOverlay = document.getElementById('next-step-overlay');
+const LAST_CP         = checkpoints.length - 1;
+const panelEyebrow  = document.getElementById('panel-eyebrow');
+const panelTitle    = document.getElementById('panel-title');
+const panelSub      = document.getElementById('panel-sub');
+const dotsContainer = document.getElementById('progress-dots');
+const scrollHint    = document.getElementById('scroll-hint');
+
+// ─── Dots ─────────────────────────────────────────────────────────────────
+checkpoints.forEach((_, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.addEventListener('click', () => goToCheckpoint(i));
+  dotsContainer.appendChild(dot);
+});
+
+function updateDots(idx) {
+  dotsContainer.querySelectorAll('.dot').forEach((d, i) =>
+    d.classList.toggle('active', i === idx)
+  );
+}
+
+// ─── Slide / panel switching ───────────────────────────────────────────────
+let switchTimer;
+function updateCheckpoint(idx) {
+  clearTimeout(switchTimer);
+
+  // Hide all surfaces immediately
+  slideOverlay.style.opacity = '0';
+  slideOverlay.style.pointerEvents = 'none';
+  contentPanel.classList.remove('visible');
+  nextStepOverlay.classList.remove('visible');
+
+  switchTimer = setTimeout(() => {
+    if (idx === LAST_CP) {
+      // Full-screen Next Step CTA
+      nextStepOverlay.classList.add('visible');
+
+    } else {
+      const panelId = PANEL_MAP[idx];
+      if (panelId) {
+        // Rich right panel
+        document.querySelectorAll('.cp-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('panel-' + panelId).classList.add('active');
+        contentPanel.scrollTop = 0;
+        panelEyebrow.textContent = checkpoints[idx].eyebrow || '';
+        panelTitle.textContent   = checkpoints[idx].title;
+        panelSub.textContent     = checkpoints[idx].body || '';
+        contentPanel.classList.add('visible');
+
+      } else {
+        // Minimal slide overlay (intro)
+        slideEyebrow.textContent = checkpoints[idx].eyebrow || '';
+        slideTitle.textContent   = checkpoints[idx].title;
+        slideBody.textContent    = checkpoints[idx].body;
+        slideOverlay.style.opacity = '1';
+      }
+    }
+  }, 160);
+
+  updateDots(idx);
+}
+
+// ─── Checkpoint navigation ────────────────────────────────────────────────
+function goToCheckpoint(idx) {
+  if (idx < 0 || idx >= checkpoints.length) return;
+  if (isSnapping && idx !== 0) return;   // allow forced boot init
+  isSnapping = true;
+  currentCPIdx = idx;
+  // Drive video directly — no scroll derivation
+  targetProgress = checkpoints[idx].progress;
+  // Keep page scroll in sync (for layout; wheel is prevented anyway)
+  const maxScroll = heroScroller.offsetHeight - window.innerHeight;
+  window.scrollTo({ top: checkpoints[idx].progress * maxScroll, behavior: 'instant' });
+  updateCheckpoint(idx);
+  // Release lock after lerp has settled
+  setTimeout(() => { isSnapping = false; }, 900);
+}
+
+// ─── Wheel — hijack, one checkpoint per intentional gesture ───────────────
+// wheelLast is only updated when a gesture is RECOGNISED — never on
+// inertia/momentum events — so the 600ms gap is measured from the last
+// intentional scroll, not the last momentum tick.
+let wheelDir  = 0;
+let wheelLast = 0;
+
+window.addEventListener('wheel', (e) => {
+  // Let content panel scroll naturally when it has room
+  if (contentPanel.contains(e.target)) {
+    const atTop    = contentPanel.scrollTop === 0;
+    const atBottom = contentPanel.scrollTop + contentPanel.clientHeight >= contentPanel.scrollHeight - 2;
+    if (!((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom))) return;
+  }
+  e.preventDefault();
+
+  const now = Date.now();
+  const dir = e.deltaY > 0 ? 1 : -1;
+
+  // New gesture = direction reversed, OR 600ms+ since last *recognised* event
+  const isNew = dir !== wheelDir || now - wheelLast > 600;
+  if (!isNew || isSnapping) return;
+
+  // Only stamp time & direction here — inertia events never reach this line
+  wheelDir  = dir;
+  wheelLast = now;
+
+  const next = Math.min(Math.max(currentCPIdx + dir, 0), LAST_CP);
+  if (next !== currentCPIdx) goToCheckpoint(next);
+}, { passive: false });
+
+// ─── Touch support ────────────────────────────────────────────────────────
+let touchStartY = 0;
+window.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
+window.addEventListener('touchend', (e) => {
+  if (isSnapping) return;
+  const dy  = touchStartY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) < 40) return;
+  const dir  = dy > 0 ? 1 : -1;
+  const next = Math.min(Math.max(currentCPIdx + dir, 0), LAST_CP);
+  if (next !== currentCPIdx) goToCheckpoint(next);
+}, { passive: true });
+
+// ─── Keyboard support ─────────────────────────────────────────────────────
+window.addEventListener('keydown', (e) => {
+  if (isSnapping) return;
+  let dir = 0;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ')  dir =  1;
+  if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')                    dir = -1;
+  if (!dir) return;
+  e.preventDefault();
+  const next = Math.min(Math.max(currentCPIdx + dir, 0), LAST_CP);
+  if (next !== currentCPIdx) goToCheckpoint(next);
+});
+
+// ─── RAF — lerp toward target ─────────────────────────────────────────────
+function raf() {
+  const diff = targetProgress - virtualProgress;
+  if (Math.abs(diff) > 0.0003) {
+    virtualProgress += diff * 0.09;
+    drawCurrentFrame();
+  }
+  requestAnimationFrame(raf);
+}
+
+// ─── Tier toggle ──────────────────────────────────────────────────────────
+function toggleTier(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.tier-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────────────
+loadFrames().then(() => {
+  loader.style.opacity = '0';
+  setTimeout(() => { loader.style.display = 'none'; }, 600);
+  drawFrame(0);
+  updateCheckpoint(0);
+  setTimeout(() => { scrollHint.style.opacity = '1'; }, 1400);
+  window.addEventListener('wheel', () => { scrollHint.style.opacity = '0'; }, { once: true });
+  requestAnimationFrame(raf);
+});
+
+// ─── Beach stars for NSO overlay ──────────────────────────────────────────
+(function(){
+  const container = document.getElementById('nsoBeachStars');
+  if (!container) return;
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const x = Math.random() * 100;
+    const y = Math.random() * 42;
+    const size = Math.random() < 0.15 ? 2 : 1;
+    const opacity = 0.15 + Math.random() * 0.55;
+    const delay = Math.random() * 4;
+    s.style.cssText = `left:${x}%;top:${y}%;width:${size}px;height:${size}px;opacity:${opacity};animation:pulse ${2 + Math.random() * 3}s ${delay}s ease-in-out infinite`;
+    container.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
