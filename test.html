@@ -955,6 +955,7 @@ let targetProgress  = 0;
 let isSnapping      = false;
 const TOTAL_FRAMES  = 192;
 const frames        = new Array(TOTAL_FRAMES).fill(null);
+const isMobile      = window.innerWidth <= 768;
 
 // ─── Config ───────────────────────────────────────────────────────────────
 const checkpoints = IGPL_CONFIG.checkpoints.map(cp => ({
@@ -986,18 +987,39 @@ const loader    = document.getElementById('loader');
 
 function loadFrames() {
   return new Promise(resolve => {
-    let completed = 0;
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const num = String(i + 1).padStart(3, '0');
-      fetch(`frames/frame_${num}.jpg`)
-        .then(r => r.blob())
-        .then(blob => createImageBitmap(blob))
-        .then(bitmap => {
-          frames[i] = bitmap;
-          completed++;
-          loaderBar.style.width = (completed / TOTAL_FRAMES * 100) + '%';
-          if (completed === TOTAL_FRAMES) resolve();
-        });
+    if (isMobile) {
+      // Mobile: load only the key frame for each checkpoint to avoid memory crash
+      const indices = [...new Set(
+        checkpoints.map(cp => Math.round(cp.progress * (TOTAL_FRAMES - 1)))
+      )];
+      let completed = 0;
+      indices.forEach(i => {
+        const num = String(i + 1).padStart(3, '0');
+        fetch(`frames/frame_${num}.jpg`)
+          .then(r => r.blob())
+          .then(blob => createImageBitmap(blob))
+          .then(bitmap => {
+            frames[i] = bitmap;
+            completed++;
+            loaderBar.style.width = (completed / indices.length * 100) + '%';
+            if (completed === indices.length) resolve();
+          });
+      });
+    } else {
+      // Desktop: load all frames for smooth scrubbing animation
+      let completed = 0;
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        const num = String(i + 1).padStart(3, '0');
+        fetch(`frames/frame_${num}.jpg`)
+          .then(r => r.blob())
+          .then(blob => createImageBitmap(blob))
+          .then(bitmap => {
+            frames[i] = bitmap;
+            completed++;
+            loaderBar.style.width = (completed / TOTAL_FRAMES * 100) + '%';
+            if (completed === TOTAL_FRAMES) resolve();
+          });
+      }
     }
   });
 }
@@ -1158,10 +1180,18 @@ window.addEventListener('keydown', (e) => {
 
 // ─── RAF — lerp toward target ─────────────────────────────────────────────
 function raf() {
-  const diff = targetProgress - virtualProgress;
-  if (Math.abs(diff) > 0.0003) {
-    virtualProgress += diff * 0.09;
-    drawCurrentFrame();
+  if (isMobile) {
+    // No lerp on mobile — only key frames are loaded, jump directly to target
+    if (virtualProgress !== targetProgress) {
+      virtualProgress = targetProgress;
+      drawCurrentFrame();
+    }
+  } else {
+    const diff = targetProgress - virtualProgress;
+    if (Math.abs(diff) > 0.0003) {
+      virtualProgress += diff * 0.09;
+      drawCurrentFrame();
+    }
   }
   requestAnimationFrame(raf);
 }
