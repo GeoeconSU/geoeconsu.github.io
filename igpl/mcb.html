@@ -350,6 +350,24 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:800;letter-spacing:-0.025em;l
 /* ── Placeholder spans ── */
 .placeholder{ display: inline; }
 
+/* ── Why IGPL — personalized cards ── */
+.why-goal-banner{margin-bottom:14px;padding:12px 16px;background:rgba(240,78,53,0.07);border:1px solid rgba(240,78,53,0.15);border-radius:10px;display:flex;align-items:flex-start;gap:10px}
+.why-goal-label{font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--coral);white-space:nowrap;padding-top:2px;flex-shrink:0;font-family:var(--display)}
+.why-goal-text{font-size:13px;color:#ebebf5;font-weight:300;line-height:1.5}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.why-card{border-radius:16px;padding:22px;position:relative;overflow:hidden;background:rgba(255,255,255,0.10);backdrop-filter:blur(18px) saturate(130%);-webkit-backdrop-filter:blur(18px) saturate(130%);border:1px solid rgba(255,255,255,0.18);box-shadow:0 4px 24px rgba(0,0,0,0.22),inset 0 1px 0 rgba(255,255,255,0.18);transition:transform 0.3s var(--ease),border-color 0.3s,box-shadow 0.3s;cursor:default}
+.why-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent)}
+.why-card:hover{transform:translateY(-4px)}
+.why-card-wide{grid-column:1/-1}
+.why-card-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;display:block;font-family:var(--display)}
+.why-card-num{font-family:var(--display);font-size:clamp(34px,3.5vw,50px);font-weight:900;line-height:1;margin-bottom:6px}
+.why-card-title{font-family:var(--display);font-size:15px;font-weight:800;color:#fff;margin-bottom:10px;line-height:1.2}
+.why-card-body{font-size:13px;color:#ebebf5;font-weight:300;line-height:1.6}
+.cp-section.active .why-goal-banner{animation:cardIn 0.55s 0.02s var(--ease) both}
+.cp-section.active .why-card:nth-child(1){animation:cardInGlass 0.8s 0.07s var(--ease) both}
+.cp-section.active .why-card:nth-child(2){animation:cardInGlass 0.8s 0.15s var(--ease) both}
+.cp-section.active .why-card:nth-child(3){animation:cardInGlass 0.8s 0.23s var(--ease) both}
+
 /* ── Why-Tour partnership slide ── */
 .wt-statement{font-family:var(--display);font-size:clamp(14px,1.5vw,18px);font-weight:700;color:#fff;line-height:1.45;margin-bottom:22px;padding:18px 20px;background:rgba(240,78,53,0.1);border-left:3px solid var(--coral);border-radius:0 10px 10px 0}
 .wt-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
@@ -535,7 +553,15 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:800;letter-spacing:-0.025em;l
   #content-panel::-webkit-scrollbar-thumb{background:rgba(232,25,107,0.35);border-radius:2px}
 
   /* ── Disable glass card animation on mobile (dark aesthetic applies cleanly) ── */
-  .sstat,.pillar,.mcard,.tier-card,.del-card,.wt-card,.tour-map{animation:none !important}
+  .sstat,.pillar,.mcard,.tier-card,.del-card,.wt-card,.tour-map,.why-card,.why-goal-banner{animation:none !important}
+  .why-grid{grid-template-columns:1fr}
+  .why-card{
+    background:rgba(255,255,255,0.04) !important;
+    border-color:rgba(255,255,255,0.07) !important;
+    padding:16px !important;
+    border-radius:12px !important;
+  }
+  .why-goal-banner{background:rgba(240,78,53,0.06) !important;border-color:rgba(240,78,53,0.12) !important}
 
   /* ── Stat cards: dark.html aesthetic ── */
   .sstat-grid{grid-template-columns:1fr}
@@ -763,30 +789,32 @@ h1,h2,h3,h4{font-family:var(--display);font-weight:800;letter-spacing:-0.025em;l
       </div>
     </div>
 
-    <!-- WHY IGPL (checkpoint 2) — Your Audience -->
+    <!-- WHY IGPL (checkpoint 2) — Personalized Why -->
     <div class="cp-section" id="panel-why">
-      <div class="pillars-col">
-        <div class="pillar p-fire">
-          <div class="pillar-row">
-            <div class="pillar-icon" style="color:var(--coral)">
-              <!-- Target/crosshair SVG -->
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
-            </div>
-            <div><div class="pillar-big grad-fire">19.8M</div><div class="pillar-title">Qualified Reach</div></div>
-          </div>
-          <div class="pillar-hover">India's affluent golf demographic — HNIs, C-suite executives, and luxury travellers. Built organically across 10 events. Entirely without paid amplification.</div>
-          <div class="pillar-tags"><span class="tag">HNI Audience</span><span class="tag">C-Suite</span><span class="tag">Luxury Travellers</span></div>
+      <!-- Brand goal banner -->
+      <div class="why-goal-banner">
+        <span class="why-goal-label">Your Goal</span>
+        <span class="why-goal-text placeholder" data-fill="brandGoal">—</span>
+      </div>
+      <div class="why-grid">
+        <!-- Strategic Fit — full width, most personalized -->
+        <div class="why-card why-card-wide" style="border-color:rgba(0,181,176,0.22)">
+          <span class="why-card-eyebrow" style="color:var(--teal)">Strategic Fit</span>
+          <div class="why-card-title">Why This Partnership Works</div>
+          <div class="why-card-body placeholder" data-fill="strategicFit">—</div>
         </div>
-        <div class="pillar p-ocean">
-          <div class="pillar-row">
-            <div class="pillar-icon" style="color:var(--teal)">
-              <!-- Globe SVG -->
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
-            </div>
-            <div><div class="pillar-big grad-ocean">Aligned</div><div class="pillar-title">Audience Fit</div></div>
-          </div>
-          <div class="pillar-hover"><span class="placeholder" data-fill="name">—</span>'s customer profile maps directly to IGPL's golf audience — India's most affluent and brand-conscious demographic.</div>
-          <div class="pillar-tags"><span class="placeholder" data-fill="targetDemographic" style="font-size:0.75em">—</span></div>
+        <!-- Audience match -->
+        <div class="why-card" style="border-color:rgba(240,78,53,0.22)">
+          <span class="why-card-eyebrow" style="color:var(--coral)">Your Audience</span>
+          <div class="why-card-num grad-fire">19.8M</div>
+          <div class="why-card-title">Reach → Your Clients</div>
+          <div class="why-card-body placeholder" data-fill="targetDemographic">—</div>
+        </div>
+        <!-- Custom Activation -->
+        <div class="why-card" style="border-color:rgba(245,166,35,0.22)">
+          <span class="why-card-eyebrow" style="color:var(--amber)">Bespoke Concept</span>
+          <div class="why-card-title">Your Activation</div>
+          <div class="why-card-body placeholder" data-fill="customActivation">—</div>
         </div>
       </div>
     </div>
@@ -1191,6 +1219,8 @@ function fillCompanyData() {
   IGPL_CONFIG.checkpoints[0].eyebrow = label + ' × IGPL';
   const eyebrowEl = document.getElementById('slide-eyebrow');
   if (eyebrowEl) eyebrowEl.textContent = label + ' × IGPL';
+  // Personalize checkpoint 2 (Why IGPL) slide overlay with brand goal
+  if (COMPANY_CONFIG.brandGoal) IGPL_CONFIG.checkpoints[2].body = COMPANY_CONFIG.brandGoal;
   // Wire CTA hrefs
   const company = COMPANY_CONFIG.name || '[COMPANY NAME]';
   const scheduleMailto = 'mailto:' + COMPANY_CONFIG.contactEmail
