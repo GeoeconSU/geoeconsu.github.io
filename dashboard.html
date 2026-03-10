@@ -3006,12 +3006,35 @@
             line-height: 1.75;
         }
         .chat-message.assistant .chat-bubble {
-            background: rgba(10,14,24,0.72);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.14),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+                inset 0 0 18px 9px rgba(255, 255, 255, 0.03);
             color: var(--text-white);
             border-top-left-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        .chat-message.assistant .chat-bubble::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+            pointer-events: none;
+        }
+        .chat-message.assistant .chat-bubble::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 1px; height: 100%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent, rgba(255, 255, 255, 0.07));
+            pointer-events: none;
         }
         .chat-message.user .chat-bubble {
             background: rgba(203,168,78,0.07);
@@ -3054,29 +3077,85 @@
             border-top: 1px solid var(--glass-border);
             display: flex; gap: 0.65rem; align-items: center;
         }
-        .chat-input-wrapper { flex: 1; }
+        .chat-input-wrapper {
+            flex: 1;
+            position: relative;
+            border-radius: 28px;
+            overflow: hidden;
+            background: rgba(18, 25, 42, 0.55);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.09),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+                inset 0 0 18px 9px rgba(10, 15, 28, 0.35);
+            transition: border-color 0.25s var(--easing), box-shadow 0.25s var(--easing);
+        }
+        .chat-input-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+            z-index: 1; pointer-events: none;
+        }
+        .chat-input-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 1px; height: 100%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), transparent, rgba(255, 255, 255, 0.06));
+            z-index: 1; pointer-events: none;
+        }
+        .chat-input-wrapper:focus-within {
+            border-color: rgba(203, 168, 78, 0.28);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.25),
+                0 0 0 2px rgba(203, 168, 78, 0.07),
+                inset 0 1px 0 rgba(255, 255, 255, 0.09),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+                inset 0 0 18px 9px rgba(10, 15, 28, 0.35);
+        }
         .chat-input {
-            width: 100%; background: var(--tertiary-bg);
-            border: 1px solid var(--glass-border); color: var(--text-white);
+            width: 100%; background: transparent;
+            border: none; color: var(--text-white);
             font-family: var(--font-body); font-size: 1rem;
-            padding: 0.75rem 1.25rem; border-radius: 28px;
+            padding: 0.75rem 1.25rem;
             resize: none; min-height: 48px; max-height: 140px;
             line-height: 1.5; outline: none;
-            transition: border-color 0.25s var(--easing);
             box-sizing: border-box;
+            position: relative; z-index: 2;
         }
-        .chat-input:focus { border-color: var(--accent-gold-dim); box-shadow: 0 0 0 2px rgba(203,168,78,0.06); }
-        .chat-input::placeholder { color: rgba(255,255,255,0.28); }
+        .chat-input::placeholder { color: rgba(255, 255, 255, 0.28); }
         .chat-send-btn {
-            width: 48px; height: 48px; background: var(--accent-gold);
-            border: none; border-radius: 50%; color: var(--primary-bg);
-            font-size: 1.15rem; cursor: pointer; display: flex;
-            align-items: center; justify-content: center;
-            transition: all 0.2s var(--easing); flex-shrink: 0;
+            width: 48px; height: 48px; flex-shrink: 0;
+            border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem;
+            color: var(--accent-gold);
+            background: rgba(18, 25, 42, 0.55);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(203, 168, 78, 0.25);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+            transition: all 0.2s var(--easing);
         }
-        .chat-send-btn:hover { background: #d4b55a; transform: scale(1.06); }
+        .chat-send-btn:hover {
+            border-color: rgba(203, 168, 78, 0.5);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 2px rgba(203, 168, 78, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+            transform: scale(1.06);
+        }
         .chat-send-btn:active { transform: scale(0.94); }
-        .chat-send-btn:disabled { background: var(--tertiary-bg); color: var(--text-muted); cursor: not-allowed; transform: none; }
+        .chat-send-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
         .chat-status { display: none; }
         .chat-status.thinking {
             display: inline-flex; align-items: center; gap: 0.4rem;
@@ -3165,7 +3244,7 @@
         .chat-copy-btn {
             position: absolute; top: 40px; right: 8px;
             background: var(--tertiary-bg); border: 1px solid var(--glass-border);
-            color: var(--text-muted); border-radius: 4px;
+            color: var(--text-muted); border-radius: 50%;
             width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
             cursor: pointer; font-size: 0.85rem;
             opacity: 0; transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease;
@@ -3958,8 +4037,8 @@ function loadDefaultCSV() {
             parseMainCSV(text);
         })
         .catch(error => {
-            console.error('Error loading rao4.csv:', error);
-            alert('Error loading data file. Please ensure rao4.csv is in the dashboard directory.');
+            console.error('Error loading data/rao4.csv:', error);
+            alert('Error loading data file. Please ensure data/rao4.csv is in the dashboard directory.');
         });
 }
 
@@ -8838,10 +8917,21 @@ function streamChatContent(bubble, html, container) {
     let i = 0;
     let rendered = '';
 
+    let userScrolled = false;
+    const onScroll = () => {
+        userScrolled = container.scrollHeight - container.scrollTop - container.clientHeight > 80;
+    };
+    container.addEventListener('scroll', onScroll);
+
+    const scroll = () => {
+        requestAnimationFrame(() => { if (!userScrolled) container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' }); });
+    };
+
     function step() {
         if (i >= chunks.length) {
             bubble.innerHTML = rendered;
-            container.scrollTop = container.scrollHeight;
+            container.removeEventListener('scroll', onScroll);
+            scroll();
             return;
         }
         // Flush all consecutive tag tokens instantly
@@ -8849,15 +8939,18 @@ function streamChatContent(bubble, html, container) {
             rendered += chunks[i].val;
             i++;
         }
-        // Then reveal one text token
-        if (i < chunks.length) {
+        // Reveal a few text tokens per tick
+        let words = 0;
+        while (i < chunks.length && !chunks[i].tag && words < 3) {
             rendered += chunks[i].val;
             i++;
+            words++;
         }
         bubble.innerHTML = rendered + '<span class="stream-cursor"></span>';
-        container.scrollTop = container.scrollHeight;
+        scroll();
         setTimeout(step, 16);
     }
+    scroll();
     step();
 }
 
