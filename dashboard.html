@@ -2952,6 +2952,227 @@
                 grid-template-columns: 1fr !important;
             }
         }
+
+        /* ===== TAB 6: INSIGHTS CHATBOT ===== */
+        /* Full-page insights tab */
+        #tab-insights.tab-content.active {
+            display: flex; flex-direction: column;
+            height: calc(100vh - 90px); overflow: hidden;
+        }
+        .chat-layout {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            height: 100%;
+            max-height: none;
+            position: relative;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem max(1.5rem, calc(50% - 620px));
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            scroll-behavior: smooth;
+        }
+        .chat-message {
+            display: flex;
+            gap: 1rem;
+            animation: fadeIn 0.35s var(--easing) forwards;
+        }
+        .chat-message.user { flex-direction: row-reverse; }
+        .chat-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            flex-shrink: 0; display: flex; align-items: center;
+            justify-content: center; font-size: 1rem; margin-top: 2px;
+        }
+        .chat-message.assistant .chat-avatar {
+            background: linear-gradient(135deg, var(--accent-gold-dim), rgba(203,168,78,0.1));
+            border: 1px solid var(--accent-gold-dim);
+            color: var(--accent-gold);
+        }
+        .chat-message.user .chat-avatar {
+            background: var(--tertiary-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+        }
+        .chat-bubble {
+            max-width: 94%;
+            padding: 1rem 1.35rem;
+            border-radius: 10px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.75;
+        }
+        .chat-message.assistant .chat-bubble {
+            background: rgba(10,14,24,0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.07);
+            color: var(--text-white);
+            border-top-left-radius: 2px;
+        }
+        .chat-message.user .chat-bubble {
+            background: rgba(203,168,78,0.07);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(203,168,78,0.18);
+            color: var(--text-white);
+            border-top-right-radius: 2px;
+        }
+        .chat-bubble strong { color: var(--accent-gold); font-weight: 600; }
+        .chat-bubble em { color: var(--text-muted); font-style: italic; }
+        .chat-bubble h3 {
+            font-family: var(--font-head); font-size: 1.1rem; color: var(--accent-gold);
+            margin: 1rem 0 0.5rem; padding-bottom: 0.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .chat-bubble ul, .chat-bubble ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+        .chat-bubble li { margin-bottom: 0.25rem; }
+        .chat-bubble p { margin: 0.4rem 0; }
+        .chat-bubble .stat-tag {
+            font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-gold);
+            background: rgba(203,168,78,0.08); padding: 0.1rem 0.4rem; border-radius: 3px;
+        }
+        .chat-bubble.error-bubble { color: var(--accent-orange); border-color: rgba(198,125,82,0.3); font-style: italic; }
+        .chat-typing { display: flex; align-items: center; gap: 5px; padding: 0.4rem 0; }
+        .chat-typing span {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--accent-gold); opacity: 0.4;
+            animation: typingBounce 1.2s infinite;
+        }
+        .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+        .chat-input-area {
+            padding: 0.875rem max(1.5rem, calc(50% - 620px)) 1.25rem;
+            background: var(--primary-bg);
+            border-top: 1px solid var(--glass-border);
+            display: flex; gap: 0.65rem; align-items: center;
+        }
+        .chat-input-wrapper { flex: 1; }
+        .chat-input {
+            width: 100%; background: var(--tertiary-bg);
+            border: 1px solid var(--glass-border); color: var(--text-white);
+            font-family: var(--font-body); font-size: 1rem;
+            padding: 0.75rem 1.25rem; border-radius: 28px;
+            resize: none; min-height: 48px; max-height: 140px;
+            line-height: 1.5; outline: none;
+            transition: border-color 0.25s var(--easing);
+            box-sizing: border-box;
+        }
+        .chat-input:focus { border-color: var(--accent-gold-dim); box-shadow: 0 0 0 2px rgba(203,168,78,0.06); }
+        .chat-input::placeholder { color: rgba(255,255,255,0.28); }
+        .chat-send-btn {
+            width: 48px; height: 48px; background: var(--accent-gold);
+            border: none; border-radius: 50%; color: var(--primary-bg);
+            font-size: 1.15rem; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
+            transition: all 0.2s var(--easing); flex-shrink: 0;
+        }
+        .chat-send-btn:hover { background: #d4b55a; transform: scale(1.06); }
+        .chat-send-btn:active { transform: scale(0.94); }
+        .chat-send-btn:disabled { background: var(--tertiary-bg); color: var(--text-muted); cursor: not-allowed; transform: none; }
+        .chat-status { display: none; }
+        .chat-status.thinking {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-family: var(--font-mono); font-size: 0.68rem;
+            color: var(--accent-amber); text-transform: uppercase; letter-spacing: 0.08em;
+            flex-shrink: 0;
+        }
+        .chat-clear-btn {
+            position: absolute; top: 1rem; right: 1.5rem; z-index: 20;
+            background: rgba(15,20,32,0.7); backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle); color: var(--text-muted);
+            font-family: var(--font-mono); font-size: 0.68rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            padding: 0.35rem 0.85rem; border-radius: 30px; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .chat-clear-btn:hover { border-color: var(--accent-gold-dim); color: var(--accent-gold); }
+        .chat-table-wrap { overflow-x: auto; margin: 0.75rem 0; }
+        .chat-bubble table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.8rem; }
+        .chat-bubble th { background: rgba(203,168,78,0.12); color: var(--accent-gold); text-align: left; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--accent-gold-dim); white-space: nowrap; }
+        .chat-bubble td { padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-white); }
+        .chat-bubble tr:last-child td { border-bottom: none; }
+        .chat-bubble tr:hover td { background: rgba(255,255,255,0.03); }
+        .chat-hr { border: none; border-top: 1px solid var(--border-subtle); margin: 1rem 0; }
+
+        /* === WELCOME STATE === */
+        .chat-welcome {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 1.5rem; padding: 2rem; text-align: center;
+        }
+        .chat-welcome-icon {
+            font-size: 3.5rem; color: var(--accent-gold);
+            animation: gentlePulse 3s ease-in-out infinite; line-height: 1;
+        }
+        .chat-welcome-title {
+            font-family: var(--font-head); font-size: 1.6rem;
+            color: var(--text-white); letter-spacing: 0.02em;
+        }
+        .chat-welcome-sub {
+            font-family: var(--font-body); font-size: 1rem;
+            color: var(--text-muted); max-width: 500px; line-height: 1.65;
+        }
+        .chat-welcome-pills {
+            display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; margin-top: 0.5rem;
+        }
+        .chat-welcome-pill {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--text-muted); font-family: var(--font-body); font-size: 0.85rem;
+            padding: 0.5rem 1.1rem; border-radius: 20px; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .chat-welcome-pill:hover { border-color: var(--accent-gold-dim); color: var(--accent-gold); background: rgba(203,168,78,0.06); }
+        @keyframes gentlePulse {
+            0%, 100% { opacity: 0.75; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+        }
+
+        /* === SCORE CHIPS === */
+        .score-chip { display: inline-block; font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600; padding: 0.05rem 0.4rem; border-radius: 4px; }
+        .score-hi  { background: rgba(80,200,120,0.12); color: #50c878; border: 1px solid rgba(80,200,120,0.25); }
+        .score-mid { background: rgba(203,168,78,0.12); color: var(--accent-gold); border: 1px solid var(--accent-gold-dim); }
+        .score-lo  { background: rgba(198,125,82,0.12); color: var(--accent-orange); border: 1px solid rgba(198,125,82,0.3); }
+
+        /* === ISO BADGES === */
+        .iso-badge { display: inline-block; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; padding: 0.05rem 0.38rem; border-radius: 3px; border: 1px solid var(--accent-gold-dim); color: var(--accent-gold); background: rgba(203,168,78,0.06); vertical-align: middle; margin: 0 1px; }
+
+        /* === USER BUBBLE PILL OVERRIDE === */
+        .chat-message.user .chat-avatar { display: none; }
+        .chat-message.user .chat-bubble { border-radius: 20px; border-top-right-radius: 4px; }
+
+        /* === PINSTRIPE BACKGROUND === */
+        .chat-messages {
+            background-image: repeating-linear-gradient(
+                -45deg, transparent, transparent 28px,
+                rgba(255,255,255,0.012) 28px, rgba(255,255,255,0.012) 29px
+            );
+        }
+
+        /* === STREAMING CURSOR === */
+        @keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .stream-cursor { display: inline-block; width: 2px; height: 1em; background: var(--accent-gold); margin-left: 2px; vertical-align: text-bottom; animation: blinkCursor 0.8s step-end infinite; }
+
+        /* === COPY BUTTON === */
+        .chat-message.assistant { position: relative; }
+        .chat-copy-btn {
+            position: absolute; top: 40px; right: 8px;
+            background: var(--tertiary-bg); border: 1px solid var(--glass-border);
+            color: var(--text-muted); border-radius: 4px;
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 0.85rem;
+            opacity: 0; transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .chat-message.assistant:hover .chat-copy-btn { opacity: 1; }
+        .chat-copy-btn:hover { color: var(--accent-gold); border-color: var(--accent-gold-dim); }
+        .chat-copy-btn.copied { color: #50c878; border-color: rgba(80,200,120,0.4); opacity: 1; }
     </style>
 </head>
 <body>
@@ -2977,6 +3198,9 @@
             </div>
             <div class="nav-item" onclick="switchTab('analytics')">
                 <i class="ri-bar-chart-line"></i> Analytics
+            </div>
+            <div class="nav-item" onclick="switchTab('insights')">
+                <i class="ri-sparkling-line"></i> Insights
             </div>
         </nav>
 
@@ -3576,9 +3800,40 @@
 
             </div>
         </div>
+
+        <!-- TAB 6: INSIGHTS CHATBOT -->
+        <div id="tab-insights" class="tab-content">
+            <div class="chat-layout">
+                <button class="chat-clear-btn" onclick="clearChatHistory()" title="Clear conversation">
+                    <i class="ri-delete-bin-line"></i> Clear
+                </button>
+                <div class="chat-messages" id="chat-messages-container"></div>
+                <div class="chat-input-area">
+                    <div class="chat-input-wrapper">
+                        <textarea
+                            id="chat-input"
+                            class="chat-input"
+                            placeholder="Ask about any country, region, or investment theme…"
+                            rows="1"
+                            onkeydown="handleChatKeydown(event)"
+                            oninput="autoResizeChatInput(this)"
+                        ></textarea>
+                    </div>
+                    <div class="chat-status" id="chat-status-indicator">Analyzing…</div>
+                    <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="Send (Enter)">
+                        <i class="ri-send-plane-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
 <script>
+// ===== GROQ / KIMI K2 CONFIG =====
+const GROQ_API_KEY = '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'; // Replace with your key
+const GROQ_MODEL   = 'moonshotai/kimi-k2-instruct';
+const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+
 // ===== DATA & STATE =====
 let rawData = [];
 let filteredRankings = [];
@@ -3594,6 +3849,11 @@ let selectedCountriesForCompare = new Set();
 
 // Enhancement #55: Favorites/Bookmark System (stored in localStorage)
 let favoriteCountries = new Set(JSON.parse(localStorage.getItem('raoFavorites') || '[]'));
+
+// ===== CHATBOT STATE =====
+let chatHistory = [];
+let isChatLoading = false;
+let datasetContextCache = null;
 
 // Enhancement #56: Comparison Presets
 const COMPARISON_PRESETS = {
@@ -3692,14 +3952,14 @@ document.addEventListener('click', (e) => {
 
 // ===== FILE HANDLING =====
 function loadDefaultCSV() {
-    fetch('data/rao4.csv')
+    fetch('rao_breakdown.csv')
         .then(response => response.text())
         .then(text => {
             parseMainCSV(text);
         })
         .catch(error => {
-            console.error('Error loading rao4.csv:', error);
-            alert('Error loading data file. Please ensure rao4.csv is in the data directory.');
+            console.error('Error loading rao_breakdown.csv:', error);
+            alert('Error loading data file. Please ensure rao_breakdown.csv is in the dashboard directory.');
         });
 }
 
@@ -3898,6 +4158,7 @@ function initializeAllTabs() {
     initializeCompareTab();
     initializeRankingsTab();
     initializeAnalyticsTab();
+    initializeChatbotTab();
 }
 
 // ===== TAB SWITCHING =====
@@ -3911,10 +4172,13 @@ function switchTab(tabName) {
     // Update navigation active state (NEW - for nav-item)
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     const navItems = document.querySelectorAll('.nav-item');
-    const tabIndex = ['overview', 'analysis', 'compare', 'rankings', 'analytics'].indexOf(tabName);
+    const tabIndex = ['overview', 'analysis', 'compare', 'rankings', 'analytics', 'insights'].indexOf(tabName);
     if (navItems[tabIndex]) {
         navItems[tabIndex].classList.add('active');
     }
+
+    // Prevent page scroll on full-page chat tab
+    document.body.style.overflow = tabName === 'insights' ? 'hidden' : '';
 }
 
 // ===== TAB 1: OVERVIEW =====
@@ -7911,8 +8175,8 @@ function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
         // Tab switching: 1-5 keys
         if (!e.target.matches('input, textarea, select')) {
-            if (e.key >= '1' && e.key <= '5') {
-                const tabs = ['overview', 'analysis', 'compare', 'rankings', 'analytics'];
+            if (e.key >= '1' && e.key <= '6') {
+                const tabs = ['overview', 'analysis', 'compare', 'rankings', 'analytics', 'insights'];
                 switchTab(tabs[parseInt(e.key) - 1]);
                 e.preventDefault();
             }
@@ -8211,6 +8475,476 @@ function getCountryRegion(code) {
         if (codes.includes(code)) return region;
     }
     return 'Unknown';
+}
+
+// ===== TAB 6: INSIGHTS CHATBOT =====
+
+// Pillar keyword map for screening query detection
+const PILLAR_KEYWORDS = {
+    market_access:         ['trade openness', 'market access', 'export', 'fdi', 'foreign investment', 'tech export'],
+    capital_environment:   ['capital', 'financial market', 'investment climate', 'finance', 'banking'],
+    trade_infrastructure:  ['logistics', 'customs', 'supply chain', 'trade infrastructure', 'port', 'shipping'],
+    digital_economy:       ['digital', 'technology', 'tech', 'ict', 'e-commerce', 'frontier tech', 'internet'],
+    business_environment:  ['regulatory', 'regulation', 'business environment', 'ease of doing business', 'red tape'],
+    innovation_market:     ['innovation', 'dynamism', 'productivity', 'labor force', 'capacity'],
+    external_vulnerability:['current account', 'external balance', 'export concentration'],
+    fiscal_health:         ['debt', 'fiscal', 'budget', 'deficit', 'government spending'],
+    monetary_stability:    ['inflation', 'monetary', 'currency', 'price stability'],
+    labor_market:          ['labor market', 'labour market', 'skills', 'informality', 'workforce', 'employment'],
+    market_structure:      ['market concentration', 'monopoly', 'competition', 'market structure'],
+    institutional:         ['institutional', 'governance', 'corruption', 'political stability', 'rule of law', 'institution']
+};
+
+// TIER 1 (always, cached): global stats + regional averages + compact ranking index
+function buildStaticContext() {
+    if (datasetContextCache) return datasetContextCache;
+
+    const n = rawData.length;
+    const avg = arr => (arr.reduce((s, v) => s + v, 0) / arr.length).toFixed(2);
+
+    const globalAvgRAO  = avg(rawData.map(c => c.calculated_rao));
+    const globalAvgOpp  = avg(rawData.map(c => c.calculated_opportunity));
+    const globalAvgStab = avg(rawData.map(c => c.calculated_stability));
+
+    const regionalAverages = Object.entries(REGIONS).map(([region, codes]) => {
+        const members = rawData.filter(c => codes.includes(c.country));
+        if (!members.length) return '';
+        return `${region}(n=${members.length}):RAO=${avg(members.map(c => c.calculated_rao))},Opp=${avg(members.map(c => c.calculated_opportunity))},Stab=${avg(members.map(c => c.calculated_stability))}`;
+    }).filter(Boolean).join(' | ');
+
+    // Compact index: ISO|Name|Rank|RAO|Opp|Stab only
+    const indexRows = rawData.map(c =>
+        `${c.country}|${c.country_name}|${c.rank}|${c.calculated_rao.toFixed(2)}|${c.calculated_opportunity.toFixed(2)}|${c.calculated_stability.toFixed(2)}`
+    ).join('\n');
+
+    datasetContextCache = `RAO Index: ${n} countries, scores 0-10 (higher=better). Formula: (Opp×0.55)+(Stab×0.45)
+Global avg: RAO=${globalAvgRAO}, Opp=${globalAvgOpp}, Stab=${globalAvgStab}
+Regional avg: ${regionalAverages}
+INDEX(ISO|Name|Rank|RAO|Opp|Stab):
+${indexRows}`;
+
+    return datasetContextCache;
+}
+
+// TIER 2 (on demand): full 12-pillar breakdown for a set of countries
+function retrievePillarContext(countries) {
+    if (!countries.length) return '';
+    const header = 'PILLARS(ISO|Name|RAO|MA|CE|TI|DE|BE|IN|EV|FH|MS|LM|MkS|Inst) — Stab pillars inverted(higher=safer):';
+    const rows = countries.map(c => {
+        const oppP  = OPPORTUNITY_PILLARS.map(p => calculatePillarScore(c, p.vars).toFixed(1));
+        const stabP = STABILITY_PILLARS.map(p => (10 - calculatePillarScore(c, p.vars)).toFixed(1));
+        return `${c.country}|${c.country_name}|${c.calculated_rao.toFixed(2)}|${[...oppP, ...stabP].join('|')}`;
+    }).join('\n');
+    return `\n${header}\n${rows}`;
+}
+
+// TIER 3 (on demand): full 28-variable breakdown for explicitly named countries only
+function retrieveVariableContext(countries) {
+    if (!countries.length) return '';
+    const allVarKeys = [
+        ...OPPORTUNITY_PILLARS.flatMap(p => p.vars),
+        ...STABILITY_PILLARS.flatMap(p => p.vars)
+    ];
+    const header = `VARIABLES(ISO|Name|${allVarKeys.map(v => VARIABLE_NAMES[v] || v).join('|')}) — (INV)=inverted,higher=lower risk:`;
+    const rows = countries.map(c => {
+        const vals = allVarKeys.map(v => {
+            const x = c[v];
+            return (x === null || isNaN(x)) ? 'N/A' : parseFloat(x).toFixed(1);
+        });
+        return `${c.country}|${c.country_name}|${vals.join('|')}`;
+    }).join('\n');
+    return `\n${header}\n${rows}`;
+}
+
+// Resolve which countries to fetch for each tier based on the query
+function resolveContext(query) {
+    const q = query.toLowerCase();
+
+    // Named countries (Tier 2 + 3)
+    let named = rawData.filter(c =>
+        q.includes(c.country_name.toLowerCase()) || q.includes(c.country.toLowerCase())
+    );
+
+    // Named regions → all countries in that region (Tier 2 only, not Tier 3)
+    let regional = [];
+    Object.entries(REGIONS).forEach(([region, codes]) => {
+        if (q.includes(region.toLowerCase())) {
+            rawData.filter(c => codes.includes(c.country)).forEach(c => regional.push(c));
+        }
+    });
+
+    // Screening: detect pillar keywords → fetch top 8 by that pillar (Tier 2 only)
+    let screening = [];
+    if (named.length === 0 && regional.length === 0) {
+        const matchedPillars = [...OPPORTUNITY_PILLARS, ...STABILITY_PILLARS].filter(p =>
+            (PILLAR_KEYWORDS[p.key] || []).some(kw => q.includes(kw))
+        );
+        if (matchedPillars.length > 0) {
+            const p = matchedPillars[0];
+            const isStab = STABILITY_PILLARS.some(sp => sp.key === p.key);
+            screening = [...rawData]
+                .sort((a, b) => {
+                    const sa = isStab ? (10 - calculatePillarScore(a, p.vars)) : calculatePillarScore(a, p.vars);
+                    const sb = isStab ? (10 - calculatePillarScore(b, p.vars)) : calculatePillarScore(b, p.vars);
+                    return sb - sa;
+                })
+                .slice(0, 8);
+        }
+    }
+
+    // Deduplicate
+    const dedup = arr => [...new Map(arr.map(c => [c.country, c])).values()];
+    const tier2 = dedup([...named, ...regional, ...screening]);
+    const tier3 = dedup(named); // Variable detail only for explicitly named countries
+
+    return { tier2, tier3 };
+}
+
+function buildSystemPrompt(query) {
+    const { tier2, tier3 } = resolveContext(query);
+    return `You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You advise institutional investors on country risk and opportunity using the Risk-Adjusted Opportunity (RAO) framework. Your responses should read like a high-quality analyst memo: clear, insightful, and grounded in data — but written in fluent, natural prose.
+
+WRITING STYLE:
+- Write in full paragraphs. Numbers are evidence that support your argument, not the argument itself. After citing a score, explain what it means in practical terms for an investor.
+- Good: "Vietnam's Digital Economy pillar scores 6.8 — nearly two full points above the global average of 4.9 — reflecting a maturing ICT export sector and strong digital commerce adoption that makes it an attractive entry point for tech-enabled businesses."
+- Bad: "Vietnam Digital Economy: 6.8 (avg 4.9)."
+- Avoid bullet-point dumps of raw numbers. Use bullets only to compare 3+ items cleanly; always add a sentence of interpretation after a list.
+- For comparisons of 3+ countries, ALWAYS include a markdown table (| Col | Col |) summarising the key metrics before the prose analysis. Tables must have a header row and a separator row (|---|---|). Follow every table with at least one paragraph of interpretation.
+- When you cite a score, always put it in context: what does it mean relative to the global average, the region, and the investment decision at hand?
+- Lead with the strategic insight, not the data. The data backs the insight.
+- Maintain a confident, direct analytical voice. Do not hedge with phrases like "it is worth noting" or "it should be mentioned."
+
+RESPONSE STRUCTURE:
+- Open with 1-2 sentences stating the core investment conclusion.
+- Use ### section headers to organize deeper analysis.
+- End substantive responses with a brief "### Bottom Line" paragraph that restates the actionable takeaway.
+- For country deep-dives: narrative on composite RAO → what the Opp/Stab split reveals about the investment profile → the 2-3 pillar strengths/weaknesses that matter most → what the sub-variable detail tells you about root causes.
+- For comparisons: explain what separates the countries in practical terms, not just numerically.
+- For screening: explain why certain countries rise to the top for the specific use case, and flag the key risk that could change the picture.
+- For regional analysis: explain what structural factors drive the regional performance pattern, using specific countries as illustrations.
+
+DATA NOTES:
+- Stability pillars and (INV) variables are inverted: a higher score means lower risk/fragility.
+- Rank is out of ${rawData.length} countries total.
+- Always anchor numbers to the global average for context.
+
+${buildStaticContext()}${retrievePillarContext(tier2)}${retrieveVariableContext(tier3)}`;
+}
+
+function initializeChatbotTab() {
+    chatHistory = [];
+    datasetContextCache = null;
+    showWelcomeState();
+    updateChatStatus('ready', 'Ready');
+}
+
+async function sendChatMessage() {
+    const input   = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send-btn');
+    const userText = input.value.trim();
+    if (!userText || isChatLoading) return;
+
+    if (!GROQ_API_KEY || GROQ_API_KEY === 'YOUR_GROQ_API_KEY_HERE') {
+        renderChatMessage('assistant', '**Configuration required.** Open `dashboard.html` and set `GROQ_API_KEY` at the top of the `<script>` block.', true);
+        return;
+    }
+
+    renderChatMessage('user', userText);
+    input.value = '';
+    input.style.height = '52px';
+    chatHistory.push({ role: 'user', content: userText });
+
+    isChatLoading = true;
+    sendBtn.disabled = true;
+    updateChatStatus('thinking', 'Analyzing...');
+    const typingId = showTypingIndicator();
+
+    try {
+        const recentHistory = chatHistory.slice(-12);
+        const messages = [
+            { role: 'system', content: buildSystemPrompt(userText) },
+            ...recentHistory
+        ];
+        const reply = await callGroqAPI(messages);
+        removeTypingIndicator(typingId);
+        renderChatMessage('assistant', reply);
+        chatHistory.push({ role: 'assistant', content: reply });
+        updateChatStatus('ready', 'Ready');
+    } catch (err) {
+        removeTypingIndicator(typingId);
+        renderChatMessage('assistant', `**Error:** ${err.message || 'Network error — check your API key and connection.'}`, true);
+        chatHistory.pop();
+        updateChatStatus('ready', 'Ready');
+    } finally {
+        isChatLoading = false;
+        sendBtn.disabled = false;
+        input.focus();
+    }
+}
+
+async function callGroqAPI(messages) {
+    const response = await fetch(GROQ_ENDPOINT, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+            model: GROQ_MODEL,
+            messages,
+            temperature: 0.25,
+            max_tokens: 2048,
+            stream: false
+        })
+    });
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || 'No response received.';
+}
+
+function renderChatMessage(role, content, isError = false) {
+    const container = document.getElementById('chat-messages-container');
+    if (!container) return;
+
+    hideWelcomeState();
+
+    const div = document.createElement('div');
+    div.className = `chat-message ${role}`;
+    const bubbleClass = 'chat-bubble' + (isError ? ' error-bubble' : '');
+    const htmlContent = chatMarkdownToHTML(content);
+
+    if (role === 'user') {
+        div.innerHTML = `<div class="${bubbleClass}">${htmlContent}</div>`;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+    } else {
+        div.innerHTML = `
+            <div class="chat-avatar"><i class="ri-sparkling-line"></i></div>
+            <div class="${bubbleClass}"></div>
+            <button class="chat-copy-btn" onclick="copyChatMessage(this)" title="Copy to clipboard"><i class="ri-file-copy-line"></i></button>
+        `;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+        const bubble = div.querySelector('.chat-bubble');
+        if (isError) {
+            bubble.innerHTML = htmlContent;
+        } else {
+            streamChatContent(bubble, htmlContent, container);
+        }
+    }
+}
+
+// Process only text nodes (between HTML tags) to avoid breaking attributes
+function processTextNodes(html, fn) {
+    return html.replace(/(?<=>|^)([^<]+)(?=<|$)/g, (_, text) => fn(text));
+}
+
+function chatMarkdownToHTML(text) {
+    let html = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    // Headers
+    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm,  '<h3>$1</h3>');
+
+    // Bold and italic
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.+?)\*/g,     '<em>$1</em>');
+
+    // Inline code -> stat tag
+    html = html.replace(/`([^`]+)`/g, '<span class="stat-tag">$1</span>');
+
+    // Markdown tables (process before lists/paragraphs)
+    html = html.replace(/((?:^\|.+\|\n?)+)/gm, match => {
+        const lines = match.trim().split('\n');
+        const isSep = l => /^\|[\s\-:|]+\|$/.test(l);
+        const dataLines = lines.filter(l => !isSep(l));
+        if (dataLines.length < 2) return match;
+        const parseRow = l => l.split('|').slice(1, -1).map(c => c.trim());
+        const [hdr, ...body] = dataLines;
+        const thead = `<thead><tr>${parseRow(hdr).map(c => `<th>${c}</th>`).join('')}</tr></thead>`;
+        const tbody = `<tbody>${body.map(r => `<tr>${parseRow(r).map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>`;
+        return `<div class="chat-table-wrap"><table>${thead}${tbody}</table></div>`;
+    });
+
+    // Horizontal rules
+    html = html.replace(/^---+$/gm, '<hr class="chat-hr">');
+
+    // Unordered lists
+    html = html.replace(/((?:^- .+$\n?)+)/gm, match => {
+        const items = match.trim().split('\n')
+            .map(l => `<li>${l.replace(/^- /, '')}</li>`).join('');
+        return `<ul>${items}</ul>`;
+    });
+
+    // Ordered lists
+    html = html.replace(/((?:^\d+\. .+$\n?)+)/gm, match => {
+        const items = match.trim().split('\n')
+            .map(l => `<li>${l.replace(/^\d+\. /, '')}</li>`).join('');
+        return `<ol>${items}</ol>`;
+    });
+
+    // Paragraphs: wrap bare lines not already in a block tag
+    html = html.replace(/^(?!<[huoldt])(.+)$/gm, '<p>$1</p>');
+
+    // Clean up empty paragraphs
+    html = html.replace(/<p>\s*<\/p>/g, '');
+
+    // Score chips — color decimal numbers 0.00–10.00 in text nodes only
+    html = processTextNodes(html, text =>
+        text.replace(/\b(\d{1,2}\.\d{1,2})\b/g, (match, num) => {
+            const v = parseFloat(num);
+            if (v < 0 || v > 10) return match;
+            const cls = v >= 7.0 ? 'score-hi' : v >= 4.5 ? 'score-mid' : 'score-lo';
+            return `<span class="score-chip ${cls}">${num}</span>`;
+        })
+    );
+
+    // ISO badges — tag known 3-letter country codes in text nodes
+    if (rawData && rawData.length) {
+        const isoSet = new Set(rawData.map(c => c.country));
+        html = processTextNodes(html, text =>
+            text.replace(/\b([A-Z]{3})\b/g, (match, iso) =>
+                isoSet.has(iso) ? `<span class="iso-badge">${iso}</span>` : match
+            )
+        );
+    }
+
+    return html;
+}
+
+function streamChatContent(bubble, html, container) {
+    // Split HTML into tag tokens and text-word tokens, reveal text word-by-word
+    const chunks = [];
+    let rem = html;
+    while (rem.length) {
+        const m = rem.match(/<[^>]+>/);
+        if (!m) {
+            rem.split(/(\s+)/).forEach(w => { if (w.length) chunks.push({ tag: false, val: w }); });
+            break;
+        }
+        if (m.index > 0) {
+            rem.substring(0, m.index).split(/(\s+)/).forEach(w => { if (w.length) chunks.push({ tag: false, val: w }); });
+        }
+        chunks.push({ tag: true, val: m[0] });
+        rem = rem.substring(m.index + m[0].length);
+    }
+
+    let i = 0;
+    let rendered = '';
+
+    function step() {
+        if (i >= chunks.length) {
+            bubble.innerHTML = rendered;
+            container.scrollTop = container.scrollHeight;
+            return;
+        }
+        // Flush all consecutive tag tokens instantly
+        while (i < chunks.length && chunks[i].tag) {
+            rendered += chunks[i].val;
+            i++;
+        }
+        // Then reveal one text token
+        if (i < chunks.length) {
+            rendered += chunks[i].val;
+            i++;
+        }
+        bubble.innerHTML = rendered + '<span class="stream-cursor"></span>';
+        container.scrollTop = container.scrollHeight;
+        setTimeout(step, 16);
+    }
+    step();
+}
+
+function showWelcomeState() {
+    const container = document.getElementById('chat-messages-container');
+    if (!container) return;
+    container.innerHTML = `
+        <div class="chat-welcome" id="chat-welcome">
+            <div class="chat-welcome-icon"><i class="ri-sparkling-line"></i></div>
+            <div class="chat-welcome-title">RAO Intelligence Assistant</div>
+            <div class="chat-welcome-sub">Ask about any country's investment profile, compare markets, screen for themes, or explore regional patterns — powered by the full RAO dataset.</div>
+            <div class="chat-welcome-pills">
+                <div class="chat-welcome-pill" onclick="sendWelcomeQuery('Analyse Singapore\\'s RAO score')">Analyse Singapore's RAO</div>
+                <div class="chat-welcome-pill" onclick="sendWelcomeQuery('Compare Vietnam and Indonesia')">Vietnam vs. Indonesia</div>
+                <div class="chat-welcome-pill" onclick="sendWelcomeQuery('Best countries for digital economy investment')">Digital economy screening</div>
+            </div>
+        </div>
+    `;
+}
+
+function hideWelcomeState() {
+    const el = document.getElementById('chat-welcome');
+    if (el) el.remove();
+}
+
+function sendWelcomeQuery(text) {
+    const input = document.getElementById('chat-input');
+    if (input) { input.value = text; sendChatMessage(); }
+}
+
+function copyChatMessage(btn) {
+    const bubble = btn.parentElement.querySelector('.chat-bubble');
+    if (!bubble) return;
+    const text = bubble.innerText || bubble.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        btn.classList.add('copied');
+        btn.innerHTML = '<i class="ri-check-line"></i>';
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = '<i class="ri-file-copy-line"></i>';
+        }, 2000);
+    }).catch(() => {});
+}
+
+function showTypingIndicator() {
+    const container = document.getElementById('chat-messages-container');
+    const id = 'typing-' + Date.now();
+    const div = document.createElement('div');
+    div.className = 'chat-message assistant';
+    div.id = id;
+    div.innerHTML = `
+        <div class="chat-avatar"><i class="ri-sparkling-line"></i></div>
+        <div class="chat-bubble"><div class="chat-typing"><span></span><span></span><span></span></div></div>
+    `;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    return id;
+}
+
+function removeTypingIndicator(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+}
+
+function handleChatKeydown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendChatMessage();
+    }
+}
+
+function autoResizeChatInput(textarea) {
+    textarea.style.height = '52px';
+    textarea.style.height = Math.min(textarea.scrollHeight, 140) + 'px';
+}
+
+function clearChatHistory() {
+    chatHistory = [];
+    showWelcomeState();
+    updateChatStatus('ready', 'Ready');
+}
+
+function updateChatStatus(state, text) {
+    const el = document.getElementById('chat-status-indicator');
+    if (!el) return;
+    el.textContent = text;
+    el.className = 'chat-status' + (state === 'ready' ? ' ready' : state === 'thinking' ? ' thinking' : '');
 }
 
 </script>
