@@ -4076,6 +4076,8 @@ function loadDefaultCSV() {
 function parseMainCSV(text) {
     const lines = text.trim().split('\n');
     const rawHeaders = lines[0].split(',').map(h => h.trim());
+    // Track which columns came from scaled_* so we can multiply by 10
+    const scaledCols = new Set(rawHeaders.filter(h => h.startsWith('scaled_')).map(h => h.slice(7)));
     // Strip 'scaled_' prefix so variable keys match OPPORTUNITY_PILLARS/STABILITY_PILLARS
     const headers = rawHeaders.map(h => h.startsWith('scaled_') ? h.slice(7) : h);
 
@@ -4085,7 +4087,12 @@ function parseMainCSV(text) {
         const row = {};
         headers.forEach((h, idx) => {
             const val = values[idx]?.trim();
-            row[h] = val === '' || val === undefined ? null : (isNaN(parseFloat(val)) ? val : parseFloat(val));
+            const num = parseFloat(val);
+            if (val === '' || val === undefined) { row[h] = null; }
+            else if (!isNaN(num)) {
+                // Scale 0-1 variables to 0-10 to match the rest of the dashboard
+                row[h] = scaledCols.has(h) ? num * 10 : num;
+            } else { row[h] = val; }
         });
         if (!row.country) continue;
 
