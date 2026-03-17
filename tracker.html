@@ -1347,31 +1347,66 @@
     }
 
     @media (max-width: 700px) {
+      /* Header */
+      .app-header { grid-template-columns: auto 1fr auto; padding: 0 1rem; gap: 0.75rem; }
+      .nav-menu { gap: 2px; padding: 4px; }
+      .tab-btn { padding: 7px 10px; font-size: 0.58rem; letter-spacing: 0.03em; }
+      .header-subtitle { display: none; }
+
+      /* Stats */
       #stats-bar { grid-template-columns: repeat(2, 1fr); }
       .stat-card:nth-child(2) { border-right: none; }
-      .tab-btn { padding: 7px 14px; font-size: 0.6rem; }
-      .nav-menu { gap: 2px; padding: 4px; }
-      .app-header { grid-template-columns: auto 1fr auto; padding: 0 1rem; gap: 1rem; }
+      .stat-card { padding: 0.85rem 1rem; }
+      .stat-value { font-size: 1.6rem; }
 
+      /* Toolbar */
+      #toolbar { padding: 0 0.75rem; gap: 0.5rem; }
+
+      /* Project blocks */
+      .project-block { margin: 0.6rem 0.75rem; }
+      .project-header { padding: 0.85rem 0.75rem; gap: 0.6rem; }
+      #projects-list { padding: 0.25rem 0 1.5rem; }
+
+      /* Task rows — simplified 3-column layout */
       .task-row {
-        grid-template-columns: 18px 80px 10px 1fr;
-        padding: 0.65rem 1rem 0.65rem 2rem;
+        grid-template-columns: 18px 1fr auto;
+        padding: 0.65rem 0.75rem 0.65rem 1.5rem;
+        gap: 0.6rem;
       }
 
-      .task-due,
-      .task-assignee,
-      .task-hover-actions { display: none; }
+      /* Status badge spans its own row visually — collapse priority dot */
+      .status-badge { display: none; }
+      .priority-dot { display: none; }
 
-      .project-header { padding: 0.9rem 1rem; }
-      #toolbar { padding: 0 1rem; }
-      .app-header { padding: 0 1rem; }
-      #empty-state { padding: 4rem 1.5rem; }
+      /* Task name cell fills middle column */
+      .task-name-cell { min-width: 0; }
+      .task-name { font-size: 0.85rem; }
+      .task-desc-text { display: none; }
+
+      /* Show due date in the right column, hide assignee */
+      .task-assignee { display: none; }
+      .task-due { font-size: 0.65rem; white-space: nowrap; flex-shrink: 0; }
+
+      /* Always hide hover actions on mobile — including todo-row override */
+      .task-hover-actions,
+      .task-row[data-status="todo"] .task-hover-actions { display: none !important; }
+
+      /* Project actions — keep visible but compact */
+      .project-actions { gap: 0.25rem; }
+
+      /* Progress bar narrower */
+      .progress-bar-wrap { width: 48px; }
+
+      /* Modals full-width on small screens */
+      .modal-box { width: calc(100vw - 1.5rem); }
+
+      #empty-state { padding: 3rem 1.25rem; }
     }
 
-    @media (max-width: 480px) {
-      .header-subtitle { display: none; }
-      .header-brand-group { display: none; }
-      #stats-bar { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 420px) {
+      .tab-btn { padding: 6px 8px; font-size: 0.54rem; }
+      .stat-value { font-size: 1.4rem; }
+      .project-name { font-size: 0.9rem; }
     }
   </style>
 </head>
