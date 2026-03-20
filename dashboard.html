@@ -3945,12 +3945,29 @@ const COMPARISON_PRESETS = {
 
 // Country name mappings for Google Charts
 const NAME_TO_GOOGLE = {
-    "Russian Federation": "Russia", "Korea, Rep.": "South Korea", "Egypt, Arab Rep.": "Egypt",
-    "Iran, Islamic Rep.": "Iran", "Slovak Republic": "Slovakia", "Congo, Dem. Rep.": "Democratic Republic of the Congo",
-    "Congo, Rep.": "Republic of the Congo", "Yemen, Rep.": "Yemen", "Venezuela, RB": "Venezuela",
-    "Syrian Arab Republic": "Syria", "Kyrgyz Republic": "Kyrgyzstan", "Lao PDR": "Laos",
-    "Bahamas, The": "The Bahamas", "Gambia, The": "The Gambia", "Turkiye": "Turkey",
-    "Viet Nam": "Vietnam", "Brunei Darussalam": "Brunei"
+    // rao6 full-name variants → Google Charts names
+    "Korea, Republic of": "South Korea",
+    "Viet Nam": "Vietnam",
+    "Russian Federation": "Russia",
+    "Iran, Islamic Republic of": "Iran",
+    "Tanzania, United Republic of": "Tanzania",
+    "Moldova, Republic of": "Moldova",
+    "Bolivia, Plurinational State of": "Bolivia",
+    "Venezuela, Bolivarian Republic of": "Venezuela",
+    "Lao People's Democratic Republic": "Laos",
+    "Syrian Arab Republic": "Syria",
+    "Türkiye": "Turkey",
+    "Brunei Darussalam": "Brunei",
+    "Czechia": "Czech Republic",
+    "ZAR": "Democratic Republic of the Congo",
+    // legacy mappings kept for safety
+    "Korea, Rep.": "South Korea", "Egypt, Arab Rep.": "Egypt",
+    "Iran, Islamic Rep.": "Iran", "Slovak Republic": "Slovakia",
+    "Congo, Dem. Rep.": "Democratic Republic of the Congo",
+    "Congo, Rep.": "Republic of the Congo", "Yemen, Rep.": "Yemen",
+    "Venezuela, RB": "Venezuela", "Kyrgyz Republic": "Kyrgyzstan",
+    "Lao PDR": "Laos", "Bahamas, The": "The Bahamas", "Gambia, The": "The Gambia",
+    "Turkiye": "Turkey"
 };
 
 const REGIONS = {
@@ -3964,23 +3981,63 @@ const REGIONS = {
 const ISO_TO_NAME = {};
 const NAME_TO_ISO = {};
 
+// rao6 uses full country names as the key — map name→ISO for internal use
+const NAME_TO_ISO_STATIC = {
+    'Hong Kong':'HKG','Singapore':'SGP','Kuwait':'KWT','Denmark':'DNK','China':'CHN',
+    'Norway':'NOR','Netherlands':'NLD','Ireland':'IRL','Viet Nam':'VNM','Qatar':'QAT',
+    'United Arab Emirates':'ARE','United States':'USA','Germany':'DEU','Sweden':'SWE',
+    'Switzerland':'CHE','Israel':'ISR','India':'IND','Iceland':'ISL','Estonia':'EST',
+    'Czechia':'CZE','Finland':'FIN','Korea, Republic of':'KOR','Belgium':'BEL',
+    'Austria':'AUT','Malaysia':'MYS','Belarus':'BLR','Malta':'MLT','Slovenia':'SVN',
+    'Lithuania':'LTU','France':'FRA','Thailand':'THA','Hungary':'HUN','Bulgaria':'BGR',
+    'Australia':'AUS','Russian Federation':'RUS','United Kingdom':'GBR','Macao':'MAC',
+    'Croatia':'HRV','Poland':'POL','Japan':'JPN','Slovakia':'SVK','Oman':'OMN',
+    'Indonesia':'IDN','Panama':'PAN','Luxembourg':'LUX','Latvia':'LVA',
+    'Philippines':'PHL','Bahrain':'BHR','Portugal':'PRT','Saudi Arabia':'SAU',
+    'Iran, Islamic Republic of':'IRN','New Zealand':'NZL','Spain':'ESP','Italy':'ITA',
+    'Romania':'ROU','Brunei Darussalam':'BRN','Cyprus':'CYP',
+    'Bosnia and Herzegovina':'BIH','Mauritius':'MUS','Serbia':'SRB','Uzbekistan':'UZB',
+    'Algeria':'DZA','Kazakhstan':'KAZ','North Macedonia':'MKD',
+    'Trinidad and Tobago':'TTO','Tajikistan':'TJK','Mongolia':'MNG','Canada':'CAN',
+    'Tanzania, United Republic of':'TZA','Brazil':'BRA','Myanmar':'MMR','Benin':'BEN',
+    'Senegal':'SEN','Jamaica':'JAM','Nicaragua':'NIC','Türkiye':'TUR','Honduras':'HND',
+    'Gabon':'GAB','Georgia':'GEO','Mexico':'MEX','Chile':'CHL','Ecuador':'ECU',
+    'Libya':'LBY','Bangladesh':'BGD','Dominican Republic':'DOM','Greece':'GRC',
+    'Armenia':'ARM','Togo':'TGO','Turkmenistan':'TKM','Sri Lanka':'LKA','Uruguay':'URY',
+    'Costa Rica':'CRI','Guatemala':'GTM','Morocco':'MAR','Moldova, Republic of':'MDA',
+    'El Salvador':'SLV','Nepal':'NPL','Mozambique':'MOZ','Mauritania':'MRT',
+    "Lao People's Democratic Republic":'LAO','Paraguay':'PRY',"Côte d'Ivoire":'CIV',
+    'Papua New Guinea':'PNG','Albania':'ALB','Namibia':'NAM','Ukraine':'UKR','Peru':'PER',
+    'South Africa':'ZAF','Azerbaijan':'AZE','Angola':'AGO','Madagascar':'MDG',
+    'Nigeria':'NGA','Colombia':'COL','Zambia':'ZMB','Argentina':'ARG','Kenya':'KEN',
+    'Botswana':'BWA','Rwanda':'RWA','Bolivia, Plurinational State of':'BOL',
+    'Ethiopia':'ETH','Pakistan':'PAK','Jordan':'JOR',
+    'Venezuela, Bolivarian Republic of':'VEN','Uganda':'UGA','Iraq':'IRQ','Egypt':'EGY',
+    'Cameroon':'CMR','Kyrgyzstan':'KGZ','Tunisia':'TUN','Chad':'TCD','Somalia':'SOM',
+    'Equatorial Guinea':'GNQ','Mali':'MLI','South Sudan':'SSD','Sierra Leone':'SLE',
+    'Ghana':'GHA','Niger':'NER','Guinea':'GIN','Malawi':'MWI','Eswatini':'SWZ',
+    'Zimbabwe':'ZWE','Burkina Faso':'BFA','Central African Republic':'CAF',
+    'Lebanon':'LBN','Yemen':'YEM','Sudan':'SDN','Liechtenstein':'LIE',
+    'Syrian Arab Republic':'SYR','ZAR':'ZAR'
+};
+
+// ISO→display name: prefer short name from NAME_TO_GOOGLE, fallback to raw rao6 name
+const ISO_NAMES = Object.fromEntries(
+    Object.entries(NAME_TO_ISO_STATIC).map(([n, iso]) => [iso, NAME_TO_GOOGLE[n] || n])
+);
+
 // Pillar configurations
 const OPPORTUNITY_PILLARS = [
     { key: 'market_access', name: 'Market Access', vars: ['trade_openness', 'high_tech_export_intensity', 'foreign_investment_attractiveness'] },
     { key: 'capital_environment', name: 'Capital Environment', vars: ['domestic_capital_formation', 'financial_market_depth'] },
     { key: 'trade_infrastructure', name: 'Trade Infrastructure', vars: ['customs_efficiency', 'logistics_infrastructure_quality'] },
     { key: 'digital_economy', name: 'Digital Economy', vars: ['ict_service_export_competitiveness', 'digital_commerce_readiness', 'frontier_technology_readiness'] },
-    { key: 'business_environment', name: 'Business Env.', vars: ['regulatory_quality_for_business'] },
     { key: 'innovation_market', name: 'Innovation', vars: ['economic_dynamism', 'market_sophistication', 'labor_force_scale', 'productive_capacities_index'] }
 ];
 
 const STABILITY_PILLARS = [
-    { key: 'external_vulnerability', name: 'External Vuln.', vars: ['current_account_imbalance', 'external_asset_position', 'export_product_concentration'] },
-    { key: 'fiscal_health', name: 'Fiscal Health', vars: ['government_debt_burden', 'fiscal_balance_trajectory'] },
-    { key: 'monetary_stability', name: 'Monetary Stab.', vars: ['inflation_pressure', 'labor_market_stress'] },
-    { key: 'labor_market', name: 'Labor Market', vars: ['skills_mismatch', 'labor_informality'] },
-    { key: 'market_structure', name: 'Market Structure', vars: ['market_concentration_risk'] },
-    { key: 'institutional', name: 'Institutional', vars: ['political_stability', 'corruption_perceptions'] }
+    { key: 'external_vulnerability', name: 'External Vuln.', vars: ['external_asset_position', 'export_product_concentration'] },
+    { key: 'labor_market', name: 'Labor Market', vars: ['skills_mismatch', 'labor_informality'] }
 ];
 
 const VARIABLE_NAMES = {
@@ -3988,19 +4045,15 @@ const VARIABLE_NAMES = {
     domestic_capital_formation: 'Domestic Capital', financial_market_depth: 'Financial Depth',
     customs_efficiency: 'Customs Efficiency', logistics_infrastructure_quality: 'Logistics Quality',
     ict_service_export_competitiveness: 'ICT Exports', digital_commerce_readiness: 'Digital Commerce', frontier_technology_readiness: 'Frontier Tech',
-    regulatory_quality_for_business: 'Regulatory Quality', economic_dynamism: 'Economic Dynamism', market_sophistication: 'Market Sophistication',
+    economic_dynamism: 'Economic Dynamism', market_sophistication: 'Market Sophistication',
     labor_force_scale: 'Labor Force Scale', productive_capacities_index: 'Productive Capacity',
-    current_account_imbalance: 'Current Account', external_asset_position: 'External Assets', export_product_concentration: 'Export Concentration',
-    government_debt_burden: 'Debt Burden', fiscal_balance_trajectory: 'Fiscal Balance', inflation_pressure: 'Inflation', labor_market_stress: 'Labor Stress',
-    skills_mismatch: 'Skills Mismatch', labor_informality: 'Informality', market_concentration_risk: 'Market Concentration',
-    political_stability: 'Political Stability', corruption_perceptions: 'Corruption'
+    external_asset_position: 'External Assets', export_product_concentration: 'Export Concentration',
+    skills_mismatch: 'Skills Mismatch', labor_informality: 'Informality'
 };
 
 // Variables where LOWER is BETTER (inverted for strengths/weaknesses analysis)
 const INVERSE_VARIABLES = [
-    'corruption_perceptions', 'current_account_imbalance', 'export_product_concentration',
-    'government_debt_burden', 'inflation_pressure', 'labor_market_stress',
-    'skills_mismatch', 'labor_informality', 'market_concentration_risk'
+    'export_product_concentration', 'skills_mismatch', 'labor_informality'
 ];
 
 // ===== INITIALIZATION =====
@@ -4031,41 +4084,98 @@ document.addEventListener('click', (e) => {
 
 // ===== FILE HANDLING =====
 function loadDefaultCSV() {
-    fetch('data/rao4.csv')
+    fetch('data/rao6.csv')
         .then(response => response.text())
         .then(text => {
             parseMainCSV(text);
         })
         .catch(error => {
-            console.error('Error loading data/rao4.csv:', error);
-            alert('Error loading data file. Please ensure data/rao4.csv is in the dashboard directory.');
+            console.error('Error loading data/rao6.csv:', error);
+            alert('Error loading data file. Please ensure data/rao6.csv is in the dashboard directory.');
         });
+}
+
+// RFC 4180-compliant CSV row parser — handles quoted fields containing commas
+function parseCSVRow(line) {
+    const fields = [];
+    let i = 0;
+    while (i <= line.length) {
+        if (i === line.length) { fields.push(''); break; }
+        if (line[i] === '"') {
+            let field = '';
+            i++;
+            while (i < line.length) {
+                if (line[i] === '"' && line[i+1] === '"') { field += '"'; i += 2; }
+                else if (line[i] === '"') { i++; break; }
+                else { field += line[i++]; }
+            }
+            fields.push(field);
+            if (line[i] === ',') i++;
+        } else {
+            const end = line.indexOf(',', i);
+            if (end === -1) { fields.push(line.slice(i)); break; }
+            fields.push(line.slice(i, end));
+            i = end + 1;
+        }
+    }
+    return fields;
 }
 
 function parseMainCSV(text) {
     const lines = text.trim().split('\n');
-    const headers = lines[0].split(',').map(h => h.trim());
+    // rao6 variable aliases: log-transformed cols mapped back to base names
+    const LOG_ALIASES = {
+        financial_market_depth_log: 'financial_market_depth',
+        labor_force_scale_log:      'labor_force_scale',
+        market_sophistication_log:  'market_sophistication'
+    };
+    const rawHeaders = parseCSVRow(lines[0]).map(h => h.trim());
+    const headers = rawHeaders.map(h => LOG_ALIASES[h] || h);
+
+    // Individual variable columns — 0-1 in rao6, scale to 0-10
+    const VAR_COLS = new Set([
+        ...OPPORTUNITY_PILLARS.flatMap(p => p.vars),
+        ...STABILITY_PILLARS.flatMap(p => p.vars)
+    ]);
 
     rawData = [];
     for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',');
+        const values = parseCSVRow(lines[i]);
         const row = {};
         headers.forEach((h, idx) => {
             const val = values[idx]?.trim();
-            row[h] = val === '' || val === undefined ? null : (isNaN(parseFloat(val)) ? val : parseFloat(val));
+            const num = parseFloat(val);
+            if (val === '' || val === undefined) { row[h] = null; }
+            else if (!isNaN(num)) {
+                row[h] = VAR_COLS.has(h) ? num * 10 : num;
+            } else { row[h] = val; }
         });
-        if (row.country && row.country_name) {
-            rawData.push(row);
-            ISO_TO_NAME[row.country] = row.country_name;
-            NAME_TO_ISO[row.country_name] = row.country;
-        }
+
+        // rao6 uses full country names — resolve to ISO
+        const fullName = row.country?.trim();
+        if (!fullName) continue;
+        const iso = NAME_TO_ISO_STATIC[fullName] || fullName;
+        row.country      = iso;
+        // Use short display name: prefer NAME_TO_GOOGLE value, fallback to fullName
+        row.country_name = NAME_TO_GOOGLE[fullName] || fullName;
+
+        // Skip rows with no RAO score
+        if (!row.rao_score) continue;
+
+        // Opportunity and stability are 0-1 in rao6 — scale to 0-10
+        row.opportunity_score = (row.opportunity_score ?? 0) * 10;
+        row.stability_score   = (row.stability_score   ?? 0) * 10;
+
+        rawData.push(row);
+        ISO_TO_NAME[iso] = fullName;
+        NAME_TO_ISO[fullName] = iso;
     }
 
-    // Calculate derived scores if not present
+    // Set calculated scores from rao6 columns
     rawData.forEach(c => {
-        if (!c.calculated_opportunity) c.calculated_opportunity = c.opportunity_score || calculateOpportunityScore(c);
-        if (!c.calculated_stability) c.calculated_stability = c.stability_score || (10 - (c.fragility_score || 5));
-        if (!c.calculated_rao) c.calculated_rao = c.rao_score || ((c.calculated_opportunity * 0.55) + (c.calculated_stability * 0.45));
+        c.calculated_opportunity = c.opportunity_score;
+        c.calculated_stability   = c.stability_score;
+        c.calculated_rao         = c.rao_score;
     });
 
     // Sort and rank
@@ -8564,14 +8674,9 @@ const PILLAR_KEYWORDS = {
     capital_environment:   ['capital', 'financial market', 'investment climate', 'finance', 'banking'],
     trade_infrastructure:  ['logistics', 'customs', 'supply chain', 'trade infrastructure', 'port', 'shipping'],
     digital_economy:       ['digital', 'technology', 'tech', 'ict', 'e-commerce', 'frontier tech', 'internet'],
-    business_environment:  ['regulatory', 'regulation', 'business environment', 'ease of doing business', 'red tape'],
-    innovation_market:     ['innovation', 'dynamism', 'productivity', 'labor force', 'capacity'],
-    external_vulnerability:['current account', 'external balance', 'export concentration'],
-    fiscal_health:         ['debt', 'fiscal', 'budget', 'deficit', 'government spending'],
-    monetary_stability:    ['inflation', 'monetary', 'currency', 'price stability'],
-    labor_market:          ['labor market', 'labour market', 'skills', 'informality', 'workforce', 'employment'],
-    market_structure:      ['market concentration', 'monopoly', 'competition', 'market structure'],
-    institutional:         ['institutional', 'governance', 'corruption', 'political stability', 'rule of law', 'institution']
+    innovation_market:     ['innovation', 'dynamism', 'productivity', 'labor force', 'capacity', 'market sophistication'],
+    external_vulnerability:['external assets', 'export concentration', 'external balance'],
+    labor_market:          ['labor market', 'labour market', 'skills', 'informality', 'workforce', 'employment']
 };
 
 // TIER 1 (always, cached): global stats + regional averages + compact ranking index
@@ -8608,7 +8713,7 @@ ${indexRows}`;
 // TIER 2 (on demand): full 12-pillar breakdown for a set of countries
 function retrievePillarContext(countries) {
     if (!countries.length) return '';
-    const header = 'PILLARS(ISO|Name|RAO|MA|CE|TI|DE|BE|IN|EV|FH|MS|LM|MkS|Inst) — Stab pillars inverted(higher=safer):';
+    const header = 'PILLARS(ISO|Name|RAO|MA|CE|TI|DE|IN|EV|LM) — Stab pillars inverted(higher=safer):';
     const rows = countries.map(c => {
         const oppP  = OPPORTUNITY_PILLARS.map(p => calculatePillarScore(c, p.vars).toFixed(1));
         const stabP = STABILITY_PILLARS.map(p => (10 - calculatePillarScore(c, p.vars)).toFixed(1));
