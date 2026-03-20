@@ -3252,6 +3252,198 @@
         .chat-message.assistant:hover .chat-copy-btn { opacity: 1; }
         .chat-copy-btn:hover { color: var(--accent-gold); border-color: var(--accent-gold-dim); }
         .chat-copy-btn.copied { color: #50c878; border-color: rgba(80,200,120,0.4); opacity: 1; }
+
+        /* ===== MOBILE RESPONSIVENESS ===== */
+
+        /* Tablet + Mobile: stack grids earlier than 1200px breakpoint already handles */
+
+        @media (max-width: 768px) {
+            /* Header: 2-row layout */
+            .header {
+                grid-template-columns: auto 1fr;
+                grid-template-rows: auto auto;
+                padding: 10px 16px;
+                gap: 8px 12px;
+            }
+            .header .logo {
+                grid-column: 1;
+                grid-row: 1;
+            }
+            .header-actions {
+                grid-column: 2;
+                grid-row: 1;
+                justify-content: flex-end;
+                gap: 0.3rem;
+            }
+            .header .nav-menu {
+                grid-column: 1 / -1;
+                grid-row: 2;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                max-width: 100%;
+                justify-content: flex-start;
+                border-radius: 30px;
+                padding: 4px;
+            }
+            .header .nav-menu::-webkit-scrollbar { display: none; }
+            .nav-item {
+                padding: 8px 14px;
+                font-size: 0.7rem;
+                flex: 0 0 auto;
+            }
+            .icon-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+            /* Hide search box in header (search available in Analysis tab) */
+            .search-box { display: none; }
+
+            /* Push content below taller header */
+            .main-container { padding-top: 125px; }
+
+            /* Section padding */
+            .section-container { padding: 1rem; }
+
+            /* Overview hero text (inline style requires !important) */
+            #tab-overview h1 { font-size: 1.6rem !important; }
+            #tab-overview p[style] { font-size: 1rem !important; }
+
+            /* Map */
+            #map-container { height: 40vh; min-height: 220px; }
+            .map-controls { top: 0.5rem; left: 0.5rem; gap: 0.35rem; }
+            .map-control-btn { padding: 6px 10px; font-size: 0.62rem; }
+            .map-legend { bottom: 0.5rem; right: 0.5rem; padding: 0.6rem; }
+            .legend-gradient { width: 100px; }
+            .legend-labels { font-size: 0.55rem; }
+
+            /* KPI cards: 2 columns */
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+            .kpi-card { padding: 16px; }
+            .kpi-value { font-size: 1.6rem; }
+            .kpi-label { font-size: 0.75rem; }
+
+            /* Grids already handled at 1200px but reinforce */
+            .grid-2 { grid-template-columns: 1fr; }
+            .analysis-grid { grid-template-columns: 1fr; }
+            .insights-grid { grid-template-columns: 1fr; }
+            .compare-grid { grid-template-columns: 1fr; }
+
+            /* Regional stats: 2 cols */
+            .regional-stats { grid-template-columns: repeat(2, 1fr); }
+
+            /* Analysis top section inline style override */
+            #analysis-content > div:first-child {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Country profile header */
+            .profile-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .profile-name { font-size: 1.4rem; }
+            .profile-score { font-size: 2rem; }
+
+            /* Pillar rows */
+            .pillar-name { width: 100px; font-size: 0.75rem; }
+
+            /* Cards */
+            .analysis-card { padding: 16px; }
+            .compare-card { padding: 16px; }
+            .country-selector-bar { padding: 16px; }
+            .country-selector { padding: 16px; }
+            .card-title { font-size: 1.1rem; margin-bottom: 1rem; }
+            .section-title { font-size: 1.2rem; }
+
+            /* Country selector: stacked dropdowns */
+            .selector-row { grid-template-columns: 1fr; }
+            .country-selector-bar > div { flex-direction: column; }
+            #analysis-country-select { min-width: unset !important; }
+
+            /* Rankings */
+            .rankings-controls { flex-direction: column; align-items: stretch; }
+            .rankings-search { max-width: 100%; min-width: unset; }
+            .rankings-table td { padding: 0.6rem 0.5rem; font-size: 0.8rem; }
+            .rankings-table th { padding: 0.6rem 0.5rem; font-size: 0.65rem; }
+
+            /* Comparison scorecard */
+            .scorecard-header { flex-direction: column; align-items: stretch; }
+            .scorecard-country { padding: 1rem; }
+            .scorecard-wins { font-size: 2rem; }
+            .scorecard-medal { font-size: 2.25rem; }
+
+            /* Variables table scrollable */
+            .variables-table { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .variable-row { font-size: 0.8rem; }
+
+            /* Differential panel */
+            .differential-panel { padding: 1.25rem; }
+
+            /* Summary stats */
+            .summary-stats { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+            .summary-stat-value { font-size: 1.6rem; }
+
+            /* Chat */
+            .chat-messages { padding: 1rem; }
+            .chat-input-area { padding: 0.75rem 1rem 1rem; }
+            .chat-bubble { padding: 0.75rem 1rem; font-size: 0.95rem; }
+            .chat-welcome-pills { gap: 0.4rem; }
+            .chat-welcome-pill { font-size: 0.8rem; padding: 0.4rem 0.85rem; }
+
+            /* Waterfall */
+            .waterfall-label { font-size: 0.8rem; }
+            .waterfall-value { font-size: 0.85rem; }
+            .waterfall-panel { padding: 1rem; }
+
+            /* Pillar comparison table */
+            .pillar-comparison { padding: 0.75rem; }
+
+            /* Comparison presets bar */
+            .country-selector > div[style*="flex"] { gap: 0.5rem; }
+            .btn { padding: 8px 14px; font-size: 0.65rem; }
+        }
+
+        @media (max-width: 480px) {
+            /* Tighter header */
+            .header { padding: 8px 12px; }
+            .logo-icon { width: 26px; height: 26px; }
+            .logo { font-size: 1.1rem; gap: 0.5rem; }
+            .logo span { font-size: 0.8rem; letter-spacing: 0.15em; }
+
+            /* Nav: icons only — collapse text nodes via font-size trick */
+            .nav-item { padding: 8px 10px; gap: 0; font-size: 0; }
+            .nav-item i { font-size: 1rem; }
+
+            /* Smaller main padding */
+            .main-container { padding-top: 115px; }
+
+            /* Map even shorter */
+            #map-container { height: 35vh; min-height: 200px; }
+
+            /* KPI: still 2 cols but tighter */
+            .kpi-value { font-size: 1.3rem; }
+            .kpi-card { padding: 12px 10px; }
+            .kpi-label { font-size: 0.68rem; }
+            .kpi-sublabel { display: none; }
+
+            /* Regional stats: 1 col */
+            .regional-stats { grid-template-columns: 1fr; }
+
+            /* Summary stats: 1 col */
+            .summary-stats { grid-template-columns: 1fr; }
+
+            /* Pillar name narrower */
+            .pillar-name { width: 80px; font-size: 0.7rem; }
+
+            /* Profile score */
+            .profile-score { font-size: 1.75rem; }
+
+            /* Variable row: hide diff column */
+            .variable-row { grid-template-columns: 2fr 1fr 1fr; gap: 0.5rem; font-size: 0.75rem; }
+
+            /* Section title */
+            .section-title { font-size: 1.05rem; }
+            .card-title { font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
