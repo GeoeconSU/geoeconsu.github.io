@@ -4099,9 +4099,10 @@
         </div>
     </div>
 
+<script src="config.js"></script>
 <script>
 // ===== GROQ / KIMI K2 CONFIG =====
-const GROQ_API_KEY = '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'; // Replace with your key
+// GROQ_API_KEY is loaded from config.js (excluded from version control)
 const GROQ_MODEL   = 'moonshotai/kimi-k2-instruct';
 const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 
@@ -4282,8 +4283,8 @@ function loadDefaultCSV() {
             parseMainCSV(text);
         })
         .catch(error => {
-            console.error('Error loading data/rao6.csv:', error);
-            alert('Error loading data file. Please ensure data/rao6.csv is in the dashboard directory.');
+            console.error('Error loading data/rao7.csv:', error);
+            alert('Error loading data file. Please ensure data/rao7.csv is in the dashboard directory.');
         });
 }
 
