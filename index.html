@@ -554,6 +554,100 @@
             color: var(--accent-gold);
         }
         
+        /* Strategic Briefs - Featured + Carousel */
+        .brief-featured {
+            display: flex;
+            gap: 4rem;
+            align-items: center;
+            padding: 3rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-left: 4px solid var(--accent-gold);
+            transition: transform 0.4s var(--easing), box-shadow 0.4s var(--easing);
+        }
+        .brief-featured:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border-color: rgba(203,168,78,0.4);
+            border-left-color: var(--accent-gold);
+        }
+        .brief-featured-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 200px;
+        }
+        .brief-featured-body {
+            flex: 1;
+        }
+        .brief-category {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            opacity: 0.8;
+        }
+        .brief-author {
+            font-size: 0.85rem;
+            opacity: 0.5;
+            font-style: italic;
+        }
+        .brief-featured-title {
+            font-size: 2.2rem;
+            color: var(--text-white);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .brief-featured-subtitle {
+            font-size: 1rem;
+            opacity: 0.7;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .brief-read-link {
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+        }
+        .brief-featured:hover .brief-read-link { opacity: 0.7; }
+
+        /* Brief carousel cards */
+        .brief-card {
+            min-width: 280px;
+            max-width: 280px;
+            background: rgba(255,255,255,0.03);
+            border-top: 3px solid var(--accent-gold);
+            padding: 1.75rem;
+            scroll-snap-align: start;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .brief-card:hover {
+            background: rgba(255,255,255,0.06);
+            transform: translateY(-4px);
+        }
+        .brief-card-title {
+            font-size: 1.2rem;
+            color: var(--text-white);
+            margin: 0.6rem 0 0.75rem;
+            line-height: 1.3;
+        }
+        .brief-card-subtitle {
+            font-size: 0.88rem;
+            opacity: 0.6;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        @media (max-width: 900px) {
+            .brief-featured { flex-direction: column; gap: 1.5rem; padding: 2rem; }
+            .brief-featured-meta { flex-direction: row; align-items: center; min-width: unset; }
+            .brief-featured-title { font-size: 1.6rem; }
+        }
+
         /* YouTube Section */
         #youtube-insights {
             padding-bottom: 6rem;
@@ -930,9 +1024,8 @@
             </div>
 
             <!-- Strategic Briefs Grid - Dynamically loaded from briefs.json -->
-            <div id="strategic-briefs-grid" class="grid-4 fade-up delay-1">
-                <!-- Loading state -->
-                <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; opacity: 0.6;">
+            <div id="strategic-briefs-grid" class="fade-up delay-1">
+                <div style="text-align: center; padding: 2rem; opacity: 0.6;">
                     <p>Loading strategic briefs...</p>
                 </div>
             </div>

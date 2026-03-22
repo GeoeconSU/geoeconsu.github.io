@@ -1,69 +1,113 @@
 /**
  * Strategic Briefs Dynamic Loader
- * Fetches briefs.json and generates matching UI cards
+ * Featured hero brief + horizontal carousel for the rest
  */
 
 async function loadStrategicBriefs() {
     const container = document.getElementById('strategic-briefs-grid');
-
-    if (!container) {
-        console.error('Strategic briefs container not found');
-        return;
-    }
+    if (!container) return;
 
     try {
-        // Fetch briefs.json
         const response = await fetch('briefs.json');
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
+        const briefs = data.briefs;
 
-        // Clear existing content (loading state)
         container.innerHTML = '';
 
-        // Generate cards for each brief
-        data.briefs.forEach(brief => {
-            const card = createBriefCard(brief);
-            container.appendChild(card);
-        });
+        if (!briefs || briefs.length === 0) {
+            container.innerHTML = '<p style="opacity:0.6;text-align:center;">No briefs available.</p>';
+            return;
+        }
 
-        console.log(`✅ Loaded ${data.briefs.length} strategic briefs`);
+        // --- Featured brief (first/newest) ---
+        const featured = createFeaturedCard(briefs[0]);
+        container.appendChild(featured);
+
+        // --- Carousel for the rest ---
+        if (briefs.length > 1) {
+            const carouselSection = document.createElement('div');
+            carouselSection.style.marginTop = '2.5rem';
+
+            const controls = document.createElement('div');
+            controls.className = 'carousel-controls';
+            controls.innerHTML = `
+                <button class="control-btn" id="briefPrevBtn">&#8592;</button>
+                <button class="control-btn" id="briefNextBtn">&#8594;</button>
+            `;
+
+            const carouselWrapper = document.createElement('div');
+            carouselWrapper.className = 'carousel-wrapper';
+
+            const carousel = document.createElement('div');
+            carousel.className = 'carousel';
+            carousel.id = 'briefsCarousel';
+
+            briefs.slice(1).forEach(brief => {
+                carousel.appendChild(createBriefCard(brief));
+            });
+
+            carouselWrapper.appendChild(carousel);
+            carouselSection.appendChild(controls);
+            carouselSection.appendChild(carouselWrapper);
+            container.appendChild(carouselSection);
+
+            // Wire up controls after DOM insertion
+            setTimeout(() => {
+                const c = document.getElementById('briefsCarousel');
+                document.getElementById('briefNextBtn').addEventListener('click', () => c.scrollBy({ left: 310, behavior: 'smooth' }));
+                document.getElementById('briefPrevBtn').addEventListener('click', () => c.scrollBy({ left: -310, behavior: 'smooth' }));
+            }, 0);
+        }
+
+        console.log(`✅ Loaded ${briefs.length} strategic briefs`);
 
     } catch (error) {
         console.error('Error loading strategic briefs:', error);
-        container.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; opacity: 0.6;">
-                <p>Unable to load strategic briefs. Please try again later.</p>
-            </div>
-        `;
+        document.getElementById('strategic-briefs-grid').innerHTML =
+            '<p style="opacity:0.6;text-align:center;">Unable to load strategic briefs.</p>';
     }
 }
 
+function createFeaturedCard(brief) {
+    const anchor = document.createElement('a');
+    anchor.href = brief.href;
+    anchor.target = '_blank';
+    anchor.style.textDecoration = 'none';
+    anchor.style.display = 'block';
+
+    const card = document.createElement('div');
+    card.className = 'brief-featured';
+    card.innerHTML = `
+        <div class="brief-featured-meta">
+            <span class="brief-category">${escapeHtml(brief.category)}</span>
+            <span class="brief-author">By ${escapeHtml(brief.author)}</span>
+        </div>
+        <div class="brief-featured-body">
+            <h3 class="brief-featured-title">${escapeHtml(brief.title)}</h3>
+            <p class="brief-featured-subtitle">${escapeHtml(brief.subtitle)}</p>
+            <span class="brief-read-link">Read Brief &rarr;</span>
+        </div>
+    `;
+
+    anchor.appendChild(card);
+    return anchor;
+}
+
 function createBriefCard(brief) {
-    // Create anchor element
     const anchor = document.createElement('a');
     anchor.href = brief.href;
     anchor.target = '_blank';
     anchor.style.textDecoration = 'none';
 
-    // Create card div
     const card = document.createElement('div');
-    card.className = 'card';
-    card.style.height = '100%';
-    card.style.transition = 'all 0.3s ease';
-    card.style.cursor = 'pointer';
-
-    // Build card HTML
+    card.className = 'brief-card';
     card.innerHTML = `
-        <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">${escapeHtml(brief.category)}</h4>
-        <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem; font-size: 1.8rem;">${escapeHtml(brief.title)}</h3>
-        <p style="font-style: italic; opacity: 0.8; margin-bottom: 0.5rem;">${escapeHtml(brief.subtitle)}</p>
-        <span style="display:block; font-size: 0.85rem; color: var(--accent-gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">By ${escapeHtml(brief.author)}</span>
-        <p style="font-size: 0.95rem;">${escapeHtml(brief.description)}</p>
-        <span style="color: var(--accent-gold); font-size: 0.9rem; margin-top: 1rem; display: inline-block;">Read Brief &rarr;</span>
+        <span class="brief-category">${escapeHtml(brief.category)}</span>
+        <h3 class="brief-card-title">${escapeHtml(brief.title)}</h3>
+        <p class="brief-card-subtitle">${escapeHtml(brief.subtitle)}</p>
+        <span class="brief-author" style="margin-top:auto;display:block;">By ${escapeHtml(brief.author)}</span>
+        <span class="brief-read-link" style="margin-top:0.75rem;display:inline-block;">Read &rarr;</span>
     `;
 
     anchor.appendChild(card);
@@ -76,10 +120,8 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Load briefs when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadStrategicBriefs);
 } else {
-    // DOM already loaded
     loadStrategicBriefs();
 }
