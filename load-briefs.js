@@ -1,6 +1,6 @@
 /**
  * Strategic Briefs Dynamic Loader
- * Featured hero brief + horizontal carousel for the rest
+ * Latest 3 in featured grid + horizontal carousel for the rest
  */
 
 async function loadStrategicBriefs() {
@@ -20,12 +20,16 @@ async function loadStrategicBriefs() {
             return;
         }
 
-        // --- Featured brief (first/newest) ---
-        const featured = createFeaturedCard(briefs[0]);
-        container.appendChild(featured);
+        // --- Featured grid: latest 3 ---
+        const featuredGrid = document.createElement('div');
+        featuredGrid.className = 'brief-featured-grid';
+        briefs.slice(0, 3).forEach(brief => {
+            featuredGrid.appendChild(createFeaturedCard(brief));
+        });
+        container.appendChild(featuredGrid);
 
         // --- Carousel for the rest ---
-        if (briefs.length > 1) {
+        if (briefs.length > 3) {
             const carouselSection = document.createElement('div');
             carouselSection.style.marginTop = '2.5rem';
 
@@ -43,7 +47,7 @@ async function loadStrategicBriefs() {
             carousel.className = 'carousel';
             carousel.id = 'briefsCarousel';
 
-            briefs.slice(1).forEach(brief => {
+            briefs.slice(3).forEach(brief => {
                 carousel.appendChild(createBriefCard(brief));
             });
 
@@ -73,24 +77,14 @@ function createFeaturedCard(brief) {
     const anchor = document.createElement('a');
     anchor.href = brief.href;
     anchor.target = '_blank';
-    anchor.style.textDecoration = 'none';
-    anchor.style.display = 'block';
-
-    const card = document.createElement('div');
-    card.className = 'brief-featured';
-    card.innerHTML = `
-        <div class="brief-featured-meta">
-            <span class="brief-category">${escapeHtml(brief.category)}</span>
-            <span class="brief-author">By ${escapeHtml(brief.author)}</span>
-        </div>
-        <div class="brief-featured-body">
-            <h3 class="brief-featured-title">${escapeHtml(brief.title)}</h3>
-            <p class="brief-featured-subtitle">${escapeHtml(brief.subtitle)}</p>
-            <span class="brief-read-link">Read Brief &rarr;</span>
-        </div>
+    anchor.className = 'brief-featured';
+    anchor.innerHTML = `
+        <span class="brief-category">${escapeHtml(brief.category)}</span>
+        <h3 class="brief-featured-title">${escapeHtml(brief.title)}</h3>
+        <p class="brief-featured-subtitle">${escapeHtml(brief.subtitle)}</p>
+        <span class="brief-author">By ${escapeHtml(brief.author)}</span>
+        <span class="brief-read-link">Read Brief &rarr;</span>
     `;
-
-    anchor.appendChild(card);
     return anchor;
 }
 
