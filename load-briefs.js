@@ -95,22 +95,19 @@ function createFeaturedCard(brief) {
 }
 
 function createBriefCard(brief) {
+    // Apply brief-card class directly to anchor so carousel flex sizing works
     const anchor = document.createElement('a');
     anchor.href = brief.href;
     anchor.target = '_blank';
     anchor.style.textDecoration = 'none';
-
-    const card = document.createElement('div');
-    card.className = 'brief-card';
-    card.innerHTML = `
+    anchor.className = 'brief-card';
+    anchor.innerHTML = `
         <span class="brief-category">${escapeHtml(brief.category)}</span>
         <h3 class="brief-card-title">${escapeHtml(brief.title)}</h3>
         <p class="brief-card-subtitle">${escapeHtml(brief.subtitle)}</p>
-        <span class="brief-author" style="margin-top:auto;display:block;">By ${escapeHtml(brief.author)}</span>
-        <span class="brief-read-link" style="margin-top:0.75rem;display:inline-block;">Read &rarr;</span>
+        <span class="brief-author">By ${escapeHtml(brief.author)}</span>
+        <span class="brief-read-link">Read &rarr;</span>
     `;
-
-    anchor.appendChild(card);
     return anchor;
 }
 
