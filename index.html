@@ -1665,7 +1665,11 @@
 
         // Start
         init();
-        
+
+    </script>
+
+    <!-- UI Logic (separate from Three.js so content always renders) -->
+    <script>
         // --- Standard UI Fade Logic ---
         const observerOptions = { root: null, threshold: 0.1 };
         const observer = new IntersectionObserver((entries) => {
@@ -1677,12 +1681,11 @@
             });
         }, observerOptions);
         document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-        
+
         // --- Carousel Logic ---
         const carousel = document.getElementById('teamCarousel');
         document.getElementById('nextBtn').addEventListener('click', () => carousel.scrollBy({ left: 340, behavior: 'smooth' }));
         document.getElementById('prevBtn').addEventListener('click', () => carousel.scrollBy({ left: -340, behavior: 'smooth' }));
-
     </script>
 
     <!-- Strategic Briefs Dynamic Loader -->
