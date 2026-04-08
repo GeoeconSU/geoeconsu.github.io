@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         :root {
             --primary-bg: #192030;
@@ -3163,8 +3165,11 @@
             color: var(--accent-amber); text-transform: uppercase; letter-spacing: 0.08em;
             flex-shrink: 0;
         }
-        .chat-clear-btn {
+        .chat-action-btns {
             position: absolute; top: 1rem; right: 1.5rem; z-index: 20;
+            display: flex; gap: 0.5rem; align-items: center;
+        }
+        .chat-clear-btn {
             background: rgba(15,20,32,0.7); backdrop-filter: blur(10px);
             border: 1px solid var(--border-subtle); color: var(--text-muted);
             font-family: var(--font-mono); font-size: 0.68rem;
@@ -3444,6 +3449,36 @@
             .section-title { font-size: 1.05rem; }
             .card-title { font-size: 1rem; }
         }
+
+        /* === CHAT CHARTS === */
+        .chat-chart-wrapper {
+            background: rgba(15, 20, 32, 0.6);
+            border: 1px solid rgba(203, 168, 78, 0.2);
+            border-radius: 8px;
+            padding: 1rem 1.25rem 0.75rem;
+            margin: 0.5rem 0;
+            max-width: 640px;
+        }
+        .chat-chart-title {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-gold);
+            margin-bottom: 0.75rem;
+            opacity: 0.85;
+        }
+        .chat-chart-canvas {
+            width: 100% !important;
+            height: 280px !important;
+        }
+        .chat-message.assistant .chat-chart-wrapper {
+            margin-left: 0;
+        }
+        @media (max-width: 768px) {
+            .chat-chart-wrapper { padding: 0.75rem; }
+            .chat-chart-canvas { height: 220px !important; }
+        }
     </style>
 </head>
 <body>
@@ -3712,7 +3747,7 @@
                             <i class="ri-map-pin-line"></i> Regional Leaders
                         </button>
                         <button class="btn" onclick="loadComparisonPreset('brics')" title="Compare BRICS countries">
-                            🇧🇷 BRICS
+                            BRICS
                         </button>
                         <button class="btn" onclick="loadComparisonPreset('g7')" title="Compare G7 countries">
                             G7
@@ -4075,9 +4110,14 @@
         <!-- TAB 6: INSIGHTS CHATBOT -->
         <div id="tab-insights" class="tab-content">
             <div class="chat-layout">
-                <button class="chat-clear-btn" onclick="clearChatHistory()" title="Clear conversation">
-                    <i class="ri-delete-bin-line"></i> Clear
-                </button>
+                <div class="chat-action-btns">
+                    <button class="chat-clear-btn" onclick="exportChatToPDF()" title="Export conversation as PDF">
+                        <i class="ri-file-pdf-line"></i> Export
+                    </button>
+                    <button class="chat-clear-btn" onclick="clearChatHistory()" title="Clear conversation">
+                        <i class="ri-delete-bin-line"></i> Clear
+                    </button>
+                </div>
                 <div class="chat-messages" id="chat-messages-container"></div>
                 <div class="chat-input-area">
                     <div class="chat-input-wrapper">
@@ -4099,12 +4139,77 @@
         </div>
     </div>
 
-<script src="config.js"></script>
 <script>
 // ===== GROQ / KIMI K2 CONFIG =====
-// GROQ_API_KEY is loaded from config.js (excluded from version control)
-const GROQ_MODEL   = 'moonshotai/kimi-k2-instruct';
-const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+// Requests proxy through Cloudflare Worker — API key never touches the browser.
+const GROQ_MODEL    = 'moonshotai/kimi-k2-instruct';
+const GROQ_ENDPOINT = 'https://rao-dashboard-proxy.guduruadip.workers.dev';
+
+// ===== CHART TOOL DEFINITIONS =====
+const CHART_TOOLS = [
+    {
+        type: 'function',
+        function: {
+            name: 'render_scatter_plot',
+            description: 'Render an Opportunity vs Stability scatter plot positioning all countries on the two-dimensional RAO grid. Use when the user asks about positioning, quadrant analysis, where countries cluster, or the overall RAO landscape. Optionally highlight specific countries with labels.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    highlight: {
+                        type: 'array',
+                        items: { type: 'string' },
+                        description: 'Country names or ISO codes to highlight with gold labels. Leave empty for all unlabelled.'
+                    },
+                    title: { type: 'string', description: 'Short chart title.' }
+                }
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'render_radar_chart',
+            description: 'Render a radar/spider chart of all pillar scores for one or two countries. Use when comparing structural profiles, analysing strengths and weaknesses, or when the user asks about a country\'s composition across pillars.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    countries: {
+                        type: 'array',
+                        items: { type: 'string' },
+                        description: 'One or two country names or ISO codes. Required.'
+                    },
+                    title: { type: 'string', description: 'Short chart title.' }
+                },
+                required: ['countries']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'render_bar_chart',
+            description: 'Render a horizontal bar chart. Use for pillar profile of a single country, or to rank countries by a metric. For questions like "top countries by X", "compare pillars", "breakdown of Y".',
+            parameters: {
+                type: 'object',
+                properties: {
+                    mode: {
+                        type: 'string',
+                        enum: ['pillar_profile', 'country_ranking'],
+                        description: 'pillar_profile: all pillar scores for one country. country_ranking: rank countries by a score.'
+                    },
+                    country: { type: 'string', description: 'Country name or ISO (for pillar_profile mode).' },
+                    metric: {
+                        type: 'string',
+                        description: 'Metric to rank by (for country_ranking). One of: rao_score, opportunity_score, stability_score, market_access, capital_environment, trade_infrastructure, digital_economy, innovation_market, external_vulnerability, labor_market.'
+                    },
+                    top_n: { type: 'number', description: 'Countries to show in ranking (default 15).' },
+                    title: { type: 'string', description: 'Short chart title.' }
+                },
+                required: ['mode']
+            }
+        }
+    }
+];
 
 // ===== DATA & STATE =====
 let rawData = [];
@@ -4138,7 +4243,7 @@ const COMPARISON_PRESETS = {
 
 // Country name mappings for Google Charts
 const NAME_TO_GOOGLE = {
-    // rao6 full-name variants → Google Charts names
+    // rao7 full-name variants → Google Charts names
     "Korea, Republic of": "South Korea",
     "Viet Nam": "Vietnam",
     "Russian Federation": "Russia",
@@ -4174,7 +4279,7 @@ const REGIONS = {
 const ISO_TO_NAME = {};
 const NAME_TO_ISO = {};
 
-// rao6 uses full country names as the key — map name→ISO for internal use
+// rao7 uses full country names as the key — map name→ISO for internal use
 const NAME_TO_ISO_STATIC = {
     'Hong Kong':'HKG','Singapore':'SGP','Kuwait':'KWT','Denmark':'DNK','China':'CHN',
     'Norway':'NOR','Netherlands':'NLD','Ireland':'IRL','Viet Nam':'VNM','Qatar':'QAT',
@@ -4214,23 +4319,23 @@ const NAME_TO_ISO_STATIC = {
     'Syrian Arab Republic':'SYR','ZAR':'ZAR'
 };
 
-// ISO→display name: prefer short name from NAME_TO_GOOGLE, fallback to raw rao6 name
+// ISO→display name: prefer short name from NAME_TO_GOOGLE, fallback to raw rao7 name
 const ISO_NAMES = Object.fromEntries(
     Object.entries(NAME_TO_ISO_STATIC).map(([n, iso]) => [iso, NAME_TO_GOOGLE[n] || n])
 );
 
 // Pillar configurations
 const OPPORTUNITY_PILLARS = [
-    { key: 'market_access', name: 'Market Access', vars: ['trade_openness', 'high_tech_export_intensity', 'foreign_investment_attractiveness'] },
-    { key: 'capital_environment', name: 'Capital Environment', vars: ['domestic_capital_formation', 'financial_market_depth'] },
+    { key: 'market_access', name: 'Market Access', vars: ['trade_openness', 'high_tech_export_intensity'] },
+    { key: 'capital_environment', name: 'Capital Environment', vars: ['foreign_investment_attractiveness', 'domestic_capital_formation', 'financial_market_depth'] },
     { key: 'trade_infrastructure', name: 'Trade Infrastructure', vars: ['customs_efficiency', 'logistics_infrastructure_quality'] },
     { key: 'digital_economy', name: 'Digital Economy', vars: ['ict_service_export_competitiveness', 'digital_commerce_readiness', 'frontier_technology_readiness'] },
-    { key: 'innovation_market', name: 'Innovation', vars: ['economic_dynamism', 'market_sophistication', 'labor_force_scale', 'productive_capacities_index'] }
+    { key: 'innovation_market', name: 'Innovation & Characteristics', vars: ['economic_dynamism', 'market_sophistication', 'labor_force_scale', 'productive_capacities_index'] }
 ];
 
 const STABILITY_PILLARS = [
-    { key: 'external_vulnerability', name: 'External Vuln.', vars: ['external_asset_position', 'export_product_concentration'] },
-    { key: 'labor_market', name: 'Labor Market', vars: ['skills_mismatch', 'labor_informality'] }
+    { key: 'external_vulnerability', name: 'External Vulnerability', vars: ['external_asset_position', 'export_product_concentration'] },
+    { key: 'labor_market', name: 'Labor Market Quality', vars: ['skills_mismatch', 'labor_informality'] }
 ];
 
 const VARIABLE_NAMES = {
@@ -4316,7 +4421,7 @@ function parseCSVRow(line) {
 
 function parseMainCSV(text) {
     const lines = text.trim().split('\n');
-    // rao6 variable aliases: log-transformed cols mapped back to base names
+    // rao7 variable aliases: log-transformed cols mapped back to base names
     const LOG_ALIASES = {
         financial_market_depth_log: 'financial_market_depth',
         labor_force_scale_log:      'labor_force_scale',
@@ -4325,7 +4430,7 @@ function parseMainCSV(text) {
     const rawHeaders = parseCSVRow(lines[0]).map(h => h.trim());
     const headers = rawHeaders.map(h => LOG_ALIASES[h] || h);
 
-    // Individual variable columns — 0-1 in rao6, scale to 0-10
+    // Individual variable columns — 0-1 in rao7, scale to 0-10
     const VAR_COLS = new Set([
         ...OPPORTUNITY_PILLARS.flatMap(p => p.vars),
         ...STABILITY_PILLARS.flatMap(p => p.vars)
@@ -4344,7 +4449,7 @@ function parseMainCSV(text) {
             } else { row[h] = val; }
         });
 
-        // rao6 uses full country names — resolve to ISO
+        // rao7 uses full country names — resolve to ISO
         const fullName = row.country?.trim();
         if (!fullName) continue;
         const iso = NAME_TO_ISO_STATIC[fullName] || fullName;
@@ -4355,7 +4460,7 @@ function parseMainCSV(text) {
         // Skip rows with no RAO score
         if (!row.rao_score) continue;
 
-        // Opportunity and stability are 0-1 in rao6 — scale to 0-10
+        // Opportunity and stability are 0-1 in rao7 — scale to 0-10
         row.opportunity_score = (row.opportunity_score ?? 0) * 10;
         row.stability_score   = (row.stability_score   ?? 0) * 10;
 
@@ -4364,7 +4469,7 @@ function parseMainCSV(text) {
         NAME_TO_ISO[fullName] = iso;
     }
 
-    // Set calculated scores from rao6 columns
+    // Set calculated scores from rao7 columns
     rawData.forEach(c => {
         c.calculated_opportunity = c.opportunity_score;
         c.calculated_stability   = c.stability_score;
@@ -4927,12 +5032,12 @@ function renderCountryProfile(country) {
         gradientBg = 'linear-gradient(135deg, rgba(168, 79, 79, 0.15), rgba(168, 79, 79, 0.05))';
     }
 
-    // Enhancement 10: Pillar emojis and variable count
+    // Enhancement #10: Pillar icons and variable count
     const pillarEmojis = {
         'Market Access': '', 'Capital Environment': '', 'Trade Infrastructure': '',
-        'Digital Economy': '', 'Business Env.': '', 'Innovation': '',
-        'External Vuln.': '', 'Fiscal Health': '', 'Monetary Stab.': '',
-        'Labor Market': '👥', 'Market Structure': '⚖️', 'Institutional': '🏛️'
+        'Digital Economy': '', 'Business Environment': '', 'Innovation & Characteristics': '',
+        'External Vulnerability': '', 'Fiscal Health': '', 'Monetary & Price Stability': '',
+        'Labor Market Quality': '', 'Market Structure': '', 'Institutional Quality': ''
     };
 
     const oppPillars = OPPORTUNITY_PILLARS.map(p => {
@@ -5277,7 +5382,7 @@ function renderStrengthsWeaknesses(country) {
         <div class="insights-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
             <div class="insight-box-enhanced" style="background: linear-gradient(135deg, rgba(74, 157, 111, 0.1), rgba(74, 157, 111, 0.02)); border: 1px solid rgba(74, 157, 111, 0.3); padding: 1.5rem; border-radius: 8px;">
                 <div class="insight-header strength" style="font-family: var(--font-head); font-size: 1.1rem; color: var(--accent-green); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="font-size: 1.5rem;">💪</span> Top Strengths
+                    Top Strengths
                 </div>
                 ${strengths.map(s => {
                     const indicator = getRankIndicator(s.percentile);
@@ -5549,7 +5654,7 @@ function renderSimilarCountries(country) {
                 </button>
                 <button class="match-filter-btn ${matchMode === 'Stability' ? 'active' : ''}" onclick="setSimilarMatchMode('Stability')"
                     style="padding: 0.5rem 1rem; border: 1px solid var(--glass-border); background: ${matchMode === 'Stability' ? 'var(--accent-gold)' : 'var(--tertiary-bg)'}; color: ${matchMode === 'Stability' ? 'var(--primary-bg)' : 'var(--text-white)'}; border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-family: var(--font-mono); text-transform: uppercase;">
-                    🛡️ Stability
+                    Stability
                 </button>
             </div>
         </div>
@@ -5940,7 +6045,7 @@ function renderDeepDiveTable() {
             <span style="font-size: 0.85rem; color: var(--text-muted);">Sort by:</span>
             <button onclick="setDeepDiveSortMode('strength')" class="sort-btn ${sortMode === 'strength' ? 'active' : ''}"
                 style="padding: 0.5rem 1rem; background: ${sortMode === 'strength' ? 'var(--accent-green)' : 'var(--tertiary-bg)'}; color: ${sortMode === 'strength' ? 'white' : 'var(--text-white)'}; border: 1px solid var(--border-subtle); border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-family: var(--font-mono);">
-                💪 Strength
+                Strength
             </button>
             <button onclick="setDeepDiveSortMode('weakness')" class="sort-btn ${sortMode === 'weakness' ? 'active' : ''}"
                 style="padding: 0.5rem 1rem; background: ${sortMode === 'weakness' ? 'var(--accent-red)' : 'var(--tertiary-bg)'}; color: ${sortMode === 'weakness' ? 'white' : 'var(--text-white)'}; border: 1px solid var(--border-subtle); border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-family: var(--font-mono);">
@@ -5948,7 +6053,7 @@ function renderDeepDiveTable() {
             </button>
             <button onclick="setDeepDiveSortMode('alphabetical')" class="sort-btn ${sortMode === 'alphabetical' ? 'active' : ''}"
                 style="padding: 0.5rem 1rem; background: ${sortMode === 'alphabetical' ? 'var(--accent-blue)' : 'var(--tertiary-bg)'}; color: ${sortMode === 'alphabetical' ? 'white' : 'var(--text-white)'}; border: 1px solid var(--border-subtle); border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: all 0.3s ease; font-family: var(--font-mono);">
-                🔤 A-Z
+                A-Z
             </button>
         </div>
 
@@ -8836,7 +8941,7 @@ Cmd/Ctrl + K: Focus search
 Esc: Close modals
 
 FEATURES:
-★ Click stars to favorite countries
+Click stars to favorite countries
 Use presets in Compare tab
 Export data from Rankings
 Hover over info icons (?) for explanations
@@ -8979,26 +9084,52 @@ function resolveContext(query) {
 
 function buildSystemPrompt(query) {
     const { tier2, tier3 } = resolveContext(query);
-    return `You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You advise institutional investors on country risk and opportunity using the Risk-Adjusted Opportunity (RAO) framework. Your responses should read like a high-quality analyst memo: clear, insightful, and grounded in data — but written in fluent, natural prose.
+    return `You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You advise institutional investors on country risk and opportunity using the Risk-Adjusted Opportunity (RAO) framework. Your analytical standard is that of a decision-grade intelligence product: you do not summarise what has happened, you explain what it means, why it matters, and what a sophisticated investor should do with that information.
+
+THE CORE ANALYTICAL STANDARD:
+Every response must meet the following test: could a senior investor read this and make a better decision than they could without it? If the response only describes conditions that are already publicly known without adding causal reasoning, forward-looking structure, or decision-relevant differentiation, it has failed that test.
+
+Build causal chains, not event lists. Do not write "X happened and this creates risk." Write "X happened, which transmits into Y through mechanism Z, which changes the decision calculus in the following way." Explain the pathway from geopolitical or macroeconomic development to investor exposure. For example: Gulf escalation → LNG supply disruption → input cost pressure on petrochemicals → margin compression in energy-intensive manufacturing → sector-specific risk premium.
+
+Use data analytically, not decoratively. A data point earns its place only if it drives an argument forward. Always contextualise figures against historical norms, regional peers, or investment thresholds. A number mentioned once and never returned to is not analysis — it is decoration. If you cite a figure, explain what it implies, whether it is high or low by relevant standards, and what changes if it moves in either direction.
+
+Distinguish between sectors and sub-variables. Country-level conclusions are starting points, not endpoints. The same country can be a strong opportunity in one sector and a liability in another. Where the question warrants it, identify which specific sectors, corridors, or asset classes are most and least exposed within a given RAO profile.
+
+Explain transmission mechanisms explicitly. When a risk or opportunity is identified, trace how it reaches the investor. Do not say "political instability poses risks to investment." Say which type of investment, through which channel (regulatory unpredictability, contract enforceability, currency pressure, supply chain disruption), at what time horizon, and with what mitigants.
+
+FORWARD-LOOKING STRUCTURE:
+Responses on country or regional risk must include structured forward-looking content where the question warrants it:
+- Base case: the most probable near-term trajectory given current conditions
+- Upside case: the specific trigger or condition that would improve the investment outlook, and what it would unlock
+- Downside case: the specific shock or deterioration that would worsen conditions, and which sectors or positions it would hit hardest
+Projections must be conditional. Do not state forecasts as certainties — state what they depend on. Vague forward-looking language ("risks remain," "uncertainty persists") is not acceptable as a substitute for structured scenario thinking.
 
 WRITING STYLE:
-- Write in full paragraphs. Numbers are evidence that support your argument, not the argument itself. After citing a score, explain what it means in practical terms for an investor.
-- Good: "Vietnam's Digital Economy pillar scores 6.8 — nearly two full points above the global average of 4.9 — reflecting a maturing ICT export sector and strong digital commerce adoption that makes it an attractive entry point for tech-enabled businesses."
-- Bad: "Vietnam Digital Economy: 6.8 (avg 4.9)."
-- Avoid bullet-point dumps of raw numbers. Use bullets only to compare 3+ items cleanly; always add a sentence of interpretation after a list.
-- For comparisons of 3+ countries, ALWAYS include a markdown table (| Col | Col |) summarising the key metrics before the prose analysis. Tables must have a header row and a separator row (|---|---|). Follow every table with at least one paragraph of interpretation.
-- When you cite a score, always put it in context: what does it mean relative to the global average, the region, and the investment decision at hand?
-- Lead with the strategic insight, not the data. The data backs the insight.
-- Maintain a confident, direct analytical voice. Do not hedge with phrases like "it is worth noting" or "it should be mentioned."
+- Write in full paragraphs. Numbers are evidence that support the argument, not the argument itself.
+- Lead with the strategic insight — the opening sentence states a conclusion, not a condition.
+- Always contextualise RAO scores against the global average, regional peers, and the specific investment decision being made.
+- Use bullet points only when comparing three or more items; always follow with an interpretive paragraph that synthesises what the comparison means — bullet points are never the end of an argument.
+- For three or more country comparisons, include a markdown table (| Col | Col | with header and separator rows) before prose; the table summarises, the prose argues.
+- Confident, direct analytical voice. No hedging phrases: "it is worth noting," "it should be considered," "there may be some risk."
+- Avoid boilerplate closing sentences ("continued monitoring is advised," "the outlook remains mixed"). Every closing sentence states something specific and actionable.
+- Vary sentence structure and register across sections — uniform paragraph construction signals low editorial quality.
 
 RESPONSE STRUCTURE:
-- Open with 1-2 sentences stating the core investment conclusion.
-- Use ### section headers to organize deeper analysis.
-- End substantive responses with a brief "### Bottom Line" paragraph that restates the actionable takeaway.
-- For country deep-dives: narrative on composite RAO → what the Opp/Stab split reveals about the investment profile → the 2-3 pillar strengths/weaknesses that matter most → what the sub-variable detail tells you about root causes.
-- For comparisons: explain what separates the countries in practical terms, not just numerically.
-- For screening: explain why certain countries rise to the top for the specific use case, and flag the key risk that could change the picture.
-- For regional analysis: explain what structural factors drive the regional performance pattern, using specific countries as illustrations.
+- Open with 1-2 sentences stating the core investment conclusion — not a scene-setter, a verdict.
+- Use ### headers for deeper sections.
+- End with a ### Bottom Line paragraph that is specific and decision-relevant, not a summary of what was already said.
+- Country deep-dives: RAO composite → Opportunity/Stability split → top 2-3 pillar strengths and weaknesses with root causes at the sub-variable level → sector or corridor differentiation → forward-looking scenario.
+- Comparisons: explain practical separation between countries — what does a higher score actually mean for a specific type of capital or decision?
+- Screening: explain why countries rise to the top of a screen; pair each with its key risk caveat and the condition under which that caveat becomes disqualifying.
+- Regional: identify structural drivers with specific country illustrations; distinguish between countries within the region rather than treating it as homogeneous; address which trajectories are converging or diverging.
+
+QUALITY FAILURES TO AVOID:
+- Describing a country's situation without explaining the mechanism connecting it to investor outcomes
+- Listing events or data points without synthesising what they mean together
+- Concluding a section with language that could apply to any country in any quarter
+- Treating a risk as identified once it has been named — a risk is only analytically complete when its transmission channel, affected sectors, time horizon, and mitigants have been addressed
+- Providing country assessments that give the same level of risk characterisation to every country
+- Forward-looking content consisting only of vague caution rather than structured scenarios with named triggers
 
 DATA NOTES:
 - Stability pillars and (INV) variables are inverted: a higher score means lower risk/fragility.
@@ -9021,8 +9152,8 @@ async function sendChatMessage() {
     const userText = input.value.trim();
     if (!userText || isChatLoading) return;
 
-    if (!GROQ_API_KEY || GROQ_API_KEY === 'YOUR_GROQ_API_KEY_HERE') {
-        renderChatMessage('assistant', '**Configuration required.** Open `dashboard.html` and set `GROQ_API_KEY` at the top of the `<script>` block.', true);
+    if (!GROQ_ENDPOINT) {
+        renderChatMessage('assistant', '**Configuration required.** Set `GROQ_PROXY_URL` in `config.js` to your deployed Cloudflare Worker URL.', true);
         return;
     }
 
@@ -9042,10 +9173,52 @@ async function sendChatMessage() {
             { role: 'system', content: buildSystemPrompt(userText) },
             ...recentHistory
         ];
-        const reply = await callGroqAPI(messages);
-        removeTypingIndicator(typingId);
-        renderChatMessage('assistant', reply);
-        chatHistory.push({ role: 'assistant', content: reply });
+
+        // First call — with chart tools enabled
+        const msg = await callGroqAPI(messages, CHART_TOOLS);
+
+        if (msg.tool_calls && msg.tool_calls.length > 0) {
+            const toolCall = msg.tool_calls[0];
+            const fnName = toolCall.function.name;
+            let fnArgs = {};
+            try { fnArgs = JSON.parse(toolCall.function.arguments); } catch {}
+
+            // Render chart into chat
+            removeTypingIndicator(typingId);
+            const chartEl = dispatchChartRender(fnName, fnArgs);
+            if (chartEl) {
+                renderChatChart(chartEl);
+                // Capture canvas after animation completes (animation is 400ms)
+                setTimeout(() => {
+                    const canvas = chartEl.querySelector('canvas');
+                    const chartTitle = chartEl.querySelector('.chat-chart-title')?.textContent || '';
+                    if (canvas) {
+                        chatHistory.push({ role: 'chart', imageData: canvas.toDataURL('image/png'), title: chartTitle });
+                    }
+                }, 500);
+            }
+
+            // Second call — send tool result back for the text analysis
+            updateChatStatus('thinking', 'Analyzing...');
+            const typingId2 = showTypingIndicator();
+            const followupMessages = [
+                ...messages,
+                { role: 'assistant', content: msg.content || null, tool_calls: msg.tool_calls },
+                { role: 'tool', tool_call_id: toolCall.id, content: 'Chart rendered successfully in the chat interface.' }
+            ];
+            const msg2 = await callGroqAPI(followupMessages);
+            removeTypingIndicator(typingId2);
+            const reply = msg2.content || '';
+            if (reply) renderChatMessage('assistant', reply);
+            chatHistory.push({ role: 'assistant', content: `[chart rendered] ${reply}` });
+        } else {
+            // Regular text response
+            removeTypingIndicator(typingId);
+            const reply = msg.content || 'No response received.';
+            renderChatMessage('assistant', reply);
+            chatHistory.push({ role: 'assistant', content: reply });
+        }
+
         updateChatStatus('ready', 'Ready');
     } catch (err) {
         removeTypingIndicator(typingId);
@@ -9059,27 +9232,354 @@ async function sendChatMessage() {
     }
 }
 
-async function callGroqAPI(messages) {
+async function callGroqAPI(messages, tools = null) {
+    const body = {
+        model: GROQ_MODEL,
+        messages,
+        temperature: 0.25,
+        max_tokens: 2048,
+        stream: false
+    };
+    if (tools) {
+        body.tools = tools;
+        body.tool_choice = 'auto';
+    }
     const response = await fetch(GROQ_ENDPOINT, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${GROQ_API_KEY}`
-        },
-        body: JSON.stringify({
-            model: GROQ_MODEL,
-            messages,
-            temperature: 0.25,
-            max_tokens: 2048,
-            stream: false
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
     });
     if (!response.ok) {
         const err = await response.json().catch(() => ({}));
         throw new Error(err?.error?.message || `HTTP ${response.status}`);
     }
     const data = await response.json();
-    return data.choices?.[0]?.message?.content || 'No response received.';
+    return data.choices?.[0]?.message || { content: 'No response received.' };
+}
+
+// ===== CHART TOOL DISPATCH =====
+function dispatchChartRender(fnName, fnArgs) {
+    try {
+        switch (fnName) {
+            case 'render_scatter_plot': return buildScatterPlot(fnArgs);
+            case 'render_radar_chart':  return buildRadarChart(fnArgs);
+            case 'render_bar_chart':    return buildBarChart(fnArgs);
+            default: return null;
+        }
+    } catch (e) {
+        console.error('Chart render error:', e);
+        return null;
+    }
+}
+
+function renderChatChart(el) {
+    const container = document.getElementById('chat-messages-container');
+    if (!container || !el) return;
+    hideWelcomeState();
+    const div = document.createElement('div');
+    div.className = 'chat-message assistant';
+    div.style.cssText = 'display:flex; gap:0.75rem; align-items:flex-start;';
+    const avatar = document.createElement('div');
+    avatar.className = 'chat-avatar';
+    avatar.innerHTML = '<i class="ri-bar-chart-2-line"></i>';
+    div.appendChild(avatar);
+    div.appendChild(el);
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
+// Resolve a country name/ISO string to a rawData entry
+function resolveCountry(nameOrISO) {
+    const upper = nameOrISO.trim().toUpperCase();
+    let found = rawData.find(r => r.country === upper);
+    if (found) return found;
+    const lower = nameOrISO.trim().toLowerCase();
+    found = rawData.find(r => r.country_name.toLowerCase() === lower);
+    if (found) return found;
+    found = rawData.find(r => r.country_name.toLowerCase().includes(lower));
+    return found || null;
+}
+
+// Shared Chart.js theme defaults
+const CHART_THEME = {
+    bg: '#192030',
+    gridColor: 'rgba(255,255,255,0.06)',
+    tickColor: 'rgba(255,255,255,0.5)',
+    gold: '#cba84e',
+    goldDim: 'rgba(203,168,78,0.18)',
+    blue: 'rgba(93,140,168,0.7)',
+    blueSolid: '#5d8ca8',
+    font: "'JetBrains Mono', monospace"
+};
+
+function makeChartWrapper(title) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chat-chart-wrapper';
+    if (title) {
+        const h = document.createElement('div');
+        h.className = 'chat-chart-title';
+        h.textContent = title;
+        wrapper.appendChild(h);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.className = 'chat-chart-canvas';
+    wrapper.appendChild(canvas);
+    return { wrapper, canvas };
+}
+
+// Track chart instances so we can destroy on clear
+const _chartInstances = [];
+function registerChart(instance) { _chartInstances.push(instance); }
+
+// ===== SCATTER PLOT =====
+function buildScatterPlot({ highlight = [], title } = {}) {
+    if (!rawData.length) return null;
+    const { wrapper, canvas } = makeChartWrapper(title || 'Opportunity vs Stability Positioning');
+
+    const highlightSet = new Set(
+        highlight.map(h => resolveCountry(h)?.country).filter(Boolean)
+    );
+
+    const base = rawData.map(c => ({ x: c.opportunity_score, y: c.stability_score, label: c.country_name, iso: c.country }));
+    const highlighted = base.filter(p => highlightSet.has(p.iso));
+    const rest = base.filter(p => !highlightSet.has(p.iso));
+
+    const medX = rawData.map(c => c.opportunity_score).sort((a,b)=>a-b)[Math.floor(rawData.length/2)];
+    const medY = rawData.map(c => c.stability_score).sort((a,b)=>a-b)[Math.floor(rawData.length/2)];
+
+    const chart = new Chart(canvas, {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Countries',
+                    data: rest,
+                    backgroundColor: 'rgba(93,140,168,0.4)',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                },
+                {
+                    label: 'Highlighted',
+                    data: highlighted,
+                    backgroundColor: CHART_THEME.gold,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 400 },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => {
+                            const d = ctx.raw;
+                            return `${d.label} — Opp: ${d.x.toFixed(2)}, Stab: ${d.y.toFixed(2)}`;
+                        }
+                    },
+                    backgroundColor: '#1f283b',
+                    borderColor: CHART_THEME.gold,
+                    borderWidth: 1,
+                    titleColor: CHART_THEME.gold,
+                    bodyColor: 'rgba(255,255,255,0.8)',
+                    bodyFont: { family: CHART_THEME.font, size: 11 }
+                },
+                annotation: undefined
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Opportunity', color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } },
+                    min: 0, max: 10,
+                    grid: { color: CHART_THEME.gridColor },
+                    ticks: { color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } }
+                },
+                y: {
+                    title: { display: true, text: 'Stability', color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } },
+                    min: 0, max: 10,
+                    grid: { color: CHART_THEME.gridColor },
+                    ticks: { color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } }
+                }
+            }
+        },
+        plugins: [{
+            id: 'quadrantLines',
+            afterDraw(chart) {
+                const { ctx, chartArea: { left, right, top, bottom }, scales: { x, y } } = chart;
+                const px = x.getPixelForValue(medX);
+                const py = y.getPixelForValue(medY);
+                ctx.save();
+                ctx.strokeStyle = 'rgba(203,168,78,0.2)';
+                ctx.setLineDash([4, 4]);
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(px, top); ctx.lineTo(px, bottom); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(left, py); ctx.lineTo(right, py); ctx.stroke();
+                ctx.restore();
+                // Labels on highlighted points
+                if (highlighted.length) {
+                    ctx.save();
+                    ctx.fillStyle = CHART_THEME.gold;
+                    ctx.font = `10px ${CHART_THEME.font}`;
+                    highlighted.forEach(p => {
+                        const px2 = x.getPixelForValue(p.x);
+                        const py2 = y.getPixelForValue(p.y);
+                        ctx.fillText(p.iso, px2 + 7, py2 - 4);
+                    });
+                    ctx.restore();
+                }
+            }
+        }]
+    });
+    registerChart(chart);
+    return wrapper;
+}
+
+// ===== RADAR CHART =====
+function buildRadarChart({ countries = [], title } = {}) {
+    if (!countries.length) return null;
+    const resolved = countries.map(resolveCountry).filter(Boolean).slice(0, 2);
+    if (!resolved.length) return null;
+
+    const { wrapper, canvas } = makeChartWrapper(title || `Pillar Profile — ${resolved.map(c => c.country_name).join(' vs ')}`);
+
+    const labels = [
+        ...OPPORTUNITY_PILLARS.map(p => p.name),
+        ...STABILITY_PILLARS.map(p => p.name)
+    ];
+
+    const colors = [
+        { border: CHART_THEME.gold, bg: 'rgba(203,168,78,0.12)' },
+        { border: CHART_THEME.blueSolid, bg: 'rgba(93,140,168,0.12)' }
+    ];
+
+    const datasets = resolved.map((c, i) => {
+        const oppScores = OPPORTUNITY_PILLARS.map(p => calculatePillarScore(c, p.vars));
+        const stabScores = STABILITY_PILLARS.map(p => 10 - calculatePillarScore(c, p.vars));
+        return {
+            label: c.country_name,
+            data: [...oppScores, ...stabScores],
+            borderColor: colors[i].border,
+            backgroundColor: colors[i].bg,
+            pointBackgroundColor: colors[i].border,
+            pointRadius: 3,
+            borderWidth: 2
+        };
+    });
+
+    const chart = new Chart(canvas, {
+        type: 'radar',
+        data: { labels, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 400 },
+            scales: {
+                r: {
+                    min: 0, max: 10,
+                    ticks: { stepSize: 2, color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 9 }, backdropColor: 'transparent' },
+                    pointLabels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 9 } },
+                    grid: { color: CHART_THEME.gridColor },
+                    angleLines: { color: CHART_THEME.gridColor }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: resolved.length > 1,
+                    labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 12 }
+                },
+                tooltip: {
+                    backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1,
+                    titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)',
+                    bodyFont: { family: CHART_THEME.font, size: 11 }
+                }
+            }
+        }
+    });
+    registerChart(chart);
+    return wrapper;
+}
+
+// ===== BAR CHART =====
+function buildBarChart({ mode, country, metric = 'rao_score', top_n = 15, title } = {}) {
+    if (!rawData.length) return null;
+
+    let labels, values, barColor, chartTitle;
+
+    if (mode === 'pillar_profile') {
+        const c = resolveCountry(country || '');
+        if (!c) return null;
+        const allPillars = [
+            ...OPPORTUNITY_PILLARS.map(p => ({ name: p.name, score: calculatePillarScore(c, p.vars), type: 'opp' })),
+            ...STABILITY_PILLARS.map(p => ({ name: p.name, score: 10 - calculatePillarScore(c, p.vars), type: 'stab' }))
+        ];
+        labels = allPillars.map(p => p.name);
+        values = allPillars.map(p => parseFloat(p.score.toFixed(2)));
+        barColor = allPillars.map(p => p.type === 'opp' ? CHART_THEME.gold : CHART_THEME.blueSolid);
+        chartTitle = title || `Pillar Profile — ${c.country_name}`;
+    } else {
+        // country_ranking
+        const pillarKeys = {
+            market_access:        p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='market_access').vars),
+            capital_environment:  p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='capital_environment').vars),
+            trade_infrastructure: p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='trade_infrastructure').vars),
+            digital_economy:      p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='digital_economy').vars),
+            innovation_market:    p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='innovation_market').vars),
+            external_vulnerability: p => 10 - calculatePillarScore(p, STABILITY_PILLARS.find(x=>x.key==='external_vulnerability').vars),
+            labor_market:         p => 10 - calculatePillarScore(p, STABILITY_PILLARS.find(x=>x.key==='labor_market').vars)
+        };
+        const scorer = pillarKeys[metric] || (p => p[metric] ?? 0);
+        const sorted = [...rawData]
+            .map(c => ({ name: c.country_name, score: scorer(c) }))
+            .filter(c => !isNaN(c.score))
+            .sort((a, b) => b.score - a.score)
+            .slice(0, Math.min(top_n, 20));
+        labels = sorted.map(c => c.name);
+        values = sorted.map(c => parseFloat(c.score.toFixed(2)));
+        barColor = CHART_THEME.gold;
+        chartTitle = title || `Top ${sorted.length} — ${metric.replace(/_/g,' ')}`;
+    }
+
+    const { wrapper, canvas } = makeChartWrapper(chartTitle);
+
+    const chart = new Chart(canvas, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{ data: values, backgroundColor: barColor, borderRadius: 3, borderSkipped: false }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 400 },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1,
+                    titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)',
+                    bodyFont: { family: CHART_THEME.font, size: 11 },
+                    callbacks: { label: ctx => ` ${ctx.raw.toFixed(2)}` }
+                }
+            },
+            scales: {
+                x: {
+                    min: 0, max: 10,
+                    grid: { color: CHART_THEME.gridColor },
+                    ticks: { color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: { color: 'rgba(255,255,255,0.75)', font: { family: CHART_THEME.font, size: 10 } }
+                }
+            }
+        }
+    });
+    // Adjust canvas height for bar count
+    canvas.style.height = `${Math.max(200, labels.length * 26 + 40)}px`;
+    registerChart(chart);
+    return wrapper;
 }
 
 function renderChatMessage(role, content, isError = false) {
@@ -9327,8 +9827,263 @@ function autoResizeChatInput(textarea) {
 
 function clearChatHistory() {
     chatHistory = [];
+    _chartInstances.forEach(c => { try { c.destroy(); } catch {} });
+    _chartInstances.length = 0;
     showWelcomeState();
     updateChatStatus('ready', 'Ready');
+}
+
+function exportChatToPDF() {
+    if (!chatHistory.length) { alert('No conversation to export.'); return; }
+    if (!window.jspdf) { alert('PDF library not loaded. Check your internet connection.'); return; }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    // Layout constants
+    const PW = 210, PH = 297, M = 18, CW = PW - M * 2;
+    const FOOTER_H = 13, CONTENT_BOTTOM = PH - FOOTER_H - 3;
+
+    // Colour palette
+    const NAVY  = [25, 32, 48];
+    const GOLD  = [203, 168, 78];
+    const DARK  = [28, 28, 28];
+    const MUTED = [148, 148, 148];
+    const CREAM = [250, 248, 244];
+    const WHITE = [255, 255, 255];
+    const WARM  = [185, 175, 148];
+
+    // Title from first user message
+    const firstUser = chatHistory.find(m => m.role === 'user');
+    const rawTitle  = firstUser ? firstUser.content.trim() : 'Intelligence Briefing';
+    const title     = rawTitle.length > 72 ? rawTitle.slice(0, 72) + '\u2026' : rawTitle;
+    const dateStr   = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    const fileDate  = new Date().toISOString().slice(0, 10);
+
+    let y = 0, pageNum = 1;
+
+    function drawHeader(isFirst) {
+        if (isFirst) {
+            doc.setFillColor(...NAVY);
+            doc.rect(0, 0, PW, 52, 'F');
+            doc.setFillColor(...GOLD);
+            doc.rect(0, 52, PW, 0.6, 'F');
+            // Eyebrow
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(...GOLD);
+            doc.text('RAO INTELLIGENCE BRIEFING', M, 13);
+            doc.setTextColor(...WARM);
+            doc.text(dateStr, PW - M, 13, { align: 'right' });
+            // Title
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(14.5); doc.setTextColor(...WHITE);
+            const tLines = doc.splitTextToSize(title, CW);
+            doc.text(tLines, M, 25);
+            // Subtitle
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...WARM);
+            doc.text('Generated by RAO Intelligence Assistant  \u00B7  Sixteenth Council Geoeconomic Strategic Unit  \u00B7  Confidential', M, 47);
+            y = 59;
+        } else {
+            doc.setFillColor(...NAVY);
+            doc.rect(0, 0, PW, 15, 'F');
+            doc.setFillColor(...GOLD);
+            doc.rect(0, 15, PW, 0.4, 'F');
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...GOLD);
+            doc.text('RAO INTELLIGENCE BRIEFING', M, 9.5);
+            doc.setFont('helvetica', 'normal'); doc.setTextColor(...WARM);
+            const short = title.length > 60 ? title.slice(0, 60) + '\u2026' : title;
+            doc.text(short, PW / 2, 9.5, { align: 'center' });
+            doc.text(dateStr, PW - M, 9.5, { align: 'right' });
+            y = 22;
+        }
+    }
+
+    function drawFooter(pNum) {
+        doc.setFillColor(...NAVY);
+        doc.rect(0, PH - FOOTER_H, PW, FOOTER_H, 'F');
+        doc.setFillColor(...GOLD);
+        doc.rect(0, PH - FOOTER_H, PW, 0.4, 'F');
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5);
+        doc.setTextColor(...GOLD);
+        doc.text('Sixteenth Council  Geoeconomic Strategic Unit', M, PH - 4.5);
+        doc.setTextColor(...WARM);
+        doc.text('Page ' + pNum, PW - M, PH - 4.5, { align: 'right' });
+    }
+
+    function ensureSpace(needed) {
+        if (y + needed > CONTENT_BOTTOM) {
+            drawFooter(pageNum);
+            doc.addPage();
+            pageNum++;
+            drawHeader(false);
+        }
+    }
+
+    function stripMd(t) {
+        return t.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1').replace(/`([^`]+)`/g, '$1');
+    }
+
+    function renderTable(rows) {
+        if (!rows.length) return;
+        const colCount = Math.max(...rows.map(r => r.length));
+        const colW = CW / colCount;
+        const ROW_H = 7;
+        rows.forEach((row, ri) => {
+            ensureSpace(ROW_H + 1);
+            const isHdr = ri === 0;
+            doc.setFillColor(...(isHdr ? NAVY : ri % 2 === 0 ? [247, 246, 242] : WHITE));
+            doc.rect(M, y - ROW_H + 1.5, CW, ROW_H, 'F');
+            if (isHdr) { doc.setFillColor(...GOLD); doc.rect(M, y - ROW_H + 1.5, 0.5, ROW_H, 'F'); }
+            for (let ci = 0; ci < colCount; ci++) {
+                const cell = stripMd(row[ci] || '');
+                doc.setFont('helvetica', isHdr ? 'bold' : 'normal');
+                doc.setFontSize(isHdr ? 7.5 : 8.5);
+                doc.setTextColor(...(isHdr ? GOLD : DARK));
+                const seg = doc.splitTextToSize(cell, colW - 3);
+                doc.text(seg[0] || '', M + ci * colW + 2, y);
+            }
+            y += ROW_H;
+        });
+        doc.setDrawColor(...GOLD); doc.setLineWidth(0.25);
+        doc.line(M, y, M + CW, y);
+        y += 4;
+    }
+
+    function renderContent(md) {
+        const lines = md.split('\n');
+        let tableRows = [], inTable = false;
+        const flushTable = () => { if (inTable && tableRows.length) { renderTable(tableRows); tableRows = []; inTable = false; } };
+
+        for (const line of lines) {
+            // Section header
+            if (/^#{1,3} /.test(line)) {
+                flushTable();
+                ensureSpace(13);
+                y += 2;
+                doc.setFillColor(...GOLD); doc.rect(M, y - 4.5, 2, 7, 'F');
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(...DARK);
+                doc.text(stripMd(line.replace(/^#{1,3} /, '')), M + 5, y);
+                y += 6.5;
+                continue;
+            }
+            // Table
+            if (line.startsWith('|')) {
+                if (/^\|[-| :]+\|$/.test(line.trim())) continue;
+                inTable = true;
+                tableRows.push(line.split('|').slice(1, -1).map(c => c.trim()));
+                continue;
+            } else { flushTable(); }
+            // Bullet
+            if (/^[-*] /.test(line)) {
+                const text = stripMd(line.slice(2));
+                const wrapped = doc.splitTextToSize(text, CW - 7);
+                ensureSpace(wrapped.length * 5.2 + 2);
+                doc.setFillColor(...GOLD); doc.circle(M + 2.2, y - 1.5, 0.85, 'F');
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(...DARK);
+                doc.text(wrapped, M + 5.5, y);
+                y += wrapped.length * 5.2 + 1.5;
+                continue;
+            }
+            // Numbered list
+            if (/^\d+\. /.test(line)) {
+                const num = line.match(/^(\d+)\./)[1];
+                const text = stripMd(line.replace(/^\d+\. /, ''));
+                const wrapped = doc.splitTextToSize(text, CW - 9);
+                ensureSpace(wrapped.length * 5.2 + 2);
+                doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(...GOLD);
+                doc.text(num + '.', M + 1, y);
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(...DARK);
+                doc.text(wrapped, M + 7, y);
+                y += wrapped.length * 5.2 + 1.5;
+                continue;
+            }
+            // Empty line
+            if (!line.trim()) { y += 3; continue; }
+            // Body paragraph
+            const wrapped = doc.splitTextToSize(stripMd(line), CW);
+            ensureSpace(wrapped.length * 5.2 + 2);
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(...DARK);
+            doc.text(wrapped, M, y);
+            y += wrapped.length * 5.2 + 1.5;
+        }
+        flushTable();
+    }
+
+    // === ASSEMBLE ===
+    drawHeader(true);
+
+    const exchanges = [];
+    chatHistory.forEach(msg => {
+        if (msg.role === 'user') {
+            exchanges.push({ query: msg.content, chart: null, response: null });
+        } else if (msg.role === 'chart' && exchanges.length) {
+            exchanges[exchanges.length - 1].chart = msg;
+        } else if (msg.role === 'assistant' && exchanges.length) {
+            // Strip the internal [chart rendered] prefix if present
+            const text = msg.content.startsWith('[chart rendered] ')
+                ? msg.content.slice(17)
+                : msg.content;
+            exchanges[exchanges.length - 1].response = text;
+        }
+    });
+
+    exchanges.forEach((ex, idx) => {
+        // Query block
+        const qLines = doc.splitTextToSize(ex.query.trim(), CW - 10);
+        const qH = qLines.length * 5.2 + 13;
+        ensureSpace(qH + 4);
+        doc.setFillColor(...CREAM);
+        doc.rect(M, y - 5, CW, qH, 'F');
+        doc.setFillColor(...GOLD);
+        doc.rect(M, y - 5, 2, qH, 'F');
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(6); doc.setTextColor(...MUTED);
+        doc.text('QUERY', M + 6, y);
+        y += 5.5;
+        doc.setFont('helvetica', 'italic'); doc.setFontSize(9.5); doc.setTextColor(55, 55, 55);
+        doc.text(qLines, M + 6, y);
+        y += qLines.length * 5.2 + 6;
+
+        // Chart image (if present)
+        if (ex.chart && ex.chart.imageData) {
+            const imgW = CW;
+            const imgH = Math.round(imgW * 0.44); // ~16:7 aspect matching canvas
+            ensureSpace(imgH + 12);
+            // Navy background so the dark-themed chart renders correctly on white PDF
+            doc.setFillColor(...NAVY);
+            doc.rect(M, y, imgW, imgH, 'F');
+            doc.addImage(ex.chart.imageData, 'PNG', M, y, imgW, imgH);
+            // Gold border
+            doc.setDrawColor(...GOLD); doc.setLineWidth(0.3);
+            doc.rect(M, y, imgW, imgH);
+            y += imgH + 2;
+            // Caption
+            if (ex.chart.title) {
+                doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5);
+                doc.setTextColor(...MUTED);
+                doc.text(ex.chart.title.toUpperCase(), M, y + 3);
+                y += 8;
+            } else {
+                y += 4;
+            }
+        }
+
+        // Response
+        if (ex.response) renderContent(ex.response);
+
+        // Divider between exchanges
+        if (idx < exchanges.length - 1) {
+            ensureSpace(10);
+            y += 3;
+            doc.setDrawColor(...GOLD); doc.setLineWidth(0.2);
+            for (let x = M; x < M + CW; x += 5) doc.line(x, y, Math.min(x + 2.5, M + CW), y);
+            y += 7;
+        }
+    });
+
+    // Stamp footers
+    const total = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= total; p++) { doc.setPage(p); drawFooter(p); }
+
+    const slug = rawTitle.slice(0, 35).replace(/[^a-zA-Z0-9\s]/g, '').trim().replace(/\s+/g, '-') || 'Briefing';
+    doc.save('RAO-Briefing-' + slug + '-' + fileDate + '.pdf');
 }
 
 function updateChatStatus(state, text) {
