@@ -9239,7 +9239,7 @@ async function callGroqAPI(messages, tools = null) {
         model: GROQ_MODEL,
         messages,
         temperature: 0.25,
-        max_tokens: 2048,
+        max_tokens: 8192,
         stream: false
     };
     if (tools) {
