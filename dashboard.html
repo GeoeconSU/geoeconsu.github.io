@@ -3049,12 +3049,15 @@
         .chat-bubble strong { color: var(--accent-gold); font-weight: 600; }
         .chat-bubble em { color: var(--text-muted); font-style: italic; }
         .chat-bubble h3 {
-            font-family: var(--font-head); font-size: 1.1rem; color: var(--accent-gold);
-            margin: 1rem 0 0.5rem; padding-bottom: 0.25rem;
-            border-bottom: 1px solid var(--border-subtle);
+            font-family: var(--font-head); font-size: 0.95rem; font-style: italic;
+            color: rgba(255,255,255,0.55); margin: 1rem 0 0.4rem;
+        }
+        .chat-bubble h4 {
+            font-family: var(--font-head); font-size: 0.88rem; color: var(--text-muted);
+            margin: 0.75rem 0 0.35rem;
         }
         .chat-bubble ul, .chat-bubble ol { padding-left: 1.5rem; margin: 0.5rem 0; }
-        .chat-bubble li { margin-bottom: 0.25rem; }
+        .chat-bubble li { margin-bottom: 0.6rem; line-height: 1.65; }
         .chat-bubble p { margin: 0.4rem 0; }
         .chat-bubble .stat-tag {
             display: inline-block; vertical-align: middle;
@@ -3182,7 +3185,7 @@
         .chat-table-wrap { overflow-x: auto; margin: 0.75rem 0; }
         .chat-bubble table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.8rem; }
         .chat-bubble th { background: rgba(203,168,78,0.12); color: var(--accent-gold); text-align: left; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--accent-gold-dim); white-space: nowrap; }
-        .chat-bubble td { padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-white); }
+        .chat-bubble td { padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-white); vertical-align: top; }
         .chat-bubble tr:last-child td { border-bottom: none; }
         .chat-bubble tr:hover td { background: rgba(255,255,255,0.03); }
         .chat-hr { border: none; border-top: 1px solid var(--border-subtle); margin: 1rem 0; }
@@ -9169,7 +9172,7 @@ async function sendChatMessage() {
     const typingId = showTypingIndicator();
 
     try {
-        const recentHistory = chatHistory.slice(-12);
+        const recentHistory = chatHistory.slice(-6);
         const messages = [
             { role: 'system', content: buildSystemPrompt(userText) },
             ...recentHistory
@@ -9239,7 +9242,7 @@ async function callGroqAPI(messages, tools = null) {
         model: GROQ_MODEL,
         messages,
         temperature: 0.25,
-        max_tokens: 8192,
+        max_tokens: 4096,
         stream: false
     };
     if (tools) {
@@ -9247,6 +9250,9 @@ async function callGroqAPI(messages, tools = null) {
         body.tool_choice = 'auto';
     } else {
         body.tool_choice = 'none';
+    }
+    if (GROQ_MODEL.startsWith('groq/compound')) {
+        body.compound_custom = { tools: { enabled_tools: [] } };
     }
     const response = await fetch(GROQ_ENDPOINT, {
         method: 'POST',
@@ -9683,8 +9689,9 @@ function chatMarkdownToHTML(text) {
         .replace(/>/g, '&gt;');
 
     // Headers
-    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-    html = html.replace(/^## (.+)$/gm,  '<h3>$1</h3>');
+    html = html.replace(/^#{4,} (.+)$/gm, '<h4>$1</h4>');
+    html = html.replace(/^### (.+)$/gm,   '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm,    '<h3>$1</h3>');
 
     // Bold and italic
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
