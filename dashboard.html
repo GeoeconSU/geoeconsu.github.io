@@ -9175,8 +9175,9 @@ async function sendChatMessage() {
             ...recentHistory
         ];
 
-        // First call — with chart tools enabled
-        const msg = await callGroqAPI(messages, CHART_TOOLS);
+        // Tool calling not supported on all models (e.g. compound-mini)
+        const supportsTools = !GROQ_MODEL.startsWith('groq/compound');
+        const msg = await callGroqAPI(messages, supportsTools ? CHART_TOOLS : null);
 
         if (msg.tool_calls && msg.tool_calls.length > 0) {
             const toolCall = msg.tool_calls[0];
@@ -9244,6 +9245,8 @@ async function callGroqAPI(messages, tools = null) {
     if (tools) {
         body.tools = tools;
         body.tool_choice = 'auto';
+    } else {
+        body.tool_choice = 'none';
     }
     const response = await fetch(GROQ_ENDPOINT, {
         method: 'POST',
