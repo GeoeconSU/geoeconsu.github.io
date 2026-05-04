@@ -1816,9 +1816,17 @@
             padding: 1rem 0;
         }
         .gate-success-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.25rem;
             display: block;
+            object-fit: contain;
+        }
+        .gate-title-underline {
+            width: 80px;
+            height: 2px;
+            background: #cba84e;
+            margin: 0.5rem auto 1.25rem;
         }
     </style>
 
@@ -1842,10 +1850,11 @@
             <!-- Success -->
             <div id="gateSuccess" hidden>
                 <div class="gate-success">
-                    <span class="gate-success-icon">✦</span>
-                    <p class="gate-eyebrow">Report Sent</p>
-                    <h2 class="gate-title">Check Your Inbox</h2>
-                    <p class="gate-sub">The Geoeconomic Risk Barometer is on its way to <strong id="gateEmailDisplay" style="color:#fff;"></strong></p>
+                    <img src="gsu.png" alt="GSU" class="gate-success-icon">
+                    <p class="gate-eyebrow" style="text-align:center;">Report Sent</p>
+                    <h2 class="gate-title" style="text-align:center;">Check Your Inbox</h2>
+                    <div class="gate-title-underline"></div>
+                    <p class="gate-sub" style="text-align:center;">The Geoeconomic Risk Barometer is on its way to <strong id="gateEmailDisplay" style="color:#fff;"></strong></p>
                 </div>
             </div>
         </div>
