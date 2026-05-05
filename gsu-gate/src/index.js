@@ -56,19 +56,10 @@ async function handleSendReport(request, env, cors) {
     return respond({ error: 'Invalid report requested.' }, 400, cors);
   }
 
-  // Fetch the PDF from the live site
   const pdfUrl = `${SITE_BASE}/${encodeURIComponent(pdf)}`;
-  const pdfRes = await fetch(pdfUrl);
-  if (!pdfRes.ok) {
-    console.error(`PDF fetch failed: ${pdfRes.status} ${pdfUrl}`);
-    return respond({ error: 'Could not retrieve the report. Please try again.' }, 500, cors);
-  }
 
-  const pdfBuffer = await pdfRes.arrayBuffer();
-  const pdfBase64 = arrayBufferToBase64(pdfBuffer);
-
-  // Send email with PDF attached
-  const sent = await sendReportEmail(env, email, name.trim(), pdf, pdfBase64);
+  // Send email with download link
+  const sent = await sendReportEmail(env, email, name.trim(), pdf, pdfUrl);
   if (!sent) {
     return respond({ error: 'Failed to send email. Please try again.' }, 500, cors);
   }
@@ -86,7 +77,7 @@ async function handleSendReport(request, env, cors) {
 
 // ── Resend ────────────────────────────────────────────────────────────────────
 
-async function sendReportEmail(env, to, name, filename, pdfBase64) {
+async function sendReportEmail(env, to, name, filename, pdfUrl) {
   const quarter = filename.includes('Q1 2026') ? 'Q1 2026' : 'Q4 2025';
 
   const res = await fetch('https://api.resend.com/emails', {
@@ -96,7 +87,7 @@ async function sendReportEmail(env, to, name, filename, pdfBase64) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'onboarding@resend.dev',
+      from: 'research@geoecon.solutions',
       to: [to],
       subject: `GSU Geoeconomic Risk Barometer — ${quarter}`,
       html: `
@@ -105,8 +96,9 @@ async function sendReportEmail(env, to, name, filename, pdfBase64) {
           <h2 style="font-size:22px;font-weight:400;margin:0 0 20px;color:#192030;">Geoeconomic Risk Barometer — ${quarter}</h2>
           <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 20px;">Hello ${name},</p>
           <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 28px;">
-            Thank you for your interest in GSU's flagship research. Please find the <strong>${quarter} Geoeconomic Risk Barometer</strong> attached to this email.
+            Thank you for your interest in GSU's flagship research. Your copy of the <strong>${quarter} Geoeconomic Risk Barometer</strong> is ready to download:
           </p>
+          <a href="${pdfUrl}" style="display:inline-block;background:#192030;color:#cba84e;font-family:Georgia,serif;font-size:15px;text-decoration:none;padding:14px 28px;border-radius:3px;margin-bottom:32px;">Download the Barometer →</a>
           <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 28px;">
             The Barometer maps the next moves of capital and power — blending hard indicators with regional intelligence and corridor-level analysis to support decision-making at the highest levels.
           </p>
@@ -117,12 +109,6 @@ async function sendReportEmail(env, to, name, filename, pdfBase64) {
           <p style="font-size:11px;color:#bbb;margin:24px 0 0;">geoecon.solutions &nbsp;·&nbsp; The Sixteenth Council &nbsp;·&nbsp; London</p>
         </div>
       `,
-      attachments: [
-        {
-          filename,
-          content: pdfBase64,
-        },
-      ],
     }),
   });
 
@@ -144,17 +130,6 @@ async function dbWrite(env, path, data) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-}
-
-// ── Utilities ─────────────────────────────────────────────────────────────────
-
-function arrayBufferToBase64(buffer) {
-  const bytes = new Uint8Array(buffer);
-  let binary = '';
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
 }
 
 function respond(body, status, headers) {
