@@ -18,7 +18,7 @@ const firebaseConfig = {
 // STEP 2: Cloudflare Worker URL (proxies Groq — API key stays server-side)
 // ─────────────────────────────────────────────────────────────────────────────
 const WORKER_URL   = "https://rao-dashboard-proxy.guduruadip.workers.dev";
-const GROQ_API_KEY = "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"; // fallback if worker unavailable
+// fallback if worker unavailable
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Firebase initialisation (compat SDK loaded via CDN in HTML)
