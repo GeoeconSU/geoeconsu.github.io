@@ -3921,19 +3921,25 @@
             <!-- KPI Strip -->
             <div id="kpi-strip" class="kpi-strip"></div>
 
-            <!-- Anomaly Alerts -->
-            <div id="anomaly-alerts" style="display:none;"></div>
 
-            <!-- Regime × TOS Matrix + Score Distribution -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:1.5rem 2rem 0;" class="fade-up">
+            <!-- Top 10 + Bottom 10 -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 1.5rem 2rem 0;" class="glow-section glow-br fade-up">
                 <div class="bento-cell">
-                    <span class="bento-label">Investment Priority Matrix — Regime × TOS</span>
-                    <div id="regime-tos-matrix" style="padding:1rem;"></div>
+                    <span class="bento-label">Top 10 Countries</span>
+                    <div id="top-10-list"></div>
                 </div>
                 <div class="bento-cell">
-                    <span class="bento-label">Score Distribution</span>
-                    <div id="score-dist-chart-wrap" style="padding:1rem;position:relative;">
-                        <canvas id="score-dist-chart" height="200"></canvas>
+                    <span class="bento-label">Bottom 10 Countries</span>
+                    <div id="bottom-10-list"></div>
+                </div>
+            </div>
+
+            <!-- Global RAO Timeseries Analysis -->
+            <div style="padding:1.5rem 2rem 0;" class="fade-up">
+                <div class="bento-cell">
+                    <span class="bento-label">Global RAO Trends 2010–Latest</span>
+                    <div style="padding:1rem;position:relative;height:300px;">
+                        <canvas id="global-timeseries-chart"></canvas>
                     </div>
                 </div>
             </div>
@@ -3948,28 +3954,8 @@
 
             <div class="section-divider"></div>
 
-            <!-- Classic Analytics: Top 10 + Bottom 10 -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 1.5rem 2rem 0;" class="glow-section glow-br fade-up">
-                <div class="bento-cell">
-                    <span class="bento-label">Top 10 Countries</span>
-                    <div id="top-10-list"></div>
-                </div>
-                <div class="bento-cell">
-                    <span class="bento-label">Bottom 10 Countries</span>
-                    <div id="bottom-10-list"></div>
-                </div>
-            </div>
-
-            <!-- Classic Analytics: Score Distribution + Scatter Plot + Regional -->
+            <!-- Regional Breakdown -->
             <div class="bento-grid glow-section fade-up">
-                <div class="bento-cell">
-                    <span class="bento-label">Score Tiers</span>
-                    <div style="padding: 0.75rem 1rem 1rem;" id="score-distribution-section"></div>
-                </div>
-                <div class="bento-cell bento-span-2">
-                    <span class="bento-label">Opportunity vs Stability Quadrant</span>
-                    <div style="padding: 0.75rem 1rem 1rem;" id="scatter-plot-section"></div>
-                </div>
                 <div class="bento-cell bento-span-3">
                     <span class="bento-label">Regional Breakdown</span>
                     <div style="padding: 0.75rem 1rem 1rem;" id="regional-section"></div>
@@ -4050,7 +4036,6 @@
                         </div>
                         <div class="analysis-card">
                             <div class="card-title">Data Quality &amp; Flags</div>
-                            <div id="data-quality-row" style="padding:0.85rem 1.2rem;"></div>
                         </div>
                     </div>
 
@@ -4387,7 +4372,6 @@
                                 <th onclick="sortRankings('regime')" class="sortable">Regime</th>
                                 <th onclick="sortRankings('tos')" class="sortable">TOS</th>
                                 <th onclick="sortRankings('yoy')" class="sortable">Δ YoY</th>
-                                <th>Conf</th>
                             </tr>
                         </thead>
                         <tbody id="rankings-tbody"></tbody>
@@ -4606,21 +4590,6 @@
                     <div id="percentile-breakdown"></div>
                 </div>
 
-                <!-- Enhancement #42: Quadrant Chart - Enhanced Visualization -->
-                <div style="margin-top: 2rem;">
-                    <div class="quadrant-container">
-                        <div class="chart-title">Opportunity vs Stability Quadrant</div>
-                        <div id="quadrant-statistics" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1rem;"></div>
-                        <div class="quadrant-chart" id="analytics-quadrant">
-                            <div class="quadrant-label top-left">Stable but Limited</div>
-                            <div class="quadrant-label top-right">Stars</div>
-                            <div class="quadrant-label bottom-left">At Risk</div>
-                            <div class="quadrant-label bottom-right">High Potential (Volatile)</div>
-                            <div class="quadrant-axis-label x">Opportunity →</div>
-                            <div class="quadrant-axis-label y">← Stability</div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Enhancement #45: Outlier Detection Analysis -->
                 <div style="margin-top: 2rem;">
@@ -4873,7 +4842,7 @@ const ISO_DISPLAY_NAMES = {
     TTO:'Trinidad and Tobago', TUN:'Tunisia', TUR:'Turkey', TZA:'Tanzania',
     UGA:'Uganda', UKR:'Ukraine', URY:'Uruguay', USA:'United States',
     UZB:'Uzbekistan', VEN:'Venezuela', VNM:'Vietnam', WSM:'Samoa',
-    XKX:'Kosovo', YEM:'Yemen', ZAF:'South Africa', ZMB:'Zambia', ZWE:'Zimbabwe'
+    KOR:'South Korea', XKX:'Kosovo', YEM:'Yemen', ZAF:'South Africa', ZMB:'Zambia', ZWE:'Zimbabwe'
 };
 
 const REGIONS = {
@@ -5297,16 +5266,13 @@ function initializeOverviewTab() {
     _landscapeYear = 2024;
     drawMap();
     renderKPIStrip();
-    renderAnomalyAlerts();
-    renderRegimeTOSMatrix();
-    renderScoreDistributionChart();
+    _renderTop10Bottom10();
+    renderGlobalTimeseries();
     renderRegionalOverview();
 
     // Classic analytics panels
-    _renderTop10Bottom10();
     renderScatterPlot();
     renderRegionalSection();
-    _renderScoreTiers();
 }
 
 function _renderTop10Bottom10() {
@@ -5393,8 +5359,7 @@ function setLandscapeYear(y) {
     _landscapeYear = y;
     drawMap();
     renderKPIStrip();
-    renderRegimeTOSMatrix();
-    renderScoreDistributionChart();
+    renderGlobalTimeseries();
     renderRegionalOverview();
 }
 
@@ -5403,28 +5368,86 @@ function renderKPIStrip() {
     if (!slice.length) return;
     const n = slice.length;
     const regimeCounts = { RO: 0, FO: 0, SL: 0, SR: 0 };
-    let tosSum = 0, highConf = 0;
+    let tosSum = 0;
     slice.forEach(r => {
         if (regimeCounts[r.regime] !== undefined) regimeCounts[r.regime]++;
         tosSum += (r.tos_score || 0);
-        if (r.data_confidence === 'HIGH') highConf++;
     });
     const meanTOS = (tosSum / n).toFixed(2);
     const meanRAO = (slice.reduce((s, r) => s + r.rao_score, 0) / n).toFixed(2);
     const top1 = slice[0];
-    const highConfPct = Math.round(highConf / n * 100);
+    const yearLabel = _landscapeYear === 2024 ? 'latest' : _landscapeYear;
     const regHtml = Object.entries(regimeCounts).map(([reg, cnt]) =>
         `<span style="color:${REGIME_COLORS[reg].solid};font-family:var(--font-mono);font-weight:600;">${reg}</span><span style="color:var(--text-muted);font-size:0.7rem;"> ${cnt}</span>`
     ).join('<span style="color:var(--border-subtle);margin:0 0.35rem;">|</span>');
 
     document.getElementById('kpi-strip').innerHTML = `
-        <div class="kpi-card"><div class="kpi-label">Universe</div><div class="kpi-value">${n}</div><div class="kpi-sub">countries · ${_landscapeYear}</div></div>
+        <div class="kpi-card"><div class="kpi-label">Universe</div><div class="kpi-value">${n}</div><div class="kpi-sub">countries · ${yearLabel}</div></div>
         <div class="kpi-card"><div class="kpi-label">Global Mean RAO</div><div class="kpi-value" style="color:var(--accent-gold);">${meanRAO}</div><div class="kpi-sub">1–10 scale</div></div>
         <div class="kpi-card"><div class="kpi-label">Top Score</div><div class="kpi-value" style="color:var(--accent-gold);">${top1.rao_score.toFixed(2)}</div><div class="kpi-sub" style="cursor:pointer;" onclick="openCountryAnalysis('${top1.country}')">${top1.country_name}</div></div>
         <div class="kpi-card"><div class="kpi-label">Regime Split</div><div style="margin-top:0.5rem;line-height:2;font-size:0.78rem;">${regHtml}</div></div>
         <div class="kpi-card"><div class="kpi-label">Mean TOS</div><div class="kpi-value" style="color:var(--accent-amber);">${meanTOS}</div><div class="kpi-sub">take-off signal</div></div>
-        <div class="kpi-card"><div class="kpi-label">HIGH Confidence</div><div class="kpi-value">${highConfPct}%</div><div class="kpi-sub">${highConf} of ${n} countries</div></div>
     `;
+}
+
+function renderGlobalTimeseries() {
+    const canvas = document.getElementById('global-timeseries-chart');
+    if (!canvas) return;
+    const years = Array.from({length:15}, (_, i) => 2010 + i);
+    const REGION_COLORS = { 'Africa':'#C2A56D', 'Americas':'#5d8a72', 'Asia-Pacific':'#607c98', 'Europe':'#7aabb4', 'Middle East':'#9b8fc0' };
+
+    const globalMeans = years.map(y => {
+        const slice = getSlice(y);
+        return slice.length ? slice.reduce((s, r) => s + r.rao_score, 0) / slice.length : null;
+    });
+
+    const datasets = [
+        {
+            label: 'Global Mean',
+            data: globalMeans,
+            borderColor: '#C2A56D',
+            backgroundColor: 'rgba(194,165,109,0.08)',
+            borderWidth: 2.5,
+            tension: 0.35,
+            spanGaps: true,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            fill: true
+        },
+        ...Object.keys(REGIONS).map(region => ({
+            label: region,
+            data: years.map(y => _regionalMeans[region]?.[y]?.['rao_score'] ?? null),
+            borderColor: REGION_COLORS[region] || '#aaa',
+            backgroundColor: 'transparent',
+            borderWidth: 1.5,
+            borderDash: [4, 3],
+            tension: 0.3,
+            spanGaps: true,
+            pointRadius: 2,
+            pointHoverRadius: 4
+        }))
+    ];
+
+    if (canvas._chartInst) { canvas._chartInst.destroy(); }
+    const chart = new Chart(canvas, {
+        type: 'line',
+        data: { labels: years, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 600 },
+            scales: {
+                x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } },
+                y: { title: { display: true, text: 'Mean RAO Score', color: 'rgba(238,234,224,0.4)', font: { size: 10 } }, min: 2, max: 8, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } }
+            },
+            plugins: {
+                legend: { position: 'top', labels: { color: 'rgba(238,234,224,0.65)', font: { size: 10 }, boxWidth: 10, padding: 14 } },
+                tooltip: { mode: 'index', intersect: false, callbacks: { label: item => `${item.dataset.label}: ${item.parsed.y != null ? item.parsed.y.toFixed(2) : '—'}` } }
+            }
+        }
+    });
+    canvas._chartInst = chart;
+    registerChart(chart);
 }
 
 function renderAnomalyAlerts() {
@@ -5742,7 +5765,6 @@ function _renderCountryV8Sections(iso) {
     renderTDMPanel(iso, year);
     renderNormVarBreakdown(iso, year);
     renderArchetypePeers(iso, year);
-    renderDataQualityRow(iso, year);
 }
 
 // ── RAO v8: Headline Card ──────────────────────────────────────────────────
@@ -8187,10 +8209,9 @@ function updateRankingsTable() {
             <td onclick="openCountryAnalysis('${c.country}')">${c.regime ? regimeBadge(c.regime) : ''}</td>
             <td onclick="openCountryAnalysis('${c.country}')"><span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--accent-amber);">${c.tos_score!=null?c.tos_score.toFixed(2):'—'}</span></td>
             <td onclick="openCountryAnalysis('${c.country}')"><span style="font-family:var(--font-mono);font-size:0.78rem;color:${(() => { const d = computeYoY(c.country,'rao_score'); return d == null ? 'var(--text-muted)' : d >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'; })()}">${(() => { const d = computeYoY(c.country,'rao_score'); return d == null ? '—' : (d>=0?'+':'')+d.toFixed(2); })()}</span></td>
-            <td>${confidenceDot(c.data_confidence)}</td>
         </tr>
         <tr class="detail-row" id="detail-${idx}">
-            <td colspan="14">
+            <td colspan="13">
                 <div class="detail-content">
                     ${renderEnhancedDetailRow(c, topCountry)}
                 </div>
@@ -8902,9 +8923,6 @@ function initializeAnalyticsTab() {
 
     // Enhancement #43: Regional chart with grouped bars
     drawRegionalChart();
-
-    // Enhancement #42: Quadrant with enhanced visualization
-    drawAnalyticsQuadrant();
 
     // Enhancement #40: Pillar Performance Matrix with context
     drawPillarPerformanceMatrix();
