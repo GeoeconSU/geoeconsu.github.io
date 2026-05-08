@@ -19,6 +19,10 @@
     </style>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     <style>
         :root {
             --primary-bg: #192030;
@@ -3622,6 +3626,71 @@
             height: 280px !important;
         }
         .chat-message.assistant .chat-chart-wrapper { margin-left: 0; }
+
+        /* ── AUTH OVERLAY ──────────────────────────────────────────────────── */
+        .auth-overlay {
+            position: fixed; inset: 0; z-index: 2000;
+            background: rgba(10,12,20,0.82); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.25s var(--easing);
+        }
+        .auth-overlay.visible { opacity: 1; pointer-events: all; }
+        .auth-modal {
+            width: 420px; max-width: calc(100vw - 40px);
+            background: rgba(20,22,35,0.96);
+            border: 1px solid rgba(203,168,78,0.25); border-radius: 8px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1);
+            padding: 2.5rem; transform: translateY(20px); transition: transform 0.25s var(--easing);
+        }
+        .auth-overlay.visible .auth-modal { transform: translateY(0); }
+        .auth-modal-logo { text-align: center; margin-bottom: 1.5rem; }
+        .auth-modal-logo img { width: 44px; margin-bottom: 0.5rem; }
+        .auth-modal-logo h2 { font-family: var(--font-head); font-size: 1.4rem; color: var(--accent-gold); font-weight: 400; }
+        .auth-modal-logo p { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
+        .auth-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.5rem; }
+        .auth-tab-btn { flex: 1; padding: 0.6rem; background: none; border: none; cursor: pointer; color: var(--text-muted); font-family: var(--font-body); font-size: 0.95rem; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .auth-tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+        .auth-form { display: flex; flex-direction: column; gap: 0.9rem; }
+        .auth-form input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 4px; padding: 0.7rem 1rem; color: var(--text-white); font-family: var(--font-body); font-size: 1rem; outline: none; transition: border-color 0.2s; }
+        .auth-form input:focus { border-color: var(--accent-gold-dim); }
+        .auth-form input::placeholder { color: var(--text-muted); }
+        .auth-btn { padding: 0.75rem; border-radius: 4px; border: none; cursor: pointer; font-family: var(--font-body); font-size: 1rem; font-weight: 500; transition: all 0.2s; }
+        .auth-btn-primary { background: var(--accent-gold); color: var(--primary-bg); }
+        .auth-btn-primary:hover { background: #d4b565; }
+        .auth-btn-google { background: rgba(255,255,255,0.07); color: var(--text-white); border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .auth-btn-google:hover { background: rgba(255,255,255,0.12); }
+        .auth-divider { text-align: center; color: var(--text-muted); font-size: 0.82rem; position: relative; }
+        .auth-divider::before, .auth-divider::after { content: ''; position: absolute; top: 50%; width: 38%; height: 1px; background: rgba(255,255,255,0.1); }
+        .auth-divider::before { left: 0; }
+        .auth-divider::after { right: 0; }
+        .auth-error { color: #e07070; font-size: 0.85rem; text-align: center; min-height: 1.2rem; }
+        .auth-link { color: var(--accent-gold); cursor: pointer; font-size: 0.82rem; text-align: center; }
+        .auth-link:hover { text-decoration: underline; }
+        .auth-close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; line-height: 1; }
+        .auth-close-btn:hover { color: var(--text-white); }
+
+        /* ── USER AVATAR MENU ──────────────────────────────────────────────── */
+        .user-menu-wrap { position: relative; }
+        .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-gold), #8a6e2a); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 0.85rem; font-weight: 600; color: var(--primary-bg); cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
+        .user-avatar:hover { border-color: var(--accent-gold); }
+        .user-dropdown { position: absolute; top: calc(100% + 10px); right: 0; min-width: 200px; background: rgba(18,20,32,0.97); border: 1px solid rgba(203,168,78,0.25); border-radius: 6px; box-shadow: 0 12px 40px rgba(0,0,0,0.6); padding: 0.5rem 0; display: none; z-index: 1100; }
+        .user-dropdown.open { display: block; }
+        .user-dropdown-header { padding: 0.75rem 1rem 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .user-dropdown-name { font-weight: 600; font-size: 0.95rem; }
+        .user-dropdown-role { font-size: 0.78rem; color: var(--accent-gold); text-transform: capitalize; }
+        .user-dropdown-item { padding: 0.55rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); transition: all 0.15s; }
+        .user-dropdown-item:hover { color: var(--text-white); background: rgba(255,255,255,0.05); }
+        .user-dropdown-item.danger { color: #e07070; }
+        .user-dropdown-item.danger:hover { background: rgba(224,112,112,0.1); }
+        .sign-in-btn { padding: 0.4rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.88rem; background: var(--accent-gold); color: var(--primary-bg); border: none; font-family: var(--font-body); font-weight: 500; transition: background 0.2s; }
+        .sign-in-btn:hover { background: #d4b565; }
+
+        /* ── TAB LOCK OVERLAY ──────────────────────────────────────────────── */
+        .tab-lock { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; background: rgba(10,12,20,0.88); backdrop-filter: blur(8px); z-index: 10; border-radius: 4px; }
+        .tab-lock i { font-size: 2.5rem; color: var(--accent-gold); opacity: 0.7; }
+        .tab-lock h3 { font-family: var(--font-head); font-size: 1.4rem; font-weight: 400; color: var(--text-white); }
+        .tab-lock p { color: var(--text-muted); font-size: 0.95rem; text-align: center; max-width: 340px; }
+        .tab-lock .auth-btn { min-width: 160px; }
     </style>
 </head>
 <body>
@@ -3659,7 +3728,7 @@
         <div class="header-actions">
             <!-- Enhancement #55: Favorites Dropdown -->
             <div class="favorites-dropdown">
-                <div class="icon-btn" onclick="toggleFavoritesMenu()" title="Favorites" id="favorites-btn">
+                <div class="icon-btn" onclick="toggleFavoritesMenu()" title="Favorites (★)" id="favorites-btn">
                     <i class="ri-star-line"></i>
                     <span id="favorites-count" style="position: absolute; top: -5px; right: -5px; background: var(--accent-gold); color: var(--primary-bg); border-radius: 50%; width: 18px; height: 18px; font-size: 0.6rem; display: none; align-items: center; justify-content: center; font-weight: 600;"></span>
                 </div>
@@ -3670,6 +3739,33 @@
 
             <div class="icon-btn" onclick="toggleInfoModal()" title="About the RAO Index">
                 <i class="ri-information-line"></i>
+            </div>
+
+            <!-- Auth / User menu -->
+            <div id="auth-header-area">
+                <button class="sign-in-btn" onclick="openAuthModal('login')" id="sign-in-btn">Sign In</button>
+                <div class="user-menu-wrap" id="user-menu-wrap" style="display:none;">
+                    <div class="user-avatar" id="user-avatar" onclick="toggleUserDropdown()"></div>
+                    <div class="user-dropdown" id="user-dropdown">
+                        <div class="user-dropdown-header">
+                            <div class="user-dropdown-name" id="dd-name"></div>
+                            <div class="user-dropdown-role" id="dd-role"></div>
+                        </div>
+                        <div class="user-dropdown-item" onclick="window.location.href='tracker.html'">
+                            <i class="ri-task-line"></i> Task Tracker
+                        </div>
+                        <div class="user-dropdown-item" onclick="window.location.href='methodology.html'">
+                            <i class="ri-file-text-line"></i> Methodology
+                        </div>
+                        <div class="user-dropdown-item" id="dd-admin-link" style="display:none;"
+                            onclick="window.location.href='admin.html'">
+                            <i class="ri-shield-user-line"></i> Admin Panel
+                        </div>
+                        <div class="user-dropdown-item danger" onclick="handleSignOut()">
+                            <i class="ri-logout-box-line"></i> Sign Out
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -9647,6 +9743,268 @@ function buildBarChart({ mode, country, metric = 'rao_score', top_n = 15, title 
     return wrapper;
 }
 
+</script>
+
+<!-- Firebase config & auth helpers -->
+<script src="firebase-config.js"></script>
+
+<!-- Auth Modal -->
+<div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
+    <div class="auth-modal" style="position:relative;">
+        <button class="auth-close-btn" onclick="closeAuthModal()">&#x2715;</button>
+        <div class="auth-modal-logo">
+            <img src="gsu.png" alt="GSU">
+            <h2>RAO Insights</h2>
+            <p id="auth-modal-subtitle">Sign in to access member features</p>
+        </div>
+        <div class="auth-tabs">
+            <button class="auth-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">Sign In</button>
+            <button class="auth-tab-btn" id="tab-register-btn" onclick="switchAuthTab('register')">Register</button>
+        </div>
+        <div id="auth-login-form">
+            <div class="auth-form">
+                <input type="email" id="login-email" placeholder="Email address" autocomplete="email">
+                <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+                <div class="auth-error" id="login-error"></div>
+                <button class="auth-btn auth-btn-primary" onclick="handleEmailLogin()">Sign In</button>
+                <div class="auth-divider">or</div>
+                <button class="auth-btn auth-btn-google" onclick="handleGoogleLogin()">
+                    <svg width="18" height="18" viewBox="0 0 48 48">
+                        <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+                        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
+                        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z"/>
+                        <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+                <div class="auth-link" onclick="switchAuthTab('reset')">Forgot password?</div>
+            </div>
+        </div>
+        <div id="auth-register-form" style="display:none;">
+            <div class="auth-form">
+                <input type="text" id="reg-name" placeholder="Full name" autocomplete="name">
+                <input type="email" id="reg-email" placeholder="Email address" autocomplete="email">
+                <input type="password" id="reg-password" placeholder="Password (min 6 characters)" autocomplete="new-password">
+                <div class="auth-error" id="register-error"></div>
+                <button class="auth-btn auth-btn-primary" onclick="handleEmailRegister()">Create Account</button>
+                <div class="auth-divider">or</div>
+                <button class="auth-btn auth-btn-google" onclick="handleGoogleLogin()">
+                    <svg width="18" height="18" viewBox="0 0 48 48">
+                        <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+                        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
+                        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z"/>
+                        <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+                <p style="font-size:0.78rem; color:var(--text-muted); text-align:center;">
+                    Free accounts get access to the AI chatbot. Employee access is granted by the director.
+                </p>
+            </div>
+        </div>
+        <div id="auth-reset-form" style="display:none;">
+            <div class="auth-form">
+                <p style="color:var(--text-muted); font-size:0.9rem;">Enter your email and we'll send a reset link.</p>
+                <input type="email" id="reset-email" placeholder="Email address">
+                <div class="auth-error" id="reset-error"></div>
+                <button class="auth-btn auth-btn-primary" onclick="handlePasswordReset()">Send Reset Link</button>
+                <div class="auth-link" onclick="switchAuthTab('login')">Back to Sign In</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── Auth modal ────────────────────────────────────────────────────────────────
+    let _authModalContext = null;
+
+    function openAuthModal(tab, context) {
+        _authModalContext = context || null;
+        switchAuthTab(tab || 'login');
+        document.getElementById('auth-overlay').classList.add('visible');
+    }
+    function closeAuthModal() {
+        document.getElementById('auth-overlay').classList.remove('visible');
+        _authModalContext = null;
+    }
+    function handleOverlayClick(e) {
+        if (e.target === document.getElementById('auth-overlay')) closeAuthModal();
+    }
+    function switchAuthTab(tab) {
+        document.getElementById('auth-login-form').style.display = tab === 'login' ? '' : 'none';
+        document.getElementById('auth-register-form').style.display = tab === 'register' ? '' : 'none';
+        document.getElementById('auth-reset-form').style.display = tab === 'reset' ? '' : 'none';
+        document.getElementById('tab-login-btn').classList.toggle('active', tab === 'login');
+        document.getElementById('tab-register-btn').classList.toggle('active', tab === 'register');
+        ['login-error', 'register-error', 'reset-error'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.textContent = '';
+        });
+    }
+    function setAuthError(formId, msg) {
+        document.getElementById(formId + '-error').textContent = msg;
+    }
+    async function handleEmailLogin() {
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        if (!email || !password) { setAuthError('login', 'Please fill in all fields.'); return; }
+        try {
+            await signInWithEmail(email, password);
+            Analytics.login('email');
+            closeAuthModal();
+        } catch (e) { setAuthError('login', friendlyAuthError(e.code)); }
+    }
+    async function handleEmailRegister() {
+        const name = document.getElementById('reg-name').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value;
+        if (!name || !email || !password) { setAuthError('register', 'Please fill in all fields.'); return; }
+        if (password.length < 6) { setAuthError('register', 'Password must be at least 6 characters.'); return; }
+        try {
+            await signUpWithEmail(email, password, name);
+            Analytics.signUp('email');
+            closeAuthModal();
+        } catch (e) { setAuthError('register', friendlyAuthError(e.code)); }
+    }
+    async function handleGoogleLogin() {
+        try {
+            await signInWithGoogle();
+            Analytics.login('google');
+            closeAuthModal();
+        } catch (e) { setAuthError('login', friendlyAuthError(e.code)); }
+    }
+    async function handlePasswordReset() {
+        const email = document.getElementById('reset-email').value.trim();
+        if (!email) { setAuthError('reset', 'Please enter your email.'); return; }
+        try {
+            await sendPasswordReset(email);
+            document.getElementById('reset-error').style.color = '#50c878';
+            setAuthError('reset', 'Reset link sent! Check your inbox.');
+        } catch (e) { setAuthError('reset', friendlyAuthError(e.code)); }
+    }
+    async function handleSignOut() {
+        Analytics.logout();
+        await signOut();
+        toggleUserDropdown(false);
+    }
+    function friendlyAuthError(code) {
+        const map = {
+            'auth/user-not-found': 'No account with that email.',
+            'auth/wrong-password': 'Incorrect password.',
+            'auth/email-already-in-use': 'That email is already registered.',
+            'auth/invalid-email': 'Please enter a valid email.',
+            'auth/weak-password': 'Password must be at least 6 characters.',
+            'auth/popup-closed-by-user': 'Google sign-in was cancelled.',
+            'auth/network-request-failed': 'Network error. Check your connection.',
+            'auth/invalid-credential': 'Incorrect email or password.',
+        };
+        return map[code] || 'Something went wrong. Please try again.';
+    }
+
+    // ── User dropdown ─────────────────────────────────────────────────────────────
+    function toggleUserDropdown(force) {
+        const dd = document.getElementById('user-dropdown');
+        const open = typeof force === 'boolean' ? force : !dd.classList.contains('open');
+        dd.classList.toggle('open', open);
+    }
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.user-menu-wrap')) toggleUserDropdown(false);
+    });
+
+    // ── Auth state → UI ───────────────────────────────────────────────────────────
+    function onAuthReady(user) {
+        const signInBtn = document.getElementById('sign-in-btn');
+        const userWrap = document.getElementById('user-menu-wrap');
+        const avatar = document.getElementById('user-avatar');
+        const ddName = document.getElementById('dd-name');
+        const ddRole = document.getElementById('dd-role');
+        const ddAdminLink = document.getElementById('dd-admin-link');
+        if (user) {
+            signInBtn.style.display = 'none';
+            userWrap.style.display = 'block';
+            const initials = (user.displayName || user.email || '?')
+                .split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            avatar.textContent = initials;
+            ddName.textContent = user.displayName || user.email;
+            ddRole.textContent = currentUserRole ? capitalize(currentUserRole) : 'Member';
+            ddAdminLink.style.display = isDirector() ? 'flex' : 'none';
+            if (_authModalContext) {
+                const ctx = _authModalContext; _authModalContext = null;
+                setTimeout(() => switchTab(ctx), 300);
+            }
+        } else {
+            signInBtn.style.display = '';
+            userWrap.style.display = 'none';
+        }
+        refreshTabLocks();
+    }
+    function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+    // ── Tab locking ───────────────────────────────────────────────────────────────
+    const TAB_ACCESS = {
+        overview: null, analysis: null, compare: null, rankings: null,
+        analytics: 'employee',
+        insights: 'free',
+    };
+    const LOCK_MESSAGES = {
+        employee: {
+            title: 'Employee Access Required',
+            desc: 'The Analytics module is available to GSU team members. Contact the director to get access.',
+            btn: 'Sign In',
+        },
+        free: {
+            title: 'Sign In to Access Insights',
+            desc: 'Create a free account to use the AI chatbot and get personalised intelligence.',
+            btn: 'Sign In / Register',
+        },
+    };
+    function canAccessTab(tabName) {
+        const required = TAB_ACCESS[tabName];
+        if (!required) return true;
+        if (required === 'free') return isFreeUser();
+        if (required === 'employee') return isEmployee();
+        if (required === 'director') return isDirector();
+        return false;
+    }
+    function refreshTabLocks() {
+        Object.keys(TAB_ACCESS).forEach(tabName => {
+            if (!TAB_ACCESS[tabName]) return;
+            const tabEl = document.getElementById('tab-' + tabName);
+            if (!tabEl) return;
+            const existing = tabEl.querySelector('.tab-lock');
+            if (canAccessTab(tabName)) {
+                if (existing) existing.remove();
+            } else {
+                if (!existing) {
+                    const msg = LOCK_MESSAGES[TAB_ACCESS[tabName]];
+                    const div = document.createElement('div');
+                    div.className = 'tab-lock';
+                    div.innerHTML = `
+                        <i class="ri-lock-2-line"></i>
+                        <h3>${msg.title}</h3>
+                        <p>${msg.desc}</p>
+                        <button class="auth-btn auth-btn-primary" onclick="openAuthModal('login','${tabName}')">${msg.btn}</button>
+                    `;
+                    tabEl.style.position = 'relative';
+                    tabEl.prepend(div);
+                }
+            }
+        });
+    }
+
+    // ── Override switchTab to check access ───────────────────────────────────────
+    (function() {
+        const _origSwitchTab = window.switchTab;
+        window.switchTab = function(tabName) {
+            _origSwitchTab(tabName);
+            if (!canAccessTab(tabName)) {
+                refreshTabLocks();
+                openAuthModal('login', tabName);
+                if (typeof Analytics !== 'undefined') Analytics.lockScreenShown(tabName);
+            } else {
+                if (typeof Analytics !== 'undefined') Analytics.tabView(tabName);
+            }
+        };
+    })();
 </script>
 
 <!-- Info Modal -->
