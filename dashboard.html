@@ -4398,6 +4398,69 @@
 
         <!-- TAB 5: ANALYTICS -->
         <div id="tab-analytics" class="tab-content">
+
+            <!-- ===== RAO v8 ANALYTICS SECTIONS ===== -->
+            <div class="section-container glow-section glow-cl" id="analytics-v8-block">
+
+                <!-- Regime × TOS Scatter -->
+                <h3 class="section-title" style="margin-bottom:0.25rem;">Regime × TOS Investment Scatter</h3>
+                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">X = TOS score (0–1) · Y = RAO score (1–10) · Size = scenario uncertainty (volatility band) · Colour = regime · Click a point to open Country tab</p>
+                <div class="chart-container" style="position:relative;height:420px;">
+                    <canvas id="regime-scatter-chart"></canvas>
+                </div>
+
+                <!-- Regional Trend Lines -->
+                <h3 class="chart-title" style="margin-top:2.5rem;margin-bottom:0.25rem;">Regional Mean RAO Trends 2010–2024</h3>
+                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">Mean RAO score per region across the panel — structural divergence visible over 15 years</p>
+                <div class="chart-container" style="position:relative;height:340px;">
+                    <canvas id="regional-trends-chart"></canvas>
+                </div>
+
+                <!-- Archetype Cluster Scatter -->
+                <h3 class="chart-title" style="margin-top:2.5rem;margin-bottom:0.25rem;">Archetype Cluster Map</h3>
+                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">X = Growth Engine (Pillar A) · Y = Quality Filter (Pillar C) · Colour = archetype</p>
+                <div class="chart-container" style="position:relative;height:380px;">
+                    <canvas id="archetype-scatter-chart"></canvas>
+                </div>
+
+                <!-- Regime Transition Tracker -->
+                <h3 class="chart-title" style="margin-top:2.5rem;margin-bottom:0.5rem;">Regime Transition Tracker</h3>
+                <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem;">
+                    <label style="font-family:var(--font-minor);font-size:0.6rem;text-transform:uppercase;color:var(--text-muted);">From</label>
+                    <select id="regime-trans-from" onchange="renderRegimeTransitionTracker()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.4rem 0.75rem;font-family:var(--font-body);font-size:0.85rem;border-radius:4px;"></select>
+                    <label style="font-family:var(--font-minor);font-size:0.6rem;text-transform:uppercase;color:var(--text-muted);">To</label>
+                    <select id="regime-trans-to" onchange="renderRegimeTransitionTracker()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.4rem 0.75rem;font-family:var(--font-body);font-size:0.85rem;border-radius:4px;"></select>
+                </div>
+                <div id="regime-transitions" style="overflow-x:auto;"></div>
+
+                <!-- Norm Variable Correlation Heatmap (22×22) -->
+                <h3 class="chart-title" style="margin-top:2.5rem;margin-bottom:0.25rem;">Norm Variable Correlation Heatmap (22 × 22)</h3>
+                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">Pearson r across 2024 cross-section for all normalised input variables — computed once</p>
+                <div id="analytics-norm-heatmap" style="overflow-x:auto;font-size:0.62rem;"></div>
+
+                <!-- Trajectory Distribution + Pre-Breakout Leaders side by side -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2.5rem;align-items:start;">
+                    <div>
+                        <h3 class="chart-title" style="margin-bottom:0.25rem;">Trajectory Distribution</h3>
+                        <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">Classification of country trajectories (2024 slice)</p>
+                        <div style="position:relative;height:280px;">
+                            <canvas id="trajectory-donut-chart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="chart-title" style="margin-bottom:0.25rem;">Pre-Breakout Leaders</h3>
+                        <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">Top 10 by TOS score (2024) — click to open Country tab</p>
+                        <div id="prebreakout-leaders"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legacy Analytics divider -->
+            <div style="border-top:1px solid var(--border-subtle);margin:2rem 0;padding-top:0.5rem;display:flex;align-items:center;gap:1rem;">
+                <span style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);white-space:nowrap;">Legacy Analytics</span>
+                <div style="flex:1;height:1px;background:var(--border-subtle);"></div>
+            </div>
+
             <div class="section-container glow-section glow-cl">
                 <!-- Enhancement #37: Statistical KPIs - Add More Metrics -->
                 <h3 class="section-title">Statistical Overview</h3>
@@ -8469,7 +8532,338 @@ function calculatePillarPercentile(country, vars, isOpportunity) {
 }
 
 // ===== TAB 5: ANALYTICS =====
+// ===== ANALYTICS V8 SECTIONS =====
+
+function initializeAnalyticsV8() {
+    _renderRegimeTOSScatter();
+    _renderRegionalTrendLines();
+    _renderArchetypeClusterScatter();
+    _initRegimeTransitionSelectors();
+    renderRegimeTransitionTracker();
+    _renderNormVarHeatmap();
+    _renderTrajectoryDistribution();
+    _renderPreBreakoutLeaders();
+}
+
+function _renderRegimeTOSScatter() {
+    const canvas = document.getElementById('regime-scatter-chart');
+    if (!canvas) return;
+    const slice = latestSlice;
+    const datasets = Object.keys(REGIME_COLORS).map(regime => {
+        const pts = slice.filter(r => r.regime === regime);
+        return {
+            label: REGIME_COLORS[regime].label,
+            data: pts.map(r => ({ x: r.tos_score || 0, y: r.rao_score || 0, iso: r.country, name: r.country_name, archetype: r.archetype, vband: r.volatility_band || 0.1 })),
+            backgroundColor: REGIME_COLORS[regime].dim,
+            borderColor: REGIME_COLORS[regime].solid,
+            borderWidth: 1.2,
+            pointRadius: pts.map(r => Math.max(4, Math.min(14, ((r.volatility_band || 0.1) - 0.05) / 0.20 * 10 + 4))),
+            pointHoverRadius: pts.map(r => Math.max(6, Math.min(16, ((r.volatility_band || 0.1) - 0.05) / 0.20 * 10 + 6)))
+        };
+    });
+    const chart = new Chart(canvas, {
+        type: 'scatter',
+        data: { datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 600 },
+            scales: {
+                x: { title: { display: true, text: 'TOS Score (0–1)', color: 'rgba(238,234,224,0.5)', font: { size: 11 } }, min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } },
+                y: { title: { display: true, text: 'RAO Score (1–10)', color: 'rgba(238,234,224,0.5)', font: { size: 11 } }, min: 1, max: 10, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } }
+            },
+            plugins: {
+                legend: { position: 'top', labels: { color: 'rgba(238,234,224,0.7)', font: { size: 11 }, boxWidth: 10, padding: 16 } },
+                tooltip: {
+                    callbacks: {
+                        title: items => items[0]?.raw?.name || '',
+                        label: item => {
+                            const d = item.raw;
+                            return [`RAO: ${(d.y||0).toFixed(2)} · TOS: ${(d.x||0).toFixed(2)}`, `Archetype: ${d.archetype || '—'}`, `Uncertainty Band: ±${(d.vband||0).toFixed(2)}`];
+                        }
+                    }
+                }
+            },
+            onClick(evt, elems) {
+                if (!elems.length) return;
+                const pt = elems[0];
+                const ds = chart.data.datasets[pt.datasetIndex].data[pt.index];
+                if (ds?.iso) openCountryFromElsewhere(ds.iso);
+            }
+        },
+        plugins: [{
+            id: 'tosLine',
+            afterDraw(ch) {
+                const xScale = ch.scales.x;
+                const x = xScale.getPixelForValue(0.5);
+                const ctx2 = ch.ctx;
+                ctx2.save();
+                ctx2.strokeStyle = '#C2A56D';
+                ctx2.setLineDash([5, 4]);
+                ctx2.lineWidth = 1.2;
+                ctx2.beginPath();
+                ctx2.moveTo(x, ch.chartArea.top);
+                ctx2.lineTo(x, ch.chartArea.bottom);
+                ctx2.stroke();
+                ctx2.setLineDash([]);
+                ctx2.fillStyle = 'rgba(194,165,109,0.7)';
+                ctx2.font = '10px var(--font-minor, monospace)';
+                ctx2.fillText('TOS 0.5 threshold', x + 6, ch.chartArea.top + 14);
+                ctx2.restore();
+            }
+        }]
+    });
+    registerChart(chart);
+}
+
+function _renderRegionalTrendLines() {
+    const canvas = document.getElementById('regional-trends-chart');
+    if (!canvas) return;
+    const years = Array.from({length:15}, (_, i) => 2010 + i);
+    const REGION_COLORS = { 'Africa':'#C2A56D', 'Americas':'#5d8a72', 'Asia-Pacific':'#607c98', 'Europe':'#7aabb4', 'Middle East':'#9b8fc0' };
+    const datasets = Object.keys(REGIONS).map(region => ({
+        label: region,
+        data: years.map(y => _regionalMeans[region]?.[y]?.['rao_score'] ?? null),
+        borderColor: REGION_COLORS[region] || '#aaa',
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        tension: 0.3,
+        spanGaps: true,
+        pointRadius: 3,
+        pointHoverRadius: 5
+    }));
+    const chart = new Chart(canvas, {
+        type: 'line',
+        data: { labels: years, datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 600 },
+            scales: {
+                x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } },
+                y: { title: { display: true, text: 'Mean RAO Score', color: 'rgba(238,234,224,0.5)', font: { size: 11 } }, min: 2, max: 8, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } }
+            },
+            plugins: {
+                legend: { position: 'top', labels: { color: 'rgba(238,234,224,0.7)', font: { size: 11 }, boxWidth: 10, padding: 16 } },
+                tooltip: { mode: 'index', intersect: false, callbacks: { label: item => `${item.dataset.label}: ${item.parsed.y != null ? item.parsed.y.toFixed(2) : '—'}` } }
+            }
+        }
+    });
+    registerChart(chart);
+}
+
+function _renderArchetypeClusterScatter() {
+    const canvas = document.getElementById('archetype-scatter-chart');
+    if (!canvas) return;
+    const archetypes = Object.keys(ARCHETYPE_COLORS);
+    const datasets = archetypes.map(arch => {
+        const pts = latestSlice.filter(r => r.archetype === arch);
+        return {
+            label: arch,
+            data: pts.map(r => ({ x: r.pillar_opportunity || 0, y: r.pillar_absorptive_capacity || 0, iso: r.country, name: r.country_name, regime: r.regime, rao: r.rao_score })),
+            backgroundColor: ARCHETYPE_COLORS[arch] + '55',
+            borderColor: ARCHETYPE_COLORS[arch],
+            borderWidth: 1,
+            pointRadius: 5,
+            pointHoverRadius: 7
+        };
+    });
+    const chart = new Chart(canvas, {
+        type: 'scatter',
+        data: { datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 600 },
+            scales: {
+                x: { title: { display: true, text: 'Pillar A — Growth Engine (0–1)', color: 'rgba(238,234,224,0.5)', font: { size: 11 } }, min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } },
+                y: { title: { display: true, text: 'Pillar C — Quality Filter (0–1)', color: 'rgba(238,234,224,0.5)', font: { size: 11 } }, min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } }
+            },
+            plugins: {
+                legend: { position: 'top', labels: { color: 'rgba(238,234,224,0.7)', font: { size: 10 }, boxWidth: 8, padding: 12 } },
+                tooltip: { callbacks: { title: i => i[0]?.raw?.name || '', label: item => { const d = item.raw; return [`RAO: ${(d.rao||0).toFixed(2)} · Regime: ${d.regime || '—'}`, `A: ${(d.x||0).toFixed(2)} · C: ${(d.y||0).toFixed(2)}`]; } } }
+            },
+            onClick(evt, elems) {
+                if (!elems.length) return;
+                const pt = elems[0];
+                const d = chart.data.datasets[pt.datasetIndex].data[pt.index];
+                if (d?.iso) openCountryFromElsewhere(d.iso);
+            }
+        }
+    });
+    registerChart(chart);
+}
+
+function _initRegimeTransitionSelectors() {
+    const years = Array.from({length:15}, (_, i) => 2010 + i);
+    ['regime-trans-from','regime-trans-to'].forEach((id, idx) => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        years.forEach(y => {
+            const opt = document.createElement('option');
+            opt.value = y; opt.textContent = y;
+            if (idx === 0 && y === 2010) opt.selected = true;
+            if (idx === 1 && y === 2024) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    });
+}
+
+function renderRegimeTransitionTracker() {
+    const fromY = parseInt(document.getElementById('regime-trans-from')?.value || 2010);
+    const toY   = parseInt(document.getElementById('regime-trans-to')?.value || 2024);
+    const container = document.getElementById('regime-transitions');
+    if (!container) return;
+
+    const regimes = ['RO','FO','SL','SR'];
+    // Build 4×4 count matrix and country lists
+    const matrix = {};
+    const lists = {};
+    regimes.forEach(fr => { matrix[fr] = {}; lists[fr] = {}; regimes.forEach(to => { matrix[fr][to] = 0; lists[fr][to] = []; }); });
+
+    for (const [iso, yearMap] of countryMap) {
+        const fromRow = yearMap.get(fromY);
+        const toRow   = yearMap.get(toY);
+        if (!fromRow?.regime || !toRow?.regime) continue;
+        const fr = fromRow.regime, to = toRow.regime;
+        if (matrix[fr] && matrix[fr][to] !== undefined) { matrix[fr][to]++; lists[fr][to].push({ iso, name: fromRow.country_name || iso, rao: toRow.rao_score }); }
+    }
+
+    let html = `<table style="border-collapse:collapse;width:100%;min-width:500px;">
+        <thead><tr><th style="padding:0.5rem 0.75rem;font-family:var(--font-minor);font-size:0.6rem;text-transform:uppercase;color:var(--text-muted);text-align:left;">From \\ To</th>`;
+    regimes.forEach(to => {
+        const c = REGIME_COLORS[to];
+        html += `<th style="padding:0.5rem 0.75rem;font-family:var(--font-minor);font-size:0.6rem;text-transform:uppercase;color:${c.solid};text-align:center;background:${c.dim};">${to}</th>`;
+    });
+    html += `</tr></thead><tbody>`;
+
+    regimes.forEach(fr => {
+        const fc = REGIME_COLORS[fr];
+        html += `<tr><td style="padding:0.5rem 0.75rem;font-family:var(--font-minor);font-size:0.65rem;font-weight:600;color:${fc.solid};background:${fc.dim};white-space:nowrap;">${fr} · ${fc.label}</td>`;
+        regimes.forEach(to => {
+            const count = matrix[fr][to];
+            const isDiag = fr === to;
+            const isSignal = !isDiag && count > 0 && (to === 'FO' || to === 'RO') && fr === 'SR';
+            const cellBg = isDiag ? 'rgba(255,255,255,0.04)' : (isSignal ? 'rgba(194,165,109,0.12)' : 'transparent');
+            const txtCol = isDiag ? 'var(--text-muted)' : (count > 0 ? 'var(--text-white)' : 'var(--text-muted)');
+            const listId = `rtm-list-${fr}-${to}`;
+            html += `<td style="padding:0.5rem 0.75rem;text-align:center;background:${cellBg};border:1px solid rgba(255,255,255,0.04);cursor:${count>0?'pointer':'default'};" onclick="toggleRTMList('${listId}',${count})">
+                <span style="font-family:var(--font-mono);font-size:1rem;font-weight:700;color:${txtCol};">${count}</span>
+                ${count>0?`<div id="${listId}" style="display:none;font-size:0.72rem;color:var(--text-muted);margin-top:0.35rem;text-align:left;">${lists[fr][to].sort((a,b)=>b.rao-a.rao).slice(0,8).map(c=>`<div style="padding:0.1rem 0;cursor:pointer;color:var(--accent-gold);" onclick="event.stopPropagation();openCountryFromElsewhere('${c.iso}')">${c.name} <span style="color:var(--text-muted);">(${(c.rao||0).toFixed(1)})</span></div>`).join('')}${lists[fr][to].length>8?`<div style="color:var(--text-muted);">+${lists[fr][to].length-8} more</div>`:''}</div>`:''}
+            </td>`;
+        });
+        html += `</tr>`;
+    });
+
+    html += `</tbody></table>
+    <p style="color:var(--text-muted);font-size:0.78rem;margin-top:0.75rem;">Showing regime transitions from ${fromY} to ${toY} · Click a cell to expand/collapse country list · Diagonal = no change</p>`;
+    container.innerHTML = html;
+}
+
+function toggleRTMList(id, count) {
+    if (!count) return;
+    const el = document.getElementById(id);
+    if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function _renderNormVarHeatmap() {
+    const container = document.getElementById('analytics-norm-heatmap');
+    if (!container) return;
+    const NORM_FIELDS = [
+        'norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp','norm_gross_capital_formation','norm_secondary_school_enrolment',
+        'norm_cpi_inflation','norm_government_debt_pct_gdp','norm_current_account_pct_gdp','norm_external_debt_pct_gni',
+        'norm_political_stability','norm_rule_of_law','norm_control_of_corruption',
+        'norm_natural_resource_rents_pct_gdp','norm_gdp_per_capita_growth','norm_youth_unemployment','norm_vulnerable_employment','norm_regulatory_quality',
+        'norm_gdp_growth_trend','norm_fdi_trend','norm_governance_trend','norm_debt_trend','norm_inflation_trend'
+    ];
+    const SHORT_LABELS = {
+        norm_gdp_growth:'GDPgr',norm_export_growth:'Exports',norm_net_fdi_pct_gdp:'FDI',norm_gross_capital_formation:'GCF',norm_secondary_school_enrolment:'Edu',
+        norm_cpi_inflation:'Infl',norm_government_debt_pct_gdp:'GovDebt',norm_current_account_pct_gdp:'CA',norm_external_debt_pct_gni:'ExtDebt',
+        norm_political_stability:'PolStab',norm_rule_of_law:'RoL',norm_control_of_corruption:'Corr',
+        norm_natural_resource_rents_pct_gdp:'NatRes',norm_gdp_per_capita_growth:'GDPpc',norm_youth_unemployment:'YouthUnempl',norm_vulnerable_employment:'VulnEmpl',norm_regulatory_quality:'RegQual',
+        norm_gdp_growth_trend:'GDPtrend',norm_fdi_trend:'FDItrend',norm_governance_trend:'GovTrend',norm_debt_trend:'DebtTrend',norm_inflation_trend:'InfTrend'
+    };
+    const rows = latestSlice.filter(r => NORM_FIELDS.every(f => r[f] != null && !isNaN(r[f])));
+    const vecs = NORM_FIELDS.map(f => rows.map(r => r[f]));
+    const cors = NORM_FIELDS.map((_, i) => NORM_FIELDS.map((__, j) => calculateCorrelation(vecs[i], vecs[j])));
+
+    const cellSize = '28px';
+    const cellStyle = 'min-width:28px;height:28px;text-align:center;font-family:var(--font-mono);font-size:0;position:relative;cursor:default;';
+    let html = `<table style="border-collapse:collapse;table-layout:fixed;">
+        <thead><tr><th style="min-width:60px;padding:0;"></th>`;
+    NORM_FIELDS.forEach((f,i) => { html += `<th style="min-width:${cellSize};height:60px;vertical-align:bottom;padding:0;"><div style="writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--font-minor);font-size:0.55rem;color:rgba(238,234,224,0.5);white-space:nowrap;padding:2px 4px;">${SHORT_LABELS[f]||f}</div></th>`; });
+    html += `</tr></thead><tbody>`;
+    NORM_FIELDS.forEach((rf, i) => {
+        html += `<tr><td style="padding:0 6px 0 0;font-family:var(--font-minor);font-size:0.55rem;color:rgba(238,234,224,0.5);white-space:nowrap;text-align:right;">${SHORT_LABELS[rf]||rf}</td>`;
+        NORM_FIELDS.forEach((cf, j) => {
+            const r = cors[i][j];
+            const abs = Math.abs(r);
+            const alpha = abs * 0.85;
+            const bg = r >= 0 ? `rgba(93,138,114,${alpha})` : `rgba(150,96,96,${alpha})`;
+            html += `<td title="${SHORT_LABELS[rf]} × ${SHORT_LABELS[cf]}: r = ${r.toFixed(2)}" style="${cellStyle}background:${bg};border:1px solid rgba(0,0,0,0.15);">&nbsp;</td>`;
+        });
+        html += `</tr>`;
+    });
+    html += `</tbody></table>
+    <div style="display:flex;gap:1.5rem;margin-top:0.75rem;align-items:center;">
+        <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--text-muted);"><span style="width:14px;height:14px;background:rgba(93,138,114,0.8);display:inline-block;border-radius:2px;"></span> Positive correlation</div>
+        <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;color:var(--text-muted);"><span style="width:14px;height:14px;background:rgba(150,96,96,0.8);display:inline-block;border-radius:2px;"></span> Negative correlation</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);">Hover cell for exact r value · ${rows.length} countries used</div>
+    </div>`;
+    container.innerHTML = html;
+}
+
+function _renderTrajectoryDistribution() {
+    const canvas = document.getElementById('trajectory-donut-chart');
+    if (!canvas) return;
+    const labels = ['structural','cyclical','recovery_bounce','stable'];
+    const FRIENDLY = { structural:'Structural', cyclical:'Cyclical', recovery_bounce:'Recovery Bounce', stable:'Stable' };
+    const COLORS = { structural:'#5d8a72', cyclical:'#C2A56D', recovery_bounce:'#607c98', stable:'#7aabb4' };
+    const counts = labels.map(l => latestSlice.filter(r => r.trajectory_classification === l).length);
+    const chart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            labels: labels.map(l => FRIENDLY[l]),
+            datasets: [{ data: counts, backgroundColor: labels.map(l => COLORS[l] + 'cc'), borderColor: labels.map(l => COLORS[l]), borderWidth: 2, hoverOffset: 4 }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '62%',
+            plugins: {
+                legend: { position: 'bottom', labels: { color: 'rgba(238,234,224,0.7)', font: { size: 11 }, boxWidth: 10, padding: 12 } },
+                tooltip: { callbacks: { label: item => `${item.label}: ${item.parsed} (${((item.parsed/latestSlice.length)*100).toFixed(1)}%)` } }
+            }
+        }
+    });
+    registerChart(chart);
+}
+
+function _renderPreBreakoutLeaders() {
+    const container = document.getElementById('prebreakout-leaders');
+    if (!container) return;
+    const leaders = [...latestSlice].sort((a, b) => (b.tos_score || 0) - (a.tos_score || 0)).slice(0, 10);
+    container.innerHTML = leaders.map((r, i) => `
+        <div onclick="openCountryFromElsewhere('${r.country}')" style="display:flex;align-items:center;gap:0.75rem;padding:0.55rem 0.75rem;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;transition:background 0.15s;" onmouseenter="this.style.background='rgba(194,165,109,0.06)'" onmouseleave="this.style.background=''">
+            <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);min-width:1.2rem;">${i+1}</span>
+            <span style="flex:1;font-family:var(--font-body);font-size:0.875rem;color:var(--text-white);">${r.country_name}</span>
+            ${tosBadge(r.tos_signal_label)}
+            ${regimeBadge(r.regime)}
+            <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-gold);min-width:2.5rem;text-align:right;">${(r.tos_score||0).toFixed(3)}</span>
+        </div>`).join('');
+}
+
+function openCountryFromElsewhere(iso) {
+    const tab = document.querySelector('[data-tab="analysis"]');
+    if (tab) tab.click();
+    setTimeout(() => {
+        const sel = document.getElementById('country-select');
+        if (sel) { sel.value = iso; sel.dispatchEvent(new Event('change')); }
+    }, 150);
+}
+
 function initializeAnalyticsTab() {
+    initializeAnalyticsV8();
     const scores = rawData.map(c => c.calculated_rao);
     const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
     const sorted = [...scores].sort((a, b) => a - b);
@@ -10044,165 +10438,161 @@ const PILLAR_KEYWORDS = {
 };
 
 // TIER 1 (always, cached): global stats + regional averages + compact ranking index
+// ===== CHATBOT CONTEXT (RAO v2.1 / rao8) =====
+
 function buildStaticContext() {
     if (datasetContextCache) return datasetContextCache;
+    const slice = latestSlice;
+    const n = slice.length;
+    const avg = arr => arr.length ? (arr.reduce((s,v)=>s+v,0)/arr.length).toFixed(2) : 'N/A';
+    const globalAvgRAO = avg(slice.map(r => r.rao_score));
+    const globalAvgTOS = avg(slice.map(r => r.tos_score || 0));
 
-    const n = rawData.length;
-    const avg = arr => (arr.reduce((s, v) => s + v, 0) / arr.length).toFixed(2);
-
-    const globalAvgRAO  = avg(rawData.map(c => c.calculated_rao));
-    const globalAvgOpp  = avg(rawData.map(c => c.calculated_opportunity));
-    const globalAvgStab = avg(rawData.map(c => c.calculated_stability));
-
-    const regionalAverages = Object.entries(REGIONS).map(([region, codes]) => {
-        const members = rawData.filter(c => codes.includes(c.country));
-        if (!members.length) return '';
-        return `${region}(n=${members.length}):RAO=${avg(members.map(c => c.calculated_rao))},Opp=${avg(members.map(c => c.calculated_opportunity))},Stab=${avg(members.map(c => c.calculated_stability))}`;
-    }).filter(Boolean).join(' | ');
-
-    // Compact index: ISO|Name|Rank|RAO|Opp|Stab only
-    const indexRows = rawData.map(c =>
-        `${c.country}|${c.country_name}|${c.rank}|${c.calculated_rao.toFixed(2)}|${c.calculated_opportunity.toFixed(2)}|${c.calculated_stability.toFixed(2)}`
+    // Compact cross-section index
+    const indexRows = slice.map(r =>
+        `${r.country}|${r.country_name}|${r.rank}|${(r.rao_score||0).toFixed(2)}|${r.regime||'?'}|${(r.tos_score||0).toFixed(2)}|${r.tos_signal_label||''}|${(r.pillar_opportunity||0).toFixed(2)}|${(r.pillar_fragility||0).toFixed(2)}|${(r.pillar_absorptive_capacity||0).toFixed(2)}|${(r.pillar_trajectory||0).toFixed(2)}|${r.archetype||''}|${(r.cvar25||0).toFixed(2)}|${(r.volatility_band||0).toFixed(2)}`
     ).join('\n');
 
-    datasetContextCache = `RAO Index: ${n} countries, scores 0-10 (higher=better). Formula: (Opp×0.55)+(Stab×0.45)
-Global avg: RAO=${globalAvgRAO}, Opp=${globalAvgOpp}, Stab=${globalAvgStab}
-Regional avg: ${regionalAverages}
-INDEX(ISO|Name|Rank|RAO|Opp|Stab):
+    datasetContextCache = `RAO Framework v2.1 — panel dataset 2010–2024, ${n} countries, Bayesian CVaR₂₅ scoring engine, 1–10 scale (higher=better).
+4 Pillars: A=Opportunity/Growth Engine | B=Fragility/Risk Brake (lower fragility=better, displayed inverted) | C=Absorptive Capacity/Quality Filter (geometric mean — collapses near zero if any component fails) | D=Trajectory/Momentum Signal (OLS trend × R²).
+TDM: TOS = geometric mean of SIS (S-curve inflection proximity) × DGI (discovery gap: fundamentals vs external capital recognition) × RVS (reform velocity: WGI trend + GDELT).
+4 Regimes: RO=Robust Opportunity (high score, low volatility) | FO=Fragile Opportunity (high score, high volatility) | SL=Stable/Low (low, low) | SR=Structural Risk (low, high).
+PRIMARY SIGNAL: FO/SR + TOS > 0.50 = pre-breakout candidates. FO + High TOS = clearest entry signal. SR + High TOS = highest conviction/risk.
+Global 2024: mean RAO=${globalAvgRAO}, mean TOS=${globalAvgTOS}
+INDEX(ISO|Name|Rank|RAO|Regime|TOS|TOSLabel|PillarA|PillarB|PillarC|PillarD|Archetype|CVaR25|VBand):
 ${indexRows}`;
 
     return datasetContextCache;
 }
 
-// TIER 2 (on demand): full 12-pillar breakdown for a set of countries
-function retrievePillarContext(countries) {
-    if (!countries.length) return '';
-    const header = 'PILLARS(ISO|Name|RAO|MA|CE|TI|DE|IN|EV|LM) — Stab pillars inverted(higher=safer):';
-    const rows = countries.map(c => {
-        const oppP  = OPPORTUNITY_PILLARS.map(p => calculatePillarScore(c, p.vars).toFixed(1));
-        const stabP = STABILITY_PILLARS.map(p => (10 - calculatePillarScore(c, p.vars)).toFixed(1));
-        return `${c.country}|${c.country_name}|${c.calculated_rao.toFixed(2)}|${[...oppP, ...stabP].join('|')}`;
-    }).join('\n');
-    return `\n${header}\n${rows}`;
+// Tier 2 (on demand): full panel history for named countries
+function retrievePillarContext(isos) {
+    if (!isos.length) return '';
+    const header = 'HISTORY(ISO|Year|RAO|Regime|TOS|A|B|C|D|TOSLabel|Trajectory|PreOverlay|Overlay):';
+    const rows = [];
+    for (const iso of isos) {
+        const hist = getCountryHistory(iso);
+        for (const r of hist) {
+            rows.push(`${r.country}|${r.year}|${(r.rao_score||0).toFixed(2)}|${r.regime||''}|${(r.tos_score||0).toFixed(2)}|${(r.pillar_opportunity||0).toFixed(2)}|${(r.pillar_fragility||0).toFixed(2)}|${(r.pillar_absorptive_capacity||0).toFixed(2)}|${(r.pillar_trajectory||0).toFixed(2)}|${r.tos_signal_label||''}|${r.trajectory_classification||''}|${(r.rao_score_pre_overlay||0).toFixed(2)}|${(r.overlay_adjustment||0).toFixed(2)}`);
+        }
+    }
+    if (!rows.length) return '';
+    return `\n${header}\n${rows.join('\n')}`;
 }
 
-// TIER 3 (on demand): full 28-variable breakdown for explicitly named countries only
-function retrieveVariableContext(countries) {
-    if (!countries.length) return '';
-    const allVarKeys = [
-        ...OPPORTUNITY_PILLARS.flatMap(p => p.vars),
-        ...STABILITY_PILLARS.flatMap(p => p.vars)
-    ];
-    const header = `VARIABLES(ISO|Name|${allVarKeys.map(v => VARIABLE_NAMES[v] || v).join('|')}) — (INV)=inverted,higher=lower risk:`;
-    const rows = countries.map(c => {
-        const vals = allVarKeys.map(v => {
-            const x = c[v];
-            return (x === null || isNaN(x)) ? 'N/A' : parseFloat(x).toFixed(1);
-        });
-        return `${c.country}|${c.country_name}|${vals.join('|')}`;
-    }).join('\n');
-    return `\n${header}\n${rows}`;
+// Tier 3 (on demand): 22 norm vars for named countries
+function retrieveVariableContext(isos) {
+    if (!isos.length) return '';
+    const NORM_FIELDS = ['norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp','norm_gross_capital_formation','norm_secondary_school_enrolment',
+        'norm_cpi_inflation','norm_government_debt_pct_gdp','norm_current_account_pct_gdp','norm_external_debt_pct_gni',
+        'norm_political_stability','norm_rule_of_law','norm_control_of_corruption',
+        'norm_natural_resource_rents_pct_gdp','norm_gdp_per_capita_growth','norm_youth_unemployment','norm_vulnerable_employment','norm_regulatory_quality',
+        'norm_gdp_growth_trend','norm_fdi_trend','norm_governance_trend','norm_debt_trend','norm_inflation_trend'];
+    const header = `VARIABLES(ISO|Year|${NORM_FIELDS.join('|')}):`;
+    const rows = [];
+    for (const iso of isos) {
+        const hist = getCountryHistory(iso);
+        const recent = hist.filter(r => r.year >= 2020);
+        for (const r of recent) {
+            rows.push(`${r.country}|${r.year}|${NORM_FIELDS.map(f => r[f] != null ? (r[f]).toFixed(2) : 'N/A').join('|')}`);
+        }
+    }
+    if (!rows.length) return '';
+    return `\n${header}\n${rows.join('\n')}`;
 }
 
-// Resolve which countries to fetch for each tier based on the query
+// Resolve context based on query intent
 function resolveContext(query) {
     const q = query.toLowerCase();
+    const isTemporal = /evolv|trend|history|over time|since|trajectory|2010|2015|2018|2020|2021|2022|2023|2024|year|change/.test(q);
+    const isRegime = /pre.?break|frontier|reform story|fo\b|sr\b|breakout|takeoff|take.off|tos|fragile opp|structural risk/.test(q);
+    const isArchetype = /archetype|cluster|high.growth|commodity|advanced economy|diversified|knowledge|service economy/.test(q);
+    const isScreening = /screen|filter|top \d|best countries|highest|lowest|rank/.test(q);
 
-    // Named countries (Tier 2 + 3)
-    let named = rawData.filter(c =>
-        q.includes(c.country_name.toLowerCase()) || q.includes(c.country.toLowerCase())
-    );
+    const namedISOs = latestSlice
+        .filter(r => q.includes(r.country_name.toLowerCase()) || q.includes(r.country.toLowerCase()))
+        .map(r => r.country);
 
-    // Named regions → all countries in that region (Tier 2 only, not Tier 3)
-    let regional = [];
+    let tier2ISOs = [...namedISOs];
+    let tier3ISOs = [...namedISOs];
+
+    // Regional queries → inject all countries in that region
     Object.entries(REGIONS).forEach(([region, codes]) => {
         if (q.includes(region.toLowerCase())) {
-            rawData.filter(c => codes.includes(c.country)).forEach(c => regional.push(c));
+            codes.forEach(iso => { if (!tier2ISOs.includes(iso)) tier2ISOs.push(iso); });
         }
     });
 
-    // Screening: detect pillar keywords → fetch top 8 by that pillar (Tier 2 only)
-    let screening = [];
-    if (named.length === 0 && regional.length === 0) {
-        const matchedPillars = [...OPPORTUNITY_PILLARS, ...STABILITY_PILLARS].filter(p =>
-            (PILLAR_KEYWORDS[p.key] || []).some(kw => q.includes(kw))
-        );
-        if (matchedPillars.length > 0) {
-            const p = matchedPillars[0];
-            const isStab = STABILITY_PILLARS.some(sp => sp.key === p.key);
-            screening = [...rawData]
-                .sort((a, b) => {
-                    const sa = isStab ? (10 - calculatePillarScore(a, p.vars)) : calculatePillarScore(a, p.vars);
-                    const sb = isStab ? (10 - calculatePillarScore(b, p.vars)) : calculatePillarScore(b, p.vars);
-                    return sb - sa;
-                })
-                .slice(0, 8);
+    // Regime screen → inject FO+SR+high TOS countries
+    if (isRegime && namedISOs.length === 0) {
+        const candidates = getRegimeCell(['FO','SR'], 0.5).slice(0, 12).map(r => r.country);
+        tier2ISOs = [...new Set([...tier2ISOs, ...candidates])];
+    }
+
+    // Archetype → inject archetype peers for named countries
+    if (isArchetype && namedISOs.length > 0) {
+        const row = getLatestRow(namedISOs[0]);
+        if (row) {
+            const peers = getPeersByArchetype(namedISOs[0], 2024).slice(0, 6).map(r => r.country);
+            tier2ISOs = [...new Set([...tier2ISOs, ...peers])];
         }
     }
 
-    // Deduplicate
-    const dedup = arr => [...new Map(arr.map(c => [c.country, c])).values()];
-    const tier2 = dedup([...named, ...regional, ...screening]);
-    const tier3 = dedup(named); // Variable detail only for explicitly named countries
+    // Screening with no named country → inject top 10 by RAO
+    if (isScreening && namedISOs.length === 0) {
+        const top10 = latestSlice.slice(0, 10).map(r => r.country);
+        tier2ISOs = [...new Set([...tier2ISOs, ...top10])];
+    }
 
-    return { tier2, tier3 };
+    return { tier2ISOs, tier3ISOs, isTemporal };
 }
 
 function buildSystemPrompt(query) {
-    const { tier2, tier3 } = resolveContext(query);
-    return `You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You advise institutional investors on country risk and opportunity using the Risk-Adjusted Opportunity (RAO) framework. Your analytical standard is that of a decision-grade intelligence product: you do not summarise what has happened, you explain what it means, why it matters, and what a sophisticated investor should do with that information.
+    const { tier2ISOs, tier3ISOs, isTemporal } = resolveContext(query);
+    const dataNote = isTemporal ? 'TEMPORAL NOTE: User asked about trends/evolution — full 2010–2024 history for named countries is included below.' : '';
+
+    return `You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You advise institutional investors on country risk and opportunity using the Risk-Adjusted Opportunity (RAO) Framework v2.1. Your analytical standard is that of a decision-grade intelligence product: you do not summarise what has happened, you explain what it means, why it matters, and what a sophisticated investor should do with that information.
+
+THE RAO FRAMEWORK:
+The RAO Framework is designed to identify countries at structural pre-breakout — high quality being built but not yet priced into external capital flows. The headline score is a Bayesian CVaR₂₅ metric: it reflects the worst-25% of simulated pillar-weight scenarios, not an optimistic central estimate. A wide volatility_band signals scenario sensitivity and requires active stress-testing.
+
+PRIMARY INVESTMENT THESIS: The actionable signal is a country in Fragile Opportunity (FO) or Structural Risk (SR) regime combined with TOS score above 0.50. FO + High TOS = clearest entry signal: structural momentum present, institutional quality not yet fully confirmed. SR + High TOS = highest conviction/risk signal: deep structural deficiencies alongside an inflection signal. Regime transitions are signals: SR→FO = due diligence trigger; FO→RO = institutional capital entry point.
+
+4 PILLARS:
+- A: Growth Engine (Opportunity) — GDP growth, export growth, net FDI, gross capital formation, secondary school enrolment
+- B: Risk Brake (Fragility, lower=better in raw form; displayed inverted so higher=safer) — inflation, government debt, current account, external debt, political stability, rule of law, control of corruption
+- C: Quality Filter (Absorptive Capacity, geometric mean) — resource rents, GDP per capita growth, youth unemployment, vulnerable employment, regulatory quality. Collapses to near zero if any component fails.
+- D: Momentum Signal (Trajectory) — OLS trends × R² for GDP growth, FDI, governance, debt, and inflation
+
+TAKE-OFF DETECTION MODULE (TDM):
+TOS = geometric mean of: SIS (S-curve inflection proximity — is the country approaching structural acceleration?), DGI (discovery gap — gap between fundamentals and external capital recognition), RVS (reform velocity — WGI trend × GDELT event data). Strong Pre-Breakout Signal = TOS ≥ 0.70. Pre-Breakout Signal = TOS ≥ 0.55. Moderate Potential = TOS 0.35–0.55.
 
 THE CORE ANALYTICAL STANDARD:
-Every response must meet the following test: could a senior investor read this and make a better decision than they could without it? If the response only describes conditions that are already publicly known without adding causal reasoning, forward-looking structure, or decision-relevant differentiation, it has failed that test.
-
-Build causal chains, not event lists. Do not write "X happened and this creates risk." Write "X happened, which transmits into Y through mechanism Z, which changes the decision calculus in the following way." Explain the pathway from geopolitical or macroeconomic development to investor exposure. For example: Gulf escalation → LNG supply disruption → input cost pressure on petrochemicals → margin compression in energy-intensive manufacturing → sector-specific risk premium.
-
-Use data analytically, not decoratively. A data point earns its place only if it drives an argument forward. Always contextualise figures against historical norms, regional peers, or investment thresholds. A number mentioned once and never returned to is not analysis — it is decoration. If you cite a figure, explain what it implies, whether it is high or low by relevant standards, and what changes if it moves in either direction.
-
-Distinguish between sectors and sub-variables. Country-level conclusions are starting points, not endpoints. The same country can be a strong opportunity in one sector and a liability in another. Where the question warrants it, identify which specific sectors, corridors, or asset classes are most and least exposed within a given RAO profile.
-
-Explain transmission mechanisms explicitly. When a risk or opportunity is identified, trace how it reaches the investor. Do not say "political instability poses risks to investment." Say which type of investment, through which channel (regulatory unpredictability, contract enforceability, currency pressure, supply chain disruption), at what time horizon, and with what mitigants.
+Every response must meet the following test: could a senior investor read this and make a better decision than they could without it? Build causal chains, not event lists. Use data analytically, not decoratively. Distinguish between sectors and sub-variables. Explain transmission mechanisms explicitly.
 
 FORWARD-LOOKING STRUCTURE:
-Responses on country or regional risk must include structured forward-looking content where the question warrants it:
-- Base case: the most probable near-term trajectory given current conditions
-- Upside case: the specific trigger or condition that would improve the investment outlook, and what it would unlock
-- Downside case: the specific shock or deterioration that would worsen conditions, and which sectors or positions it would hit hardest
-Projections must be conditional. Do not state forecasts as certainties — state what they depend on. Vague forward-looking language ("risks remain," "uncertainty persists") is not acceptable as a substitute for structured scenario thinking.
+Country or regional analysis must include: Base case (most probable near-term trajectory) · Upside case (specific trigger and what it unlocks) · Downside case (specific shock and sectors most affected). Projections must be conditional — state what they depend on.
 
 WRITING STYLE:
-- Write in full paragraphs. Numbers are evidence that support the argument, not the argument itself.
-- Lead with the strategic insight — the opening sentence states a conclusion, not a condition.
-- Always contextualise RAO scores against the global average, regional peers, and the specific investment decision being made.
-- Use bullet points only when comparing three or more items; always follow with an interpretive paragraph that synthesises what the comparison means — bullet points are never the end of an argument.
-- For three or more country comparisons, include a markdown table (| Col | Col | with header and separator rows) before prose; the table summarises, the prose argues.
-- Confident, direct analytical voice. No hedging phrases: "it is worth noting," "it should be considered," "there may be some risk."
-- Avoid boilerplate closing sentences ("continued monitoring is advised," "the outlook remains mixed"). Every closing sentence states something specific and actionable.
-- Vary sentence structure and register across sections — uniform paragraph construction signals low editorial quality.
+- Lead with the strategic insight — opening sentence states a conclusion, not a condition.
+- Full paragraphs; numbers as evidence, not argument.
+- Contextualise RAO scores against global mean, regional peers, and the investment decision type.
+- Bullet points only when comparing 3+ items; always follow with synthesis paragraph.
+- For 3+ country comparisons, include a markdown table before prose.
+- Confident, direct voice. No hedging phrases.
+- Specific, actionable closing sentence — no boilerplate.
 
 RESPONSE STRUCTURE:
-- Open with 1-2 sentences stating the core investment conclusion — not a scene-setter, a verdict.
-- Use ### headers for deeper sections.
-- End with a ### Bottom Line paragraph that is specific and decision-relevant, not a summary of what was already said.
-- Country deep-dives: RAO composite → Opportunity/Stability split → top 2-3 pillar strengths and weaknesses with root causes at the sub-variable level → sector or corridor differentiation → forward-looking scenario.
-- Comparisons: explain practical separation between countries — what does a higher score actually mean for a specific type of capital or decision?
-- Screening: explain why countries rise to the top of a screen; pair each with its key risk caveat and the condition under which that caveat becomes disqualifying.
-- Regional: identify structural drivers with specific country illustrations; distinguish between countries within the region rather than treating it as homogeneous; address which trajectories are converging or diverging.
+- 1-2 sentence verdict opener.
+- ### headers for sections.
+- ### Bottom Line: specific and decision-relevant, not a summary.
+- Country deep-dives: RAO composite → pillar strengths/weaknesses (root cause at norm-var level) → sector differentiation → regime + TOS signal → forward scenario.
+- Comparisons: explain what the score differential means for a specific type of capital.
+- Screening: explain why countries appear; pair each with key risk caveat and disqualifying condition.
 
-QUALITY FAILURES TO AVOID:
-- Describing a country's situation without explaining the mechanism connecting it to investor outcomes
-- Listing events or data points without synthesising what they mean together
-- Concluding a section with language that could apply to any country in any quarter
-- Treating a risk as identified once it has been named — a risk is only analytically complete when its transmission channel, affected sectors, time horizon, and mitigants have been addressed
-- Providing country assessments that give the same level of risk characterisation to every country
-- Forward-looking content consisting only of vague caution rather than structured scenarios with named triggers
+${dataNote}
 
-DATA NOTES:
-- Stability pillars and (INV) variables are inverted: a higher score means lower risk/fragility.
-- Rank is out of ${rawData.length} countries total.
-- Always anchor numbers to the global average for context.
-
-${buildStaticContext()}${retrievePillarContext(tier2)}${retrieveVariableContext(tier3)}`;
+${buildStaticContext()}${retrievePillarContext(tier2ISOs)}${retrieveVariableContext(isTemporal ? tier3ISOs : [])}`;
 }
 
 function initializeChatbotTab() {
@@ -10426,11 +10816,11 @@ function chatMarkdownToHTML(text) {
     // Clean up empty paragraphs
     html = html.replace(/<p>\s*<\/p>/g, '');
 
-    // Score chips — color decimal numbers 0.00–10.00 in text nodes only
+    // Score chips — color decimal numbers 1.00–10.00 (RAO scale) in text nodes only
     html = processTextNodes(html, text =>
         text.replace(/\b(\d{1,2}\.\d{1,2})\b/g, (match, num) => {
             const v = parseFloat(num);
-            if (v < 0 || v > 10) return match;
+            if (v < 1 || v > 10) return match;
             const cls = v >= 7.0 ? 'score-hi' : v >= 4.5 ? 'score-mid' : 'score-lo';
             return `<span class="score-chip ${cls}">${num}</span>`;
         })
@@ -10601,6 +10991,8 @@ function dispatchChartRender(fnName, fnArgs) {
             case 'render_scatter_plot': return buildScatterPlot(fnArgs);
             case 'render_radar_chart':  return buildRadarChart(fnArgs);
             case 'render_bar_chart':    return buildBarChart(fnArgs);
+            case 'render_line_chart':   return buildLineChart(fnArgs);
+            case 'render_regime_matrix': return buildChatRegimeMatrix(fnArgs);
             default: return null;
         }
     } catch (e) {
@@ -10666,72 +11058,54 @@ function makeChartWrapper(title) {
 const _chartInstances = [];
 function registerChart(instance) { _chartInstances.push(instance); }
 
-// ===== SCATTER PLOT =====
+// ===== SCATTER PLOT (rao8: Pillar A vs C, colored by regime) =====
 function buildScatterPlot({ highlight = [], title } = {}) {
-    if (!rawData.length) return null;
-    const { wrapper, canvas } = makeChartWrapper(title || 'Opportunity vs Stability Positioning');
-
-    const highlightSet = new Set(
-        highlight.map(h => resolveCountry(h)?.country).filter(Boolean)
-    );
-
-    const base = rawData.map(c => ({ x: c.opportunity_score, y: c.stability_score, label: c.country_name, iso: c.country }));
-    const highlighted = base.filter(p => highlightSet.has(p.iso));
-    const rest = base.filter(p => !highlightSet.has(p.iso));
-
-    const medX = rawData.map(c => c.opportunity_score).sort((a,b)=>a-b)[Math.floor(rawData.length/2)];
-    const medY = rawData.map(c => c.stability_score).sort((a,b)=>a-b)[Math.floor(rawData.length/2)];
-
+    if (!latestSlice.length) return null;
+    const { wrapper, canvas } = makeChartWrapper(title || 'Growth Engine vs Quality Filter — Structural Positioning');
+    const highlightSet = new Set(highlight.map(h => resolveCountry(h)?.country).filter(Boolean));
+    const regimes = ['RO','FO','SL','SR'];
+    const datasets = regimes.map(regime => {
+        const pts = latestSlice.filter(r => r.regime === regime && !highlightSet.has(r.country));
+        return {
+            label: REGIME_COLORS[regime].label,
+            data: pts.map(r => ({ x: r.pillar_opportunity||0, y: r.pillar_absorptive_capacity||0, label: r.country_name, iso: r.country, rao: r.rao_score })),
+            backgroundColor: REGIME_COLORS[regime].dim,
+            borderColor: REGIME_COLORS[regime].solid,
+            borderWidth: 1, pointRadius: 4, pointHoverRadius: 6
+        };
+    });
+    // Highlighted countries on top
+    const hlPts = latestSlice.filter(r => highlightSet.has(r.country));
+    if (hlPts.length) datasets.push({
+        label: 'Highlighted',
+        data: hlPts.map(r => ({ x: r.pillar_opportunity||0, y: r.pillar_absorptive_capacity||0, label: r.country_name, iso: r.country, rao: r.rao_score })),
+        backgroundColor: CHART_THEME.gold, borderColor: '#fff', borderWidth: 1.5,
+        pointRadius: 7, pointHoverRadius: 9
+    });
     const chart = new Chart(canvas, {
         type: 'scatter',
-        data: {
-            datasets: [
-                { label: 'Countries', data: rest, backgroundColor: 'rgba(93,140,168,0.4)', pointRadius: 4, pointHoverRadius: 6 },
-                { label: 'Highlighted', data: highlighted, backgroundColor: CHART_THEME.gold, pointRadius: 6, pointHoverRadius: 8 }
-            ]
-        },
+        data: { datasets },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: { duration: 400 },
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
             plugins: {
-                legend: { display: false },
-                tooltip: {
-                    callbacks: { label: ctx => { const d = ctx.raw; return `${d.label} — Opp: ${d.x.toFixed(2)}, Stab: ${d.y.toFixed(2)}`; } },
-                    backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1,
-                    titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)',
-                    bodyFont: { family: CHART_THEME.font, size: 11 }
-                }
+                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 }, boxWidth: 8, padding: 10 } },
+                tooltip: { callbacks: { title: i => i[0]?.raw?.label||'', label: item => { const d=item.raw; return [`Pillar A: ${d.x.toFixed(2)} · Pillar C: ${d.y.toFixed(2)}`, `RAO: ${(d.rao||0).toFixed(2)}`]; } }, backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold }
             },
             scales: {
-                x: { title: { display: true, text: 'Opportunity', color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } }, min: 0, max: 10, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } } },
-                y: { title: { display: true, text: 'Stability', color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } }, min: 0, max: 10, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } } }
+                x: { title: { display: true, text: 'Pillar A — Growth Engine (0–1)', color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
+                y: { title: { display: true, text: 'Pillar C — Quality Filter (0–1)', color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } }
             }
         },
         plugins: [{
-            id: 'quadrantLines',
-            afterDraw(chart) {
-                const { ctx, chartArea: { left, right, top, bottom }, scales: { x, y } } = chart;
-                const px = x.getPixelForValue(medX);
-                const py = y.getPixelForValue(medY);
+            id: 'hlLabels',
+            afterDraw(ch) {
+                if (!hlPts.length) return;
+                const { ctx, scales: { x, y } } = ch;
                 ctx.save();
-                ctx.strokeStyle = 'rgba(203,168,78,0.2)';
-                ctx.setLineDash([4, 4]);
-                ctx.lineWidth = 1;
-                ctx.beginPath(); ctx.moveTo(px, top); ctx.lineTo(px, bottom); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(left, py); ctx.lineTo(right, py); ctx.stroke();
+                ctx.fillStyle = CHART_THEME.gold;
+                ctx.font = `10px ${CHART_THEME.font}`;
+                hlPts.forEach(r => { ctx.fillText(r.country, x.getPixelForValue(r.pillar_opportunity||0)+7, y.getPixelForValue(r.pillar_absorptive_capacity||0)-4); });
                 ctx.restore();
-                if (highlighted.length) {
-                    ctx.save();
-                    ctx.fillStyle = CHART_THEME.gold;
-                    ctx.font = `10px ${CHART_THEME.font}`;
-                    highlighted.forEach(p => {
-                        const px2 = x.getPixelForValue(p.x);
-                        const py2 = y.getPixelForValue(p.y);
-                        ctx.fillText(p.iso, px2 + 7, py2 - 4);
-                    });
-                    ctx.restore();
-                }
             }
         }]
     });
@@ -10739,31 +11113,34 @@ function buildScatterPlot({ highlight = [], title } = {}) {
     return wrapper;
 }
 
-// ===== RADAR CHART =====
+// ===== RADAR CHART (rao8: 4 pillars, B inverted) =====
 function buildRadarChart({ countries = [], title } = {}) {
     if (!countries.length) return null;
-    const resolved = countries.map(resolveCountry).filter(Boolean).slice(0, 2);
+    const resolved = countries.map(resolveCountry).filter(Boolean).slice(0, 3);
     if (!resolved.length) return null;
 
-    const { wrapper, canvas } = makeChartWrapper(title || `Pillar Profile — ${resolved.map(c => c.country_name).join(' vs ')}`);
-
-    const labels = [...OPPORTUNITY_PILLARS.map(p => p.name), ...STABILITY_PILLARS.map(p => p.name)];
+    const { wrapper, canvas } = makeChartWrapper(title || `Pillar Radar — ${resolved.map(c => c.country_name).join(' · ')}`);
+    const labels = ['A Growth Engine', 'B Risk Brake (inv)', 'C Quality Filter', 'D Momentum Signal'];
     const colors = [
-        { border: CHART_THEME.gold, bg: 'rgba(203,168,78,0.12)' },
-        { border: CHART_THEME.blueSolid, bg: 'rgba(93,140,168,0.12)' }
+        { border: CHART_THEME.gold, bg: 'rgba(194,165,109,0.12)' },
+        { border: CHART_THEME.blueSolid, bg: 'rgba(96,124,152,0.12)' },
+        { border: '#5d8a72', bg: 'rgba(93,138,114,0.12)' }
     ];
 
     const datasets = resolved.map((c, i) => {
-        const oppScores = OPPORTUNITY_PILLARS.map(p => calculatePillarScore(c, p.vars));
-        const stabScores = STABILITY_PILLARS.map(p => 10 - calculatePillarScore(c, p.vars));
+        const row = getLatestRow(c.country) || c;
         return {
             label: c.country_name,
-            data: [...oppScores, ...stabScores],
+            data: [
+                (row.pillar_opportunity || 0) * 10,
+                (1 - (row.pillar_fragility || 0)) * 10,
+                (row.pillar_absorptive_capacity || 0) * 10,
+                (row.pillar_trajectory || 0) * 10
+            ],
             borderColor: colors[i].border,
             backgroundColor: colors[i].bg,
             pointBackgroundColor: colors[i].border,
-            pointRadius: 3,
-            borderWidth: 2
+            pointRadius: 3, borderWidth: 2
         };
     });
 
@@ -10771,9 +11148,7 @@ function buildRadarChart({ countries = [], title } = {}) {
         type: 'radar',
         data: { labels, datasets },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: { duration: 400 },
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
             scales: {
                 r: {
                     min: 0, max: 10,
@@ -10785,7 +11160,7 @@ function buildRadarChart({ countries = [], title } = {}) {
             },
             plugins: {
                 legend: { display: resolved.length > 1, labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 12 } },
-                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', bodyFont: { family: CHART_THEME.font, size: 11 } }
+                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)' }
             }
         }
     });
@@ -10793,72 +11168,134 @@ function buildRadarChart({ countries = [], title } = {}) {
     return wrapper;
 }
 
-// ===== BAR CHART =====
+// ===== BAR CHART (rao8 pillars) =====
 function buildBarChart({ mode, country, metric = 'rao_score', top_n = 15, title } = {}) {
-    if (!rawData.length) return null;
-
-    let labels, values, barColor, chartTitle;
+    if (!latestSlice.length) return null;
+    let labels, values, barColor, chartTitle, xMax = 1;
 
     if (mode === 'pillar_profile') {
         const c = resolveCountry(country || '');
         if (!c) return null;
-        const allPillars = [
-            ...OPPORTUNITY_PILLARS.map(p => ({ name: p.name, score: calculatePillarScore(c, p.vars), type: 'opp' })),
-            ...STABILITY_PILLARS.map(p => ({ name: p.name, score: 10 - calculatePillarScore(c, p.vars), type: 'stab' }))
+        const row = getLatestRow(c.country) || c;
+        const pillars = [
+            { name: 'A Growth Engine',      score: row.pillar_opportunity || 0,              color: PILLARS.opportunity.color },
+            { name: 'B Risk Brake (inv)',    score: 1 - (row.pillar_fragility || 0),          color: PILLARS.fragility.color },
+            { name: 'C Quality Filter',      score: row.pillar_absorptive_capacity || 0,      color: PILLARS.absorptive.color },
+            { name: 'D Momentum Signal',     score: row.pillar_trajectory || 0,               color: PILLARS.trajectory.color }
         ];
-        labels = allPillars.map(p => p.name);
-        values = allPillars.map(p => parseFloat(p.score.toFixed(2)));
-        barColor = allPillars.map(p => p.type === 'opp' ? CHART_THEME.gold : CHART_THEME.blueSolid);
+        labels = pillars.map(p => p.name);
+        values = pillars.map(p => parseFloat(p.score.toFixed(3)));
+        barColor = pillars.map(p => p.color);
         chartTitle = title || `Pillar Profile — ${c.country_name}`;
     } else {
-        const pillarKeys = {
-            market_access:          p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='market_access').vars),
-            capital_environment:    p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='capital_environment').vars),
-            trade_infrastructure:   p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='trade_infrastructure').vars),
-            digital_economy:        p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='digital_economy').vars),
-            innovation_market:      p => calculatePillarScore(p, OPPORTUNITY_PILLARS.find(x=>x.key==='innovation_market').vars),
-            external_vulnerability: p => 10 - calculatePillarScore(p, STABILITY_PILLARS.find(x=>x.key==='external_vulnerability').vars),
-            labor_market:           p => 10 - calculatePillarScore(p, STABILITY_PILLARS.find(x=>x.key==='labor_market').vars)
-        };
-        const scorer = pillarKeys[metric] || (p => p[metric] ?? 0);
-        const sorted = [...rawData]
-            .map(c => ({ name: c.country_name, score: scorer(c) }))
-            .filter(c => !isNaN(c.score))
+        const scorer = r => r[metric] ?? 0;
+        const isRAO = metric === 'rao_score'; xMax = isRAO ? 10 : 1;
+        const sorted = [...latestSlice]
+            .map(r => ({ name: r.country_name, score: scorer(r) }))
+            .filter(r => !isNaN(r.score))
             .sort((a, b) => b.score - a.score)
             .slice(0, Math.min(top_n, 20));
-        labels = sorted.map(c => c.name);
-        values = sorted.map(c => parseFloat(c.score.toFixed(2)));
+        labels = sorted.map(r => r.name);
+        values = sorted.map(r => parseFloat(r.score.toFixed(3)));
         barColor = CHART_THEME.gold;
         chartTitle = title || `Top ${sorted.length} — ${metric.replace(/_/g,' ')}`;
     }
 
     const { wrapper, canvas } = makeChartWrapper(chartTitle);
-
     const chart = new Chart(canvas, {
         type: 'bar',
         data: { labels, datasets: [{ data: values, backgroundColor: barColor, borderRadius: 3, borderSkipped: false }] },
         options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: { duration: 400 },
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
             plugins: {
                 legend: { display: false },
-                tooltip: {
-                    backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1,
-                    titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)',
-                    bodyFont: { family: CHART_THEME.font, size: 11 },
-                    callbacks: { label: ctx => ` ${ctx.raw.toFixed(2)}` }
-                }
+                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { label: ctx => ` ${ctx.raw.toFixed(3)}` } }
             },
             scales: {
-                x: { min: 0, max: 10, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 10 } } },
-                y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.75)', font: { family: CHART_THEME.font, size: 10 } } }
+                x: { min: 0, max: xMax, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
+                y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.75)', font: { size: 10 } } }
             }
         }
     });
     canvas.style.height = `${Math.max(200, labels.length * 26 + 40)}px`;
     registerChart(chart);
+    return wrapper;
+}
+
+// ===== LINE CHART (rao8 panel: time series) =====
+function buildLineChart({ countries = [], metric = 'rao_score', title } = {}) {
+    if (!countries.length || !panelData.length) return null;
+    const resolved = countries.map(resolveCountry).filter(Boolean).slice(0, 3);
+    if (!resolved.length) return null;
+    const years = Array.from({length:15}, (_, i) => 2010 + i);
+    const colors = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72'];
+    const datasets = resolved.map((c, i) => {
+        const hist = getCountryHistory(c.country);
+        const yearMap = new Map(hist.map(r => [r.year, r[metric]]));
+        return {
+            label: c.country_name,
+            data: years.map(y => yearMap.get(y) ?? null),
+            borderColor: colors[i], backgroundColor: 'transparent',
+            borderWidth: 2, tension: 0.3, spanGaps: true, pointRadius: 3, pointHoverRadius: 5
+        };
+    });
+
+    const isRAO = metric === 'rao_score';
+    const { wrapper, canvas } = makeChartWrapper(title || `${metric.replace(/_/g,' ')} — ${resolved.map(c=>c.country_name).join(' · ')}`);
+    const chart = new Chart(canvas, {
+        type: 'line',
+        data: { labels: years, datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            scales: {
+                x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
+                y: { min: isRAO ? 1 : 0, max: isRAO ? 10 : 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } }
+            },
+            plugins: {
+                legend: { display: resolved.length > 1, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 }, boxWidth: 10, padding: 12 } },
+                tooltip: { mode: 'index', intersect: false, backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold }
+            }
+        }
+    });
+    registerChart(chart);
+    return wrapper;
+}
+
+// ===== REGIME MATRIX (chatbot tool) =====
+function buildChatRegimeMatrix({ year = 2024, title } = {}) {
+    const slice = year === 2024 ? latestSlice : getSlice(year);
+    if (!slice.length) return null;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chat-chart-wrapper';
+    if (title || year !== 2024) {
+        const h = document.createElement('div');
+        h.className = 'chat-chart-title';
+        h.textContent = title || `Regime × TOS Investment Priority Matrix — ${year}`;
+        wrapper.appendChild(h);
+    }
+    const div = document.createElement('div');
+    const regimes = ['RO','FO','SL','SR'];
+    const HIGH = 0.5;
+    let html = `<div style="display:grid;grid-template-columns:auto repeat(4,1fr);gap:4px;font-size:0.72rem;margin-top:0.5rem;">`;
+    html += `<div></div>`;
+    regimes.forEach(r => { const c = REGIME_COLORS[r]; html += `<div style="padding:4px 6px;background:${c.dim};border:1px solid ${c.solid};border-radius:3px;text-align:center;font-family:var(--font-minor);color:${c.solid};font-weight:600;">${r}</div>`; });
+    ['High TOS ≥ 0.5','Low TOS < 0.5'].forEach((rowLabel, rowIdx) => {
+        const tosMin = rowIdx === 0 ? HIGH : 0;
+        const tosMax = rowIdx === 0 ? 1 : HIGH;
+        html += `<div style="padding:4px 6px;font-family:var(--font-minor);color:var(--text-muted);display:flex;align-items:center;white-space:nowrap;">${rowLabel}</div>`;
+        regimes.forEach(regime => {
+            const matches = slice.filter(r => r.regime === regime && (r.tos_score||0) >= tosMin && (r.tos_score||0) < tosMax);
+            const isPulse = regime === 'FO' && rowIdx === 0 || regime === 'SR' && rowIdx === 0;
+            const rc = REGIME_COLORS[regime];
+            html += `<div style="padding:6px;background:${rc.dim};border:1px solid ${isPulse?rc.solid:rc.solid+'44'};border-radius:3px;${isPulse?'box-shadow:0 0 8px '+rc.solid+'55;':''}">`;
+            html += `<div style="font-family:var(--font-mono);font-size:1rem;font-weight:700;color:${rc.solid};">${matches.length}</div>`;
+            matches.slice(0,3).forEach(r => { html += `<div style="font-size:0.65rem;color:rgba(238,234,224,0.6);margin-top:1px;">${r.country_name}</div>`; });
+            html += `</div>`;
+        });
+    });
+    html += `</div>`;
+    div.innerHTML = html;
+    wrapper.appendChild(div);
     return wrapper;
 }
 
@@ -11177,38 +11614,28 @@ function buildBarChart({ mode, country, metric = 'rao_score', top_n = 15, title 
         </div>
         <div style="padding:1.4rem; font-family:var(--font-body); font-size:0.9rem; line-height:1.75; color:var(--text-muted);">
 
-            <p style="margin-bottom:1.2rem;">The <strong style="color:var(--text-white);">Risk-Adjusted Opportunity (RAO) Index</strong> is a composite geoeconomic intelligence tool developed by the Sixteenth Council's Geoeconomic Strategy Unit. It ranks <strong style="color:var(--text-white);">146 countries</strong> on a 0–10 scale by combining economic opportunity with structural stability.</p>
+            <p style="margin-bottom:1.2rem;">The <strong style="color:var(--text-white);">Risk-Adjusted Opportunity (RAO) Framework v2.1</strong> is a Bayesian geoeconomic scoring engine developed by the Sixteenth Council's Geoeconomic Strategy Unit. It ranks <strong style="color:var(--text-white);">162 countries</strong> on a 1–10 scale using a panel dataset covering 2010–2024 (2,430 rows, 49 columns). The headline score is a <strong style="color:var(--text-white);">CVaR₂₅ metric</strong> — it reflects the worst-25% of simulated pillar-weight scenarios, not an optimistic central estimate.</p>
 
-            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Scoring Structure</div>
-            <p style="margin-bottom:1.2rem;">The RAO score is the geometric mean of an <strong style="color:var(--text-white);">Opportunity score</strong> and an adjusted <strong style="color:var(--text-white);">Stability score</strong>. This means a country must perform well on both dimensions to rank highly — strong opportunity in an unstable environment is penalised.</p>
+            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Four Structural Pillars</div>
+            <div style="display:grid; grid-template-columns:auto 1fr; gap:0.5rem 1rem; margin-bottom:1.2rem; align-items:start;">
+                <span style="font-family:var(--font-minor);font-size:0.65rem;font-weight:700;color:#C2A56D;">A</span><div style="font-size:0.85rem;color:var(--text-white);"><strong>Growth Engine</strong> <span style="color:var(--text-muted);font-size:0.78rem;">— GDP growth, export growth, net FDI, gross capital formation, secondary school enrolment</span></div>
+                <span style="font-family:var(--font-minor);font-size:0.65rem;font-weight:700;color:#966060;">B</span><div style="font-size:0.85rem;color:var(--text-white);"><strong>Risk Brake</strong> (Fragility, lower=better) <span style="color:var(--text-muted);font-size:0.78rem;">— inflation, government debt, current account, external debt, political stability, rule of law, corruption</span></div>
+                <span style="font-family:var(--font-minor);font-size:0.65rem;font-weight:700;color:#607c98;">C</span><div style="font-size:0.85rem;color:var(--text-white);"><strong>Quality Filter</strong> (geometric mean — collapses if any component fails) <span style="color:var(--text-muted);font-size:0.78rem;">— resource rents, GDP per capita growth, youth unemployment, vulnerable employment, regulatory quality</span></div>
+                <span style="font-family:var(--font-minor);font-size:0.65rem;font-weight:700;color:#5d8a72;">D</span><div style="font-size:0.85rem;color:var(--text-white);"><strong>Momentum Signal</strong> (OLS trend × R²) <span style="color:var(--text-muted);font-size:0.78rem;">— GDP growth trend, FDI trend, governance trend, debt trend, inflation trend</span></div>
+            </div>
 
-            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Opportunity Pillars</div>
+            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Take-off Detection Module (TDM)</div>
+            <p style="margin-bottom:1.2rem;font-size:0.85rem;">TOS = geometric mean of <strong style="color:var(--text-white);">SIS</strong> (S-curve inflection proximity) × <strong style="color:var(--text-white);">DGI</strong> (discovery gap: fundamentals vs. external capital recognition) × <strong style="color:var(--text-white);">RVS</strong> (reform velocity). TOS &gt; 0.50 in a Fragile Opportunity or Structural Risk regime is the primary pre-breakout signal.</p>
+
+            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Investment Regimes</div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.4rem 1.2rem; margin-bottom:1.2rem;">
-                <div style="padding:0.4rem 0; border-bottom:1px solid var(--border-subtle); color:var(--text-white); font-size:0.85rem;">Market Access</div>
-                <div style="padding:0.4rem 0; border-bottom:1px solid var(--border-subtle); color:var(--text-white); font-size:0.85rem;">Capital Environment</div>
-                <div style="padding:0.4rem 0; border-bottom:1px solid var(--border-subtle); color:var(--text-white); font-size:0.85rem;">Trade Infrastructure</div>
-                <div style="padding:0.4rem 0; border-bottom:1px solid var(--border-subtle); color:var(--text-white); font-size:0.85rem;">Digital Economy</div>
-                <div style="padding:0.4rem 0; color:var(--text-white); font-size:0.85rem; grid-column:span 2;">Innovation &amp; Market Characteristics</div>
+                <div style="padding:0.4rem 0.6rem;border-left:2px solid #5d8a72;font-size:0.82rem;"><strong style="color:#5d8a72;">RO</strong> Robust Opportunity — high score, low volatility</div>
+                <div style="padding:0.4rem 0.6rem;border-left:2px solid #C2A56D;font-size:0.82rem;"><strong style="color:#C2A56D;">FO</strong> Fragile Opportunity — high score, high volatility</div>
+                <div style="padding:0.4rem 0.6rem;border-left:2px solid #607c98;font-size:0.82rem;"><strong style="color:#607c98;">SL</strong> Stable / Low — low score, low volatility</div>
+                <div style="padding:0.4rem 0.6rem;border-left:2px solid #966060;font-size:0.82rem;"><strong style="color:#966060;">SR</strong> Structural Risk — low score, high volatility</div>
             </div>
 
-            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Stability Pillars</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.4rem 1.2rem; margin-bottom:1.2rem;">
-                <div style="padding:0.4rem 0; border-bottom:1px solid var(--border-subtle); color:var(--text-white); font-size:0.85rem;">External Vulnerability</div>
-                <div style="padding:0.4rem 0; color:var(--text-white); font-size:0.85rem;">Labor Market Quality</div>
-            </div>
-
-            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Score Interpretation</div>
-            <div style="margin-bottom:1.2rem;">
-                <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-                    <span style="font-family:var(--font-minor); font-size:0.72rem;"><span style="color:var(--accent-green);">8–10</span> Excellent</span>
-                    <span style="font-family:var(--font-minor); font-size:0.72rem;"><span style="color:var(--accent-lime);">6.5–8</span> Good</span>
-                    <span style="font-family:var(--font-minor); font-size:0.72rem;"><span style="color:var(--accent-amber);">5–6.5</span> Moderate</span>
-                    <span style="font-family:var(--font-minor); font-size:0.72rem;"><span style="color:var(--accent-orange);">3–5</span> Concerning</span>
-                    <span style="font-family:var(--font-minor); font-size:0.72rem;"><span style="color:var(--accent-red);">0–3</span> Critical</span>
-                </div>
-            </div>
-
-            <p style="font-size:0.78rem; color:var(--text-muted); opacity:0.65; margin-bottom:0;">Data sourced from World Bank, IMF, UNCTAD, and WEF datasets. Index compiled by the Sixteenth Council Geoeconomic Strategy Unit.</p>
+            <p style="font-size:0.78rem; color:var(--text-muted); opacity:0.65; margin-bottom:0;">Data sourced from World Bank, IMF, UNCTAD, WGI, and GDELT datasets. RAO Framework v2.1 (April 2026) — rao8 | 162 countries | 2010–2024. Compiled by the Sixteenth Council Geoeconomic Strategy Unit.</p>
         </div>
     </div>
 </div>
