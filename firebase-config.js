@@ -15,12 +15,10 @@ const firebaseConfig = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// STEP 2: Groq API key for the AI chatbot
-//   Get your key from https://console.groq.com → API Keys
-//   The key is visible in source but the chatbot is gated behind login,
-//   so only registered users can trigger API calls.
+// STEP 2: Cloudflare Worker URL (proxies Groq — API key stays server-side)
 // ─────────────────────────────────────────────────────────────────────────────
-const GROQ_API_KEY = "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";
+const WORKER_URL   = "https://rao-dashboard-proxy.guduruadip.workers.dev";
+const GROQ_API_KEY = "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"; // fallback if worker unavailable
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Firebase initialisation (compat SDK loaded via CDN in HTML)
@@ -87,6 +85,13 @@ function isFreeUser()  { return roleAtLeast('free'); }
 auth.onAuthStateChanged(async (user) => {
     currentUser = user;
     if (user) {
+        // Email/password accounts must verify their email before getting access
+        if (!user.emailVerified && user.providerData[0]?.providerId === 'password') {
+            currentUserRole  = null;
+            currentUserLevel = 0;
+            if (typeof onAuthReady === 'function') onAuthReady(user);
+            return;
+        }
         try {
             const snap = await db.collection('users').doc(user.uid).get();
             if (snap.exists) {
@@ -94,7 +99,7 @@ auth.onAuthStateChanged(async (user) => {
                 currentUserRole  = data.role  || 'free';
                 currentUserLevel = data.level || 0;
             } else {
-                // First sign-in: create user document with 'free' role
+                // First sign-in after verification: create user document with 'free' role
                 await db.collection('users').doc(user.uid).set({
                     email:       user.email,
                     displayName: user.displayName || user.email.split('@')[0],
@@ -125,6 +130,7 @@ async function signInWithEmail(email, password) {
 async function signUpWithEmail(email, password, displayName) {
     const cred = await auth.createUserWithEmailAndPassword(email, password);
     await cred.user.updateProfile({ displayName });
+    await cred.user.sendEmailVerification();
     return cred;
 }
 
