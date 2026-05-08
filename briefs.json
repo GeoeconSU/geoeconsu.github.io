@@ -1,6 +1,46 @@
 {
   "briefs": [
     {
+      "category": "GEOPOLITICAL OUTLOOK",
+      "title": "West Asia Oil, India Fuel",
+      "subtitle": "Examines the geopolitical and domestic pressures influencing India's fuel price decisions post-elections.",
+      "author": "Indulekha A and Tansi Rawat",
+      "description": "This brief analyzes the impact of West Asia conflict on global oil prices and India's politically sensitive fuel pricing post-elections.",
+      "filename": "West Asia Conflict Pushes Oil Prices Higher Is Fuel Hike Approaching India Post-Elections.pdf",
+      "href": "insights/West Asia Conflict Pushes Oil Prices Higher Is Fuel Hike Approaching India Post-Elections.pdf",
+      "processed_date": "2026-05-04T07:49:07.204610"
+    },
+    {
+      "category": "GEOPOLITICAL OUTLOOK",
+      "title": "China's Trade Risks",
+      "subtitle": "China's new extraterritorial rules create significant compliance uncertainty and trade risks for multinational corporations navigating conflicting international legal frameworks.",
+      "author": "Tansi Rawat",
+      "description": "China's new extraterritorial rules raise compliance uncertainty and trade risks for multinationals, driven by regulatory divergence and potential s...",
+      "filename": "China’s New Extraterritorial Rules Increase Trade Risks for Multinationals.pdf",
+      "href": "insights/China’s New Extraterritorial Rules Increase Trade Risks for Multinationals.pdf",
+      "processed_date": "2026-04-25T13:41:02.046605"
+    },
+    {
+      "category": "SUPPLY CHAIN RISK",
+      "title": "China Sulphuric Acid Ban",
+      "subtitle": "China's export halt of sulphuric acid, driven by geopolitical tensions, creates a critical supply shock for global fertilizer markets and food prices.",
+      "author": "Indulekha A",
+      "description": "China's sulphuric acid export ban, fueled by geopolitical tensions, severely impacts global fertilizer supply, risking increased food inflation and...",
+      "filename": "China’s Sulphuric Acid Export Ban Food Inflation and Fertilizer Risk.pdf",
+      "href": "insights/China’s Sulphuric Acid Export Ban Food Inflation and Fertilizer Risk.pdf",
+      "processed_date": "2026-04-22T06:54:10.531664"
+    },
+    {
+      "category": "CRISIS RESPONSE",
+      "title": "Ireland Fuel Support",
+      "subtitle": "The Irish government introduced a €500 million package of fuel tax reductions and subsidies to ease pressure from rising energy prices, facing mixed immediate market and political reactions.",
+      "author": "Lucas Ward",
+      "description": "Ireland enacted a €500M fuel subsidy and tax cut package for farmers, hauliers, and motorists to counter rising energy costs, eliciting varied mark...",
+      "filename": "Irish Support for Farmers Cannot Fully Mitigate Price Shocks .pdf",
+      "href": "insights/Irish Support for Farmers Cannot Fully Mitigate Price Shocks .pdf",
+      "processed_date": "2026-04-21T03:22:08.039249"
+    },
+    {
       "category": "ECONOMIC STRATEGY",
       "title": "China Shock 2.0",
       "subtitle": "Analyzes the impact of increased Chinese imports on global and domestic manufacturing, highlighting India's strategic challenges and opportunities.",

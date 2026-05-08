@@ -886,8 +886,8 @@
                     <p>The Barometer provides a decision-grade overview of where execution is most feasible in the near and medium term. It blends hard indicators with regional insights and corridor-level analysis to drive decision-making at the highest levels.</p>
                     <p>Among its tools is a concise <strong>Risk-Adjusted Opportunity (RAO)</strong> score that supports our country briefs, triggers to watch, and strategic outlook. We publish quarterly with interim updates when conditions change.</p>
                     <br>
-                    <a href="GRB Q1 2026.pdf" class="btn" target="_blank">Download Q1 2026 Report (PDF)</a>
-                    <a href="GRB Q4 2025.pdf" class="btn" target="_blank" style="margin-left: 1rem; opacity: 0.7;">Q4 2025</a>
+                    <button class="btn" onclick="openGate('GRB Q1 2026.pdf')">Download Q1 2026 Report (PDF)</button>
+                    <button class="btn" onclick="openGate('GRB Q4 2025.pdf')" style="margin-left: 1rem; opacity: 0.7;">Q4 2025</button>
                 </div>
                 <div class="fade-up delay-1">
                     <div class="card">
@@ -1698,5 +1698,228 @@
 
     <!-- Strategic Briefs Dynamic Loader -->
     <script src="load-briefs.js"></script>
+
+    <!-- ── Barometer Gate ─────────────────────────────────────────────── -->
+    <style>
+        .gate-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 14, 24, 0.85);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .gate-overlay[hidden] { display: none; }
+
+        .gate-modal {
+            background: #1f283b;
+            border: 1px solid rgba(203, 168, 78, 0.2);
+            border-radius: 4px;
+            padding: 3rem 2.5rem;
+            max-width: 440px;
+            width: 100%;
+            position: relative;
+            animation: gateFadeIn 0.25s ease;
+        }
+        @keyframes gateFadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .gate-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        .gate-close:hover { color: #fff; }
+
+        .gate-eyebrow {
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #cba84e;
+            margin: 0 0 1rem;
+            font-family: 'EB Garamond', serif;
+        }
+        .gate-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 400;
+            color: #fff;
+            margin: 0 0 0.6rem;
+            border: none;
+        }
+        .gate-sub {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.55);
+            margin: 0 0 1.75rem;
+            line-height: 1.5;
+        }
+
+        .gate-input {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 3px;
+            color: #fff;
+            font-family: 'EB Garamond', serif;
+            font-size: 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .gate-input::placeholder { color: rgba(255,255,255,0.3); }
+        .gate-input:focus { border-color: rgba(203,168,78,0.6); }
+
+        .gate-btn {
+            display: block;
+            width: 100%;
+            background: #cba84e;
+            color: #192030;
+            border: none;
+            border-radius: 3px;
+            font-family: 'EB Garamond', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.85rem 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 0.25rem;
+        }
+        .gate-btn:hover { opacity: 0.88; }
+        .gate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .gate-error {
+            color: #e07070;
+            font-size: 0.85rem;
+            margin: 0.6rem 0 0;
+        }
+        .gate-error[hidden] { display: none; }
+
+        .gate-success {
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .gate-success-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.25rem;
+            display: block;
+            object-fit: contain;
+        }
+        .gate-title-underline {
+            width: 80px;
+            height: 2px;
+            background: #cba84e;
+            margin: 0.5rem auto 1.25rem;
+        }
+    </style>
+
+    <div id="gateOverlay" class="gate-overlay" role="dialog" aria-modal="true" aria-labelledby="gateTitle" hidden>
+        <div class="gate-modal">
+            <button class="gate-close" onclick="closeGate()" aria-label="Close">&times;</button>
+
+            <!-- Form -->
+            <div id="gateForm">
+                <p class="gate-eyebrow">Geoeconomic Risk Barometer</p>
+                <h2 id="gateTitle" class="gate-title">Access the Report</h2>
+                <p class="gate-sub">Enter your details and we'll send the report directly to your inbox.</p>
+                <form onsubmit="submitGate(event)" novalidate>
+                    <input type="text" id="gateName" class="gate-input" placeholder="Full name" autocomplete="name" required>
+                    <input type="email" id="gateEmail" class="gate-input" placeholder="Work email" autocomplete="email" required>
+                    <button type="submit" class="gate-btn" id="gateSubmitBtn">Send Me the Report</button>
+                </form>
+                <p id="gateError" class="gate-error" hidden></p>
+            </div>
+
+            <!-- Success -->
+            <div id="gateSuccess" hidden>
+                <div class="gate-success">
+                    <p class="gate-eyebrow">Report Sent</p>
+                    <h2 class="gate-title" style="border:none;">Check Your Inbox</h2>
+                    <div class="gate-title-underline"></div>
+                    <p class="gate-sub">The Geoeconomic Risk Barometer is on its way to <strong id="gateEmailDisplay" style="color:#fff;"></strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GATE_WORKER = 'https://gsu-gate.guduruadip.workers.dev';
+        let _gatePdf = '';
+
+        function openGate(pdf) {
+            _gatePdf = pdf;
+            document.getElementById('gateOverlay').hidden = false;
+            document.body.style.overflow = 'hidden';
+            document.getElementById('gateForm').hidden = false;
+            document.getElementById('gateSuccess').hidden = true;
+            document.getElementById('gateName').focus();
+        }
+
+        function closeGate() {
+            document.getElementById('gateOverlay').hidden = true;
+            document.body.style.overflow = '';
+            document.getElementById('gateError').hidden = true;
+            document.getElementById('gateName').value = '';
+            document.getElementById('gateEmail').value = '';
+            document.getElementById('gateSubmitBtn').textContent = 'Send Me the Report';
+            document.getElementById('gateSubmitBtn').disabled = false;
+        }
+
+        async function submitGate(e) {
+            e.preventDefault();
+            const name  = document.getElementById('gateName').value.trim();
+            const email = document.getElementById('gateEmail').value.trim();
+            const btn   = document.getElementById('gateSubmitBtn');
+            const err   = document.getElementById('gateError');
+
+            btn.textContent = 'Sending…';
+            btn.disabled = true;
+            err.hidden = true;
+
+            try {
+                const res  = await fetch(`${GATE_WORKER}/send-report`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, pdf: _gatePdf }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+
+                document.getElementById('gateEmailDisplay').textContent = email;
+                document.getElementById('gateForm').hidden = true;
+                document.getElementById('gateSuccess').hidden = false;
+            } catch (ex) {
+                err.textContent = ex.message;
+                err.hidden = false;
+            } finally {
+                btn.textContent = 'Send Me the Report';
+                btn.disabled = false;
+            }
+        }
+
+        document.getElementById('gateOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeGate();
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && !document.getElementById('gateOverlay').hidden) closeGate();
+        });
+    </script>
 </body>
 </html>

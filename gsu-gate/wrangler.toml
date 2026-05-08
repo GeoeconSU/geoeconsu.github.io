@@ -1,0 +1,10 @@
+name = "gsu-gate"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Set secrets via CLI — never put them here:
+#   wrangler secret put RESEND_API_KEY
+#
+# Firebase Realtime DB URL (not secret, matches tracker.html)
+[vars]
+FIREBASE_DB_URL = "https://gsu-tracker-default-rtdb.europe-west1.firebasedatabase.app"
