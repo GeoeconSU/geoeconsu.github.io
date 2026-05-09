@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAO Insights Dashboard | GSU</title>
-    <link rel="icon" type="image/x-icon" href="gsu.ico">
+    <link rel="icon" type="image/x-icon" href="assets/gsu.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -151,7 +151,7 @@
             border: 1px solid var(--border-subtle);
             border-radius: 0;
             padding: 10px 20px;
-            width: 300px;
+            width: 100%;
         }
         .search-box input {
             background: transparent;
@@ -630,12 +630,13 @@
             padding-top: 0;
         }
         .map-controls {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            z-index: 10;
             display: flex;
+            flex-wrap: wrap;
+            align-items: center;
             gap: 0.5rem;
+            padding: 0.7rem 2rem 0.6rem;
+            background: rgba(20,27,42,0.5);
+            border-bottom: 1px solid var(--border-subtle);
         }
         .map-control-btn {
             background: linear-gradient(140deg, rgba(25,33,50,.97) 0%, rgba(20,28,44,.95) 100%);
@@ -827,6 +828,20 @@
             width: 100%;
             border-radius: 2px;
             cursor: pointer;
+        }
+
+        /* Dropdown option panel colours (Chrome/Edge honour these) */
+        #landscape-year-select,
+        #analysis-year-select {
+            color: var(--text-white);
+        }
+        #landscape-year-select option,
+        #analysis-year-select option,
+        .country-selector-bar select option,
+        .rankings-filter select option,
+        .percentile-filter select option {
+            background: #1f283b;
+            color: #e8e8e8;
         }
 
         .analysis-grid {
@@ -3553,8 +3568,8 @@
                 font-size: 1rem;
                 border-radius: 50%;
             }
-            /* Hide search box in header (search available in Analysis tab) */
-            .search-box { display: none; }
+            /* Hide search box in header — analysis tab search stays visible */
+            .header .search-box { display: none; }
 
             /* Push content below taller header */
             .main-container { padding-top: 125px; }
@@ -3568,7 +3583,7 @@
 
             /* Map */
             #map-container { height: 40vh; min-height: 220px; }
-            .map-controls { top: 0.5rem; left: 0.5rem; gap: 0.35rem; }
+            .map-controls { padding: 0.5rem 1rem; gap: 0.3rem; }
             .map-control-btn { padding: 6px 10px; font-size: 0.62rem; }
             .map-legend { bottom: 0.5rem; right: 0.5rem; padding: 0.6rem; }
             .legend-gradient { width: 100px; }
@@ -3783,8 +3798,8 @@
         .user-dropdown-item:hover { color: var(--text-white); background: rgba(255,255,255,0.05); }
         .user-dropdown-item.danger { color: #e07070; }
         .user-dropdown-item.danger:hover { background: rgba(224,112,112,0.1); }
-        .sign-in-btn { padding: 0.4rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.88rem; background: var(--accent-gold); color: var(--primary-bg); border: none; font-family: var(--font-body); font-weight: 500; transition: background 0.2s; }
-        .sign-in-btn:hover { background: #d4b565; }
+        .sign-in-btn { padding: 0.38rem 1.25rem; border-radius: 20px; cursor: pointer; font-size: 0.82rem; background: rgba(194,165,109,0.07); color: var(--accent-gold); border: 1px solid rgba(194,165,109,0.55); font-family: var(--font-head); font-weight: 400; letter-spacing: 0.05em; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: all 0.25s; }
+        .sign-in-btn:hover { background: rgba(194,165,109,0.16); border-color: var(--accent-gold); color: #d9bc7a; box-shadow: 0 0 12px rgba(194,165,109,0.18); }
 
         /* ── TAB LOCK OVERLAY ──────────────────────────────────────────────── */
         .tab-lock { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; background: rgba(10,12,20,0.88); backdrop-filter: blur(8px); z-index: 10; border-radius: 4px; }
@@ -3801,7 +3816,7 @@
     <!-- Header -->
     <header class="header glass-panel">
         <div class="logo">
-            <img src="gsu.png" alt="GSU" class="logo-icon">
+            <img src="assets/gsu.png" alt="GSU" class="logo-icon">
             <span>RAO INSIGHTS</span>
         </div>
 
@@ -3844,7 +3859,7 @@
 
             <!-- Auth / User menu -->
             <div id="auth-header-area">
-                <button class="sign-in-btn" onclick="openAuthModal('login')" id="sign-in-btn">Sign In</button>
+                <button class="sign-in-btn" onclick="openAuthModal('login')" id="sign-in-btn">SIGN IN</button>
                 <div class="user-menu-wrap" id="user-menu-wrap" style="display:none;">
                     <div class="user-avatar" id="user-avatar" onclick="toggleUserDropdown()"></div>
                     <div class="user-dropdown" id="user-dropdown">
@@ -3852,7 +3867,7 @@
                             <div class="user-dropdown-name" id="dd-name"></div>
                             <div class="user-dropdown-role" id="dd-role"></div>
                         </div>
-                        <div class="user-dropdown-item" onclick="window.location.href='tracker.html'">
+                        <div class="user-dropdown-item" onclick="window.location.href='dev/tracker.html'">
                             <i class="ri-task-line"></i> Task Tracker
                         </div>
                         <div class="user-dropdown-item" onclick="window.location.href='methodology.html'">
@@ -3893,21 +3908,21 @@
                 </div>
             </div>
 
-            <!-- Map Section with 7-view controls + year selector -->
+            <!-- Map view controls — sits above the map section -->
+            <div class="map-controls" id="landscape-controls">
+                <button class="map-control-btn active" onclick="setMapView('rao')" id="view-rao">RAO Score</button>
+                <button class="map-control-btn" onclick="setMapView('pillar_a')" id="view-pillar_a">Pillar A</button>
+                <button class="map-control-btn" onclick="setMapView('pillar_b')" id="view-pillar_b">Pillar B</button>
+                <button class="map-control-btn" onclick="setMapView('pillar_c')" id="view-pillar_c">Pillar C</button>
+                <button class="map-control-btn" onclick="setMapView('pillar_d')" id="view-pillar_d">Pillar D</button>
+                <button class="map-control-btn" onclick="setMapView('tos')" id="view-tos">TOS</button>
+                <button class="map-control-btn" onclick="setMapView('regime')" id="view-regime">Regime</button>
+                <select id="landscape-year-select" onchange="setLandscapeYear(parseInt(this.value))"
+                    style="background:rgba(25,33,50,.97);border:1px solid var(--border-subtle);color:var(--w65);padding:5px 8px;font-family:var(--font-minor);font-size:.63rem;cursor:pointer;border-radius:3px;margin-left:0.5rem;"></select>
+            </div>
+
+            <!-- Map Section -->
             <section class="map-section">
-                <div class="map-controls" id="landscape-controls">
-                    <div style="display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center;">
-                        <button class="map-control-btn active" onclick="setMapView('rao')" id="view-rao">RAO Score</button>
-                        <button class="map-control-btn" onclick="setMapView('pillar_a')" id="view-pillar_a">Pillar A</button>
-                        <button class="map-control-btn" onclick="setMapView('pillar_b')" id="view-pillar_b">Pillar B</button>
-                        <button class="map-control-btn" onclick="setMapView('pillar_c')" id="view-pillar_c">Pillar C</button>
-                        <button class="map-control-btn" onclick="setMapView('pillar_d')" id="view-pillar_d">Pillar D</button>
-                        <button class="map-control-btn" onclick="setMapView('tos')" id="view-tos">TOS</button>
-                        <button class="map-control-btn" onclick="setMapView('regime')" id="view-regime">Regime</button>
-                        <select id="landscape-year-select" onchange="setLandscapeYear(parseInt(this.value))"
-                            style="background:rgba(25,33,50,.97);border:1px solid var(--border-subtle);color:var(--w65);padding:5px 8px;font-family:var(--font-minor);font-size:.63rem;cursor:pointer;border-radius:3px;margin-left:4px;"></select>
-                    </div>
-                </div>
                 <div class="map-legend" id="map-legend-dynamic">
                     <div class="legend-title" id="legend-title-text">RAO Score (1–10)</div>
                     <div class="legend-gradient" id="legend-gradient-bar"></div>
@@ -3940,9 +3955,9 @@
                         <canvas id="global-timeseries-chart"></canvas>
                     </div>
                 </div>
-                <div class="bento-cell">
+                <div class="bento-cell" style="display:flex;flex-direction:column;">
                     <span class="bento-label">Score Distribution</span>
-                    <div id="score-dist-chart-wrap" style="padding:0.75rem;position:relative;height:210px;">
+                    <div id="score-dist-chart-wrap" style="padding:0.75rem;position:relative;flex:1;min-height:260px;">
                         <canvas id="score-dist-chart"></canvas>
                     </div>
                 </div>
@@ -3972,19 +3987,22 @@
 
         <!-- TAB 2: COUNTRY ANALYSIS -->
         <div id="tab-analysis" class="tab-content">
-            <div class="section-container glow-section glow-br">
-                <div class="country-selector-bar">
-                    <label>Search for a Country</label>
-                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                        <div class="search-box" style="position: relative; flex: 1; min-width: 280px; max-width: 480px;">
+            <div class="section-container glow-section glow-br" style="overflow:visible;">
+                <div class="country-selector-bar" style="display:flex;align-items:flex-end;gap:1.5rem;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:260px;">
+                        <label style="margin-bottom:0.5rem;">Search for a Country</label>
+                        <div class="search-box" style="position:relative;">
                             <input type="text" placeholder="Search countries..." id="global-search" oninput="handleGlobalSearch(this.value)" onfocus="showSearchResults()">
                             <div class="search-results" id="search-results"></div>
                         </div>
                         <select id="analysis-country-select" onchange="loadCountryAnalysis(this.value)" style="display:none;">
                             <option value=""></option>
                         </select>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:0.4rem;min-width:110px;">
+                        <label style="margin-bottom:0;">Year</label>
                         <select id="analysis-year-select" onchange="setAnalysisYear(parseInt(this.value))"
-                            style="background:var(--card-bg);border:1px solid var(--border-subtle);color:var(--w65);padding:8px 12px;font-family:var(--font-minor);font-size:0.72rem;cursor:pointer;border-radius:3px;min-width:90px;"></select>
+                            style="background:var(--card-bg);border:1px solid var(--border-subtle);color:var(--w65);padding:8px 12px;font-family:var(--font-minor);font-size:0.72rem;cursor:pointer;border-radius:3px;width:100%;"></select>
                     </div>
                 </div>
 
@@ -5254,8 +5272,9 @@ function initializeOverviewTab() {
 }
 
 function _renderTop10Bottom10() {
-    const total = rawData.length;
-    const top10HTML = rawData.slice(0, 10).map((c, idx) => {
+    const slice = getSlice(_landscapeYear);
+    const total = slice.length;
+    const top10HTML = slice.slice(0, 10).map((c, idx) => {
         const percentile = ((total - c.rank) / total * 100).toFixed(0);
         const medal = idx === 0 ? '#1' : idx === 1 ? '#2' : idx === 2 ? '#3' : '';
         const gradientBg = idx < 3 ? `background: linear-gradient(135deg, rgba(194,165,109,${0.15 - idx*0.03}), transparent);` : '';
@@ -5270,7 +5289,7 @@ function _renderTop10Bottom10() {
     }).join('');
     document.getElementById('top-10-list').innerHTML = top10HTML;
 
-    const bot10HTML = rawData.slice(-10).reverse().map(c => {
+    const bot10HTML = slice.slice(-10).reverse().map(c => {
         const percentile = ((total - c.rank) / total * 100).toFixed(0);
         return `<div class="rank-item" onclick="openCountryAnalysis('${c.country}')">
             <div class="rank-number">${c.rank}</div>
@@ -5339,6 +5358,8 @@ function setLandscapeYear(y) {
     renderGlobalTimeseries();
     renderScoreDistributionChart();
     renderRegionalOverview();
+    _renderTop10Bottom10();
+    renderRegionalSection();
 }
 
 function renderKPIStrip() {
@@ -5372,7 +5393,13 @@ function renderGlobalTimeseries() {
     const canvas = document.getElementById('global-timeseries-chart');
     if (!canvas) return;
     const years = Array.from({length:15}, (_, i) => 2010 + i);
-    const REGION_COLORS = { 'Africa':'#C2A56D', 'Americas':'#5d8a72', 'Asia-Pacific':'#607c98', 'Europe':'#7aabb4', 'Middle East':'#9b8fc0' };
+    const REGION_COLORS = {
+        'Africa':       '#E8943A',
+        'Americas':     '#2DC87A',
+        'Asia-Pacific': '#4B96E8',
+        'Europe':       '#E05B7A',
+        'Middle East':  '#A96EDB'
+    };
 
     const globalMeans = years.map(y => {
         const slice = getSlice(y);
@@ -5384,7 +5411,7 @@ function renderGlobalTimeseries() {
             label: 'Global Mean',
             data: globalMeans,
             borderColor: '#C2A56D',
-            backgroundColor: 'rgba(194,165,109,0.08)',
+            backgroundColor: 'rgba(194,165,109,0.1)',
             borderWidth: 2.5,
             tension: 0.35,
             spanGaps: true,
@@ -5397,12 +5424,12 @@ function renderGlobalTimeseries() {
             data: years.map(y => _regionalMeans[region]?.[y]?.['rao_score'] ?? null),
             borderColor: REGION_COLORS[region] || '#aaa',
             backgroundColor: 'transparent',
-            borderWidth: 1.5,
-            borderDash: [4, 3],
+            borderWidth: 2,
+            borderDash: [5, 3],
             tension: 0.3,
             spanGaps: true,
-            pointRadius: 2,
-            pointHoverRadius: 4
+            pointRadius: 2.5,
+            pointHoverRadius: 5
         }))
     ];
 
@@ -5489,6 +5516,7 @@ function renderScoreDistributionChart() {
     });
     const ctx = document.getElementById('score-dist-chart');
     if (!ctx) return;
+    if (ctx._chartInst) { ctx._chartInst.destroy(); }
     const chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -5502,10 +5530,17 @@ function renderScoreDistributionChart() {
             }))
         },
         options: {
-            responsive: true, maintainAspectRatio: true,
+            responsive: true, maintainAspectRatio: false,
             plugins: {
                 legend: { display: true, position: 'bottom', labels: { color: 'rgba(238,234,224,0.5)', font:{size:10}, boxWidth:10, padding:10 } },
-                tooltip: { callbacks: { title: items => `RAO ${items[0].label}–${(parseFloat(items[0].label)+0.5).toFixed(1)}` } }
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        title: items => `RAO Score ${items[0].label}–${(parseFloat(items[0].label)+0.5).toFixed(1)}`,
+                        label: item => item.parsed.y > 0 ? ` ${item.dataset.label}: ${item.parsed.y} countries` : null
+                    }
+                }
             },
             scales: {
                 x: { stacked: true, grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'rgba(238,234,224,0.4)', font:{size:9}, maxRotation:0 } },
@@ -5513,6 +5548,7 @@ function renderScoreDistributionChart() {
             }
         }
     });
+    ctx._chartInst = chart;
     registerChart(chart);
 }
 
@@ -5635,7 +5671,7 @@ function drawMap() {
         }
     });
     chart.draw(dataTable, { colorAxis, backgroundColor:'#192030', datalessRegionColor:'#252e42',
-        defaultColor:'#252e42', legend:{textStyle:{color:'#ffffff',fontName:'EB Garamond',fontSize:12}},
+        defaultColor:'#252e42', legend:'none',
         tooltip:{isHtml:true,showTitle:false}, keepAspectRatio:true });
 }
 
@@ -5816,14 +5852,15 @@ function renderScoreDecompCard(iso, year) {
     const el = document.getElementById('score-decomp');
     if (!el) return;
 
-    const pre = row.rao_score_pre_overlay ?? row.rao_score;
-    const ov  = row.overlay_adjustment ?? 0;
-    const ms  = row.market_size_bonus ?? 0;
-    const fin = row.rao_score;
+    const pre   = row.rao_score_pre_overlay ?? row.rao_score;
+    const ov    = row.overlay_adjustment ?? 0;
+    const ovAdj = pre + ov;
+    const ms    = row.market_size_bonus ?? 0;
+    const fin   = row.rao_score;
     const ovCol = ov >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
 
-    const pill = (label, val, col) => `<div style="display:flex;flex-direction:column;align-items:center;gap:0.25rem;padding:0.4rem 0.6rem;min-width:72px;">
-        <div style="font-family:var(--font-mono);font-size:1.15rem;color:${col};font-weight:500;">${val>=0?'':'-'}${Math.abs(val).toFixed(2)}</div>
+    const pill = (label, val, col, showSign = false) => `<div style="display:flex;flex-direction:column;align-items:center;gap:0.25rem;padding:0.4rem 0.6rem;min-width:72px;">
+        <div style="font-family:var(--font-mono);font-size:1.15rem;color:${col};font-weight:500;">${showSign&&val>0?'+':''}${val.toFixed(2)}</div>
         <div style="font-family:var(--font-minor);font-size:0.54rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);text-align:center;line-height:1.3;">${label}</div>
     </div>`;
     const arrow = `<span style="color:rgba(238,234,224,0.2);font-size:1rem;">→</span>`;
@@ -5833,9 +5870,9 @@ function renderScoreDecompCard(iso, year) {
         <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
             ${pill('Pre-Overlay', pre, 'var(--text-white)')}
             ${arrow}
-            ${pill('Overlay Adj', ov, ovCol)}
+            ${pill('After Overlay', ovAdj, ovCol)}
             ${arrow}
-            ${pill('Market Size Bonus', ms, 'var(--accent-blue)')}
+            ${pill('Market Size Bonus', ms, 'var(--accent-blue)', true)}
             ${arrow}
             <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;padding:0.6rem 1.2rem;background:rgba(194,165,109,0.1);border:1px solid rgba(194,165,109,0.25);border-radius:3px;min-width:80px;">
                 <div style="font-family:var(--font-mono);font-size:1.4rem;color:var(--accent-gold);font-weight:600;">${fin.toFixed(2)}</div>
@@ -5856,22 +5893,57 @@ function renderRAOTimeSeries(iso) {
     const ctx = document.getElementById('country-rao-timeseries');
     if (!ctx) return;
     Chart.getChart(ctx)?.destroy();
+
+    // Compute pillar proportional contributions for each year
+    const pillarFills = history.map(r => {
+        const pA =     r.pillar_opportunity         ?? 0;
+        const pB = 1 - (r.pillar_fragility          ?? 0); // invert: lower fragility is better
+        const pC =     r.pillar_absorptive_capacity ?? 0;
+        const pD =     r.pillar_trajectory          ?? 0;
+        const total = pA + pB + pC + pD || 1;
+        const s = r.rao_score ?? 0;
+        return { a: (pA/total)*s, b: (pB/total)*s, c: (pC/total)*s, d: (pD/total)*s };
+    });
+
     registerChart(new Chart(ctx, {
         type: 'line',
         data: {
             labels: history.map(r => r.year),
             datasets: [
+                // ── Pillar fill layers (stacked, transparent) ──
                 {
-                    label: history[0].country_name,
-                    data: history.map(r => r.rao_score),
-                    borderColor: '#C2A56D', backgroundColor: 'rgba(194,165,109,0.08)',
-                    borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: '#C2A56D',
-                    tension: 0.3, fill: true
+                    label: 'Pillar A (Growth)',
+                    data: pillarFills.map(p => p.a),
+                    borderWidth: 0, pointRadius: 0, tension: 0.3,
+                    fill: 'origin',
+                    backgroundColor: 'rgba(232,148,58,0.18)'
                 },
+                {
+                    label: 'Pillar B (Risk)',
+                    data: pillarFills.map(p => p.a + p.b),
+                    borderWidth: 0, pointRadius: 0, tension: 0.3,
+                    fill: '-1',
+                    backgroundColor: 'rgba(75,150,232,0.18)'
+                },
+                {
+                    label: 'Pillar C (Quality)',
+                    data: pillarFills.map(p => p.a + p.b + p.c),
+                    borderWidth: 0, pointRadius: 0, tension: 0.3,
+                    fill: '-1',
+                    backgroundColor: 'rgba(169,110,219,0.18)'
+                },
+                {
+                    label: 'Pillar D (Momentum)',
+                    data: pillarFills.map(p => p.a + p.b + p.c + p.d),
+                    borderWidth: 0, pointRadius: 0, tension: 0.3,
+                    fill: '-1',
+                    backgroundColor: 'rgba(45,200,122,0.18)'
+                },
+                // ── Reference lines (dotted, readable) ──
                 {
                     label: 'Global Mean',
                     data: history.map(r => getGlobalMean('rao_score', r.year)),
-                    borderColor: 'rgba(238,234,224,0.25)', borderDash: [4, 4],
+                    borderColor: 'rgba(238,234,224,0.65)', borderDash: [5, 4],
                     borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false
                 },
                 {
@@ -5881,16 +5953,32 @@ function renderRAOTimeSeries(iso) {
                         if (!peers.length) return null;
                         return peers.reduce((s,p)=>s+p.rao_score,0)/peers.length;
                     }),
-                    borderColor: ARCHETYPE_COLORS[history[history.length-1].archetype] || 'rgba(96,124,152,0.7)',
+                    borderColor: ARCHETYPE_COLORS[history[history.length-1].archetype] || '#607c98',
                     borderDash: [3, 3], borderWidth: 1.5, pointRadius: 0, tension: 0.3, fill: false
+                },
+                // ── Country line (on top) ──
+                {
+                    label: history[0].country_name,
+                    data: history.map(r => r.rao_score),
+                    borderColor: '#C2A56D', backgroundColor: 'rgba(194,165,109,0.0)',
+                    borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: '#C2A56D',
+                    tension: 0.3, fill: false
                 }
             ]
         },
         options: {
             responsive: true, maintainAspectRatio: true,
             plugins: {
-                legend: { display: true, position: 'bottom', labels: { color:'rgba(238,234,224,0.5)', font:{size:10}, boxWidth:10, padding:12 } },
-                tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2) ?? '—'}` } }
+                legend: { display: true, position: 'bottom', labels: { color:'rgba(238,234,224,0.5)', font:{size:10}, boxWidth:10, padding:12,
+                    filter: item => !['Pillar A (Growth)','Pillar B (Risk)','Pillar C (Quality)','Pillar D (Momentum)'].includes(item.text)
+                } },
+                tooltip: {
+                    mode: 'index', intersect: false,
+                    callbacks: { label: ctx => {
+                        if (['Pillar A (Growth)','Pillar B (Risk)','Pillar C (Quality)','Pillar D (Momentum)'].includes(ctx.dataset.label)) return null;
+                        return `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2) ?? '—'}`;
+                    }}
+                }
             },
             scales: {
                 x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'rgba(238,234,224,0.4)',font:{size:10}} },
@@ -9902,9 +9990,10 @@ function renderScatterPlot() {
 // Enhancement #9: Regional Comparison Enhanced Chart
 function renderRegionalSection() {
     const combined = {};
+    const yearSlice = getSlice(_landscapeYear);
 
     Object.keys(REGIONS).forEach(region => {
-        const countries = rawData.filter(c => REGIONS[region].includes(c.country));
+        const countries = yearSlice.filter(c => REGIONS[region].includes(c.country));
         if (countries.length === 0) return;
         const sorted = [...countries].sort((a, b) => b.calculated_rao - a.calculated_rao);
         const raoScores = countries.map(c => c.calculated_rao);
@@ -11346,7 +11435,7 @@ function buildChatRegimeMatrix({ year = 2024, title } = {}) {
     <div class="auth-modal" style="position:relative;">
         <button class="auth-close-btn" onclick="closeAuthModal()">&#x2715;</button>
         <div class="auth-modal-logo">
-            <img src="gsu.png" alt="GSU">
+            <img src="assets/gsu.png" alt="GSU">
             <h2>RAO Insights</h2>
             <p id="auth-modal-subtitle">Sign in to access member features</p>
         </div>

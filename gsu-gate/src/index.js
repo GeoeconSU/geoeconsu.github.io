@@ -6,8 +6,8 @@ const ALLOWED_ORIGINS = [
 
 // Only these filenames can be requested — prevents arbitrary URL fetch
 const ALLOWED_PDFS = {
-  'GRB Q1 2026.pdf': 'GRB Q1 2026.pdf',
-  'GRB Q4 2025.pdf': 'GRB Q4 2025.pdf',
+  'GRB Q1 2026.pdf': 'docs/GRB Q1 2026.pdf',
+  'GRB Q4 2025.pdf': 'docs/GRB Q4 2025.pdf',
 };
 
 const SITE_BASE = 'https://geoecon.solutions';
@@ -56,7 +56,8 @@ async function handleSendReport(request, env, cors) {
     return respond({ error: 'Invalid report requested.' }, 400, cors);
   }
 
-  const pdfUrl = `${SITE_BASE}/${encodeURIComponent(pdf)}`;
+  const pdfPath = ALLOWED_PDFS[pdf];
+  const pdfUrl = SITE_BASE + '/' + pdfPath.split('/').map(encodeURIComponent).join('/');
 
   // Send email with download link
   const sent = await sendReportEmail(env, email, name.trim(), pdf, pdfUrl);

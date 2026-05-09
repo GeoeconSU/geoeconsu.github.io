@@ -2,6 +2,9 @@
 # Local commit script
 commit.sh
 
+# Dev/test pages (not for deployment)
+dev/
+
 # Claude Code documentation
 CLAUDE.md
 
