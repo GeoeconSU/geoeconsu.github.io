@@ -10859,7 +10859,7 @@ async function callGroqAPI(messages, tools = null) {
         model: GROQ_MODEL,
         messages,
         temperature: 0.25,
-        max_tokens: 2048,
+        max_tokens: 4096,
         stream: false
     };
     if (GROQ_MODEL.startsWith('groq/compound')) {
