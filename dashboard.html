@@ -4017,23 +4017,23 @@
                     </div>
                 </div>
 
-                <div id="analysis-content" style="display: none;">
+                <div id="analysis-content" style="display:none;">
 
-                    <!-- ── RAO v8: Headline Card ── -->
+                    <!-- ── ROW 1: Headline ── -->
                     <div id="profile-headline" class="analysis-card" style="margin-bottom:12px;"></div>
 
-                    <!-- ── RAO v8: Pillar Strip ── -->
-                    <div id="country-pillar-strip" style="margin-bottom:12px;"></div>
+                    <!-- ── ROW 2: Pillar Strip + Score Decomp ── -->
+                    <div style="display:grid;grid-template-columns:55% 45%;gap:12px;margin-bottom:12px;">
+                        <div id="country-pillar-strip"></div>
+                        <div id="score-decomp" class="analysis-card"></div>
+                    </div>
 
-                    <!-- ── RAO v8: Score Decomposition ── -->
-                    <div id="score-decomp" class="analysis-card" style="margin-bottom:12px;"></div>
-
-                    <!-- ── RAO v8: Time Series + Regime Timeline ── -->
-                    <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px;">
+                    <!-- ── ROW 3: Time Series + Regime History ── -->
+                    <div style="display:grid;grid-template-columns:62% 38%;gap:12px;margin-bottom:12px;">
                         <div class="analysis-card">
                             <div class="card-title">RAO Score Trajectory (2010–2024)</div>
                             <div style="padding:0.5rem 1.2rem 1rem;position:relative;">
-                                <canvas id="country-rao-timeseries" height="90"></canvas>
+                                <canvas id="country-rao-timeseries" height="100"></canvas>
                             </div>
                         </div>
                         <div class="analysis-card">
@@ -4042,8 +4042,8 @@
                         </div>
                     </div>
 
-                    <!-- ── RAO v8: 4-Pillar Radar + TDM Panel ── -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                    <!-- ── ROW 4: 4-Pillar Radar + TDM ── -->
+                    <div style="display:grid;grid-template-columns:44% 56%;gap:12px;margin-bottom:12px;">
                         <div class="analysis-card">
                             <div class="card-title">4-Pillar Profile</div>
                             <div style="padding:0.5rem 1.2rem 1rem;position:relative;">
@@ -4056,60 +4056,60 @@
                         </div>
                     </div>
 
-                    <!-- ── RAO v8: Norm Variable Breakdown ── -->
+                    <!-- ── ROW 5: Variable Breakdown (full) ── -->
                     <div class="analysis-card" style="margin-bottom:12px;">
                         <div class="card-title">Variable Breakdown by Pillar</div>
                         <div id="country-norm-vars-table" style="padding:0 0 0.5rem;"></div>
                     </div>
 
-                    <!-- ── RAO v8: Archetype Peers ── -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div class="card-title">Archetype Peer Comparison</div>
-                        <div id="archetype-peers" style="padding:0.5rem 0;"></div>
-                    </div>
-
-                    <!-- Strengths & Weaknesses -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div class="card-title">Strengths & Weaknesses</div>
-                        <div id="strengths-weaknesses-content" style="padding: 0.75rem 1.2rem 1rem;"></div>
+                    <!-- ── ROW 6: Archetype Peers + Strengths & Weaknesses ── -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                        <div class="analysis-card">
+                            <div class="card-title">Archetype Peer Comparison</div>
+                            <div id="archetype-peers" style="padding:0.5rem 0;"></div>
+                        </div>
+                        <div class="analysis-card">
+                            <div class="card-title">Strengths & Weaknesses</div>
+                            <div id="strengths-weaknesses-content" style="padding:0.75rem 1.2rem 1rem;"></div>
+                        </div>
                     </div>
 
                     <!-- Hidden legacy containers (required by JS) -->
                     <div id="profile-content" style="display:none;"></div>
                     <div id="pillar-balance-content" style="display:none;"></div>
 
-                    <!-- Country Connections (merged) -->
-                    <div class="analysis-card" style="margin-top: 12px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1.2rem 0.4rem; border-bottom:1px solid var(--border-subtle);">
-                            <span style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold);">Country Connections</span>
-                            <div id="similar-filter-btns" style="display:flex; gap:0.4rem;"></div>
+                    <!-- ── ROW 7: Country Connections (full) ── -->
+                    <div class="analysis-card" style="margin-bottom:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.85rem 1.2rem 0.4rem;border-bottom:1px solid var(--border-subtle);">
+                            <span style="font-family:var(--font-minor);font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.16em;color:var(--accent-gold);">Country Connections</span>
+                            <div id="similar-filter-btns" style="display:flex;gap:0.4rem;"></div>
                         </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr;">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;">
                             <div style="border-right:1px solid var(--border-subtle);">
-                                <div style="font-family:var(--font-minor); font-size:0.58rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); padding:0.6rem 1.2rem 0.4rem; border-bottom:1px solid var(--border-subtle);">Regional Peers</div>
+                                <div style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);padding:0.6rem 1.2rem 0.4rem;border-bottom:1px solid var(--border-subtle);">Regional Peers</div>
                                 <div id="neighbors-content"></div>
                             </div>
                             <div>
-                                <div style="font-family:var(--font-minor); font-size:0.58rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); padding:0.6rem 1.2rem 0.4rem; border-bottom:1px solid var(--border-subtle);">Similar RAO Profiles</div>
+                                <div style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);padding:0.6rem 1.2rem 0.4rem;border-bottom:1px solid var(--border-subtle);">Similar RAO Profiles</div>
                                 <div id="similar-content"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Regional Context (Full Width) -->
-                    <div class="analysis-card" style="margin-top: 12px;">
-                        <div class="card-title">Regional Context</div>
-                        <div id="regional-context-content"></div>
+                    <!-- ── ROW 8: Regional Context + Global Benchmarking ── -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                        <div class="analysis-card">
+                            <div class="card-title">Regional Context</div>
+                            <div id="regional-context-content"></div>
+                        </div>
+                        <div class="analysis-card">
+                            <div class="card-title">Global Benchmarking</div>
+                            <div id="global-benchmark-content"></div>
+                        </div>
                     </div>
 
-                    <!-- Global Benchmarking (Full Width) -->
-                    <div class="analysis-card" style="margin-top: 12px;">
-                        <div class="card-title">Global Benchmarking</div>
-                        <div id="global-benchmark-content"></div>
-                    </div>
-
-                    <!-- Peer Comparison -->
-                    <div class="analysis-card" style="margin-top: 12px;">
+                    <!-- ── ROW 9: Peer Comparison (full) ── -->
+                    <div class="analysis-card" style="margin-bottom:12px;">
                         <div class="card-title">Peer Comparison · All Pillars</div>
                         <div id="peer-comparison-content"></div>
                     </div>
