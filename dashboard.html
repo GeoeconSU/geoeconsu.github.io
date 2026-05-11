@@ -10624,9 +10624,9 @@ function buildStaticContext() {
     const globalAvgRAO = avg(slice.map(r => r.rao_score));
     const globalAvgTOS = avg(slice.map(r => r.tos_score || 0));
 
-    // Compact cross-section index
+    // Compact index — 9 fields to stay within compound-mini context limits
     const indexRows = slice.map(r =>
-        `${r.country}|${r.country_name}|${r.rank}|${(r.rao_score||0).toFixed(2)}|${r.regime||'?'}|${(r.tos_score||0).toFixed(2)}|${r.tos_signal_label||''}|${(r.pillar_opportunity||0).toFixed(2)}|${(r.pillar_fragility||0).toFixed(2)}|${(r.pillar_absorptive_capacity||0).toFixed(2)}|${(r.pillar_trajectory||0).toFixed(2)}|${r.archetype||''}|${(r.cvar25||0).toFixed(2)}|${(r.volatility_band||0).toFixed(2)}`
+        `${r.country}|${r.country_name}|${r.rank}|${(r.rao_score||0).toFixed(2)}|${r.regime||'?'}|${(r.tos_score||0).toFixed(2)}|${(r.pillar_opportunity||0).toFixed(2)}|${(r.pillar_fragility||0).toFixed(2)}|${(r.pillar_absorptive_capacity||0).toFixed(2)}|${(r.pillar_trajectory||0).toFixed(2)}`
     ).join('\n');
 
     datasetContextCache = `RAO Framework v2.1 — panel dataset 2010–2024, ${n} countries, Bayesian CVaR₂₅ scoring engine, 1–10 scale (higher=better).
@@ -10635,41 +10635,40 @@ TDM: TOS = geometric mean of SIS (S-curve inflection proximity) × DGI (discover
 4 Regimes: RO=Robust Opportunity (high score, low volatility) | FO=Fragile Opportunity (high score, high volatility) | SL=Stable/Low (low, low) | SR=Structural Risk (low, high).
 PRIMARY SIGNAL: FO/SR + TOS > 0.50 = pre-breakout candidates. FO + High TOS = clearest entry signal. SR + High TOS = highest conviction/risk.
 Global 2024: mean RAO=${globalAvgRAO}, mean TOS=${globalAvgTOS}
-INDEX(ISO|Name|Rank|RAO|Regime|TOS|TOSLabel|PillarA|PillarB|PillarC|PillarD|Archetype|CVaR25|VBand):
+INDEX(ISO|Name|Rank|RAO|Regime|TOS|Opp|Frag|AbsCap|Traj):
 ${indexRows}`;
 
     return datasetContextCache;
 }
 
-// Tier 2 (on demand): full panel history for named countries
+// Tier 2 (on demand): recent panel history for named/regional countries (2020–2024 only)
 function retrievePillarContext(isos) {
     if (!isos.length) return '';
-    const header = 'HISTORY(ISO|Year|RAO|Regime|TOS|A|B|C|D|TOSLabel|Trajectory|PreOverlay|Overlay):';
+    const capped = isos.slice(0, 12);
+    const header = 'HISTORY(ISO|Year|RAO|Regime|TOS|Opp|Frag|AbsCap|Traj):';
     const rows = [];
-    for (const iso of isos) {
-        const hist = getCountryHistory(iso);
+    for (const iso of capped) {
+        const hist = getCountryHistory(iso).filter(r => r.year >= 2020);
         for (const r of hist) {
-            rows.push(`${r.country}|${r.year}|${(r.rao_score||0).toFixed(2)}|${r.regime||''}|${(r.tos_score||0).toFixed(2)}|${(r.pillar_opportunity||0).toFixed(2)}|${(r.pillar_fragility||0).toFixed(2)}|${(r.pillar_absorptive_capacity||0).toFixed(2)}|${(r.pillar_trajectory||0).toFixed(2)}|${r.tos_signal_label||''}|${r.trajectory_classification||''}|${(r.rao_score_pre_overlay||0).toFixed(2)}|${(r.overlay_adjustment||0).toFixed(2)}`);
+            rows.push(`${r.country}|${r.year}|${(r.rao_score||0).toFixed(2)}|${r.regime||''}|${(r.tos_score||0).toFixed(2)}|${(r.pillar_opportunity||0).toFixed(2)}|${(r.pillar_fragility||0).toFixed(2)}|${(r.pillar_absorptive_capacity||0).toFixed(2)}|${(r.pillar_trajectory||0).toFixed(2)}`);
         }
     }
     if (!rows.length) return '';
     return `\n${header}\n${rows.join('\n')}`;
 }
 
-// Tier 3 (on demand): 22 norm vars for named countries
+// Tier 3 (on demand): key norm vars for explicitly named countries, 2023–2024 only
 function retrieveVariableContext(isos) {
     if (!isos.length) return '';
     const NORM_FIELDS = ['norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp','norm_gross_capital_formation','norm_secondary_school_enrolment',
         'norm_cpi_inflation','norm_government_debt_pct_gdp','norm_current_account_pct_gdp','norm_external_debt_pct_gni',
         'norm_political_stability','norm_rule_of_law','norm_control_of_corruption',
-        'norm_natural_resource_rents_pct_gdp','norm_gdp_per_capita_growth','norm_youth_unemployment','norm_vulnerable_employment','norm_regulatory_quality',
-        'norm_gdp_growth_trend','norm_fdi_trend','norm_governance_trend','norm_debt_trend','norm_inflation_trend'];
+        'norm_natural_resource_rents_pct_gdp','norm_gdp_per_capita_growth','norm_youth_unemployment','norm_vulnerable_employment','norm_regulatory_quality'];
     const header = `VARIABLES(ISO|Year|${NORM_FIELDS.join('|')}):`;
     const rows = [];
     for (const iso of isos) {
-        const hist = getCountryHistory(iso);
-        const recent = hist.filter(r => r.year >= 2020);
-        for (const r of recent) {
+        const hist = getCountryHistory(iso).filter(r => r.year >= 2023);
+        for (const r of hist) {
             rows.push(`${r.country}|${r.year}|${NORM_FIELDS.map(f => r[f] != null ? (r[f]).toFixed(2) : 'N/A').join('|')}`);
         }
     }
@@ -10692,10 +10691,10 @@ function resolveContext(query) {
     let tier2ISOs = [...namedISOs];
     let tier3ISOs = [...namedISOs];
 
-    // Regional queries → inject all countries in that region
+    // Regional queries → inject countries in that region (capped at 10)
     Object.entries(REGIONS).forEach(([region, codes]) => {
         if (q.includes(region.toLowerCase())) {
-            codes.forEach(iso => { if (!tier2ISOs.includes(iso)) tier2ISOs.push(iso); });
+            codes.slice(0, 10).forEach(iso => { if (!tier2ISOs.includes(iso)) tier2ISOs.push(iso); });
         }
     });
 
@@ -10725,7 +10724,7 @@ function resolveContext(query) {
 
 function buildSystemPrompt(query) {
     const { tier2ISOs, tier3ISOs, isTemporal } = resolveContext(query);
-    const dataNote = isTemporal ? 'TEMPORAL NOTE: User asked about trends/evolution — full 2010–2024 history for named countries is included below.' : '';
+    const dataNote = isTemporal ? 'TEMPORAL NOTE: User asked about trends/evolution — 2020–2024 history for named countries is included below.' : '';
 
     return `You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You advise institutional investors on country risk and opportunity using the Risk-Adjusted Opportunity (RAO) Framework v2.1. Your analytical standard is that of a decision-grade intelligence product: you do not summarise what has happened, you explain what it means, why it matters, and what a sophisticated investor should do with that information.
 
@@ -10860,7 +10859,7 @@ async function callGroqAPI(messages, tools = null) {
         model: GROQ_MODEL,
         messages,
         temperature: 0.25,
-        max_tokens: 4096,
+        max_tokens: 2048,
         stream: false
     };
     if (GROQ_MODEL.startsWith('groq/compound')) {
