@@ -3744,52 +3744,53 @@
         }
         .auth-overlay.visible { opacity: 1; pointer-events: all; }
         .auth-modal {
-            width: 420px; max-width: calc(100vw - 40px);
-            background: rgba(20,22,35,0.96);
-            border: 1px solid rgba(203,168,78,0.25); border-radius: 8px;
-            box-shadow: 0 24px 64px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1);
-            padding: 2.5rem; transform: translateY(20px); transition: transform 0.25s var(--easing);
+            width: 400px; max-width: calc(100vw - 40px);
+            background: var(--secondary-bg);
+            border: 1px solid rgba(203,168,78,0.22); border-radius: 3px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.06);
+            padding: 2rem 2rem 1.75rem; transform: translateY(16px); transition: transform 0.25s var(--easing);
         }
         .auth-overlay.visible .auth-modal { transform: translateY(0); }
-        .auth-modal-logo { text-align: center; margin-bottom: 1.5rem; }
-        .auth-modal-logo img { width: 44px; margin-bottom: 0.5rem; }
-        .auth-modal-logo h2 { font-family: var(--font-head); font-size: 1.4rem; color: var(--accent-gold); font-weight: 400; }
-        .auth-modal-logo p { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
-        .auth-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.5rem; }
-        .auth-tab-btn { flex: 1; padding: 0.6rem; background: none; border: none; cursor: pointer; color: var(--text-muted); font-family: var(--font-body); font-size: 0.95rem; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .auth-modal-logo { text-align: center; margin-bottom: 1.4rem; }
+        .auth-modal-logo img { width: 36px; margin-bottom: 0.6rem; opacity: 0.9; }
+        .auth-modal-logo h2 { font-family: var(--font-head); font-size: 1.25rem; color: var(--accent-gold); font-weight: 400; letter-spacing: 0.02em; }
+        .auth-modal-logo p { font-family: var(--font-minor); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); margin-top: 0.4rem; }
+        .auth-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 1.4rem; gap: 0; }
+        .auth-tab-btn { flex: 1; padding: 0.55rem 0.5rem; background: none; border: none; cursor: pointer; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .auth-tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
-        .auth-form { display: flex; flex-direction: column; gap: 0.9rem; }
-        .auth-form input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 4px; padding: 0.7rem 1rem; color: var(--text-white); font-family: var(--font-body); font-size: 1rem; outline: none; transition: border-color 0.2s; }
-        .auth-form input:focus { border-color: var(--accent-gold-dim); }
-        .auth-form input::placeholder { color: var(--text-muted); }
-        .auth-btn { padding: 0.75rem; border-radius: 4px; border: none; cursor: pointer; font-family: var(--font-body); font-size: 1rem; font-weight: 500; transition: all 0.2s; }
+        .auth-form { display: flex; flex-direction: column; gap: 0.75rem; }
+        .auth-form input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; padding: 0.65rem 0.9rem; color: var(--text-white); font-family: var(--font-body); font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+        .auth-form input:focus { border-color: rgba(194,165,109,0.5); background: rgba(255,255,255,0.06); }
+        .auth-form input::placeholder { color: var(--text-muted); font-size: 0.88rem; }
+        .auth-btn { padding: 0.68rem 1rem; border-radius: 2px; border: none; cursor: pointer; font-family: var(--font-minor); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; transition: all 0.2s; }
         .auth-btn-primary { background: var(--accent-gold); color: var(--primary-bg); }
-        .auth-btn-primary:hover { background: #d4b565; }
-        .auth-btn-google { background: rgba(255,255,255,0.07); color: var(--text-white); border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-        .auth-btn-google:hover { background: rgba(255,255,255,0.12); }
-        .auth-divider { text-align: center; color: var(--text-muted); font-size: 0.82rem; position: relative; }
-        .auth-divider::before, .auth-divider::after { content: ''; position: absolute; top: 50%; width: 38%; height: 1px; background: rgba(255,255,255,0.1); }
+        .auth-btn-primary:hover { background: #d4b565; box-shadow: 0 0 14px rgba(194,165,109,0.3); }
+        .auth-btn-google { background: rgba(255,255,255,0.05); color: var(--w65); border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-family: var(--font-body); font-size: 0.88rem; text-transform: none; letter-spacing: 0; }
+        .auth-btn-google:hover { background: rgba(255,255,255,0.09); color: var(--text-white); }
+        .auth-divider { text-align: center; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; position: relative; }
+        .auth-divider::before, .auth-divider::after { content: ''; position: absolute; top: 50%; width: 38%; height: 1px; background: rgba(255,255,255,0.08); }
         .auth-divider::before { left: 0; }
         .auth-divider::after { right: 0; }
-        .auth-error { color: #e07070; font-size: 0.85rem; text-align: center; min-height: 1.2rem; }
-        .auth-link { color: var(--accent-gold); cursor: pointer; font-size: 0.82rem; text-align: center; }
-        .auth-link:hover { text-decoration: underline; }
-        .auth-close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; line-height: 1; }
+        .auth-error { color: #d97070; font-family: var(--font-minor); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; text-align: center; min-height: 1.2rem; }
+        .auth-link { color: var(--accent-gold); cursor: pointer; font-family: var(--font-minor); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; opacity: 0.85; }
+        .auth-link:hover { opacity: 1; text-decoration: underline; }
+        .auth-close-btn { position: absolute; top: 0.85rem; right: 0.9rem; background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; line-height: 1; display: flex; align-items: center; padding: 0.2rem; transition: color 0.15s; }
         .auth-close-btn:hover { color: var(--text-white); }
 
         /* ── USER AVATAR MENU ──────────────────────────────────────────────── */
         .user-menu-wrap { position: relative; }
-        .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-gold), #8a6e2a); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 0.85rem; font-weight: 600; color: var(--primary-bg); cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
-        .user-avatar:hover { border-color: var(--accent-gold); }
-        .user-dropdown { position: absolute; top: calc(100% + 10px); right: 0; min-width: 200px; background: rgba(18,20,32,0.97); border: 1px solid rgba(203,168,78,0.25); border-radius: 6px; box-shadow: 0 12px 40px rgba(0,0,0,0.6); padding: 0.5rem 0; display: none; z-index: 1100; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #c2a56d, #7a6030); display: flex; align-items: center; justify-content: center; font-family: var(--font-minor); font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary-bg); cursor: pointer; border: 1.5px solid rgba(194,165,109,0.4); transition: border-color 0.2s, box-shadow 0.2s; }
+        .user-avatar:hover { border-color: var(--accent-gold); box-shadow: 0 0 10px rgba(194,165,109,0.25); }
+        .user-dropdown { position: absolute; top: calc(100% + 8px); right: 0; min-width: 210px; background: var(--secondary-bg); border: 1px solid rgba(203,168,78,0.2); border-radius: 3px; box-shadow: 0 12px 40px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.04); padding: 0; display: none; z-index: 1100; overflow: hidden; }
         .user-dropdown.open { display: block; }
-        .user-dropdown-header { padding: 0.75rem 1rem 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .user-dropdown-name { font-weight: 600; font-size: 0.95rem; }
-        .user-dropdown-role { font-size: 0.78rem; color: var(--accent-gold); text-transform: capitalize; }
-        .user-dropdown-item { padding: 0.55rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); transition: all 0.15s; }
-        .user-dropdown-item:hover { color: var(--text-white); background: rgba(255,255,255,0.05); }
-        .user-dropdown-item.danger { color: #e07070; }
-        .user-dropdown-item.danger:hover { background: rgba(224,112,112,0.1); }
+        .user-dropdown-header { padding: 0.85rem 1rem 0.7rem; border-bottom: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); }
+        .user-dropdown-name { font-family: var(--font-head); font-weight: 400; font-size: 0.9rem; color: var(--text-white); }
+        .user-dropdown-role { font-family: var(--font-minor); font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent-gold); margin-top: 0.2rem; }
+        .user-dropdown-item { padding: 0.55rem 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.55rem; font-family: var(--font-minor); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); transition: all 0.15s; }
+        .user-dropdown-item i { font-size: 0.9rem; }
+        .user-dropdown-item:hover { color: var(--text-white); background: rgba(255,255,255,0.04); }
+        .user-dropdown-item.danger { color: rgba(220,100,100,0.85); }
+        .user-dropdown-item.danger:hover { background: rgba(200,80,80,0.08); color: #e07070; }
         .sign-in-btn { padding: 0.38rem 1.25rem; border-radius: 20px; cursor: pointer; font-size: 0.82rem; background: rgba(194,165,109,0.07); color: var(--accent-gold); border: 1px solid rgba(194,165,109,0.55); font-family: var(--font-head); font-weight: 400; letter-spacing: 0.05em; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: all 0.25s; }
         .sign-in-btn:hover { background: rgba(194,165,109,0.16); border-color: var(--accent-gold); color: #d9bc7a; box-shadow: 0 0 12px rgba(194,165,109,0.18); }
 
@@ -3903,10 +3904,10 @@
             <!-- Map view controls — sits above the map section -->
             <div class="map-controls" id="landscape-controls">
                 <button class="map-control-btn active" onclick="setMapView('rao')" id="view-rao">RAO Score</button>
-                <button class="map-control-btn" onclick="setMapView('pillar_a')" id="view-pillar_a">Pillar A</button>
-                <button class="map-control-btn" onclick="setMapView('pillar_b')" id="view-pillar_b">Pillar B</button>
-                <button class="map-control-btn" onclick="setMapView('pillar_c')" id="view-pillar_c">Pillar C</button>
-                <button class="map-control-btn" onclick="setMapView('pillar_d')" id="view-pillar_d">Pillar D</button>
+                <button class="map-control-btn" onclick="setMapView('pillar_a')" id="view-pillar_a">Opportunity</button>
+                <button class="map-control-btn" onclick="setMapView('pillar_b')" id="view-pillar_b">Fragility</button>
+                <button class="map-control-btn" onclick="setMapView('pillar_c')" id="view-pillar_c">Absorptive Capacity</button>
+                <button class="map-control-btn" onclick="setMapView('pillar_d')" id="view-pillar_d">Trajectory</button>
                 <button class="map-control-btn" onclick="setMapView('tos')" id="view-tos">TOS</button>
                 <button class="map-control-btn" onclick="setMapView('regime')" id="view-regime">Regime</button>
                 <select id="landscape-year-select" onchange="setLandscapeYear(parseInt(this.value))"
@@ -4094,17 +4095,8 @@
                         <div id="peer-comparison-content"></div>
                     </div>
 
-                    <!-- All Variables Deep Dive -->
-                    <div class="analysis-card" style="margin-top: 12px;">
-                        <div class="card-title" style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.7rem; padding-bottom: 0.5rem;">
-                            <span>All Variables Deep Dive</span>
-                            <button id="toggle-deep-dive" onclick="toggleDeepDive()"
-                                style="padding: 0.35rem 0.85rem; background: rgba(194,165,109,0.12); color: var(--accent-gold); border: 1px solid rgba(194,165,109,0.25); border-radius: 2px; font-family: var(--font-minor); font-size: 0.6rem; cursor: pointer; transition: background 0.2s; text-transform: uppercase; letter-spacing: 0.1em;">
-                                Expand
-                            </button>
-                        </div>
-                        <div id="deep-dive-content" style="display: none; padding: 0.75rem 1.2rem 1rem;"></div>
-                    </div>
+                    <!-- deep-dive-content stub retained for legacy JS compatibility -->
+                    <div id="deep-dive-content" style="display:none;"></div>
                 </div>
 
                 <div id="analysis-empty" style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
@@ -4392,7 +4384,7 @@
 
                 <!-- Archetype Cluster Scatter -->
                 <h3 class="chart-title" style="margin-top:2.5rem;margin-bottom:0.25rem;">Archetype Cluster Map</h3>
-                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">X = Growth Engine (Pillar A) · Y = Quality Filter (Pillar C) · Colour = archetype</p>
+                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">X = Opportunity · Y = Absorptive Capacity · Colour = archetype</p>
                 <div class="chart-container" style="position:relative;height:380px;">
                     <canvas id="archetype-scatter-chart"></canvas>
                 </div>
@@ -4653,7 +4645,7 @@ const CHART_TOOLS = [
         type: 'function',
         function: {
             name: 'render_scatter_plot',
-            description: 'Render a Growth Engine (Pillar A) vs Quality Filter (Pillar C) scatter plot positioning all countries. Points coloured by investment regime (RO/FO/SL/SR). Use when the user asks about positioning, quadrant analysis, where countries cluster, structural landscape, or opportunity screening. Optionally highlight specific countries.',
+            description: 'Render an Opportunity vs Absorptive Capacity scatter plot positioning all countries. Points coloured by investment regime (RO/FO/SL/SR). Use when the user asks about positioning, quadrant analysis, where countries cluster, structural landscape, or opportunity screening. Optionally highlight specific countries.',
             parameters: {
                 type: 'object',
                 properties: {
@@ -4667,7 +4659,7 @@ const CHART_TOOLS = [
         type: 'function',
         function: {
             name: 'render_radar_chart',
-            description: 'Render a radar/spider chart of all four pillar scores (A: Growth Engine, B: Risk Brake, C: Quality Filter, D: Momentum Signal) for one or two countries. Use when comparing structural profiles, analysing strengths and weaknesses, or when the user asks about a country\'s pillar composition.',
+            description: 'Render a radar/spider chart of all four pillar scores (Opportunity, Fragility, Absorptive Capacity, Trajectory) for one or two countries. Use when comparing structural profiles, analysing strengths and weaknesses, or when the user asks about a country\'s pillar composition.',
             parameters: {
                 type: 'object',
                 properties: {
@@ -4850,26 +4842,26 @@ const NAME_TO_ISO = {};   // populated at parse time (kept for legacy compat)
 
 const PILLARS = {
     opportunity: {
-        key: 'pillar_opportunity', label: 'Growth Engine', letter: 'A',
+        key: 'pillar_opportunity', label: 'Opportunity',
         color: 'var(--accent-gold)',
         vars: ['norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp',
                'norm_gross_capital_formation','norm_secondary_school_enrolment']
     },
     fragility: {
-        key: 'pillar_fragility', label: 'Risk Brake', letter: 'B',
+        key: 'pillar_fragility', label: 'Fragility',
         color: 'var(--accent-red)',
         vars: ['norm_cpi_inflation','norm_government_debt_pct_gdp',
                'norm_current_account_pct_gdp','norm_external_debt_pct_gni',
                'norm_political_stability','norm_rule_of_law','norm_control_of_corruption']
     },
     absorptive: {
-        key: 'pillar_absorptive_capacity', label: 'Quality Filter', letter: 'C',
+        key: 'pillar_absorptive_capacity', label: 'Absorptive Capacity',
         color: 'var(--accent-blue)',
         vars: ['norm_natural_resource_rents_pct_gdp','norm_gdp_per_capita_growth',
                'norm_youth_unemployment','norm_vulnerable_employment','norm_regulatory_quality']
     },
     trajectory: {
-        key: 'pillar_trajectory', label: 'Momentum Signal', letter: 'D',
+        key: 'pillar_trajectory', label: 'Trajectory',
         color: 'var(--accent-green)',
         vars: ['norm_gdp_growth_trend','norm_fdi_trend','norm_governance_trend',
                'norm_debt_trend','norm_inflation_trend']
@@ -4929,12 +4921,12 @@ const NORM_VAR_LABELS = {
 
 // Legacy pillar configs (kept for old tab code — Phase 2 removes these)
 const OPPORTUNITY_PILLARS = [
-    { key: 'market_access',       name: 'Growth Engine (A)',  vars: ['norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp'] },
-    { key: 'capital_environment', name: 'Quality Filter (C)', vars: ['norm_regulatory_quality','norm_rule_of_law','norm_control_of_corruption'] },
-    { key: 'trade_infrastructure',name: 'Momentum (D)',       vars: ['norm_gdp_growth_trend','norm_fdi_trend','norm_governance_trend'] }
+    { key: 'market_access',       name: 'Opportunity',         vars: ['norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp'] },
+    { key: 'capital_environment', name: 'Absorptive Capacity', vars: ['norm_regulatory_quality','norm_rule_of_law','norm_control_of_corruption'] },
+    { key: 'trade_infrastructure',name: 'Trajectory',          vars: ['norm_gdp_growth_trend','norm_fdi_trend','norm_governance_trend'] }
 ];
 const STABILITY_PILLARS = [
-    { key: 'external_vulnerability', name: 'Risk Brake (B)',  vars: ['norm_cpi_inflation','norm_government_debt_pct_gdp','norm_external_debt_pct_gni'] }
+    { key: 'external_vulnerability', name: 'Fragility',        vars: ['norm_cpi_inflation','norm_government_debt_pct_gdp','norm_external_debt_pct_gni'] }
 ];
 const VARIABLE_NAMES = Object.assign({}, NORM_VAR_LABELS);
 const INVERSE_VARIABLES = ['norm_cpi_inflation','norm_government_debt_pct_gdp','norm_external_debt_pct_gni','norm_youth_unemployment','norm_vulnerable_employment','norm_natural_resource_rents_pct_gdp'];
@@ -5550,7 +5542,7 @@ function renderRegionalOverview() {
     const header = `<div style="display:grid;grid-template-columns:150px 65px 1fr 130px;align-items:center;gap:1rem;padding:0.4rem 1.4rem;border-bottom:1px solid var(--border-subtle);">
         <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Region</span>
         <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Avg RAO</span>
-        <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Pillars: A (Growth) · B (Risk, inv) · C (Quality) · D (Momentum)</span>
+        <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Opportunity · Fragility (inv) · Absorptive Capacity · Trajectory</span>
         <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Regime Mix</span>
     </div>`;
 
@@ -5606,10 +5598,10 @@ function openCountryAnalysis(code) {
 
 const _MAP_VIEWS = {
     rao:      { title:'RAO Score (1–10)',         grad:'linear-gradient(to right,#966060,#c9a961,#5d8a72)',            lo:'Low (1)',    hi:'High (10)' },
-    pillar_a: { title:'Pillar A — Growth Engine', grad:'linear-gradient(to right,#252e42,#5d8a72)',                    lo:'0',          hi:'1'         },
-    pillar_b: { title:'Pillar B — Risk Brake',    grad:'linear-gradient(to right,#252e42,#966060)',                    lo:'0 (Low)',     hi:'1 (High)'  },
-    pillar_c: { title:'Pillar C — Quality Filter',grad:'linear-gradient(to right,#252e42,#607c98)',                    lo:'0',          hi:'1'         },
-    pillar_d: { title:'Pillar D — Momentum',      grad:'linear-gradient(to right,#252e42,#5d8a72)',                    lo:'0',          hi:'1'         },
+    pillar_a: { title:'Opportunity',        grad:'linear-gradient(to right,#252e42,#5d8a72)',  lo:'0', hi:'1' },
+    pillar_b: { title:'Fragility',          grad:'linear-gradient(to right,#252e42,#966060)',  lo:'0 (Low)', hi:'1 (High)' },
+    pillar_c: { title:'Absorptive Capacity',grad:'linear-gradient(to right,#252e42,#607c98)',  lo:'0', hi:'1' },
+    pillar_d: { title:'Trajectory',         grad:'linear-gradient(to right,#252e42,#5d8a72)',  lo:'0', hi:'1' },
     tos:      { title:'TOS — Take-off Signal',    grad:'linear-gradient(to right,#252e42,#c9a961,#C2A56D)',            lo:'0',          hi:'1'         },
     regime:   { title:'Regime Classification',    grad:`linear-gradient(to right,#966060,#607c98,#C2A56D,#5d8a72)`,   lo:'SR',         hi:'RO'        }
 };
@@ -5781,10 +5773,10 @@ function renderPillarStrip(iso, year) {
     if (!row || !el) return;
 
     const pillars = [
-        { key:'pillar_opportunity',        label:'A · Growth Engine',  color:'#C2A56D', val: row.pillar_opportunity || 0 },
-        { key:'pillar_fragility',          label:'B · Risk Brake',     color:'#966060', val: row.pillar_fragility || 0, inverted: true },
-        { key:'pillar_absorptive_capacity',label:'C · Quality Filter', color:'#607c98', val: row.pillar_absorptive_capacity || 0 },
-        { key:'pillar_trajectory',         label:'D · Momentum',       color:'#5d8a72', val: row.pillar_trajectory || 0 }
+        { key:'pillar_opportunity',        label:'Opportunity',        color:'#C2A56D', val: row.pillar_opportunity || 0 },
+        { key:'pillar_fragility',          label:'Fragility',          color:'#966060', val: row.pillar_fragility || 0, inverted: true },
+        { key:'pillar_absorptive_capacity',label:'Absorptive Capacity',color:'#607c98', val: row.pillar_absorptive_capacity || 0 },
+        { key:'pillar_trajectory',         label:'Trajectory',         color:'#5d8a72', val: row.pillar_trajectory || 0 }
     ];
 
     el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-subtle);border:1px solid var(--border-subtle);border-radius:3px;overflow:hidden;">
@@ -5851,29 +5843,30 @@ function renderScoreDecompCard(iso, year) {
     const fin   = row.rao_score;
     const ovCol = ov >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
 
-    const pill = (label, val, col, showSign = false) => `<div style="display:flex;flex-direction:column;align-items:center;gap:0.25rem;padding:0.4rem 0.6rem;min-width:72px;">
-        <div style="font-family:var(--font-mono);font-size:1.15rem;color:${col};font-weight:500;">${showSign&&val>0?'+':''}${val.toFixed(2)}</div>
-        <div style="font-family:var(--font-minor);font-size:0.54rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);text-align:center;line-height:1.3;">${label}</div>
-    </div>`;
-    const arrow = `<span style="color:rgba(238,234,224,0.2);font-size:1rem;">→</span>`;
+    const cell = (label, val, col, showSign=false, highlight=false) =>
+        `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.2rem;padding:0.7rem 0.5rem;${highlight?'background:rgba(194,165,109,0.08);border:1px solid rgba(194,165,109,0.22);border-radius:2px;':'border:1px solid rgba(255,255,255,0.05);border-radius:2px;'}">
+            <div style="font-family:var(--font-mono);font-size:${highlight?'1.5rem':'1.1rem'};color:${col};font-weight:${highlight?'600':'400'};">${showSign&&val>0?'+':''}${val.toFixed(2)}</div>
+            <div style="font-family:var(--font-minor);font-size:0.52rem;text-transform:uppercase;letter-spacing:0.1em;color:${highlight?'var(--accent-gold)':'var(--text-muted)'};text-align:center;line-height:1.3;">${label}</div>
+        </div>`;
+    const sep = `<div style="color:rgba(238,234,224,0.18);font-size:0.85rem;padding:0 0.1rem;align-self:center;">→</div>`;
+    const metaCell = (label, val) =>
+        `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.2rem;padding:0.7rem 0.5rem;border:1px solid rgba(255,255,255,0.05);border-radius:2px;">
+            <div style="font-family:var(--font-mono);font-size:1.1rem;color:var(--text-white);">${val}</div>
+            <div style="font-family:var(--font-minor);font-size:0.52rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);text-align:center;">${label}</div>
+        </div>`;
 
-    el.innerHTML = `<div style="padding:0.9rem 1.6rem;">
-        <div style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent-gold);margin-bottom:0.8rem;">Score Decomposition</div>
-        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-            ${pill('Pre-Overlay', pre, 'var(--text-white)')}
-            ${arrow}
-            ${pill('After Overlay', ovAdj, ovCol)}
-            ${arrow}
-            ${pill('Market Size Bonus', ms, 'var(--accent-blue)', true)}
-            ${arrow}
-            <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;padding:0.6rem 1.2rem;background:rgba(194,165,109,0.1);border:1px solid rgba(194,165,109,0.25);border-radius:3px;min-width:80px;">
-                <div style="font-family:var(--font-mono);font-size:1.4rem;color:var(--accent-gold);font-weight:600;">${fin.toFixed(2)}</div>
-                <div style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-gold);">Final RAO</div>
-            </div>
-            <div style="margin-left:auto;display:flex;flex-direction:column;gap:0.2rem;align-self:center;">
-                <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);">CVaR₂₅ <span style="font-family:var(--font-mono);color:var(--text-white);margin-left:0.4rem;">${row.cvar25!=null?row.cvar25.toFixed(2):'—'}</span></div>
-                <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);">Vol. Band <span style="font-family:var(--font-mono);color:var(--text-white);margin-left:0.4rem;">±${row.volatility_band!=null?row.volatility_band.toFixed(2):'—'}</span></div>
-            </div>
+    el.innerHTML = `<div style="padding:0.75rem 1.2rem 0.85rem;">
+        <div style="display:flex;align-items:center;gap:0.25rem;flex-wrap:nowrap;">
+            ${cell('Pre-Overlay', pre, 'var(--w65)')}
+            ${sep}
+            ${cell('Overlay Adj', ov, ovCol, true)}
+            ${sep}
+            ${cell('Mkt Size Bonus', ms, 'var(--accent-blue)', true)}
+            ${sep}
+            ${cell('Final RAO', fin, 'var(--accent-gold)', false, true)}
+            <div style="width:1px;height:48px;background:rgba(255,255,255,0.07);margin:0 0.35rem;align-self:center;flex-shrink:0;"></div>
+            ${metaCell('CVaR₂₅', row.cvar25!=null?row.cvar25.toFixed(2):'—')}
+            ${metaCell('Vol. Band', row.volatility_band!=null?'±'+row.volatility_band.toFixed(2):'—')}
         </div>
     </div>`;
 }
@@ -5904,28 +5897,28 @@ function renderRAOTimeSeries(iso) {
             datasets: [
                 // ── Pillar fill layers (stacked, transparent) ──
                 {
-                    label: 'Pillar A (Growth)',
+                    label: 'Opportunity',
                     data: pillarFills.map(p => p.a),
                     borderWidth: 0, pointRadius: 0, tension: 0.3,
                     fill: 'origin',
                     backgroundColor: 'rgba(232,148,58,0.18)'
                 },
                 {
-                    label: 'Pillar B (Risk)',
+                    label: 'Fragility',
                     data: pillarFills.map(p => p.a + p.b),
                     borderWidth: 0, pointRadius: 0, tension: 0.3,
                     fill: '-1',
                     backgroundColor: 'rgba(75,150,232,0.18)'
                 },
                 {
-                    label: 'Pillar C (Quality)',
+                    label: 'Absorptive Capacity',
                     data: pillarFills.map(p => p.a + p.b + p.c),
                     borderWidth: 0, pointRadius: 0, tension: 0.3,
                     fill: '-1',
                     backgroundColor: 'rgba(169,110,219,0.18)'
                 },
                 {
-                    label: 'Pillar D (Momentum)',
+                    label: 'Trajectory',
                     data: pillarFills.map(p => p.a + p.b + p.c + p.d),
                     borderWidth: 0, pointRadius: 0, tension: 0.3,
                     fill: '-1',
@@ -5962,12 +5955,12 @@ function renderRAOTimeSeries(iso) {
             responsive: true, maintainAspectRatio: true,
             plugins: {
                 legend: { display: true, position: 'bottom', labels: { color:'rgba(238,234,224,0.5)', font:{size:10}, boxWidth:10, padding:12,
-                    filter: item => !['Pillar A (Growth)','Pillar B (Risk)','Pillar C (Quality)','Pillar D (Momentum)'].includes(item.text)
+                    filter: item => !['Opportunity','Fragility','Absorptive Capacity','Trajectory'].includes(item.text)
                 } },
                 tooltip: {
                     mode: 'index', intersect: false,
                     callbacks: { label: ctx => {
-                        if (['Pillar A (Growth)','Pillar B (Risk)','Pillar C (Quality)','Pillar D (Momentum)'].includes(ctx.dataset.label)) return null;
+                        if (['Opportunity','Fragility','Absorptive Capacity','Trajectory'].includes(ctx.dataset.label)) return null;
                         return `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2) ?? '—'}`;
                     }}
                 }
@@ -6021,7 +6014,7 @@ function renderPillarRadar(iso, year) {
     const peerC = peers.length ? peers.reduce((s,p)=>s+(p.pillar_absorptive_capacity||0),0)/peers.length : null;
     const peerD = peers.length ? peers.reduce((s,p)=>s+(p.pillar_trajectory||0),0)/peers.length : null;
 
-    const labels = ['A · Growth Engine','B · Risk Brake (inv)','C · Quality Filter','D · Momentum'];
+    const labels = ['Opportunity','Fragility (inv)','Absorptive Capacity','Trajectory'];
     const countryVals = [
         row.pillar_opportunity || 0,
         1 - (row.pillar_fragility || 0),
@@ -6064,13 +6057,13 @@ function renderTDMPanel(iso, year) {
 
     const arc = (val, col, size=60) => {
         const pct = Math.max(0, Math.min(1, val || 0));
-        return `<div style="position:relative;width:${size}px;height:${size}px;margin:0 auto 0.35rem;">
+        return `<div style="position:relative;width:${size}px;height:${size}px;margin:0 auto;">
             <svg viewBox="0 0 36 36" style="width:100%;height:100%;transform:rotate(-90deg);">
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="${col}" stroke-width="3"
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2.5"/>
+                <circle cx="18" cy="18" r="15.9" fill="none" stroke="${col}" stroke-width="2.5"
                     stroke-dasharray="${(pct*100).toFixed(1)} 100" stroke-linecap="round"/>
             </svg>
-            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:${size>=60?'0.78':'0.68'}rem;color:${col};font-weight:600;">${pct.toFixed(2)}</div>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:${size>=70?'0.9':'0.72'}rem;color:${col};font-weight:600;">${pct.toFixed(2)}</div>
         </div>`;
     };
 
@@ -6078,22 +6071,37 @@ function renderTDMPanel(iso, year) {
     const isPulse = tosScore >= 0.5;
     const tosLabel = row.tos_signal_label || '';
 
-    const subBox = (label, val, col) => `<div style="text-align:center;padding:0.6rem 0.25rem;border:1px solid rgba(255,255,255,0.05);border-radius:3px;background:rgba(255,255,255,0.02);">
-        ${arc(val, col, 50)}
-        <div style="font-family:var(--font-minor);font-size:0.56rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);line-height:1.3;">${label}</div>
-    </div>`;
+    const SUB_DESCS = {
+        sis: 'S-curve inflection proximity — structural acceleration signal',
+        dgi: 'Discovery gap — fundamentals vs external capital recognition',
+        rvs: 'Reform velocity — governance trend × GDELT event data'
+    };
 
-    el.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;padding:0.25rem;">
-        <div style="text-align:center;padding:0.6rem 0.5rem;${isPulse?'box-shadow:0 0 14px rgba(194,165,109,0.2);border:1px solid rgba(194,165,109,0.3);border-radius:3px;background:rgba(194,165,109,0.04);':'border:1px solid rgba(255,255,255,0.04);border-radius:3px;'}">
-            ${arc(tosScore, '#C2A56D', 64)}
-            <div style="font-family:var(--font-minor);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-gold);margin-bottom:0.25rem;">TOS — Take-off Signal</div>
-            ${tosBadge(tosLabel)}
+    const subBox = (key, label, val, col) => {
+        const pct = Math.max(0, Math.min(1, val || 0));
+        const barW = Math.round(pct * 100);
+        return `<div style="display:flex;align-items:center;gap:0.85rem;padding:0.6rem 0.75rem;border:1px solid rgba(255,255,255,0.05);border-radius:2px;background:rgba(255,255,255,0.015);">
+            ${arc(val, col, 46)}
+            <div style="flex:1;min-width:0;">
+                <div style="font-family:var(--font-minor);font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:${col};margin-bottom:0.15rem;">${label}</div>
+                <div style="font-family:var(--font-body);font-size:0.72rem;color:var(--text-muted);line-height:1.35;margin-bottom:0.4rem;">${SUB_DESCS[key]}</div>
+                <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;"><div style="width:${barW}%;height:100%;background:${col};border-radius:2px;transition:width 0.6s;"></div></div>
+            </div>
+        </div>`;
+    };
+
+    el.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px;padding:0.2rem 0 0.25rem;">
+        <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem 0.75rem;${isPulse?'background:rgba(194,165,109,0.05);border:1px solid rgba(194,165,109,0.28);border-radius:2px;box-shadow:0 0 16px rgba(194,165,109,0.12);':'border:1px solid rgba(255,255,255,0.05);border-radius:2px;'}">
+            ${arc(tosScore, '#C2A56D', 76)}
+            <div style="flex:1;">
+                <div style="font-family:var(--font-minor);font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent-gold);margin-bottom:0.3rem;">TOS · Take-off Signal</div>
+                <div style="margin-bottom:0.4rem;">${tosBadge(tosLabel)}</div>
+                <div style="font-family:var(--font-body);font-size:0.75rem;color:var(--text-muted);line-height:1.4;">Geometric mean of SIS, DGI, and RVS sub-signals. Scores ≥ 0.50 indicate pre-breakout candidate status.</div>
+            </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-            ${subBox('SIS · S-curve', row.sis_score, '#607c98')}
-            ${subBox('DGI · Discovery', row.dgi_score, '#9b8fc0')}
-            ${subBox('RVS · Reform', row.rvs_score, '#5d8a72')}
-        </div>
+        ${subBox('sis','SIS', row.sis_score, '#607c98')}
+        ${subBox('dgi','DGI', row.dgi_score, '#9b8fc0')}
+        ${subBox('rvs','RVS', row.rvs_score, '#5d8a72')}
     </div>`;
 }
 
@@ -6104,10 +6112,10 @@ function renderNormVarBreakdown(iso, year) {
     if (!row || !el) return;
 
     const PILLAR_GROUPS = [
-        { key:'opportunity', label:'A · Growth Engine', color:'#C2A56D', vars: PILLARS.opportunity.vars },
-        { key:'fragility',   label:'B · Risk Brake',    color:'#966060', vars: PILLARS.fragility.vars },
-        { key:'absorptive',  label:'C · Quality Filter', color:'#607c98', vars: PILLARS.absorptive.vars },
-        { key:'trajectory',  label:'D · Momentum',       color:'#5d8a72', vars: PILLARS.trajectory.vars }
+        { key:'opportunity', label:'Opportunity',        color:'#C2A56D', vars: PILLARS.opportunity.vars },
+        { key:'fragility',   label:'Fragility',          color:'#966060', vars: PILLARS.fragility.vars },
+        { key:'absorptive',  label:'Absorptive Capacity',color:'#607c98', vars: PILLARS.absorptive.vars },
+        { key:'trajectory',  label:'Trajectory',         color:'#5d8a72', vars: PILLARS.trajectory.vars }
     ];
 
     const globalMeans = {};
@@ -7241,7 +7249,7 @@ function _renderCompareRadar(isos) {
     const rows = isos.map(iso => getLatestRow(iso)).filter(Boolean);
     if (!rows.length) return;
 
-    const labels = ['A · Growth','B · Risk (inv)','C · Quality','D · Momentum'];
+    const labels = ['Opportunity','Fragility (inv)','Absorptive Capacity','Trajectory'];
     const datasets = rows.map((r, i) => ({
         label: r.country_name,
         data: [r.pillar_opportunity||0, 1-(r.pillar_fragility||0), r.pillar_absorptive_capacity||0, r.pillar_trajectory||0],
@@ -7269,7 +7277,7 @@ function _renderComparePillarBars(isos) {
     const rows = isos.map(iso => getLatestRow(iso)).filter(Boolean);
     if (!rows.length) return;
 
-    const labels = ['A Growth','B Risk (inv)','C Quality','D Momentum'];
+    const labels = ['Opportunity','Fragility (inv)','Absorptive Capacity','Trajectory'];
     const datasets = rows.map((r,i) => ({
         label: r.country_name,
         data: [r.pillar_opportunity||0, 1-(r.pillar_fragility||0), r.pillar_absorptive_capacity||0, r.pillar_trajectory||0],
@@ -8772,8 +8780,8 @@ function _renderArchetypeClusterScatter() {
             maintainAspectRatio: false,
             animation: { duration: 600 },
             scales: {
-                x: { title: { display: true, text: 'Pillar A — Growth Engine (0–1)', color: 'rgba(238,234,224,0.5)', font: { size: 11 } }, min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } },
-                y: { title: { display: true, text: 'Pillar C — Quality Filter (0–1)', color: 'rgba(238,234,224,0.5)', font: { size: 11 } }, min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } }
+                x: { title: { display: true, text: 'Opportunity (0–1)', color: 'rgba(238,234,224,0.5)', font: { size: 11 } }, min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } },
+                y: { title: { display: true, text: 'Absorptive Capacity (0–1)', color: 'rgba(238,234,224,0.5)', font: { size: 11 } }, min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(238,234,224,0.5)', font: { size: 10 } } }
             },
             plugins: {
                 legend: { position: 'top', labels: { color: 'rgba(238,234,224,0.7)', font: { size: 10 }, boxWidth: 8, padding: 12 } },
@@ -10605,7 +10613,7 @@ function buildStaticContext() {
     ).join('\n');
 
     datasetContextCache = `RAO Framework v2.1 — panel dataset 2010–2024, ${n} countries, Bayesian CVaR₂₅ scoring engine, 1–10 scale (higher=better).
-4 Pillars: A=Opportunity/Growth Engine | B=Fragility/Risk Brake (lower fragility=better, displayed inverted) | C=Absorptive Capacity/Quality Filter (geometric mean — collapses near zero if any component fails) | D=Trajectory/Momentum Signal (OLS trend × R²).
+4 Pillars: Opportunity | Fragility (lower=better, displayed inverted) | Absorptive Capacity (geometric mean — collapses near zero if any component fails) | Trajectory (OLS trend × R²).
 TDM: TOS = geometric mean of SIS (S-curve inflection proximity) × DGI (discovery gap: fundamentals vs external capital recognition) × RVS (reform velocity: WGI trend + GDELT).
 4 Regimes: RO=Robust Opportunity (high score, low volatility) | FO=Fragile Opportunity (high score, high volatility) | SL=Stable/Low (low, low) | SR=Structural Risk (low, high).
 PRIMARY SIGNAL: FO/SR + TOS > 0.50 = pre-breakout candidates. FO + High TOS = clearest entry signal. SR + High TOS = highest conviction/risk.
@@ -10710,10 +10718,10 @@ The RAO Framework is designed to identify countries at structural pre-breakout �
 PRIMARY INVESTMENT THESIS: The actionable signal is a country in Fragile Opportunity (FO) or Structural Risk (SR) regime combined with TOS score above 0.50. FO + High TOS = clearest entry signal: structural momentum present, institutional quality not yet fully confirmed. SR + High TOS = highest conviction/risk signal: deep structural deficiencies alongside an inflection signal. Regime transitions are signals: SR→FO = due diligence trigger; FO→RO = institutional capital entry point.
 
 4 PILLARS:
-- A: Growth Engine (Opportunity) — GDP growth, export growth, net FDI, gross capital formation, secondary school enrolment
-- B: Risk Brake (Fragility, lower=better in raw form; displayed inverted so higher=safer) — inflation, government debt, current account, external debt, political stability, rule of law, control of corruption
-- C: Quality Filter (Absorptive Capacity, geometric mean) — resource rents, GDP per capita growth, youth unemployment, vulnerable employment, regulatory quality. Collapses to near zero if any component fails.
-- D: Momentum Signal (Trajectory) — OLS trends × R² for GDP growth, FDI, governance, debt, and inflation
+- Opportunity — GDP growth, export growth, net FDI, gross capital formation, secondary school enrolment
+- Fragility (lower=better in raw form; displayed inverted so higher=safer) — inflation, government debt, current account, external debt, political stability, rule of law, control of corruption
+- Absorptive Capacity (geometric mean) — resource rents, GDP per capita growth, youth unemployment, vulnerable employment, regulatory quality. Collapses to near zero if any component fails.
+- Trajectory — OLS trends × R² for GDP growth, FDI, governance, debt, and inflation
 
 TAKE-OFF DETECTION MODULE (TDM):
 TOS = geometric mean of: SIS (S-curve inflection proximity — is the country approaching structural acceleration?), DGI (discovery gap — gap between fundamentals and external capital recognition), RVS (reform velocity — WGI trend × GDELT event data). Strong Pre-Breakout Signal = TOS ≥ 0.70. Pre-Breakout Signal = TOS ≥ 0.55. Moderate Potential = TOS 0.35–0.55.
@@ -11209,10 +11217,10 @@ function makeChartWrapper(title) {
 const _chartInstances = [];
 function registerChart(instance) { _chartInstances.push(instance); }
 
-// ===== SCATTER PLOT (rao8: Pillar A vs C, colored by regime) =====
+// ===== SCATTER PLOT (rao8: Opportunity vs Absorptive Capacity, colored by regime) =====
 function buildScatterPlot({ highlight = [], title } = {}) {
     if (!latestSlice.length) return null;
-    const { wrapper, canvas } = makeChartWrapper(title || 'Growth Engine vs Quality Filter — Structural Positioning');
+    const { wrapper, canvas } = makeChartWrapper(title || 'Opportunity vs Absorptive Capacity — Structural Positioning');
     const highlightSet = new Set(highlight.map(h => resolveCountry(h)?.country).filter(Boolean));
     const regimes = ['RO','FO','SL','SR'];
     const datasets = regimes.map(regime => {
@@ -11240,11 +11248,11 @@ function buildScatterPlot({ highlight = [], title } = {}) {
             responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
             plugins: {
                 legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 }, boxWidth: 8, padding: 10 } },
-                tooltip: { callbacks: { title: i => i[0]?.raw?.label||'', label: item => { const d=item.raw; return [`Pillar A: ${d.x.toFixed(2)} · Pillar C: ${d.y.toFixed(2)}`, `RAO: ${(d.rao||0).toFixed(2)}`]; } }, backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold }
+                tooltip: { callbacks: { title: i => i[0]?.raw?.label||'', label: item => { const d=item.raw; return [`Opportunity: ${d.x.toFixed(2)} · Absorptive: ${d.y.toFixed(2)}`, `RAO: ${(d.rao||0).toFixed(2)}`]; } }, backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold }
             },
             scales: {
-                x: { title: { display: true, text: 'Pillar A — Growth Engine (0–1)', color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
-                y: { title: { display: true, text: 'Pillar C — Quality Filter (0–1)', color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } }
+                x: { title: { display: true, text: 'Opportunity (0–1)', color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
+                y: { title: { display: true, text: 'Absorptive Capacity (0–1)', color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } }
             }
         },
         plugins: [{
@@ -11271,7 +11279,7 @@ function buildRadarChart({ countries = [], title } = {}) {
     if (!resolved.length) return null;
 
     const { wrapper, canvas } = makeChartWrapper(title || `Pillar Radar — ${resolved.map(c => c.country_name).join(' · ')}`);
-    const labels = ['A Growth Engine', 'B Risk Brake (inv)', 'C Quality Filter', 'D Momentum Signal'];
+    const labels = ['Opportunity', 'Fragility (inv)', 'Absorptive Capacity', 'Trajectory'];
     const colors = [
         { border: CHART_THEME.gold, bg: 'rgba(194,165,109,0.12)' },
         { border: CHART_THEME.blueSolid, bg: 'rgba(96,124,152,0.12)' },
@@ -11329,10 +11337,10 @@ function buildBarChart({ mode, country, metric = 'rao_score', top_n = 15, title 
         if (!c) return null;
         const row = getLatestRow(c.country) || c;
         const pillars = [
-            { name: 'A Growth Engine',      score: row.pillar_opportunity || 0,              color: PILLARS.opportunity.color },
-            { name: 'B Risk Brake (inv)',    score: 1 - (row.pillar_fragility || 0),          color: PILLARS.fragility.color },
-            { name: 'C Quality Filter',      score: row.pillar_absorptive_capacity || 0,      color: PILLARS.absorptive.color },
-            { name: 'D Momentum Signal',     score: row.pillar_trajectory || 0,               color: PILLARS.trajectory.color }
+            { name: 'Opportunity',        score: row.pillar_opportunity || 0,              color: PILLARS.opportunity.color },
+            { name: 'Fragility (inv)',     score: 1 - (row.pillar_fragility || 0),          color: PILLARS.fragility.color },
+            { name: 'Absorptive Capacity',score: row.pillar_absorptive_capacity || 0,      color: PILLARS.absorptive.color },
+            { name: 'Trajectory',         score: row.pillar_trajectory || 0,               color: PILLARS.trajectory.color }
         ];
         labels = pillars.map(p => p.name);
         values = pillars.map(p => parseFloat(p.score.toFixed(3)));
@@ -11458,7 +11466,7 @@ function buildChatRegimeMatrix({ year = 2024, title } = {}) {
 <!-- Auth Modal -->
 <div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
     <div class="auth-modal" style="position:relative;">
-        <button class="auth-close-btn" onclick="closeAuthModal()">&#x2715;</button>
+        <button class="auth-close-btn" onclick="closeAuthModal()"><i class="ri-close-line"></i></button>
         <div class="auth-modal-logo">
             <img src="assets/gsu.png" alt="GSU">
             <h2>RAO Insights</h2>
@@ -11504,7 +11512,7 @@ function buildChatRegimeMatrix({ year = 2024, title } = {}) {
                     </svg>
                     Continue with Google
                 </button>
-                <p style="font-size:0.78rem; color:var(--text-muted); text-align:center;">
+                <p style="font-family:var(--font-minor);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);text-align:center;line-height:1.5;">
                     Free accounts get access to the AI chatbot. Employee access is granted by the director.
                 </p>
             </div>
@@ -11826,11 +11834,11 @@ function buildChatRegimeMatrix({ year = 2024, title } = {}) {
             <p style="margin-bottom:1.2rem;">The <strong style="color:var(--text-white);">Risk-Adjusted Opportunity (RAO) Framework v2.1</strong> is a Bayesian geoeconomic scoring engine developed by the Sixteenth Council's Geoeconomic Strategy Unit. It ranks <strong style="color:var(--text-white);">162 countries</strong> on a 1–10 scale using a panel dataset covering 2010–2024 (2,430 rows, 49 columns). The headline score is a <strong style="color:var(--text-white);">CVaR₂₅ metric</strong> — it reflects the worst-25% of simulated pillar-weight scenarios, not an optimistic central estimate.</p>
 
             <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Four Structural Pillars</div>
-            <div style="display:grid; grid-template-columns:auto 1fr; gap:0.5rem 1rem; margin-bottom:1.2rem; align-items:start;">
-                <span style="font-family:var(--font-minor);font-size:0.65rem;font-weight:700;color:#C2A56D;">A</span><div style="font-size:0.85rem;color:var(--text-white);"><strong>Growth Engine</strong> <span style="color:var(--text-muted);font-size:0.78rem;">— GDP growth, export growth, net FDI, gross capital formation, secondary school enrolment</span></div>
-                <span style="font-family:var(--font-minor);font-size:0.65rem;font-weight:700;color:#966060;">B</span><div style="font-size:0.85rem;color:var(--text-white);"><strong>Risk Brake</strong> (Fragility, lower=better) <span style="color:var(--text-muted);font-size:0.78rem;">— inflation, government debt, current account, external debt, political stability, rule of law, corruption</span></div>
-                <span style="font-family:var(--font-minor);font-size:0.65rem;font-weight:700;color:#607c98;">C</span><div style="font-size:0.85rem;color:var(--text-white);"><strong>Quality Filter</strong> (geometric mean — collapses if any component fails) <span style="color:var(--text-muted);font-size:0.78rem;">— resource rents, GDP per capita growth, youth unemployment, vulnerable employment, regulatory quality</span></div>
-                <span style="font-family:var(--font-minor);font-size:0.65rem;font-weight:700;color:#5d8a72;">D</span><div style="font-size:0.85rem;color:var(--text-white);"><strong>Momentum Signal</strong> (OLS trend × R²) <span style="color:var(--text-muted);font-size:0.78rem;">— GDP growth trend, FDI trend, governance trend, debt trend, inflation trend</span></div>
+            <div style="display:grid; grid-template-columns:1fr; gap:0.5rem; margin-bottom:1.2rem;">
+                <div style="padding:0.4rem 0.75rem;border-left:2px solid #C2A56D;font-size:0.85rem;"><strong style="color:#C2A56D;">Opportunity</strong> <span style="color:var(--text-muted);font-size:0.78rem;">— GDP growth, export growth, net FDI, gross capital formation, secondary school enrolment</span></div>
+                <div style="padding:0.4rem 0.75rem;border-left:2px solid #966060;font-size:0.85rem;"><strong style="color:#966060;">Fragility</strong> <span style="color:var(--text-muted);font-size:0.78rem;">(lower=better, displayed inverted) — inflation, government debt, current account, external debt, political stability, rule of law, corruption</span></div>
+                <div style="padding:0.4rem 0.75rem;border-left:2px solid #607c98;font-size:0.85rem;"><strong style="color:#607c98;">Absorptive Capacity</strong> <span style="color:var(--text-muted);font-size:0.78rem;">(geometric mean — collapses if any component fails) — resource rents, GDP per capita growth, youth unemployment, vulnerable employment, regulatory quality</span></div>
+                <div style="padding:0.4rem 0.75rem;border-left:2px solid #5d8a72;font-size:0.85rem;"><strong style="color:#5d8a72;">Trajectory</strong> <span style="color:var(--text-muted);font-size:0.78rem;">(OLS trend × R²) — GDP growth trend, FDI trend, governance trend, debt trend, inflation trend</span></div>
             </div>
 
             <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Take-off Detection Module (TDM)</div>
