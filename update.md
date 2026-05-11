@@ -142,6 +142,160 @@ This document records all changes made to the repository during the 2026-05-09 w
 
 ## 5. Deferred / Not Yet Done
 
-- **Login/signup fixes** — deferred to a later session (Firebase auth flow errors)
-- **Compare, Rankings, Analytics, Insights tabs** — not yet reviewed for layout/chart issues
+- **Compare, Rankings, Analytics, Insights tabs** — not fully reviewed for all layout/chart issues
 - **CSS/HTML split** — dashboard.html is 11,700+ lines; splitting into separate CSS file deferred
+
+---
+---
+
+# GSU Site — Update Log (2026-05-10)
+
+This document records all changes made to `dashboard.html` during the 2026-05-10 work session. All changes are in `dashboard.html` only (no structural file moves this session).
+
+---
+
+## 1. Overview Tab — Year-Aware Data
+
+### Top 10 / Bottom 10 (`_renderTop10Bottom10`)
+- Changed `rawData` → `getSlice(_landscapeYear)` so the top/bottom country lists update when the year slider is changed
+- Added call to `_renderTop10Bottom10()` inside `setLandscapeYear()` so it re-renders on every year change
+
+### Regional Breakdown (`renderRegionalSection`)
+- Changed `rawData` → `getSlice(_landscapeYear)` stored as `yearSlice`
+- Added call to `renderRegionalSection()` inside `setLandscapeYear()`
+
+---
+
+## 2. Analysis Tab — Search Box & Country Dropdown
+
+### Dropdown Clipping (portal pattern)
+- Root cause: `.tab-content.active` has a `fadeIn` CSS animation using `transform: translateY()`, which creates a CSS containing block — making `position:fixed` children behave like `position:absolute` during the animation, causing the dropdown to be clipped by `overflow:hidden` ancestors
+- Fix: moved `#search-results` div to a direct child of `<body>` (standard portal pattern); JS positions it with `getBoundingClientRect()` on the `.search-box`
+- `_positionSearchResults()` measures `.search-box` bounding rect and applies `top`/`left`/`width` to the fixed-position portal
+- Scroll listener repositions results when page is scrolled while dropdown is open
+
+### Search Box Width
+- `.search-box` changed from `width: 300px` to `width: 100%` so it fills the flex row
+
+### Analysis section container
+- Added `overflow:visible` to the glow-section container wrapping the search bar (was `overflow:hidden`, clipping the dropdown)
+
+### Media query fix
+- `.search-box { display:none }` → `.header .search-box { display:none }` so analysis search input is not hidden on mobile
+
+### Keyboard Navigation for Country Search
+- Added `onkeydown="handleSearchKeydown(event)"` to the search input
+- New `handleSearchKeydown()`: ArrowDown/Up moves highlight, Enter selects, Escape closes
+- New `_setSearchKbIndex()`: manages `kb-active` CSS class on result items
+- New `_closeSearch()`: centralised close + reset helper used by document click and keyboard Escape
+- `.search-result-item.kb-active` CSS rule added: `background: var(--tertiary-bg); outline: 1px solid rgba(194,165,109,0.35)`
+
+### Browser Autocomplete Suppression
+- Added `autocomplete="off" autocorrect="off" spellcheck="false"` to the search input — prevents browser address autofill from hijacking keyboard arrow keys
+
+---
+
+## 3. Rankings Tab
+
+### Stats Defaulting to 0 on Load
+- `initializeRankingsTab()` was calling `updateRankingsTable()` directly, which does not update quick-stats
+- Fixed by calling `filterRankings()` instead — the orchestrating function that calls both `updateRankingsTable()` and `updateQuickStats()`
+
+### Score Mini-Bar Gradient Overlapping Text
+- `.score-with-bar` changed from relative-position container to `display:flex; flex-direction:column; gap:3px`
+- `.score-mini-bar` changed from `position:absolute; z-index:-1` (which overlapped score text) to a plain block element in the column flow
+- Score number and bar now stack vertically with no overlap
+
+### Star / Favourites — Dedicated Column
+- Moved `<span class="favorite-star">` out of the Country name `<td>` — star was inline with the country name and could wrap to a new line on narrow columns
+- Added new `<th>` header (36 px wide, star icon, no sort action) between Country and RAO Score
+- Added matching `<td>` (36 px, centred, click triggers `toggleFavorite`) for each row
+- Country name cell now only contains the name and the data-completeness warning icon
+
+---
+
+## 4. Compare Tab — Pre-Populate on "Compare Countries"
+
+### `compareSelectedCountries()` Rewrite
+- Previous version used wrong element IDs (`country1-select` etc.) and called non-existent `runComparison()`
+- Rewrote to use correct IDs (`compare-country-1`, `compare-country-2`, `compare-country-3`) and `updateComparison()`
+- `switchTab('compare')` is called first; country selects are set after a 300 ms delay to let the tab render
+
+---
+
+## 5. Score Distribution Chart — Canvas Reuse Bug
+
+- Added `canvas._chartInst` destroy-before-recreate pattern to `renderScoreDistributionChart()`
+- Previously the chart was not destroyed before re-creation on year change, causing Chart.js to throw a canvas-already-in-use error and silently fail
+
+---
+
+## 6. Lock Screen (Analytics & Insights Tabs)
+
+### Position Fix — Always Visible Without Scrolling
+- `.tab-lock` changed from `position: absolute; inset: 0` to `position: fixed; inset: 0`
+- Previous: overlay spanned the full height of tab content (potentially thousands of pixels); `justify-content: center` placed the message far below the viewport requiring scroll to see it
+- Fixed: overlay now covers the viewport regardless of content height
+
+### Z-index — Tab Bar Remains Accessible
+- `.tab-lock` `z-index` set to `999` (below the fixed header at `z-index: 1000`)
+- The navigation tab bar floats above the lock blur, so users can switch to an accessible tab without being stuck
+
+---
+
+## 7. Auth Modal — Keyboard Navigation
+
+- `onkeydown="handleAuthKeydown(event)"` added to all auth form inputs: `login-email`, `login-password`, `reg-name`, `reg-email`, `reg-password`, `reset-email`
+- New `handleAuthKeydown(event)`: if Enter pressed, detects which form is currently visible and calls `handleEmailLogin()`, `handleEmailRegister()`, or `handlePasswordReset()` accordingly
+- Global `document.addEventListener('keydown')`: Escape key closes the auth modal when it is open
+
+---
+
+## 8. Registration — Smart Email-Already-Exists Detection
+
+Previous behaviour: `auth/email-already-in-use` always showed "That email is already registered." regardless of whether the existing account was verified or not — causing silent double-submissions when the user re-clicked.
+
+New `handleEmailRegister()` logic:
+
+| Scenario | What happens |
+|----------|-------------|
+| New email | Account created → success toast → verify panel shown |
+| Email exists, same password entered, account **unverified** | Verification email resent → toast → verify panel shown |
+| Email exists, same password entered, account **verified** | Inline error: "This email already has a verified account. Please sign in instead." |
+| Email exists, **different** password | Inline error: "An account with this email exists. Sign in or reset your password." |
+
+Implementation: on `auth/email-already-in-use`, attempts `signInWithEmail(email, password)` with the credentials already typed; branches on `cred.user.emailVerified` and on sign-in error codes.
+
+---
+
+## 9. Registration — Success Toast
+
+- New `showAuthToast(msg)` function: creates a floating bar fixed at `bottom: 2rem`, gold border, fades out after 3.5 s
+- Called on first successful registration ("Verification email sent — check your inbox.")
+- Called when verification email is resent to an unverified account ("Verification email resent — check your inbox.")
+
+---
+
+## 10. Auth UI — Unverified User Showing Avatar
+
+- Firebase signs users in immediately after `createUserWithEmailAndPassword`, even before email verification
+- Previously `onAuthReady(user)` showed the user avatar/menu for any non-null user, so a freshly registered but unverified user would see "Free" in the avatar spot
+- Fix: added `const isUnverified = user && !user.emailVerified && user.providerData[0]?.providerId === 'password'`; the avatar block only runs for `user && !isUnverified`
+- Unverified email/password users now see the Sign In button, not the avatar
+- Google OAuth users are unaffected (their `providerId` is `'google.com'` and they are always verified)
+
+---
+
+## 11. Files Changed Summary
+
+| File | Type of change |
+|------|---------------|
+| `dashboard.html` | All changes above — UI fixes, auth flow, keyboard nav, lock screen, rankings star column |
+
+---
+
+## 12. Deferred / Not Yet Done
+
+- **Analytics tab** — charts and layout not fully reviewed
+- **Insights tab** — brief grid and chatbot not reviewed for layout issues
+- **CSS/HTML split** — dashboard.html is 11,800+ lines; deferred

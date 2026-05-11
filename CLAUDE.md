@@ -116,7 +116,7 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 - **Dashboard only** (`dashboard.html`) is protected — all other pages are public.
 - Auth is handled by **Firebase** (project: `gsu-members`) via `firebase-config.js`.
 - Sign-in methods: email/password + Google OAuth (`signInWithPopup`).
-- Email verification is required before role assignment.
+- Email verification is required before role assignment. Unverified email/password users are treated as unauthenticated in the UI (Sign In button shown, no avatar) even though Firebase has technically signed them in — see Gotcha #10.
 - **User roles** stored in Firestore at `users/{uid}/`:
   - `director` — full access
   - `employee` — restricted access (with `level` 0–5)
@@ -328,6 +328,9 @@ The `gsu-gate` Cloudflare Worker gates the GRB quarterly reports:
 7. **Firebase config**: API keys in `firebase-config.js` are intentionally public (client-side SDK); access control is enforced via Firestore security rules on the backend
 8. **briefs.json vs insights/**: 3 briefs in `briefs.json` do not have corresponding PDFs in `insights/` — links will 404 until the PDFs are added
 9. **rao8.csv trend fields**: The fields `norm_gdp_growth_trend`, `norm_fdi_trend`, `norm_governance_trend`, `norm_debt_trend`, `norm_inflation_trend` are declared in dashboard.html's `NUMERIC_FIELDS` but absent from rao8.csv — they parse as `null`
+10. **Unverified Firebase users show as logged in**: Firebase's `onAuthStateChanged` fires with a non-null user immediately after `createUserWithEmailAndPassword`, before email is verified. `onAuthReady()` in dashboard.html treats these users as unauthenticated in the UI (shows Sign In button, not avatar) by checking `user.emailVerified && providerData[0].providerId === 'password'`. Do not remove this check.
+11. **`#search-results` portal**: The country search dropdown in the Analysis tab is a direct child of `<body>` (not inside `.search-box`). This is intentional — the `fadeIn` CSS animation on `.tab-content.active` uses `transform`, which creates a containing block that breaks `position:fixed` children during the animation. Moving it inside the search box again will cause the dropdown to be clipped.
+12. **Tab lock z-index**: `.tab-lock` is `position:fixed; z-index:999`. The fixed header is `z-index:1000`. Do not raise `.tab-lock` above 999 or the navigation tabs will be obscured and users will be stuck on the locked tab.
 
 ## Contact & Ownership
 
