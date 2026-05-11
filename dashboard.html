@@ -3810,7 +3810,7 @@
         .user-dropdown-item:hover { color: var(--text-white); background: rgba(255,255,255,0.04); }
         .user-dropdown-item.danger { color: rgba(220,100,100,0.85); }
         .user-dropdown-item.danger:hover { background: rgba(200,80,80,0.08); color: #e07070; }
-        .sign-in-btn { padding: 0.38rem 1.25rem; border-radius: 20px; cursor: pointer; font-size: 0.72rem; background: rgba(194,165,109,0.07); color: var(--accent-gold); border: 1px solid rgba(194,165,109,0.55); font-family: var(--font-mono); font-weight: 400; letter-spacing: 0.04em; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: all 0.25s; }
+        .sign-in-btn { height: 36px; padding: 0 1.25rem; border-radius: 20px; cursor: pointer; font-size: 0.72rem; background: rgba(194,165,109,0.07); color: var(--accent-gold); border: 1px solid rgba(194,165,109,0.55); font-family: var(--font-mono); font-weight: 400; letter-spacing: 0.04em; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: all 0.25s; display: inline-flex; align-items: center; }
         .sign-in-btn:hover { background: rgba(194,165,109,0.16); border-color: var(--accent-gold); color: #d9bc7a; box-shadow: 0 0 12px rgba(194,165,109,0.18); }
 
         /* ── TAB LOCK OVERLAY ──────────────────────────────────────────────── */
@@ -3818,7 +3818,7 @@
         .tab-lock i { font-size: 2.5rem; color: var(--accent-gold); opacity: 0.7; }
         .tab-lock h3 { font-family: var(--font-head); font-size: 1.4rem; font-weight: 400; color: var(--text-white); }
         .tab-lock p { color: var(--text-muted); font-size: 0.95rem; text-align: center; max-width: 340px; }
-        .tab-lock .auth-btn { min-width: 160px; }
+        .tab-lock .auth-btn { min-width: 160px; width: auto; }
     </style>
 </head>
 <body>
@@ -4640,7 +4640,6 @@
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="config.js"></script>
 <script>
 // ===== PROGRESS BAR =====
 (function() {
@@ -4655,9 +4654,8 @@
 })();
 
 // ===== GROQ / KIMI K2 CONFIG =====
-// GROQ_API_KEY is loaded from config.js (excluded from version control)
-const GROQ_MODEL   = 'moonshotai/kimi-k2-instruct';
-const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+// Requests are proxied through the Cloudflare Worker (WORKER_URL from firebase-config.js)
+const GROQ_MODEL = 'moonshotai/kimi-k2-instruct';
 
 const CHART_TOOLS = [
     {
@@ -10786,11 +10784,6 @@ async function sendChatMessage() {
     const userText = input.value.trim();
     if (!userText || isChatLoading) return;
 
-    if (!GROQ_API_KEY || GROQ_API_KEY === 'YOUR_GROQ_API_KEY_HERE') {
-        renderChatMessage('assistant', '**Configuration required.** Open `dashboard.html` and set `GROQ_API_KEY` at the top of the `<script>` block.', true);
-        return;
-    }
-
     renderChatMessage('user', userText);
     input.value = '';
     input.style.height = '52px';
@@ -10879,12 +10872,9 @@ async function callGroqAPI(messages, tools = null) {
     if (GROQ_MODEL.startsWith('groq/compound')) {
         body.compound_custom = { tools: { enabled_tools: [] } };
     }
-    const response = await fetch(GROQ_ENDPOINT, {
+    const response = await fetch(WORKER_URL, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${GROQ_API_KEY}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
     });
     if (!response.ok) {

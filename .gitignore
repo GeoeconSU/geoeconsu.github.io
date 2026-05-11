@@ -2,6 +2,10 @@
 # Local commit script
 commit.sh
 
+# API keys (never commit)
+config.js
+.env
+
 # Dev/test pages (not for deployment)
 dev/
 
