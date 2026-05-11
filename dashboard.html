@@ -3754,8 +3754,9 @@
         }
         .auth-overlay.visible .auth-modal { transform: translateY(0); }
         .auth-modal-logo { text-align: center; margin-bottom: 1.75rem; }
-        .auth-modal-logo img { width: 34px; margin-bottom: 0.75rem; opacity: 0.92; display: block; margin-left: auto; margin-right: auto; }
-        .auth-modal-logo h2 { font-family: var(--font-head); font-size: 1.2rem; color: var(--accent-gold); font-weight: 400; letter-spacing: 0.03em; margin-bottom: 0.35rem; }
+        .auth-modal-logo img { width: 42px; margin-bottom: 0.85rem; opacity: 0.92; display: block; margin-left: auto; margin-right: auto; }
+        .auth-modal-logo h2 { font-family: var(--font-head); font-size: 1.3rem; color: var(--text-white); font-weight: 400; letter-spacing: -0.01em; margin-bottom: 0.35rem; }
+        .auth-modal-logo h2 em { color: var(--accent-gold); font-style: italic; }
         .auth-modal-logo p { font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-muted); }
         .auth-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 1.5rem; }
         .auth-tab-btn { flex: 1; padding: 0.6rem 0.5rem; background: none; border: none; cursor: pointer; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; border-bottom: 2px solid transparent; transition: all 0.2s; }
@@ -11487,7 +11488,7 @@ function buildChatRegimeMatrix({ year = 2024, title } = {}) {
         <button class="auth-close-btn" onclick="closeAuthModal()"><i class="ri-close-line"></i></button>
         <div class="auth-modal-logo">
             <img src="assets/gsu.png" alt="GSU">
-            <h2>RAO Insights</h2>
+            <h2>RAO <em>Insights</em></h2>
             <p id="auth-modal-subtitle">Sign in to access member features</p>
         </div>
         <div class="auth-tabs">
@@ -11530,9 +11531,6 @@ function buildChatRegimeMatrix({ year = 2024, title } = {}) {
                     </svg>
                     Continue with Google
                 </button>
-                <p style="font-family:var(--font-minor);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);text-align:center;line-height:1.5;">
-                    Free accounts get access to the AI chatbot. Employee access is granted by the director.
-                </p>
             </div>
         </div>
         <div id="auth-reset-form" style="display:none;">
