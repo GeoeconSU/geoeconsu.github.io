@@ -10863,14 +10863,13 @@ async function callGroqAPI(messages, tools = null) {
         max_tokens: 4096,
         stream: false
     };
-    if (tools) {
+    if (GROQ_MODEL.startsWith('groq/compound')) {
+        body.compound_custom = { tools: { enabled_tools: [] } };
+    } else if (tools) {
         body.tools = tools;
         body.tool_choice = 'auto';
     } else {
         body.tool_choice = 'none';
-    }
-    if (GROQ_MODEL.startsWith('groq/compound')) {
-        body.compound_custom = { tools: { enabled_tools: [] } };
     }
     const response = await fetch(WORKER_URL, {
         method: 'POST',
