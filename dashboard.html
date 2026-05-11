@@ -3738,52 +3738,61 @@
         /* ── AUTH OVERLAY ──────────────────────────────────────────────────── */
         .auth-overlay {
             position: fixed; inset: 0; z-index: 2000;
-            background: rgba(8,10,18,0.85); backdrop-filter: blur(12px);
+            background: rgba(8,10,18,0.8); backdrop-filter: blur(12px);
             display: flex; align-items: center; justify-content: center;
             opacity: 0; pointer-events: none; transition: opacity 0.25s var(--easing);
         }
         .auth-overlay.visible { opacity: 1; pointer-events: all; }
         .auth-modal {
-            width: 400px; max-width: calc(100vw - 40px);
-            background: #1a2131;
-            border: 1px solid rgba(255,255,255,0.07);
-            border-top: 2px solid var(--accent-gold);
-            border-radius: 2px;
-            box-shadow: 0 32px 80px rgba(0,0,0,0.8);
-            padding: 0; transform: translateY(14px); transition: transform 0.25s var(--easing);
-            overflow: hidden;
+            width: 420px; max-width: calc(100vw - 40px);
+            background: #192030;
+            border: 1px solid rgba(194,165,109,0.18);
+            border-radius: 3px;
+            box-shadow: 0 28px 72px rgba(0,0,0,0.72), inset 0 1px 0 rgba(255,255,255,0.05);
+            padding: 2.25rem 2.25rem 2rem;
+            transform: translateY(16px); transition: transform 0.28s var(--easing);
         }
         .auth-overlay.visible .auth-modal { transform: translateY(0); }
-        /* header band */
-        .auth-modal-logo { padding: 1.4rem 1.6rem 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.85rem; }
-        .auth-modal-logo img { width: 28px; opacity: 0.9; flex-shrink: 0; }
-        .auth-modal-logo-text { display: flex; flex-direction: column; gap: 0.15rem; }
-        .auth-modal-logo h2 { font-family: var(--font-minor); font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; color: var(--accent-gold); margin: 0; }
-        .auth-modal-logo p { font-family: var(--font-minor); font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin: 0; }
-        /* tabs */
-        .auth-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0 1.6rem; background: rgba(0,0,0,0.15); }
-        .auth-tab-btn { flex: 0; padding: 0.65rem 0; margin-right: 1.75rem; background: none; border: none; cursor: pointer; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .auth-modal-logo { text-align: center; margin-bottom: 1.75rem; }
+        .auth-modal-logo img { width: 34px; margin-bottom: 0.75rem; opacity: 0.92; display: block; margin-left: auto; margin-right: auto; }
+        .auth-modal-logo h2 { font-family: var(--font-head); font-size: 1.2rem; color: var(--accent-gold); font-weight: 400; letter-spacing: 0.03em; margin-bottom: 0.35rem; }
+        .auth-modal-logo p { font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-muted); }
+        .auth-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 1.5rem; }
+        .auth-tab-btn { flex: 1; padding: 0.6rem 0.5rem; background: none; border: none; cursor: pointer; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; border-bottom: 2px solid transparent; transition: all 0.2s; }
         .auth-tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
         .auth-tab-btn:hover:not(.active) { color: var(--w65); }
-        /* form body */
-        .auth-form { display: flex; flex-direction: column; gap: 0.65rem; padding: 1.4rem 1.6rem 1.6rem; }
-        .auth-form input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 1px; padding: 0.6rem 0.85rem; color: var(--text-white); font-family: var(--font-body); font-size: 0.88rem; outline: none; transition: border-color 0.2s, background 0.2s; }
-        .auth-form input:focus { border-color: rgba(194,165,109,0.45); background: rgba(255,255,255,0.06); }
-        .auth-form input::placeholder { color: var(--text-muted); font-size: 0.85rem; }
-        /* primary button — mirrors active nav-item */
-        .auth-btn { padding: 0.65rem 1rem; border-radius: 40px; border: none; cursor: pointer; font-family: var(--font-minor); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; transition: all 0.25s var(--easing); width: 100%; }
-        .auth-btn-primary { background: var(--accent-gold); color: var(--primary-bg); box-shadow: 0 4px 14px rgba(194,165,109,0.22); }
-        .auth-btn-primary:hover { background: #d4b565; box-shadow: 0 4px 20px rgba(194,165,109,0.38); transform: translateY(-1px); }
-        .auth-btn-google { background: rgba(255,255,255,0.05); color: var(--w65); border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-family: var(--font-body); font-size: 0.85rem; text-transform: none; letter-spacing: 0; }
-        .auth-btn-google:hover { background: rgba(255,255,255,0.09); color: var(--text-white); }
-        .auth-divider { text-align: center; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.12em; position: relative; }
-        .auth-divider::before, .auth-divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: rgba(255,255,255,0.07); }
+        .auth-form { display: flex; flex-direction: column; gap: 0.8rem; }
+        .auth-form input {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 2px; padding: 0.7rem 1rem; color: var(--text-white);
+            font-family: var(--font-body); font-size: 0.92rem; outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .auth-form input:focus { border-color: rgba(194,165,109,0.45); background: rgba(255,255,255,0.05); }
+        .auth-form input::placeholder { color: var(--text-muted); }
+        .auth-btn {
+            padding: 0.72rem 1rem; border-radius: 2px; border: none; cursor: pointer;
+            font-family: var(--font-minor); font-size: 0.72rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            transition: all 0.2s; width: 100%;
+        }
+        .auth-btn-primary { background: var(--accent-gold); color: #111926; }
+        .auth-btn-primary:hover { background: #d4b565; box-shadow: 0 0 18px rgba(194,165,109,0.28); }
+        .auth-btn-google {
+            background: rgba(255,255,255,0.04); color: var(--w65);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 2px;
+            display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+            font-family: var(--font-body); font-size: 0.88rem; text-transform: none; letter-spacing: 0;
+        }
+        .auth-btn-google:hover { background: rgba(255,255,255,0.08); color: var(--text-white); }
+        .auth-divider { text-align: center; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.14em; position: relative; }
+        .auth-divider::before, .auth-divider::after { content: ''; position: absolute; top: 50%; width: 38%; height: 1px; background: rgba(255,255,255,0.08); }
         .auth-divider::before { left: 0; }
         .auth-divider::after { right: 0; }
-        .auth-error { color: #c46060; font-family: var(--font-minor); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; min-height: 1.1rem; }
-        .auth-link { color: rgba(194,165,109,0.75); cursor: pointer; font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; text-align: center; transition: color 0.15s; }
+        .auth-error { color: #b85555; font-family: var(--font-minor); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; min-height: 1.1rem; }
+        .auth-link { color: rgba(194,165,109,0.7); cursor: pointer; font-family: var(--font-minor); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; text-align: center; transition: color 0.15s; }
         .auth-link:hover { color: var(--accent-gold); }
-        .auth-close-btn { position: absolute; top: 0.9rem; right: 1rem; background: none; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; line-height: 1; display: flex; align-items: center; padding: 0.2rem; transition: color 0.15s; }
+        .auth-close-btn { position: absolute; top: 0.85rem; right: 0.9rem; background: none; border: none; color: var(--text-muted); font-size: 1rem; cursor: pointer; line-height: 1; display: flex; align-items: center; padding: 0.2rem; transition: color 0.15s; }
         .auth-close-btn:hover { color: var(--text-white); }
 
         /* ── USER AVATAR MENU ──────────────────────────────────────────────── */
@@ -3800,7 +3809,7 @@
         .user-dropdown-item:hover { color: var(--text-white); background: rgba(255,255,255,0.04); }
         .user-dropdown-item.danger { color: rgba(220,100,100,0.85); }
         .user-dropdown-item.danger:hover { background: rgba(200,80,80,0.08); color: #e07070; }
-        .sign-in-btn { padding: 0.38rem 1.25rem; border-radius: 20px; cursor: pointer; font-size: 0.82rem; background: rgba(194,165,109,0.07); color: var(--accent-gold); border: 1px solid rgba(194,165,109,0.55); font-family: var(--font-head); font-weight: 400; letter-spacing: 0.05em; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: all 0.25s; }
+        .sign-in-btn { padding: 0.38rem 1.25rem; border-radius: 20px; cursor: pointer; font-size: 0.72rem; background: rgba(194,165,109,0.07); color: var(--accent-gold); border: 1px solid rgba(194,165,109,0.55); font-family: var(--font-mono); font-weight: 400; letter-spacing: 0.04em; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: all 0.25s; }
         .sign-in-btn:hover { background: rgba(194,165,109,0.16); border-color: var(--accent-gold); color: #d9bc7a; box-shadow: 0 0 12px rgba(194,165,109,0.18); }
 
         /* ── TAB LOCK OVERLAY ──────────────────────────────────────────────── */
@@ -11478,10 +11487,8 @@ function buildChatRegimeMatrix({ year = 2024, title } = {}) {
         <button class="auth-close-btn" onclick="closeAuthModal()"><i class="ri-close-line"></i></button>
         <div class="auth-modal-logo">
             <img src="assets/gsu.png" alt="GSU">
-            <div class="auth-modal-logo-text">
-                <h2>RAO Insights</h2>
-                <p id="auth-modal-subtitle">Sign in to access member features</p>
-            </div>
+            <h2>RAO Insights</h2>
+            <p id="auth-modal-subtitle">Sign in to access member features</p>
         </div>
         <div class="auth-tabs">
             <button class="auth-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">Sign In</button>
