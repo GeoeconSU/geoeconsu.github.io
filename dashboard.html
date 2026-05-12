@@ -10624,18 +10624,17 @@ function buildStaticContext() {
     const globalAvgRAO = avg(slice.map(r => r.rao_score));
     const globalAvgTOS = avg(slice.map(r => r.tos_score || 0));
 
-    // Compact index — 9 fields to stay within compound-mini context limits
+    // Compact index — 6 fields only; pillar detail available via tier-2 retrieval
     const indexRows = slice.map(r =>
-        `${r.country}|${r.country_name}|${r.rank}|${(r.rao_score||0).toFixed(2)}|${r.regime||'?'}|${(r.tos_score||0).toFixed(2)}|${(r.pillar_opportunity||0).toFixed(2)}|${(r.pillar_fragility||0).toFixed(2)}|${(r.pillar_absorptive_capacity||0).toFixed(2)}|${(r.pillar_trajectory||0).toFixed(2)}`
+        `${r.country}|${r.country_name}|${r.rank}|${(r.rao_score||0).toFixed(2)}|${r.regime||'?'}|${(r.tos_score||0).toFixed(2)}`
     ).join('\n');
 
-    datasetContextCache = `RAO Framework v2.1 — panel dataset 2010–2024, ${n} countries, Bayesian CVaR₂₅ scoring engine, 1–10 scale (higher=better).
-4 Pillars: Opportunity | Fragility (lower=better, displayed inverted) | Absorptive Capacity (geometric mean — collapses near zero if any component fails) | Trajectory (OLS trend × R²).
-TDM: TOS = geometric mean of SIS (S-curve inflection proximity) × DGI (discovery gap: fundamentals vs external capital recognition) × RVS (reform velocity: WGI trend + GDELT).
-4 Regimes: RO=Robust Opportunity (high score, low volatility) | FO=Fragile Opportunity (high score, high volatility) | SL=Stable/Low (low, low) | SR=Structural Risk (low, high).
-PRIMARY SIGNAL: FO/SR + TOS > 0.50 = pre-breakout candidates. FO + High TOS = clearest entry signal. SR + High TOS = highest conviction/risk.
+    datasetContextCache = `RAO Framework v2.1 — ${n} countries, 1–10 scale (higher=better).
+Pillars: Opportunity | Fragility (inverted, higher=safer) | Absorptive Capacity (geometric mean) | Trajectory (OLS trend×R²).
+Regimes: RO=Robust Opportunity | FO=Fragile Opportunity | SL=Stable/Low | SR=Structural Risk.
+TOS: geometric mean of SIS×DGI×RVS. Signal: FO/SR + TOS>0.50 = pre-breakout candidate.
 Global 2024: mean RAO=${globalAvgRAO}, mean TOS=${globalAvgTOS}
-INDEX(ISO|Name|Rank|RAO|Regime|TOS|Opp|Frag|AbsCap|Traj):
+INDEX(ISO|Name|Rank|RAO|Regime|TOS):
 ${indexRows}`;
 
     return datasetContextCache;
