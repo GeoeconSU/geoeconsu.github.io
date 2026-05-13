@@ -117,10 +117,15 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 - Auth is handled by **Firebase** (project: `gsu-members`) via `firebase-config.js`.
 - Sign-in methods: email/password + Google OAuth (`signInWithPopup`).
 - Email verification is required before role assignment. Unverified email/password users are treated as unauthenticated in the UI (Sign In button shown, no avatar) even though Firebase has technically signed them in — see Gotcha #10.
-- **User roles** stored in Firestore at `users/{uid}/`:
-  - `director` — full access
-  - `employee` — restricted access (with `level` 0–5)
-  - `free` — limited access
+- **Access tier** (`level` field, numeric) and **job function** (`role` field, string) are stored independently in Firestore at `users/{uid}/`. Unregistered users are not in Firestore at all; `currentUserLevel` is `null` in code for them.
+  - `level: 1` — Director/Founder (`role: 'director' | 'founder'`); founders can edit other founders, directors cannot
+  - `level: 2` — Department Head (`role: 'research-head' | 'tech-head' | 'social-head' | 'ops-head' | 'head'`)
+  - `level: 3` — Employee (`role: 'researcher' | 'developer' | 'analyst' | 'writer' | 'social-media'`)
+  - `level: 4` — Client (`role: 'client'`)
+  - `level: 5` — Free registered user (`role: 'free'`)
+  - `level: 6+` — Reserved for future roles
+  - `currentUserLevel: null` — Not in DB / unauthenticated (no Firestore record)
+- Access gates use `levelAtMost(n)` in `firebase-config.js` — returns true if `currentUserLevel !== null && currentUserLevel <= n`. Lower number = more privilege.
 - Firebase Analytics tracks all user interactions (tab views, logins, comparisons, etc.).
 
 ### Dashboard Tab Structure (`dashboard.html`)

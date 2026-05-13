@@ -11829,18 +11829,20 @@ function buildChatRegimeMatrix({ year = 2024, title } = {}) {
     function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
     // ── Tab locking ───────────────────────────────────────────────────────────────
+    // Values are the maximum level allowed (lower number = more privilege).
+    // null = public. Add new tabs here with the required level threshold.
     const TAB_ACCESS = {
         overview: null, analysis: null, compare: null, rankings: null,
-        analytics: 'employee',
-        insights: 'free',
+        analytics: 3,  // level 1–3 (director, head, employee)
+        insights:  5,  // level 1–5 (any registered user)
     };
     const LOCK_MESSAGES = {
-        employee: {
+        3: {
             title: 'Employee Access Required',
             desc: 'The Analytics module is available to GSU team members. Contact the director to get access.',
             btn: 'Sign In',
         },
-        free: {
+        5: {
             title: 'Sign In to Access Insights',
             desc: 'Create a free account to use the AI chatbot and get personalised intelligence.',
             btn: 'Sign In / Register',
@@ -11848,11 +11850,8 @@ function buildChatRegimeMatrix({ year = 2024, title } = {}) {
     };
     function canAccessTab(tabName) {
         const required = TAB_ACCESS[tabName];
-        if (!required) return true;
-        if (required === 'free') return isFreeUser();
-        if (required === 'employee') return isEmployee();
-        if (required === 'director') return isDirector();
-        return false;
+        if (required === null || required === undefined) return true;
+        return levelAtMost(required);
     }
     function refreshTabLocks() {
         Object.keys(TAB_ACCESS).forEach(tabName => {
