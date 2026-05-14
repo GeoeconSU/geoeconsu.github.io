@@ -1,0 +1,108 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper: is the request from a signed-in user? ─────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ── Caller's numeric access level from their Firestore doc ────────────────
+    //    999 = not in DB (unregistered).  Lower number = more privilege.
+    //    1 = founder/director  2 = head  3 = employee  4 = client  5 = free
+    function callerLevel() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.level
+        : 999;
+    }
+
+    // ── Caller's role string (needed only to distinguish founder vs director) ─
+    function callerRole() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'none')
+        : 'none';
+    }
+
+    // ── Tier helpers ──────────────────────────────────────────────────────────
+    function isDirectorOrFounder() { return isSignedIn() && callerLevel() <= 1; }
+    function isFounder()           { return isSignedIn() && callerRole() == 'founder'; }
+    function isEmployee()          { return isSignedIn() && callerLevel() <= 3; }
+    function isRegistered()        { return isSignedIn() && callerLevel() < 999; }
+
+    // ── Users ─────────────────────────────────────────────────────────────────
+    match /users/{userId} {
+
+      // Any signed-in user can read their own document.
+      allow get: if isSignedIn() && request.auth.uid == userId;
+
+      // Users can update their own non-sensitive fields (role & level are locked).
+      allow update: if isSignedIn()
+                    && request.auth.uid == userId
+                    && !request.resource.data.diff(resource.data)
+                         .affectedKeys().hasAny(['level', 'role']);
+
+      // Directors & founders: full listing + individual reads (admin console).
+      // Employees (level 2–3): read-only listing for admin console.
+      allow list, get: if isDirectorOrFounder();
+      allow list, get: if isEmployee();
+
+      // Self-registration on first sign-in: must create own doc at free tier only.
+      allow create: if isSignedIn()
+                    && request.auth.uid == userId
+                    && request.resource.data.get('role',  'free') == 'free'
+                    && request.resource.data.get('level', 5)      >= 5;
+
+      // Directors/founders can create docs for others.
+      // Founders: unrestricted.  Directors: cannot create another director/founder (level ≤ 1).
+      allow create: if isDirectorOrFounder()
+                    && request.auth.uid != userId
+                    && (isFounder() || request.resource.data.get('level', 999) > 1);
+
+      // Directors/founders can update other users' documents.
+      // Founders: unrestricted.  Directors: cannot edit directors or founders (target level ≤ 1).
+      allow update: if isDirectorOrFounder()
+                    && request.auth.uid != userId
+                    && (isFounder() || resource.data.get('level', 999) > 1);
+
+      // Same authority restriction for delete.
+      allow delete: if isDirectorOrFounder()
+                    && request.auth.uid != userId
+                    && (isFounder() || resource.data.get('level', 999) > 1);
+    }
+
+    // ── Methodology docs — employees and above can read; directors/founders write ─
+    match /methodology/{docId} {
+      allow read:  if isEmployee();
+      allow write: if isDirectorOrFounder();
+    }
+
+    // ── Tasks ─────────────────────────────────────────────────────────────────
+    match /tasks/{taskId} {
+      // Directors/founders manage everything.
+      allow read, write: if isDirectorOrFounder();
+
+      // Employees can read tasks assigned to them or created by them.
+      allow read: if isEmployee()
+                  && (resource.data.assignedTo == request.auth.uid
+                      || resource.data.createdBy == request.auth.uid);
+
+      // Employees can update status/notes on their own assigned tasks only
+      // (cannot reassign, change creator, or alter priority).
+      allow update: if isEmployee()
+                    && resource.data.assignedTo == request.auth.uid
+                    && !request.resource.data.diff(resource.data)
+                         .affectedKeys().hasAny(['assignedTo', 'createdBy', 'priority']);
+    }
+
+    // ── App config — any registered user can read; directors/founders write ───
+    match /config/{docId} {
+      allow read:  if isRegistered();
+      allow write: if isDirectorOrFounder();
+    }
+
+    // ── Deny everything else by default ──────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

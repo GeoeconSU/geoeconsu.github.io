@@ -26,11 +26,11 @@ const WORKER_URL   = "https://rao-dashboard-proxy.guduruadip.workers.dev";
 firebase.initializeApp(firebaseConfig);
 const auth      = firebase.auth();
 const db        = firebase.firestore();
-const analytics = firebase.analytics();
+const analytics = (typeof firebase.analytics === 'function') ? firebase.analytics() : null;
 
 // ── Analytics helpers — call these anywhere to log events ────────────────────
 function logEvent(eventName, params) {
-    analytics.logEvent(eventName, params || {});
+    if (analytics) analytics.logEvent(eventName, params || {});
 }
 
 // Convenience wrappers for the events we care about
@@ -67,19 +67,18 @@ const Analytics = {
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 // ── Current user state (updated by onAuthStateChanged) ───────────────────────
-let currentUser     = null;
-let currentUserRole = null;   // 'director' | 'employee' | 'free' | null
-let currentUserLevel = 0;     // 1-5 for employees, 0 otherwise
+let currentUser      = null;
+let currentUserRole  = null;  // semantic label: 'director' | 'research-head' | 'researcher' | 'client' | 'free' | …
+let currentUserLevel = null;  // access tier: null=not in DB (unregistered), 1=director, 2=head, 3=employee, 4=client, 5=free; 6+ reserved
 
-// Role helpers
-const ROLE_WEIGHT = { director: 3, employee: 2, free: 1 };
-function roleAtLeast(role) {
-    if (!currentUserRole) return false;
-    return (ROLE_WEIGHT[currentUserRole] || 0) >= (ROLE_WEIGHT[role] || 0);
-}
-function isDirector()  { return currentUserRole === 'director'; }
-function isEmployee()  { return roleAtLeast('employee'); }
-function isFreeUser()  { return roleAtLeast('free'); }
+// ── Access helpers (lower level number = more privilege) ──────────────────────
+// levelAtMost(n): true if user has a DB record AND their level ≤ n
+function levelAtMost(n) { return currentUserLevel !== null && currentUserLevel <= n; }
+function isDirector()   { return currentUserLevel === 1; }
+function isHead()       { return levelAtMost(2); }
+function isEmployee()   { return levelAtMost(3); }
+function isClient()     { return levelAtMost(4); }
+function isFreeUser()   { return levelAtMost(5); }
 
 // ── Auth state listener ───────────────────────────────────────────────────────
 auth.onAuthStateChanged(async (user) => {
@@ -88,7 +87,7 @@ auth.onAuthStateChanged(async (user) => {
         // Email/password accounts must verify their email before getting access
         if (!user.emailVerified && user.providerData[0]?.providerId === 'password') {
             currentUserRole  = null;
-            currentUserLevel = 0;
+            currentUserLevel = null;
             if (typeof onAuthReady === 'function') onAuthReady(user);
             return;
         }
@@ -97,26 +96,27 @@ auth.onAuthStateChanged(async (user) => {
             if (snap.exists) {
                 const data = snap.data();
                 currentUserRole  = data.role  || 'free';
-                currentUserLevel = data.level || 0;
+                currentUserLevel = data.level || null;
             } else {
                 // First sign-in after verification: create user document with 'free' role
                 await db.collection('users').doc(user.uid).set({
                     email:       user.email,
                     displayName: user.displayName || user.email.split('@')[0],
                     role:        'free',
-                    level:       0,
+                    level:       5,
                     createdAt:   firebase.firestore.FieldValue.serverTimestamp()
                 });
                 currentUserRole  = 'free';
-                currentUserLevel = 0;
+                currentUserLevel = 5;
             }
         } catch (e) {
             console.error('Error loading user profile:', e);
-            currentUserRole = 'free';
+            currentUserRole  = 'free';
+            currentUserLevel = 5;
         }
     } else {
         currentUserRole  = null;
-        currentUserLevel = 0;
+        currentUserLevel = null;
     }
     // Notify the dashboard that auth state has changed
     if (typeof onAuthReady === 'function') onAuthReady(user);
