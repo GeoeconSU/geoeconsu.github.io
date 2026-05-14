@@ -289,10 +289,11 @@
             flex-wrap: wrap;
         }
         .search-wrap {
-            flex: 1; min-width: 220px;
+            flex: 0 0 20%;
             display: flex; align-items: center; gap: 0.5rem;
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 0.55rem 1rem;
+            border-radius: var(--radius); padding: 0 0.9rem;
+            height: 38px; box-sizing: border-box;
             box-shadow: var(--shadow-sm); transition: border-color 0.2s;
         }
         .search-wrap:focus-within { border-color: var(--border-gold); }
@@ -304,14 +305,18 @@
         }
         .search-wrap input::placeholder { color: var(--text-faint); }
         .filter-select {
+            flex: 0 0 17%;
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 0.55rem 1rem;
+            border-radius: var(--radius); padding: 0 1rem;
             font-family: var(--font-minor); font-size: 0.65rem; font-weight: 500;
             text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
             cursor: pointer; outline: none; box-shadow: var(--shadow-sm);
+            height: 38px; box-sizing: border-box;
             transition: border-color 0.2s;
         }
         .filter-select:focus { border-color: var(--border-gold); }
+        #role-filter { flex-basis: 19%; }
+        #sort-select  { flex-basis: 14%; }
         .toolbar-count {
             margin-left: auto; font-family: var(--font-minor); font-size: 0.62rem;
             color: var(--text-faint); white-space: nowrap; letter-spacing: 0.05em;
@@ -478,18 +483,50 @@
         }
         @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.35; } }
 
-        /* ── SAVE BUTTON ─────────────────────────────────────────────────────── */
-        .save-changes-btn {
-            display: none;
-            padding: 0.52rem 1.1rem; border-radius: 2px; cursor: pointer;
-            font-family: var(--font-minor); font-size: 0.65rem; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.12em;
-            background: var(--accent-gold); color: #111926; border: none;
-            transition: background 0.15s, box-shadow 0.15s;
-            box-shadow: 0 2px 10px rgba(194,165,109,0.3);
-            white-space: nowrap;
+        /* ── MODIFY BUTTON ───────────────────────────────────────────────────── */
+        .modify-btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            height: 38px; padding: 0 1.1rem; border-radius: var(--radius);
+            font-family: var(--font-minor); font-size: 0.62rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.12em; white-space: nowrap;
+            background: var(--bg-card); color: var(--text-faint);
+            border: 1px solid var(--border); cursor: default;
+            box-shadow: var(--shadow-sm); transition: all 0.18s;
         }
-        .save-changes-btn:hover { background: #d4b565; box-shadow: 0 4px 16px rgba(194,165,109,0.4); }
+        .modify-btn.active {
+            background: var(--accent-gold); color: #111926;
+            border-color: var(--accent-gold); cursor: pointer;
+            box-shadow: 0 2px 12px rgba(194,165,109,0.35);
+        }
+        .modify-btn.active:hover {
+            background: #d4b565; box-shadow: 0 4px 18px rgba(194,165,109,0.45);
+        }
+        .modify-count {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 18px; height: 18px; border-radius: 9px; padding: 0 0.3rem;
+            background: rgba(0,0,0,0.18); font-size: 0.58rem; font-weight: 800;
+            letter-spacing: 0;
+        }
+        .modify-btn:not(.active) .modify-count { background: rgba(255,255,255,0.07); }
+
+        /* ── RESET BUTTON ────────────────────────────────────────────────────── */
+        .reset-btn {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            height: 38px; padding: 0 0.9rem; border-radius: var(--radius);
+            font-family: var(--font-minor); font-size: 0.62rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap;
+            background: var(--bg-card); color: var(--text-faint);
+            border: 1px solid var(--border); cursor: default;
+            box-shadow: var(--shadow-sm); transition: all 0.18s;
+            opacity: 0.4;
+        }
+        .reset-btn.active {
+            color: #c06868; border-color: rgba(192,104,104,0.38);
+            background: rgba(192,104,104,0.07); cursor: pointer; opacity: 1;
+        }
+        .reset-btn.active:hover {
+            background: rgba(192,104,104,0.14); border-color: rgba(192,104,104,0.55);
+        }
 
         /* ── REVIEW MODAL ────────────────────────────────────────────────────── */
         .review-overlay {
@@ -512,19 +549,52 @@
         .review-header p { font-family: var(--font-minor); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 0.2rem; }
         .review-close { background: none; border: none; cursor: pointer; color: var(--text-faint); font-size: 1.1rem; line-height: 1; padding: 0; }
         .review-close:hover { color: var(--text); }
-        .review-list { overflow-y: auto; padding: 0.75rem 1.5rem; flex: 1; }
-        .review-row {
-            display: flex; flex-direction: column; gap: 0.25rem;
-            padding: 0.75rem 0; border-bottom: 1px solid var(--border);
+        .review-list { overflow-y: auto; padding: 1rem 1.25rem; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0.65rem; }
+        /* ── Review change cards ── */
+        .review-card {
+            background: var(--bg-row); border: 1px solid var(--border);
+            border-radius: var(--radius); overflow: hidden;
         }
-        .review-row:last-child { border-bottom: none; }
-        .review-name { font-family: var(--font-head); font-size: 0.9rem; color: var(--text); }
-        .review-fields { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .review-field {
-            font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);
+        .review-card-head {
+            display: flex; align-items: center; gap: 0.8rem;
+            padding: 0.8rem 1rem; border-bottom: 1px solid var(--border);
         }
-        .review-field s { color: var(--text-faint); }
-        .review-field strong { color: var(--accent-gold); }
+        .review-avatar {
+            width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+            background: rgba(194,165,109,0.12); border: 1px solid rgba(194,165,109,0.28);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-minor); font-size: 0.58rem; font-weight: 800;
+            color: var(--accent-gold); letter-spacing: 0.06em;
+        }
+        .review-card-info { flex: 1; min-width: 0; }
+        .review-card-name {
+            font-family: var(--font-body); font-size: 0.88rem; color: var(--text);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .review-card-email {
+            font-family: var(--font-minor); font-size: 0.58rem; color: var(--text-muted);
+            letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .review-card-body { padding: 0.65rem 1rem; display: flex; flex-direction: column; gap: 0.45rem; }
+        .review-change-row { display: flex; align-items: center; gap: 0.6rem; }
+        .review-change-label {
+            font-family: var(--font-minor); font-size: 0.52rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.13em; color: var(--text-faint);
+            width: 40px; flex-shrink: 0;
+        }
+        .review-pill {
+            font-family: var(--font-minor); font-size: 0.62rem; font-weight: 500;
+            padding: 0.18rem 0.6rem; border-radius: 2px; white-space: nowrap;
+        }
+        .review-pill.old {
+            background: transparent; border: 1px solid var(--border);
+            color: var(--text-faint); text-decoration: line-through;
+        }
+        .review-pill.new {
+            background: rgba(194,165,109,0.12); border: 1px solid rgba(194,165,109,0.3);
+            color: var(--accent-gold);
+        }
+        .review-pill-arrow { color: var(--text-faint); font-size: 0.7rem; flex-shrink: 0; }
         .review-footer {
             padding: 1rem 1.5rem; border-top: 1px solid var(--border);
             display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;
@@ -576,8 +646,8 @@
         <div id="gate-denied" style="display:none;">
             <div class="gate-denied">
                 <i class="ri-shield-keyhole-line"></i>
-                <h3>Director Access Required</h3>
-                <p>This console is restricted to GSU directors. Your account does not have the required permissions.</p>
+                <h3>Access Required</h3>
+                <p>This console is restricted to GSU directors, founders, and employees. Your account does not have the required permissions.</p>
                 <a onclick="gateSwitchAccount()">Sign in with a different account →</a>
             </div>
         </div>
@@ -607,7 +677,7 @@
         <div class="user-dropdown" id="user-dropdown">
             <div class="user-dropdown-header">
                 <div class="user-dropdown-name" id="dd-name"></div>
-                <div class="user-dropdown-role">Director</div>
+                <div class="user-dropdown-role" id="dd-role-label">Director</div>
             </div>
             <div class="user-dropdown-item" onclick="window.location.href='dashboard.html'">
                 <i class="ri-dashboard-line"></i> Dashboard
@@ -629,6 +699,12 @@
             <div class="page-subtitle">Manage roles and access levels across the GSU member base</div>
             <div class="last-updated" id="last-updated"></div>
         </div>
+    </div>
+
+    <!-- Read-only notice (shown for employees, hidden for directors) -->
+    <div id="readonly-notice" style="display:none;margin-bottom:1.25rem;padding:0.65rem 1rem;background:rgba(74,106,136,0.08);border:1px solid rgba(74,106,136,0.22);border-radius:var(--radius);font-family:var(--font-minor);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--role-employee);display:none;">
+        <i class="ri-eye-line" style="margin-right:0.4rem;"></i>
+        Read-only view — role and level changes require director or founder access.
     </div>
 
     <!-- Stats -->
@@ -675,8 +751,13 @@
             <option value="name-asc">Name A–Z</option>
             <option value="level-asc">Level</option>
         </select>
+        <button class="modify-btn" id="save-changes-btn" onclick="openReviewModal()">
+            <i class="ri-edit-2-line"></i> Modify <span class="modify-count" id="modify-count">0</span>
+        </button>
+        <button class="reset-btn" id="reset-changes-btn" onclick="resetChanges()">
+            <i class="ri-arrow-go-back-line"></i> Reset
+        </button>
         <div class="toolbar-count" id="toolbar-count"></div>
-        <button class="save-changes-btn" id="save-changes-btn" onclick="openReviewModal()">Review &amp; Save (0)</button>
     </div>
 
     <!-- Table -->
@@ -762,10 +843,20 @@ const ALL_ROLES = [
     { value:'client',        label:'Client',             group:'4 — Client' },
     { value:'free',          label:'Free',               group:'5 — Free' },
 ];
-const ROLE_GROUPS = [...new Set(ALL_ROLES.map(r => r.group))];
-function buildRoleOptions(currentRole) {
-    return ROLE_GROUPS.map(g =>
-        `<optgroup label="${g}">${ALL_ROLES.filter(r => r.group === g).map(r =>
+function getAdminIsFounder() {
+    return allUsers.find(u => u.uid === currentAdminUid)?.role === 'founder';
+}
+
+// levelFilter: if provided, only show roles whose ROLE_LEVEL_MAP value equals levelFilter
+function buildRoleOptions(currentRole, isFounderAdmin, levelFilter) {
+    const visible = ALL_ROLES.filter(r => {
+        if (r.value === 'founder' && !isFounderAdmin) return false;
+        if (levelFilter !== undefined && ROLE_LEVEL_MAP[r.value] !== levelFilter) return false;
+        return true;
+    });
+    const groups = [...new Set(visible.map(r => r.group))];
+    return groups.map(g =>
+        `<optgroup label="${g}">${visible.filter(r => r.group === g).map(r =>
             `<option value="${r.value}"${currentRole === r.value ? ' selected' : ''}>${r.label}</option>`
         ).join('')}</optgroup>`
     ).join('');
@@ -783,13 +874,14 @@ function onAuthReady(user) {
         showGateSignIn();
         return;
     }
-    if (!isDirector()) {
+    // Allow directors, founders (level 1), heads (level 2), and employees (level 3)
+    if (!isEmployee()) {
         showGateDenied();
         return;
     }
-    // Authorised director
     currentAdminUid = user.uid;
     hideGate(user);
+    updateSaveBtn();
     startRealtimeUsers();
 }
 
@@ -810,12 +902,31 @@ function showGateDenied() {
 function hideGate(user) {
     document.getElementById('gate').style.display = 'none';
     document.getElementById('main-content').style.display = '';
-    document.getElementById('header-badge').style.display = 'flex';
     document.getElementById('user-menu-wrap').style.display = '';
     const initials = (user.displayName || user.email || '?')
         .split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
     document.getElementById('user-avatar').textContent = initials;
     document.getElementById('dd-name').textContent = user.displayName || user.email;
+
+    // Show role badge and read-only banner based on access level
+    const badge = document.getElementById('header-badge');
+    badge.style.display = 'flex';
+    if (isDirector()) {
+        badge.innerHTML = '<i class="ri-shield-user-line"></i> ' +
+            (currentUserRole === 'founder' ? 'Founder' : 'Director');
+        document.getElementById('dd-role-label').textContent =
+            currentUserRole === 'founder' ? 'Founder' : 'Director';
+    } else {
+        badge.innerHTML = '<i class="ri-eye-line"></i> Read-Only';
+        badge.style.background = 'rgba(74,106,136,0.1)';
+        badge.style.borderColor = 'rgba(74,106,136,0.3)';
+        badge.style.color = 'var(--role-employee)';
+        document.getElementById('dd-role-label').textContent =
+            currentUserRole || 'Employee';
+        // Show read-only notice
+        const notice = document.getElementById('readonly-notice');
+        if (notice) notice.style.display = '';
+    }
 }
 
 // ── Gate sign-in actions ───────────────────────────────────────────────────
@@ -865,6 +976,15 @@ function startRealtimeUsers() {
     if (unsubscribeUsers) unsubscribeUsers();
     unsubscribeUsers = db.collection('users').onSnapshot(snap => {
         allUsers = snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+        // Sync badge with live role — handles role changes without requiring re-login
+        const me = allUsers.find(u => u.uid === currentAdminUid);
+        if (me && me.level === 1) {
+            const text  = me.role === 'founder' ? 'Founder' : 'Director';
+            const badge = document.getElementById('header-badge');
+            const label = document.getElementById('dd-role-label');
+            if (badge) badge.innerHTML = `<i class="ri-shield-user-line"></i> ${text}`;
+            if (label) label.textContent = text;
+        }
         updateStats();
         renderUsers();
         document.getElementById('last-updated').textContent =
@@ -932,17 +1052,21 @@ function renderTable(list) {
         return;
     }
 
-    const currentAdminRole = allUsers.find(u => u.uid === currentAdminUid)?.role;
-    const adminIsFounder   = currentAdminRole === 'founder';
+    const currentAdminRole  = allUsers.find(u => u.uid === currentAdminUid)?.role;
+    const currentAdminLevel = allUsers.find(u => u.uid === currentAdminUid)?.level ?? 5;
+    const adminIsFounder    = currentAdminRole === 'founder';
+    const adminIsDirector   = currentAdminLevel <= 1;   // director OR founder
     const LEVELS = [[1,'1 — Director'],[2,'2 — Head'],[3,'3 — Employee'],[4,'4 — Client'],[5,'5 — Free']];
 
     tbody.innerHTML = list.map(u => {
         const name     = u.displayName || u.email?.split('@')[0] || '—';
         const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
         const joined   = u.createdAt ? u.createdAt.toDate().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : '—';
-        const isSelf            = u.uid === currentAdminUid;
-        const isProtectedFounder = (u.role === 'founder') && !adminIsFounder;
-        const canEdit           = !isSelf && !isProtectedFounder;
+        const isSelf              = u.uid === currentAdminUid;
+        // Level-1 users (directors + founders) can only be edited by founders
+        const isProtectedLevel1   = (u.level === 1) && !adminIsFounder;
+        // Employees (level 2-3) always get read-only; directors/founders get full edit
+        const canEdit = adminIsDirector && !isSelf && !isProtectedLevel1;
 
         // Use staged pending values if present, else DB values
         const p     = pendingChanges[u.uid];
@@ -952,11 +1076,11 @@ function renderTable(list) {
 
         const dis   = canEdit ? '' : 'disabled';
         const dtip  = isSelf ? ' title="Cannot edit your own record"'
-                    : isProtectedFounder ? ' title="Founders can only be edited by other founders"' : '';
+                    : isProtectedLevel1 ? ' title="Directors and founders can only be edited by other founders"' : '';
 
         const roleSelect = `<select class="inline-select" data-uid="${u.uid}"
             onchange="stageChange('${u.uid}','role',this.value)"
-            ${dis}${dtip} style="max-width:155px;">${buildRoleOptions(role)}</select>`;
+            ${dis}${dtip} style="max-width:155px;">${buildRoleOptions(role, adminIsFounder, level)}</select>`;
 
         const levelSelect = `<select class="level-select" data-uid="${u.uid}"
             onchange="stageChange('${u.uid}','level',parseInt(this.value))"
@@ -998,6 +1122,7 @@ function stageChange(uid, field, value) {
     if (!pendingChanges[uid]) {
         pendingChanges[uid] = {
             displayName: user.displayName || user.email || uid,
+            email: user.email || '',
             originalRole: user.role || 'free',
             originalLevel: user.level || 5,
             role: user.role || 'free',
@@ -1018,13 +1143,23 @@ function stageChange(uid, field, value) {
         const defaultRole = LEVEL_DEFAULT_ROLE[value];
         if (defaultRole) {
             pendingChanges[uid].role = defaultRole;
-            if (row) { const s = row.querySelector('.inline-select'); if (s) s.value = defaultRole; }
+            // Rebuild role options filtered to this level
+            if (row) {
+                const s = row.querySelector('.inline-select');
+                if (s) s.innerHTML = buildRoleOptions(defaultRole, getAdminIsFounder(), value);
+            }
         }
     }
 
-    // If reverted to original, drop from pending
+    // If reverted to original, drop from pending and restore role options to original level filter
     const p = pendingChanges[uid];
-    if (p.role === p.originalRole && p.level === p.originalLevel) delete pendingChanges[uid];
+    if (p.role === p.originalRole && p.level === p.originalLevel) {
+        delete pendingChanges[uid];
+        if (row) {
+            const s = row.querySelector('.inline-select');
+            if (s) s.innerHTML = buildRoleOptions(p.originalRole, getAdminIsFounder(), p.originalLevel);
+        }
+    }
 
     // Highlight row
     if (row) row.classList.toggle('row-pending', uid in pendingChanges);
@@ -1043,23 +1178,56 @@ function stageChange(uid, field, value) {
 
 function updateSaveBtn() {
     const count = Object.keys(pendingChanges).length;
-    const btn = document.getElementById('save-changes-btn');
+    const btn   = document.getElementById('save-changes-btn');
+    const badge = document.getElementById('modify-count');
+    const reset = document.getElementById('reset-changes-btn');
     if (!btn) return;
-    btn.style.display = count > 0 ? '' : 'none';
-    btn.textContent = `Review & Save (${count})`;
+    btn.classList.toggle('active', count > 0);
+    if (badge) badge.textContent = count;
+    if (reset) reset.classList.toggle('active', count > 0);
+}
+
+function resetChanges() {
+    if (!Object.keys(pendingChanges).length) return;
+    pendingChanges = {};
+    updateSaveBtn();
+    filterUsers();
 }
 
 function openReviewModal() {
     const entries = Object.entries(pendingChanges);
     if (!entries.length) return;
-    document.getElementById('review-list').innerHTML = entries.map(([uid, p]) => `
-        <div class="review-row">
-            <div class="review-name">${escapeHtml(p.displayName)}</div>
-            <div class="review-fields">
-                ${p.role  !== p.originalRole  ? `<span class="review-field">Role: <s>${escapeHtml(p.originalRole)}</s> → <strong>${escapeHtml(p.role)}</strong></span>` : ''}
-                ${p.level !== p.originalLevel ? `<span class="review-field">Level: <s>${p.originalLevel}</s> → <strong>${p.level}</strong></span>` : ''}
+    const LEVEL_LABELS = { 1:'Director / Founder', 2:'Department Head', 3:'Employee', 4:'Client', 5:'Free' };
+    const roleLabel  = v => (ALL_ROLES.find(r => r.value === v)?.label) || v;
+    const levelLabel = v => LEVEL_LABELS[v] || ('Level ' + v);
+    document.getElementById('review-list').innerHTML = entries.map(([uid, p]) => {
+        const initials = p.displayName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        const roleRow  = p.role  !== p.originalRole  ? `
+            <div class="review-change-row">
+                <span class="review-change-label">Role</span>
+                <span class="review-pill old">${escapeHtml(roleLabel(p.originalRole))}</span>
+                <span class="review-pill-arrow">→</span>
+                <span class="review-pill new">${escapeHtml(roleLabel(p.role))}</span>
+            </div>` : '';
+        const lvlRow   = p.level !== p.originalLevel ? `
+            <div class="review-change-row">
+                <span class="review-change-label">Level</span>
+                <span class="review-pill old">${escapeHtml(levelLabel(p.originalLevel))}</span>
+                <span class="review-pill-arrow">→</span>
+                <span class="review-pill new">${escapeHtml(levelLabel(p.level))}</span>
+            </div>` : '';
+        return `
+        <div class="review-card">
+            <div class="review-card-head">
+                <div class="review-avatar">${escapeHtml(initials)}</div>
+                <div class="review-card-info">
+                    <div class="review-card-name">${escapeHtml(p.displayName)}</div>
+                    <div class="review-card-email">${escapeHtml(p.email)}</div>
+                </div>
             </div>
-        </div>`).join('');
+            <div class="review-card-body">${roleRow}${lvlRow}</div>
+        </div>`;
+    }).join('');
     document.getElementById('review-modal').classList.add('show');
 }
 
