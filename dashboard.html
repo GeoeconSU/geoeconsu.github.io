@@ -4758,17 +4758,10 @@
                     </div>
                 </div>
 
-                <!-- 2-col: Outliers + Fragility -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                    <div class="analysis-card">
-                        <div class="card-title">Statistical Outlier Detection</div>
-                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.4rem;">Countries beyond 2σ from the global mean</div>
-                        <div id="outlier-analysis" style="padding:0 1.2rem 1rem;"></div>
-                    </div>
-                    <div class="analysis-card">
-                        <div class="card-title">Fragility Analysis</div>
-                        <div id="fragility-analysis" style="padding:0.75rem 1.2rem 1rem;"></div>
-                    </div>
+                <!-- Stability Analysis (full-width, compact) -->
+                <div class="analysis-card">
+                    <div class="card-title">Stability Analysis</div>
+                    <div id="fragility-analysis" style="padding:0.6rem 1.2rem 1rem;"></div>
                 </div>
             </div>
 
@@ -9278,8 +9271,7 @@ function initializeAnalyticsTab() {
     // Enhancement #44: Percentile Breakdown with visual enhancement
     drawPercentileBreakdown();
 
-    // Enhancement #45: Outlier Detection Analysis
-    drawOutlierAnalysis();
+
 
     // Enhancement #46: Fragility Analysis Section
     drawFragilityAnalysis();
@@ -9459,31 +9451,29 @@ function drawRegionalChart() {
     const sortedRegions = Object.entries(regionalStats).sort((a, b) => b[1].rao - a[1].rao);
 
     const chartHTML = sortedRegions.map(([region, stats], idx) => `
-        <div style="margin-bottom: 1.5rem; animation: fadeIn 0.4s ease-out ${idx * 0.1}s both;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                <span style="font-size: 0.9rem; font-weight: 500;">${region}</span>
-                <span style="font-family: var(--font-mono); color: var(--accent-gold); font-size: 0.85rem;">Avg RAO: ${stats.rao.toFixed(2)}</span>
+        <div style="margin-bottom:0.9rem;animation:fadeIn 0.4s ease-out ${idx * 0.08}s both;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+                <span style="font-family:var(--font-minor);font-size:0.72rem;font-weight:600;color:var(--text-white);">${region}</span>
+                <span style="font-family:var(--font-mono);color:var(--accent-gold);font-size:0.68rem;">${stats.rao.toFixed(2)}</span>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">
                 <div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem; font-size: 0.75rem;">
-                        <span style="color: var(--accent-gold);">Opportunity</span>
-                        <span style="font-family: var(--font-mono); color: var(--text-white);">${stats.opportunity.toFixed(2)}</span>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:0.12rem;">
+                        <span style="font-family:var(--font-minor);font-size:0.58rem;color:var(--accent-gold);">Opp</span>
+                        <span style="font-family:var(--font-mono);font-size:0.58rem;color:var(--text-white);">${stats.opportunity.toFixed(2)}</span>
                     </div>
-                    <div style="width: 100%; height: 12px; background: var(--tertiary-bg); border-radius: 6px; overflow: hidden; position: relative;">
-                        <div style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--accent-gold-dim), var(--accent-gold)); border-radius: 6px; transition: width 0.8s ease-out ${idx * 0.08 + 0.2}s;" data-width="${(stats.opportunity / 10) * 100}"></div>
+                    <div style="width:100%;height:5px;background:var(--tertiary-bg);border-radius:3px;overflow:hidden;">
+                        <div style="width:0%;height:100%;background:linear-gradient(90deg,var(--accent-gold-dim),var(--accent-gold));border-radius:3px;transition:width 0.8s ease-out ${idx * 0.08 + 0.2}s;" data-width="${(stats.opportunity / 10) * 100}"></div>
                     </div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem;">Range: ${stats.oppMin.toFixed(1)} - ${stats.oppMax.toFixed(1)}</div>
                 </div>
                 <div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem; font-size: 0.75rem;">
-                        <span style="color: var(--accent-blue);">Stability</span>
-                        <span style="font-family: var(--font-mono); color: var(--text-white);">${stats.stability.toFixed(2)}</span>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:0.12rem;">
+                        <span style="font-family:var(--font-minor);font-size:0.58rem;color:var(--accent-blue);">Stab</span>
+                        <span style="font-family:var(--font-mono);font-size:0.58rem;color:var(--text-white);">${stats.stability.toFixed(2)}</span>
                     </div>
-                    <div style="width: 100%; height: 12px; background: var(--tertiary-bg); border-radius: 6px; overflow: hidden; position: relative;">
-                        <div style="width: 0%; height: 100%; background: linear-gradient(90deg, rgba(93, 140, 168, 0.3), var(--accent-blue)); border-radius: 6px; transition: width 0.8s ease-out ${idx * 0.08 + 0.2}s;" data-width="${(stats.stability / 10) * 100}"></div>
+                    <div style="width:100%;height:5px;background:var(--tertiary-bg);border-radius:3px;overflow:hidden;">
+                        <div style="width:0%;height:100%;background:linear-gradient(90deg,rgba(93,140,168,0.3),var(--accent-blue));border-radius:3px;transition:width 0.8s ease-out ${idx * 0.08 + 0.2}s;" data-width="${(stats.stability / 10) * 100}"></div>
                     </div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem;">Range: ${stats.stabMin.toFixed(1)} - ${stats.stabMax.toFixed(1)}</div>
                 </div>
             </div>
         </div>
@@ -9851,39 +9841,29 @@ function drawPercentileBreakdown() {
     const sorted = [...rawData].sort((a, b) => b.calculated_rao - a.calculated_rao);
     const percentiles = [
         { label: 'Top 10%', countries: sorted.slice(0, Math.ceil(sorted.length * 0.1)), tier: 'Excellent' },
-        { label: '10-25%', countries: sorted.slice(Math.ceil(sorted.length * 0.1), Math.ceil(sorted.length * 0.25)), tier: 'Good' },
-        { label: '25-50%', countries: sorted.slice(Math.ceil(sorted.length * 0.25), Math.ceil(sorted.length * 0.5)), tier: 'Moderate' },
-        { label: '50-75%', countries: sorted.slice(Math.ceil(sorted.length * 0.5), Math.ceil(sorted.length * 0.75)), tier: 'Concerning' },
+        { label: '10–25%', countries: sorted.slice(Math.ceil(sorted.length * 0.1), Math.ceil(sorted.length * 0.25)), tier: 'Good' },
+        { label: '25–50%', countries: sorted.slice(Math.ceil(sorted.length * 0.25), Math.ceil(sorted.length * 0.5)), tier: 'Moderate' },
+        { label: '50–75%', countries: sorted.slice(Math.ceil(sorted.length * 0.5), Math.ceil(sorted.length * 0.75)), tier: 'Concerning' },
         { label: 'Bottom 25%', countries: sorted.slice(Math.ceil(sorted.length * 0.75)), tier: 'Critical' }
     ];
+    const colors = ['var(--accent-green)', 'var(--accent-lime)', 'var(--accent-amber)', 'var(--accent-orange)', 'var(--accent-red)'];
 
     const html = `
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
             ${percentiles.map((p, idx) => {
                 const avgScore = p.countries.reduce((sum, c) => sum + c.calculated_rao, 0) / p.countries.length;
                 const minScore = p.countries[p.countries.length - 1].calculated_rao;
                 const maxScore = p.countries[0].calculated_rao;
-                const colors = ['var(--accent-green)', 'var(--accent-lime)', 'var(--accent-amber)', 'var(--accent-orange)', 'var(--accent-red)'];
-                const gradients = [
-                    'linear-gradient(135deg, rgba(74, 157, 111, 0.2), rgba(74, 157, 111, 0.05))',
-                    'linear-gradient(135deg, rgba(123, 168, 74, 0.2), rgba(123, 168, 74, 0.05))',
-                    'linear-gradient(135deg, rgba(201, 169, 97, 0.2), rgba(201, 169, 97, 0.05))',
-                    'linear-gradient(135deg, rgba(198, 125, 82, 0.2), rgba(198, 125, 82, 0.05))',
-                    'linear-gradient(135deg, rgba(168, 79, 79, 0.2), rgba(168, 79, 79, 0.05))'
-                ];
                 return `
-                    <div style="background: ${gradients[idx]}; padding: 1.5rem; border-radius: 4px; border-top: 4px solid ${colors[idx]}; text-align: center; cursor: pointer; transition: all 0.3s ease; animation: fadeIn 0.4s ease-out ${idx * 0.1}s both;"
-                         onmouseenter="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.3)';"
-                         onmouseleave="this.style.transform='translateY(0)'; this.style.boxShadow='none';"
+                    <div style="padding:0.75rem;border-top:2px solid ${colors[idx]};background:var(--tertiary-bg);cursor:pointer;transition:opacity 0.2s;"
+                         onmouseenter="this.style.opacity='0.75'"
+                         onmouseleave="this.style.opacity='1'"
                          onclick="showPercentileCountries('${p.label}', ${JSON.stringify(p.countries.map(c => c.country_name)).replace(/"/g, '&quot;')})">
-                        <div style="font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">${p.label}</div>
-                        <div style="font-size: 2.2rem; font-weight: 600; color: ${colors[idx]}; margin-bottom: 0.5rem; font-family: var(--font-mono);">${p.countries.length}</div>
-                        <div style="display: inline-block; padding: 0.25rem 0.75rem; background: ${colors[idx]}; color: white; border-radius: 12px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.75rem;">${p.tier}</div>
-                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
-                            <div style="margin-bottom: 0.25rem;">Avg: <span style="color: ${colors[idx]}; font-weight: 600;">${avgScore.toFixed(2)}</span></div>
-                            <div style="font-size: 0.75rem;">Range: ${minScore.toFixed(1)} - ${maxScore.toFixed(1)}</div>
-                        </div>
-                        <div style="margin-top: 0.75rem; font-size: 0.7rem; color: var(--text-muted); opacity: 0.7;">Click to view countries</div>
+                        <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.25rem;">${p.label}</div>
+                        <div style="font-family:var(--font-mono);font-size:1.5rem;font-weight:600;color:${colors[idx]};line-height:1;margin-bottom:0.2rem;">${p.countries.length}</div>
+                        <div style="font-family:var(--font-minor);font-size:0.48rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:${colors[idx]};margin-bottom:0.4rem;">${p.tier}</div>
+                        <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-muted);">avg ${avgScore.toFixed(2)}</div>
+                        <div style="font-family:var(--font-mono);font-size:0.55rem;color:var(--w45);">${minScore.toFixed(1)}–${maxScore.toFixed(1)}</div>
                     </div>
                 `;
             }).join('')}
@@ -9925,111 +9905,6 @@ function populateVariableExplorerDropdown() {
     document.getElementById('variable-select').innerHTML = optionsHTML;
 }
 
-// Enhancement #45: Outlier Detection Analysis
-function drawOutlierAnalysis() {
-    const scores = rawData.map(c => c.calculated_rao);
-    const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
-    const stddev = Math.sqrt(scores.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / scores.length);
-
-    const upperBound = mean + (2 * stddev);
-    const lowerBound = mean - (2 * stddev);
-
-    const positiveOutliers = rawData.filter(c => c.calculated_rao > upperBound);
-    const negativeOutliers = rawData.filter(c => c.calculated_rao < lowerBound);
-
-    // Identify what makes them outliers
-    const analyzeOutlier = (country) => {
-        const allVars = [
-            ...OPPORTUNITY_PILLARS.flatMap(p => p.vars),
-            ...STABILITY_PILLARS.flatMap(p => p.vars)
-        ];
-
-        const varScores = allVars.map(v => {
-            const values = rawData.map(c => c[v]).filter(val => val !== null && !isNaN(val));
-            const varMean = values.reduce((a, b) => a + b, 0) / values.length;
-            const varStd = Math.sqrt(values.reduce((sum, val) => sum + Math.pow(val - varMean, 2), 0) / values.length);
-            const countryVal = country[v];
-            if (countryVal === null || isNaN(countryVal)) return null;
-            const zScore = (countryVal - varMean) / varStd;
-            return { var: v, name: VARIABLE_NAMES[v] || v, zScore, value: countryVal };
-        }).filter(v => v !== null);
-
-        return varScores.sort((a, b) => Math.abs(b.zScore) - Math.abs(a.zScore)).slice(0, 3);
-    };
-
-    const html = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
-            <div>
-                <h4 style="font-family: var(--font-minor); font-size: 0.65rem; text-transform: uppercase; color: var(--accent-green); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="ri-arrow-up-circle-fill"></i> Positive Outliers (Exceptionally High)
-                </h4>
-                ${positiveOutliers.length > 0 ? `
-                    <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        ${positiveOutliers.map(c => {
-                            const drivers = analyzeOutlier(c);
-                            return `
-                                <div style="background: var(--tertiary-bg); padding: 0.85rem 1rem; border-radius: 3px; border: 1px solid var(--border-subtle); border-top: 2px solid var(--accent-green); cursor: pointer; transition: background 0.2s;"
-                                     onclick="openCountryAnalysis('${c.country}')"
-                                     onmouseenter="this.style.background='rgba(93,138,114,0.08)'"
-                                     onmouseleave="this.style.background='var(--tertiary-bg)'">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                                        <span style="font-weight: 600; font-size: 1rem;">${c.country_name}</span>
-                                        <span style="font-family: var(--font-mono); color: var(--accent-green); font-size: 1.1rem; font-weight: 600;">${c.calculated_rao.toFixed(2)}</span>
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-                                        ${((c.calculated_rao - mean) / stddev).toFixed(2)}σ above mean
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted);">
-                                        <strong>Key Drivers:</strong><br>
-                                        ${drivers.map(d => `• ${d.name} (${d.zScore > 0 ? '+' : ''}${d.zScore.toFixed(1)}σ)`).join('<br>')}
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                ` : '<p style="text-align: center; color: var(--text-muted); padding: 2rem;">No positive outliers detected</p>'}
-            </div>
-            <div>
-                <h4 style="font-family: var(--font-minor); font-size: 0.65rem; text-transform: uppercase; color: var(--accent-red); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="ri-arrow-down-circle-fill"></i> Negative Outliers (Exceptionally Low)
-                </h4>
-                ${negativeOutliers.length > 0 ? `
-                    <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        ${negativeOutliers.map(c => {
-                            const drivers = analyzeOutlier(c);
-                            return `
-                                <div style="background: var(--tertiary-bg); padding: 0.85rem 1rem; border-radius: 3px; border: 1px solid var(--border-subtle); border-top: 2px solid var(--accent-red); cursor: pointer; transition: background 0.2s;"
-                                     onclick="openCountryAnalysis('${c.country}')"
-                                     onmouseenter="this.style.background='rgba(150,96,96,0.08)'"
-                                     onmouseleave="this.style.background='var(--tertiary-bg)'">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                                        <span style="font-weight: 600; font-size: 1rem;">${c.country_name}</span>
-                                        <span style="font-family: var(--font-mono); color: var(--accent-red); font-size: 1.1rem; font-weight: 600;">${c.calculated_rao.toFixed(2)}</span>
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-                                        ${((mean - c.calculated_rao) / stddev).toFixed(2)}σ below mean
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: var(--text-muted);">
-                                        <strong>Key Drivers:</strong><br>
-                                        ${drivers.map(d => `• ${d.name} (${d.zScore > 0 ? '+' : ''}${d.zScore.toFixed(1)}σ)`).join('<br>')}
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                ` : '<p style="text-align: center; color: var(--text-muted); padding: 2rem;">No negative outliers detected</p>'}
-            </div>
-        </div>
-        <div style="margin-top: 1.25rem; padding: 0.85rem 1.2rem; background: var(--tertiary-bg); border-radius: 3px; border-top: 2px solid rgba(194,165,109,0.35);">
-            <div style="font-family: var(--font-minor); font-size: 0.72rem; color: var(--text-muted);">
-                <strong>Methodology:</strong> Outliers are countries with RAO scores beyond ±2 standard deviations (σ) from the mean (${mean.toFixed(2)}).
-                Standard deviation: ${stddev.toFixed(2)}. Bounds: ${lowerBound.toFixed(2)} - ${upperBound.toFixed(2)}.
-            </div>
-        </div>
-    `;
-    document.getElementById('outlier-analysis').innerHTML = html;
-}
-
 // Enhancement #46: Stability Analysis Section
 function drawFragilityAnalysis() {
     const stabilityScores = rawData.map(c => ({
@@ -10039,48 +9914,39 @@ function drawFragilityAnalysis() {
         rao: c.calculated_rao
     })).sort((a, b) => b.stability - a.stability);
 
-    const mostStable  = stabilityScores.slice(0, 10);
-    const leastStable = stabilityScores.slice(-10).reverse();
+    const mostStable  = stabilityScores.slice(0, 5);
+    const leastStable = stabilityScores.slice(-5).reverse();
     const avgStability = stabilityScores.reduce((sum, c) => sum + c.stability, 0) / stabilityScores.length;
 
+    const row = (c, i, col) => `
+        <div onclick="openCountryAnalysis('${c.code}')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:0.28rem 0;border-bottom:1px solid var(--border-subtle);">
+            <span style="font-family:var(--font-minor);font-size:0.7rem;color:var(--text-white);">${i+1}. ${c.name}</span>
+            <span style="font-family:var(--font-mono);font-size:0.72rem;color:${col};">${c.stability.toFixed(2)}</span>
+        </div>`;
+
     const html = `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; margin-bottom: 2rem;">
-            <div style="background: var(--tertiary-bg); padding: 1.25rem; border-radius: 4px; text-align: center;">
-                <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">Global Avg Stability</div>
-                <div style="font-size: 2rem; font-weight: 600; color: var(--accent-blue); font-family: var(--font-mono);">${avgStability.toFixed(2)}</div>
+        <div style="display:flex;gap:1.5rem;align-items:center;padding-bottom:0.6rem;border-bottom:1px solid var(--border-subtle);margin-bottom:0.75rem;">
+            <div style="display:flex;gap:0.35rem;align-items:baseline;">
+                <span style="font-family:var(--font-mono);font-size:1.15rem;color:var(--accent-blue);">${avgStability.toFixed(2)}</span>
+                <span style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Global avg stability</span>
             </div>
-            <div style="background: var(--tertiary-bg); padding: 1.25rem; border-radius: 4px; text-align: center;">
-                <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem;">Countries Analysed</div>
-                <div style="font-size: 2rem; font-weight: 600; color: var(--accent-gold); font-family: var(--font-mono);">${stabilityScores.length}</div>
+            <div style="display:flex;gap:0.35rem;align-items:baseline;">
+                <span style="font-family:var(--font-mono);font-size:1.15rem;color:var(--accent-gold);">${stabilityScores.length}</span>
+                <span style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Countries</span>
             </div>
         </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
             <div>
-                <h4 style="font-family: var(--font-minor); font-size: 0.65rem; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 1rem;">
-                    <i class="ri-shield-check-fill"></i> Most Stable Countries
-                </h4>
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    ${mostStable.map((c, idx) => `
-                        <div class="context-item" onclick="openCountryAnalysis('${c.code}')" style="cursor: pointer;">
-                            <span>${idx + 1}. ${c.name}</span>
-                            <span class="context-item-score" style="color: var(--accent-blue);">${c.stability.toFixed(2)}</span>
-                        </div>
-                    `).join('')}
+                <div style="font-family:var(--font-minor);font-size:0.5rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent-blue);margin-bottom:0.45rem;">
+                    <i class="ri-shield-check-fill"></i> Most Stable
                 </div>
+                ${mostStable.map((c, i) => row(c, i, 'var(--accent-blue)')).join('')}
             </div>
             <div>
-                <h4 style="font-family: var(--font-minor); font-size: 0.65rem; text-transform: uppercase; color: var(--accent-red); margin-bottom: 1rem;">
-                    <i class="ri-alert-fill"></i> Least Stable Countries
-                </h4>
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    ${leastStable.map((c, idx) => `
-                        <div class="context-item" onclick="openCountryAnalysis('${c.code}')" style="cursor: pointer;">
-                            <span>${idx + 1}. ${c.name}</span>
-                            <span class="context-item-score" style="color: var(--accent-red);">${c.stability.toFixed(2)}</span>
-                        </div>
-                    `).join('')}
+                <div style="font-family:var(--font-minor);font-size:0.5rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent-red);margin-bottom:0.45rem;">
+                    <i class="ri-alert-fill"></i> Least Stable
                 </div>
+                ${leastStable.map((c, i) => row(c, i, 'var(--accent-red)')).join('')}
             </div>
         </div>
     `;
