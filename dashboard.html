@@ -10805,8 +10805,13 @@ function hideGlobalTooltip() {
 function toggleInfoModal() {
     const modal = document.getElementById('info-modal');
     if (!modal) return;
-    const isVisible = modal.style.display === 'flex';
-    modal.style.display = isVisible ? 'none' : 'flex';
+    if (modal.classList.contains('active')) {
+        modal.classList.remove('active');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+    } else {
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => requestAnimationFrame(() => modal.classList.add('active')));
+    }
 }
 
 function toggleHelpModal() { toggleInfoModal(); }
@@ -12125,36 +12130,221 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
 </script>
 
 <!-- Info Modal -->
-<div id="info-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center; padding:2rem;">
-    <div style="background:var(--secondary-bg); border:1px solid var(--border-subtle); border-radius:4px; max-width:640px; width:100%; max-height:85vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,0.5);">
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:1rem 1.4rem; border-bottom:1px solid var(--border-subtle);">
-            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold);">About the RAO Index</div>
-            <button onclick="toggleInfoModal()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1.2rem; line-height:1; padding:0;"><i class="ri-close-line"></i></button>
+<style>
+#info-modal {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+}
+#info-modal.active {
+    opacity: 1;
+    pointer-events: all;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+#info-modal .rao-modal-card {
+    transform: translateY(16px) scale(0.97);
+    opacity: 0;
+    transition: transform 0.32s cubic-bezier(0.25,1,0.35,1), opacity 0.28s ease;
+}
+#info-modal.active .rao-modal-card {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+.rao-modal-var {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.32rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.8rem;
+}
+.rao-modal-var:last-child { border-bottom: none; }
+.rao-modal-var-name {
+    font-family: var(--font-minor);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-white);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 130px;
+}
+.rao-modal-var-desc { color: var(--text-muted); line-height: 1.5; }
+.rao-modal-section-label {
+    font-family: var(--font-minor);
+    font-size: 0.55rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-gold);
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.rao-modal-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(194,165,109,0.15);
+}
+</style>
+<div id="info-modal" style="display:none; position:fixed; inset:0; background:rgba(10,15,28,0.82); z-index:10000; align-items:flex-start; justify-content:center; padding:2.5rem 1.5rem; overflow-y:auto;" onclick="if(event.target===this)toggleInfoModal()">
+    <div class="rao-modal-card" style="background:linear-gradient(160deg,rgba(25,33,50,0.99) 0%,rgba(20,28,46,0.99) 100%); border:1px solid rgba(194,165,109,0.2); border-radius:4px; width:100%; max-width:900px; box-shadow:0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03); overflow:hidden;">
+
+        <!-- Header -->
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:1.25rem 1.75rem; border-bottom:1px solid var(--border-subtle); background:rgba(194,165,109,0.04);">
+            <div>
+                <div style="font-family:var(--font-head); font-size:1.35rem; color:var(--text-white); line-height:1.2; margin-bottom:0.2rem;">Risk-Adjusted Opportunity Index</div>
+                <div style="font-family:var(--font-minor); font-size:0.58rem; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold);">Framework Overview</div>
+            </div>
+            <button onclick="toggleInfoModal()" style="background:none; border:1px solid var(--border-subtle); color:var(--text-muted); cursor:pointer; font-size:1rem; line-height:1; padding:0.4rem 0.5rem; border-radius:3px; transition:all 0.2s; display:flex; align-items:center;" onmouseover="this.style.borderColor='rgba(194,165,109,0.4)';this.style.color='var(--text-white)'" onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--text-muted)'"><i class="ri-close-line"></i></button>
         </div>
-        <div style="padding:1.4rem; font-family:var(--font-body); font-size:0.9rem; line-height:1.75; color:var(--text-muted);">
 
-            <p style="margin-bottom:1.2rem;">The <strong style="color:var(--text-white);">Risk-Adjusted Opportunity (RAO) Framework v2.1</strong> is a Bayesian geoeconomic scoring engine developed by the Sixteenth Council's Geoeconomic Strategy Unit. It ranks <strong style="color:var(--text-white);">162 countries</strong> on a 1–10 scale using a panel dataset covering 2010–2025. The headline score is a <strong style="color:var(--text-white);">CVaR₂₅ metric</strong> — it reflects the worst-25% of simulated pillar-weight scenarios, not an optimistic central estimate.</p>
+        <div style="padding:1.75rem; font-family:var(--font-body); font-size:0.875rem; line-height:1.75; color:var(--text-muted);">
 
-            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Four Structural Pillars</div>
-            <div style="display:grid; grid-template-columns:1fr; gap:0.5rem; margin-bottom:1.2rem;">
-                <div style="padding:0.4rem 0.75rem;border-left:2px solid #C2A56D;font-size:0.85rem;"><strong style="color:#C2A56D;">Opportunity</strong> <span style="color:var(--text-muted);font-size:0.78rem;">— GDP growth, export growth, net FDI, gross capital formation, secondary school enrolment</span></div>
-                <div style="padding:0.4rem 0.75rem;border-left:2px solid #607c98;font-size:0.85rem;"><strong style="color:#607c98;">Stability</strong> <span style="color:var(--text-muted);font-size:0.78rem;">(higher=better) — inflation, government debt, current account, external debt, political stability, rule of law, corruption</span></div>
-                <div style="padding:0.4rem 0.75rem;border-left:2px solid #607c98;font-size:0.85rem;"><strong style="color:#607c98;">Absorptive Capacity</strong> <span style="color:var(--text-muted);font-size:0.78rem;">(geometric mean — collapses if any component fails) — resource rents, GDP per capita growth, youth unemployment, vulnerable employment, regulatory quality</span></div>
-                <div style="padding:0.4rem 0.75rem;border-left:2px solid #5d8a72;font-size:0.85rem;"><strong style="color:#5d8a72;">Trajectory</strong> <span style="color:var(--text-muted);font-size:0.78rem;">(OLS trend × R²) — GDP growth trend, FDI trend, governance trend, debt trend, inflation trend</span></div>
+            <!-- Intro -->
+            <p style="margin-bottom:1.75rem; font-size:0.9rem; color:rgba(238,234,224,0.8); line-height:1.8;">
+                The <strong style="color:var(--text-white);">Risk-Adjusted Opportunity (RAO) Index</strong> ranks <strong style="color:var(--text-white);">162 countries</strong> on a <strong style="color:var(--text-white);">1–10 scale</strong> using a panel dataset spanning 2010–2025. It synthesises 22 normalised indicators across four structural pillars to produce a composite score that captures both growth potential and the conditions necessary to realise it. Higher scores indicate stronger, more stable investment environments. The framework is designed to surface countries building structural quality ahead of external market recognition.
+            </p>
+
+            <!-- THE FOUR PILLARS -->
+            <div class="rao-modal-section-label">The Four Structural Pillars</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.75rem;">
+
+                <!-- Opportunity -->
+                <div style="background:rgba(194,165,109,0.05); border:1px solid rgba(194,165,109,0.18); border-radius:3px; overflow:hidden;">
+                    <div style="padding:0.7rem 1rem 0.5rem; border-bottom:1px solid rgba(194,165,109,0.12); background:rgba(194,165,109,0.07);">
+                        <div style="font-family:var(--font-minor); font-size:0.58rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:#C2A56D;">A · Opportunity</div>
+                        <div style="font-family:var(--font-body); font-size:0.78rem; color:rgba(238,234,224,0.65); margin-top:0.25rem; line-height:1.5;">Measures a country's immediate growth engine — the pull factors that attract capital and generate economic expansion.</div>
+                    </div>
+                    <div style="padding:0.65rem 1rem;">
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">GDP Growth</span><span class="rao-modal-var-desc">Rate of expansion in overall economic output</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Export Growth</span><span class="rao-modal-var-desc">Momentum in goods and services sold to foreign markets</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Net FDI</span><span class="rao-modal-var-desc">Foreign direct investment inflows as a share of GDP</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Capital Formation</span><span class="rao-modal-var-desc">Investment in productive fixed assets and infrastructure</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Secondary Enrolment</span><span class="rao-modal-var-desc">Human capital development at secondary education level</span></div>
+                    </div>
+                </div>
+
+                <!-- Stability -->
+                <div style="background:rgba(96,124,152,0.05); border:1px solid rgba(96,124,152,0.2); border-radius:3px; overflow:hidden;">
+                    <div style="padding:0.7rem 1rem 0.5rem; border-bottom:1px solid rgba(96,124,152,0.12); background:rgba(96,124,152,0.07);">
+                        <div style="font-family:var(--font-minor); font-size:0.58rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:#607c98;">B · Stability</div>
+                        <div style="font-family:var(--font-body); font-size:0.78rem; color:rgba(238,234,224,0.65); margin-top:0.25rem; line-height:1.5;">Measures macroeconomic and institutional resilience — the foundations that sustain opportunity over time. Higher is better.</div>
+                    </div>
+                    <div style="padding:0.65rem 1rem;">
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">CPI Inflation</span><span class="rao-modal-var-desc">Price level stability — low inflation preserves purchasing power</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Government Debt</span><span class="rao-modal-var-desc">Fiscal headroom — lower debt creates policy flexibility</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">External Debt</span><span class="rao-modal-var-desc">Vulnerability to foreign currency obligations</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Current Account</span><span class="rao-modal-var-desc">External balance position and trade competitiveness</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Political Stability</span><span class="rao-modal-var-desc">Absence of violence, conflict, and political disruption</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Rule of Law</span><span class="rao-modal-var-desc">Strength of legal institutions, contracts, and property rights</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Control of Corruption</span><span class="rao-modal-var-desc">Quality of public sector governance and accountability</span></div>
+                    </div>
+                </div>
+
+                <!-- Absorptive Capacity -->
+                <div style="background:rgba(93,138,114,0.05); border:1px solid rgba(93,138,114,0.18); border-radius:3px; overflow:hidden;">
+                    <div style="padding:0.7rem 1rem 0.5rem; border-bottom:1px solid rgba(93,138,114,0.12); background:rgba(93,138,114,0.07);">
+                        <div style="font-family:var(--font-minor); font-size:0.58rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:#5d8a72;">C · Absorptive Capacity</div>
+                        <div style="font-family:var(--font-body); font-size:0.78rem; color:rgba(238,234,224,0.65); margin-top:0.25rem; line-height:1.5;">Measures whether a country can productively absorb investment — the structural conditions for capital to translate into real development.</div>
+                    </div>
+                    <div style="padding:0.65rem 1rem;">
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Regulatory Quality</span><span class="rao-modal-var-desc">Business environment, market openness, and policy predictability</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">GDP per Capita Growth</span><span class="rao-modal-var-desc">Per-person income improvement — broad-based development quality</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Youth Unemployment</span><span class="rao-modal-var-desc">Labour market health for younger cohorts — lower is better</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Vulnerable Employment</span><span class="rao-modal-var-desc">Share of workforce in precarious or informal arrangements — lower is better</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Resource Rents</span><span class="rao-modal-var-desc">Over-reliance on extractive industries — high rents crowd out diversification</span></div>
+                    </div>
+                </div>
+
+                <!-- Trajectory -->
+                <div style="background:rgba(122,142,98,0.05); border:1px solid rgba(122,142,98,0.18); border-radius:3px; overflow:hidden;">
+                    <div style="padding:0.7rem 1rem 0.5rem; border-bottom:1px solid rgba(122,142,98,0.12); background:rgba(122,142,98,0.07);">
+                        <div style="font-family:var(--font-minor); font-size:0.58rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:#7a8e62;">D · Trajectory</div>
+                        <div style="font-family:var(--font-body); font-size:0.78rem; color:rgba(238,234,224,0.65); margin-top:0.25rem; line-height:1.5;">Measures the direction of travel — whether a country's fundamentals are improving or deteriorating across key dimensions over the medium term.</div>
+                    </div>
+                    <div style="padding:0.65rem 1rem;">
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">GDP Growth Trend</span><span class="rao-modal-var-desc">Sustained directional momentum in economic growth over time</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">FDI Trend</span><span class="rao-modal-var-desc">Directional change in foreign investor appetite and confidence</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Governance Trend</span><span class="rao-modal-var-desc">Improving or deteriorating institutional and governance quality</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Debt Trend</span><span class="rao-modal-var-desc">Direction of fiscal trajectory — rising or falling debt burden</span></div>
+                        <div class="rao-modal-var"><span class="rao-modal-var-name">Inflation Trend</span><span class="rao-modal-var-desc">Price stability trajectory — anchoring or drifting inflation</span></div>
+                    </div>
+                </div>
             </div>
 
-            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Take-off Detection Module (TDM)</div>
-            <p style="margin-bottom:1.2rem;font-size:0.85rem;">TOS = geometric mean of <strong style="color:var(--text-white);">SIS</strong> (S-curve inflection proximity) × <strong style="color:var(--text-white);">DGI</strong> (discovery gap: fundamentals vs. external capital recognition) × <strong style="color:var(--text-white);">RVS</strong> (reform velocity). TOS &gt; 0.50 in a Fragile Opportunity or Structural Risk regime is the primary pre-breakout signal.</p>
-
-            <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold); margin-bottom:0.75rem;">Investment Regimes</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.4rem 1.2rem; margin-bottom:1.2rem;">
-                <div style="padding:0.4rem 0.6rem;border-left:2px solid #5d8a72;font-size:0.82rem;"><strong style="color:#5d8a72;">RO</strong> Robust Opportunity — high score, low volatility</div>
-                <div style="padding:0.4rem 0.6rem;border-left:2px solid #C2A56D;font-size:0.82rem;"><strong style="color:#C2A56D;">FO</strong> Fragile Opportunity — high score, high volatility</div>
-                <div style="padding:0.4rem 0.6rem;border-left:2px solid #607c98;font-size:0.82rem;"><strong style="color:#607c98;">SL</strong> Stable / Low — low score, low volatility</div>
-                <div style="padding:0.4rem 0.6rem;border-left:2px solid #966060;font-size:0.82rem;"><strong style="color:#966060;">SR</strong> Structural Risk — low score, high volatility</div>
+            <!-- TOS SIGNAL -->
+            <div class="rao-modal-section-label">Take-off Signal (TOS)</div>
+            <p style="margin-bottom:1.1rem; font-size:0.875rem; color:rgba(238,234,224,0.75); line-height:1.8;">
+                The TOS is a composite signal scored 0–1 that identifies countries approaching a structural pre-breakout — where fundamental quality is being built but has not yet been priced into external capital flows. It combines three independent sub-signals, each measuring a different dimension of readiness for structural acceleration.
+            </p>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:1.25rem;">
+                <div style="background:rgba(194,165,109,0.05); border:1px solid rgba(194,165,109,0.15); border-radius:3px; padding:0.9rem 1rem;">
+                    <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#C2A56D; margin-bottom:0.4rem;">SIS — Structural Inflection Score</div>
+                    <div style="font-size:0.8rem; color:rgba(238,234,224,0.7); line-height:1.6;">Detects whether a country is approaching an inflection point in its growth and institutional trajectory — the moment before structural acceleration becomes visible to markets. High SIS countries are building momentum.</div>
+                </div>
+                <div style="background:rgba(96,124,152,0.05); border:1px solid rgba(96,124,152,0.15); border-radius:3px; padding:0.9rem 1rem;">
+                    <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#607c98; margin-bottom:0.4rem;">DGI — Discovery Gap Index</div>
+                    <div style="font-size:0.8rem; color:rgba(238,234,224,0.7); line-height:1.6;">Measures the gap between a country's fundamental quality and its recognition by external capital markets. A wide gap signals an underdiscovered opportunity — high fundamentals not yet reflected in capital flows or market pricing.</div>
+                </div>
+                <div style="background:rgba(93,138,114,0.05); border:1px solid rgba(93,138,114,0.15); border-radius:3px; padding:0.9rem 1rem;">
+                    <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#5d8a72; margin-bottom:0.4rem;">RVS — Reform Velocity Score</div>
+                    <div style="font-size:0.8rem; color:rgba(238,234,224,0.7); line-height:1.6;">Measures the pace and direction of institutional and policy reform. High RVS countries are actively improving their governance and economic frameworks — signalling structural intent rather than cyclical noise.</div>
+                </div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:3px; padding:0.75rem 1.1rem; margin-bottom:1.75rem;">
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0; text-align:center;">
+                    <div style="padding:0.4rem 0.5rem; border-right:1px solid var(--border-subtle);">
+                        <div style="font-family:var(--font-mono); font-size:0.9rem; color:#C2A56D; font-weight:600;">≥ 0.70</div>
+                        <div style="font-family:var(--font-minor); font-size:0.52rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-top:0.2rem;">Strong Pre-Breakout</div>
+                    </div>
+                    <div style="padding:0.4rem 0.5rem; border-right:1px solid var(--border-subtle);">
+                        <div style="font-family:var(--font-mono); font-size:0.9rem; color:rgba(194,165,109,0.75); font-weight:600;">0.55 – 0.70</div>
+                        <div style="font-family:var(--font-minor); font-size:0.52rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-top:0.2rem;">Pre-Breakout Signal</div>
+                    </div>
+                    <div style="padding:0.4rem 0.5rem; border-right:1px solid var(--border-subtle);">
+                        <div style="font-family:var(--font-mono); font-size:0.9rem; color:rgba(238,234,224,0.5); font-weight:600;">0.35 – 0.55</div>
+                        <div style="font-family:var(--font-minor); font-size:0.52rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-top:0.2rem;">Moderate Potential</div>
+                    </div>
+                    <div style="padding:0.4rem 0.5rem;">
+                        <div style="font-family:var(--font-mono); font-size:0.9rem; color:rgba(238,234,224,0.3); font-weight:600;">< 0.35</div>
+                        <div style="font-family:var(--font-minor); font-size:0.52rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-top:0.2rem;">Low Signal</div>
+                    </div>
+                </div>
             </div>
 
-            <p style="font-size:0.78rem; color:var(--text-muted); opacity:0.65; margin-bottom:0;">Data sourced from World Bank, IMF, UNCTAD, WGI, and GDELT datasets. RAO Framework v2.1 (May 2026) — rao9 | 162 countries | 2010–2025. Compiled by the Sixteenth Council Geoeconomic Strategy Unit.</p>
+            <!-- INVESTMENT REGIMES -->
+            <div class="rao-modal-section-label">Investment Regimes</div>
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:1.5rem;">
+                <div style="background:rgba(93,138,114,0.07); border:1px solid rgba(93,138,114,0.22); border-radius:3px; padding:0.85rem 1rem;">
+                    <div style="font-family:var(--font-minor); font-size:0.65rem; font-weight:600; letter-spacing:0.1em; color:#5d8a72; margin-bottom:0.4rem;">RO — Robust Opportunity</div>
+                    <div style="font-size:0.78rem; color:rgba(238,234,224,0.65); line-height:1.55;">High RAO score with low scenario uncertainty. Strong fundamentals, consistent performance. Core allocation territory.</div>
+                </div>
+                <div style="background:rgba(194,165,109,0.07); border:1px solid rgba(194,165,109,0.22); border-radius:3px; padding:0.85rem 1rem;">
+                    <div style="font-family:var(--font-minor); font-size:0.65rem; font-weight:600; letter-spacing:0.1em; color:#C2A56D; margin-bottom:0.4rem;">FO — Fragile Opportunity</div>
+                    <div style="font-size:0.78rem; color:rgba(238,234,224,0.65); line-height:1.55;">High RAO score with elevated scenario variance. Strong upside potential but path-dependent — monitor closely for structural confirmation.</div>
+                </div>
+                <div style="background:rgba(96,124,152,0.07); border:1px solid rgba(96,124,152,0.22); border-radius:3px; padding:0.85rem 1rem;">
+                    <div style="font-family:var(--font-minor); font-size:0.65rem; font-weight:600; letter-spacing:0.1em; color:#607c98; margin-bottom:0.4rem;">SL — Stable / Low</div>
+                    <div style="font-size:0.78rem; color:rgba(238,234,224,0.65); line-height:1.55;">Lower RAO score but low volatility. Stable, predictable environments with limited upside. Defensive or transitional positioning.</div>
+                </div>
+                <div style="background:rgba(150,96,96,0.07); border:1px solid rgba(150,96,96,0.22); border-radius:3px; padding:0.85rem 1rem;">
+                    <div style="font-family:var(--font-minor); font-size:0.65rem; font-weight:600; letter-spacing:0.1em; color:#966060; margin-bottom:0.4rem;">SR — Structural Risk</div>
+                    <div style="font-size:0.78rem; color:rgba(238,234,224,0.65); line-height:1.55;">Low RAO score with high scenario uncertainty. Weak fundamentals compounded by instability. Elevated risk; proceed with caution.</div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="border-top:1px solid var(--border-subtle); padding-top:1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+                <span style="font-family:var(--font-minor); font-size:0.55rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(238,234,224,0.3);">Data: World Bank · IMF · UNCTAD · WGI · 162 countries · 2010–2025</span>
+                <button onclick="toggleInfoModal()" style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.1em;background:none;border:1px solid var(--border-subtle);color:var(--text-muted);padding:0.4rem 0.85rem;border-radius:3px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(194,165,109,0.4)';this.style.color='var(--text-white)'" onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--text-muted)'">Close</button>
+            </div>
         </div>
     </div>
 </div>
