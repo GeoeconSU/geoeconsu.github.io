@@ -733,29 +733,30 @@
             padding: 0.75rem 1rem 0.6rem;
             border-bottom: 1px solid rgba(255,255,255,0.07);
             background: rgba(194,165,109,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.75rem;
         }
+        .tt-head-left { flex: 1; min-width: 0; }
+        .tt-head-right { text-align: right; flex-shrink: 0; }
         .tt-country {
             font-family: var(--font-head);
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             color: var(--text-white);
             line-height: 1.2;
-            margin-bottom: 0.35rem;
         }
         .tt-meta {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             flex-wrap: wrap;
+            margin-bottom: 0.5rem;
         }
         .tt-body {
             padding: 0.6rem 1rem 0.75rem;
         }
-        .tt-score-row {
-            display: flex;
-            align-items: baseline;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
+        .tt-score-row { display: none; }
         .tt-rao {
             font-family: var(--font-mono);
             font-size: 1.8rem;
@@ -769,6 +770,7 @@
             text-transform: uppercase;
             letter-spacing: 0.12em;
             color: var(--text-muted);
+            margin-top: 0.15rem;
         }
         .tt-pillars {
             display: grid;
@@ -5851,17 +5853,17 @@ function createTooltip(row) {
 
     return `<div class="tooltip-custom">
         <div class="tt-head">
-            <div class="tt-country">${row.country_name}</div>
-            <div class="tt-meta">${regBadge}${archBadge}${tosSig}</div>
+            <div class="tt-head-left">
+                <div class="tt-country">${row.country_name}</div>
+            </div>
+            <div class="tt-head-right">
+                <div class="tt-rao">${(row.rao_score||0).toFixed(2)}</div>
+                <div class="tt-rao-label">RAO Score</div>
+                <div class="tt-rank-badge">#${row.rank||'—'} / ${n}</div>
+            </div>
         </div>
         <div class="tt-body">
-            <div class="tt-score-row">
-                <div class="tt-rao">${(row.rao_score||0).toFixed(2)}</div>
-                <div>
-                    <div class="tt-rao-label">RAO Score</div>
-                    <div class="tt-rank-badge">#${row.rank||'—'} / ${n}</div>
-                </div>
-            </div>
+            <div class="tt-meta">${regBadge}${archBadge}${tosSig}</div>
             <div class="tt-pillars">${pillarsHtml}</div>
             <div class="tt-hint">Click to open Country Analysis →</div>
         </div>
