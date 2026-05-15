@@ -4689,35 +4689,35 @@
                     <div id="pillar-performance-matrix" style="padding:0.5rem 0;"></div>
                 </div>
 
-                <!-- 22×22 norm var heatmap -->
-                <div class="analysis-card" style="margin-bottom:12px;">
-                    <div class="card-title">Normalised Variable Correlation Heatmap · 22 × 22</div>
-                    <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.65rem;">Pearson r across the 2025 cross-section for all normalised input variables</div>
-                    <div id="analytics-norm-heatmap" style="overflow-x:auto;font-size:0.62rem;padding:0 1.2rem 1rem;"></div>
-                </div>
-
-                <!-- Pillar correlation heatmap with controls -->
-                <div class="analysis-card">
-                    <div class="card-title">Pillar Correlation Heatmap</div>
-                    <div style="padding:0.75rem 1.2rem 1rem;">
-                        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
-                            <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Filter</label>
-                            <select id="correlation-filter" onchange="drawCorrelationHeatmap()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.6rem;font-family:var(--font-body);font-size:0.8rem;border-radius:3px;">
-                                <option value="all">All Correlations</option>
-                                <option value="positive">Positive Only</option>
-                                <option value="negative">Negative Only</option>
-                            </select>
-                            <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Strength</label>
-                            <input type="range" id="correlation-threshold" min="0" max="1" step="0.1" value="0" onchange="drawCorrelationHeatmap()" style="width:110px;accent-color:var(--accent-gold);">
-                            <span id="correlation-threshold-value" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent-gold);">0.0+</span>
-                        </div>
-                        <div id="correlation-heatmap"></div>
-                        <div style="margin-top:1.25rem;">
-                            <button onclick="toggleFullCorrelationMatrix()" class="btn">
-                                <i class="ri-table-line"></i>
-                                <span id="correlation-matrix-toggle-text">Show Full Correlation Matrix</span>
-                            </button>
-                            <div id="full-correlation-matrix" style="display:none;margin-top:1rem;overflow-x:auto;"></div>
+                <!-- 22×22 heatmap (left) + Pillar Correlation (right) -->
+                <div style="display:grid;grid-template-columns:3fr 2fr;gap:12px;align-items:start;">
+                    <div class="analysis-card">
+                        <div class="card-title">Normalised Variable Correlation Heatmap · 22 × 22</div>
+                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.65rem;">Pearson r across the 2025 cross-section for all normalised input variables</div>
+                        <div id="analytics-norm-heatmap" style="overflow-x:auto;font-size:0.62rem;padding:0 1.2rem 1rem;"></div>
+                    </div>
+                    <div class="analysis-card">
+                        <div class="card-title">Pillar Correlation Heatmap</div>
+                        <div style="padding:0.75rem 1.2rem 1rem;">
+                            <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+                                <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Filter</label>
+                                <select id="correlation-filter" onchange="drawCorrelationHeatmap()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.6rem;font-family:var(--font-body);font-size:0.8rem;border-radius:3px;">
+                                    <option value="all">All Correlations</option>
+                                    <option value="positive">Positive Only</option>
+                                    <option value="negative">Negative Only</option>
+                                </select>
+                                <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Strength</label>
+                                <input type="range" id="correlation-threshold" min="0" max="1" step="0.1" value="0" onchange="drawCorrelationHeatmap()" style="width:90px;accent-color:var(--accent-gold);">
+                                <span id="correlation-threshold-value" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent-gold);">0.0+</span>
+                            </div>
+                            <div id="correlation-heatmap"></div>
+                            <div style="margin-top:1.25rem;">
+                                <button onclick="toggleFullCorrelationMatrix()" class="btn">
+                                    <i class="ri-table-line"></i>
+                                    <span id="correlation-matrix-toggle-text">Show Full Correlation Matrix</span>
+                                </button>
+                                <div id="full-correlation-matrix" style="display:none;margin-top:1rem;overflow-x:auto;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
