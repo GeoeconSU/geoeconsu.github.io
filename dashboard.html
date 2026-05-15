@@ -4509,232 +4509,271 @@
         <!-- TAB 5: ANALYTICS -->
         <div id="tab-analytics" class="tab-content">
 
-            <!-- ===== RAO v8 ANALYTICS SECTIONS ===== -->
-            <div class="section-container glow-section glow-cl" id="analytics-v8-block">
-
-                <!-- Regime × TOS Scatter -->
-                <h3 class="section-title" style="margin-bottom:0.25rem;">Regime × TOS Investment Scatter</h3>
-                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">X = TOS score (0–1) · Y = RAO score (1–10) · Size = scenario uncertainty (volatility band) · Colour = regime · Click a point to open Country tab</p>
-                <div class="chart-container" style="position:relative;height:420px;">
-                    <canvas id="regime-scatter-chart"></canvas>
-                </div>
-
-                <!-- Regional Trend Lines -->
-                <h3 class="chart-title" style="margin-top:2.5rem;margin-bottom:0.25rem;">Regional Mean RAO Trends 2010–2025</h3>
-                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">Mean RAO score per region across the panel — structural divergence visible over 15 years</p>
-                <div class="chart-container" style="position:relative;height:340px;">
-                    <canvas id="regional-trends-chart"></canvas>
-                </div>
-
-                <!-- Archetype Cluster Scatter -->
-                <h3 class="chart-title" style="margin-top:2.5rem;margin-bottom:0.25rem;">Archetype Cluster Map</h3>
-                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">X = Opportunity · Y = Absorptive Capacity · Colour = archetype</p>
-                <div class="chart-container" style="position:relative;height:380px;">
-                    <canvas id="archetype-scatter-chart"></canvas>
-                </div>
-
-                <!-- Regime Transition Tracker -->
-                <h3 class="chart-title" style="margin-top:2.5rem;margin-bottom:0.5rem;">Regime Transition Tracker</h3>
-                <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem;">
-                    <label style="font-family:var(--font-minor);font-size:0.6rem;text-transform:uppercase;color:var(--text-muted);">From</label>
-                    <select id="regime-trans-from" onchange="renderRegimeTransitionTracker()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.4rem 0.75rem;font-family:var(--font-body);font-size:0.85rem;border-radius:4px;"></select>
-                    <label style="font-family:var(--font-minor);font-size:0.6rem;text-transform:uppercase;color:var(--text-muted);">To</label>
-                    <select id="regime-trans-to" onchange="renderRegimeTransitionTracker()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.4rem 0.75rem;font-family:var(--font-body);font-size:0.85rem;border-radius:4px;"></select>
-                </div>
-                <div id="regime-transitions" style="overflow-x:auto;"></div>
-
-                <!-- Norm Variable Correlation Heatmap (22×22) -->
-                <h3 class="chart-title" style="margin-top:2.5rem;margin-bottom:0.25rem;">Norm Variable Correlation Heatmap (22 × 22)</h3>
-                <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">Pearson r across 2025 cross-section for all normalised input variables — computed once</p>
-                <div id="analytics-norm-heatmap" style="overflow-x:auto;font-size:0.62rem;"></div>
-
-                <!-- Trajectory Distribution + Pre-Breakout Leaders side by side -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2.5rem;align-items:start;">
+            <!-- ══ I · SCORE INTELLIGENCE ══════════════════════════════════════════ -->
+            <div class="section-container glow-section glow-tl">
+                <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);">
+                    <span style="font-family:var(--font-minor);font-size:0.55rem;font-weight:600;text-transform:uppercase;letter-spacing:0.22em;color:var(--accent-gold);flex-shrink:0;">I</span>
                     <div>
-                        <h3 class="chart-title" style="margin-bottom:0.25rem;">Trajectory Distribution</h3>
-                        <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">Classification of country trajectories (2025 slice)</p>
-                        <div style="position:relative;height:280px;">
-                            <canvas id="trajectory-donut-chart"></canvas>
+                        <div style="font-family:var(--font-head);font-size:1.25rem;color:var(--text-white);line-height:1.2;">Score Intelligence</div>
+                        <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);margin-top:0.2rem;">Descriptive statistics, score distribution, and tier structure across 162 countries · 2025 cross-section</div>
+                    </div>
+                </div>
+
+                <!-- KPI strip -->
+                <div class="analysis-card" style="margin-bottom:12px;">
+                    <div class="card-title">Global RAO Statistics</div>
+                    <div style="display:grid;grid-template-columns:repeat(9,1fr);">
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
+                            <div id="analytics-mean" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--accent-gold);">—</div>
+                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Mean</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
+                            <div id="analytics-median" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--accent-gold);">—</div>
+                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Median</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
+                            <div id="analytics-stddev" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
+                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Std Dev</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
+                            <div id="analytics-range" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
+                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Range</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
+                            <div id="analytics-iqr" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
+                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">IQR</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
+                            <div id="analytics-cv" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
+                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">CV</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
+                            <div id="analytics-min" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--accent-red);">—</div>
+                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Min</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
+                            <div id="analytics-max" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--accent-green);">—</div>
+                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Max</div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;">
+                            <div id="analytics-skewness" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
+                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Skewness</div>
+                            <div id="analytics-skewness-label" style="font-family:var(--font-minor);font-size:0.46rem;color:var(--accent-amber);text-align:center;line-height:1.3;">—</div>
                         </div>
                     </div>
-                    <div>
-                        <h3 class="chart-title" style="margin-bottom:0.25rem;">Pre-Breakout Leaders</h3>
-                        <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;">Top 10 by TOS score (2025) — click to open Country tab</p>
-                        <div id="prebreakout-leaders"></div>
+                </div>
+
+                <!-- 2-col: Distribution + Regional -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                    <div class="analysis-card">
+                        <div class="card-title">Score Distribution</div>
+                        <div id="distribution-histogram" style="padding:0.75rem 1.2rem 1rem;"></div>
                     </div>
+                    <div class="analysis-card">
+                        <div class="card-title">Regional Performance</div>
+                        <div id="regional-chart" style="padding:0.75rem 1.2rem 1rem;"></div>
+                    </div>
+                </div>
+
+                <!-- Percentile tiers -->
+                <div class="analysis-card">
+                    <div class="card-title">Score Tier Breakdown</div>
+                    <div id="percentile-breakdown" style="padding:0.75rem 1.2rem 1rem;"></div>
                 </div>
             </div>
 
-            <!-- Legacy Analytics divider -->
-            <div style="border-top:1px solid var(--border-subtle);margin:2rem 0;padding-top:0.5rem;display:flex;align-items:center;gap:1rem;">
-                <span style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);white-space:nowrap;">Legacy Analytics</span>
-                <div style="flex:1;height:1px;background:var(--border-subtle);"></div>
-            </div>
-
-            <div class="section-container glow-section glow-cl">
-                <!-- Enhancement #37: Statistical KPIs - Add More Metrics -->
-                <h3 class="section-title">Statistical Overview</h3>
-                <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
-                    <div class="kpi-card">
-                        <div class="kpi-value" id="analytics-mean">-</div>
-                        <div class="kpi-label">Mean</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-value" id="analytics-median">-</div>
-                        <div class="kpi-label">Median</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-value" id="analytics-stddev">-</div>
-                        <div class="kpi-label">Std Dev</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-value" id="analytics-range">-</div>
-                        <div class="kpi-label">Range</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-value" id="analytics-iqr">-</div>
-                        <div class="kpi-label">IQR</div>
-                        <div class="kpi-sublabel">Interquartile Range</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-value" id="analytics-cv">-</div>
-                        <div class="kpi-label">Coef. of Variation</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-value" id="analytics-min">-</div>
-                        <div class="kpi-label">Min Value</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-value" id="analytics-max">-</div>
-                        <div class="kpi-label">Max Value</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-value" id="analytics-skewness">-</div>
-                        <div class="kpi-label">Skewness</div>
-                        <div class="kpi-sublabel" id="analytics-skewness-label">-</div>
+            <!-- ══ II · REGIME LANDSCAPE ════════════════════════════════════════════ -->
+            <div class="section-container glow-section glow-tr" style="margin-top:0;padding-top:1.75rem;">
+                <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);">
+                    <span style="font-family:var(--font-minor);font-size:0.55rem;font-weight:600;text-transform:uppercase;letter-spacing:0.22em;color:var(--accent-gold);flex-shrink:0;">II</span>
+                    <div>
+                        <div style="font-family:var(--font-head);font-size:1.25rem;color:var(--text-white);line-height:1.2;">Regime Landscape</div>
+                        <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);margin-top:0.2rem;">Investment regime positioning, archetype clusters, structural transitions, and pillar leaders</div>
                     </div>
                 </div>
 
-                <!-- Enhancement #38: Variable Explorer - Better Organization -->
-                <div class="variable-explorer">
-                    <h3 class="chart-title">Variable Explorer</h3>
-                    <div class="variable-selector">
-                        <label>Select Variable (Grouped by Pillar)</label>
-                        <select id="variable-select" onchange="updateVariableExplorer()">
-                            <option value="">-- Select a Variable --</option>
-                        </select>
+                <!-- Regime × TOS scatter (full width) -->
+                <div class="analysis-card" style="margin-bottom:12px;">
+                    <div class="card-title">Regime × Trade-off Signal Positioning</div>
+                    <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.65rem;">X = TOS score (0–1) · Y = RAO score · Size = volatility band · Colour = regime · Click a point to open Country Analysis</div>
+                    <div style="position:relative;height:400px;padding:0 1.2rem 1rem;">
+                        <canvas id="regime-scatter-chart"></canvas>
                     </div>
-                    <div id="variable-explorer-content" style="display: none;">
-                        <div class="variable-stats" id="variable-stats"></div>
-                        <div id="variable-histogram"></div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
-                            <div>
-                                <h4 style="font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 1rem;">Top 5 Countries</h4>
-                                <div id="variable-top-countries"></div>
+                </div>
+
+                <!-- 2-col: Archetypes + Transitions -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                    <div class="analysis-card">
+                        <div class="card-title">Archetype Cluster Map</div>
+                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.5rem;">Opportunity vs Absorptive Capacity · Colour = archetype</div>
+                        <div style="position:relative;height:320px;padding:0 1.2rem 1rem;">
+                            <canvas id="archetype-scatter-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="analysis-card">
+                        <div class="card-title">Regime Transition Tracker</div>
+                        <div style="padding:0.75rem 1.2rem 1rem;">
+                            <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+                                <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">From</label>
+                                <select id="regime-trans-from" onchange="renderRegimeTransitionTracker()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.6rem;font-family:var(--font-body);font-size:0.8rem;border-radius:3px;"></select>
+                                <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">To</label>
+                                <select id="regime-trans-to" onchange="renderRegimeTransitionTracker()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.6rem;font-family:var(--font-body);font-size:0.8rem;border-radius:3px;"></select>
                             </div>
-                            <div>
-                                <h4 style="font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; color: var(--accent-red); margin-bottom: 1rem;">Bottom 5 Countries</h4>
-                                <div id="variable-bottom-countries"></div>
-                            </div>
+                            <div id="regime-transitions" style="overflow-x:auto;"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Enhancement #41: Distribution Histogram - Better Chart -->
-                <div class="chart-grid">
-                    <div class="chart-container">
-                        <div class="chart-title">Score Distribution with Statistics</div>
-                        <div id="distribution-histogram" class="chart-content"></div>
-                    </div>
-
-                    <!-- Enhancement #43: Regional Chart - Upgrade to Grouped Bars -->
-                    <div class="chart-container">
-                        <div class="chart-title">Regional Performance Comparison</div>
-                        <div id="regional-chart" class="chart-content"></div>
-                    </div>
-                </div>
-
-                <!-- Enhancement #40: Pillar Performance Matrix - Add Context -->
-                <div style="margin-top: 2rem;">
-                    <h3 class="chart-title">Global Pillar Performance Matrix</h3>
-                    <div id="pillar-performance-matrix"></div>
-                </div>
-
-                <!-- Enhancement #39: Correlation Heatmap - Expand -->
-                <div style="margin-top: 2rem;">
-                    <h3 class="chart-title">Pillar Correlation Heatmap</h3>
-                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center;">
-                        <p style="color: var(--text-muted); font-size: 0.9rem; flex: 1;">Shows how different pillars correlate with each other globally</p>
-                        <div style="display: flex; gap: 0.5rem; align-items: center;">
-                            <label style="font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted);">Filter:</label>
-                            <select id="correlation-filter" onchange="drawCorrelationHeatmap()" style="background: var(--tertiary-bg); border: 1px solid var(--border-subtle); color: var(--text-white); padding: 0.5rem; font-family: var(--font-body); font-size: 0.85rem; border-radius: 4px;">
-                                <option value="all">All Correlations</option>
-                                <option value="positive">Positive Only</option>
-                                <option value="negative">Negative Only</option>
-                            </select>
-                            <label style="font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; color: var(--text-muted); margin-left: 1rem;">Strength:</label>
-                            <input type="range" id="correlation-threshold" min="0" max="1" step="0.1" value="0" onchange="drawCorrelationHeatmap()" style="width: 120px;">
-                            <span id="correlation-threshold-value" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-gold);">0.0+</span>
-                        </div>
-                    </div>
-                    <div id="correlation-heatmap"></div>
-                    <div style="margin-top: 1.5rem;">
-                        <button onclick="toggleFullCorrelationMatrix()" class="btn" style="padding: 0.75rem 1.5rem;">
-                            <i class="ri-table-line"></i>
-                            <span id="correlation-matrix-toggle-text">Show Full Correlation Matrix</span>
-                        </button>
-                        <div id="full-correlation-matrix" style="display: none; margin-top: 1rem; overflow-x: auto;"></div>
-                    </div>
-                </div>
-
-                <!-- Top & Bottom Performers by Pillar -->
-                <div style="margin-top: 2rem;">
-                    <h3 class="chart-title">Pillar Leaders & Laggards</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
-                        <div>
-                            <h4 style="font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 1rem;">Opportunity Leaders</h4>
+                <!-- Pillar leaders & laggards (4-col) -->
+                <div class="analysis-card">
+                    <div class="card-title">Pillar Leaders & Laggards · 2025</div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);">
+                        <div style="padding:0.75rem 1.2rem 1rem;border-right:1px solid var(--border-subtle);">
+                            <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-green);margin-bottom:0.65rem;">Opportunity Leaders</div>
                             <div id="opp-leaders"></div>
                         </div>
-                        <div>
-                            <h4 style="font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 1rem;">Stability Leaders</h4>
+                        <div style="padding:0.75rem 1.2rem 1rem;border-right:1px solid var(--border-subtle);">
+                            <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-blue);margin-bottom:0.65rem;">Stability Leaders</div>
                             <div id="stab-leaders"></div>
                         </div>
-                        <div>
-                            <h4 style="font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; color: var(--accent-red); margin-bottom: 1rem;">Opportunity Laggards</h4>
+                        <div style="padding:0.75rem 1.2rem 1rem;border-right:1px solid var(--border-subtle);">
+                            <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-red);margin-bottom:0.65rem;">Opportunity Laggards</div>
                             <div id="opp-laggards"></div>
                         </div>
-                        <div>
-                            <h4 style="font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; color: var(--accent-red); margin-bottom: 1rem;">Stability Laggards</h4>
+                        <div style="padding:0.75rem 1.2rem 1rem;">
+                            <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-red);margin-bottom:0.65rem;">Stability Laggards</div>
                             <div id="stab-laggards"></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Enhancement #44: Percentile Breakdown - Visual Enhancement -->
-                <div style="margin-top: 2rem;">
-                    <h3 class="chart-title">Score Percentile Breakdown</h3>
-                    <div id="percentile-breakdown"></div>
-                </div>
-
-
-                <!-- Enhancement #45: Outlier Detection Analysis -->
-                <div style="margin-top: 2rem;">
-                    <h3 class="chart-title">
-                        <i class="ri-error-warning-line"></i> Outlier Detection Analysis
-                    </h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Countries beyond 2 standard deviations from the mean</p>
-                    <div id="outlier-analysis"></div>
-                </div>
-
-                <!-- Enhancement #46: Fragility Analysis Section -->
-                <div style="margin-top: 2rem;">
-                    <h3 class="chart-title">
-                        <i class="ri-alert-line"></i> Fragility Analysis
-                    </h3>
-                    <div id="fragility-analysis"></div>
-                </div>
-
             </div>
+
+            <!-- ══ III · STRUCTURAL DRIVERS ═════════════════════════════════════════ -->
+            <div class="section-container glow-section glow-cl" style="margin-top:0;padding-top:1.75rem;">
+                <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);">
+                    <span style="font-family:var(--font-minor);font-size:0.55rem;font-weight:600;text-transform:uppercase;letter-spacing:0.22em;color:var(--accent-gold);flex-shrink:0;">III</span>
+                    <div>
+                        <div style="font-family:var(--font-head);font-size:1.25rem;color:var(--text-white);line-height:1.2;">Structural Drivers</div>
+                        <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);margin-top:0.2rem;">Variable-level distributions, pillar performance statistics, and cross-variable correlations</div>
+                    </div>
+                </div>
+
+                <!-- Variable explorer -->
+                <div class="analysis-card" style="margin-bottom:12px;">
+                    <div class="card-title">Variable Explorer</div>
+                    <div style="padding:0.75rem 1.2rem 1rem;">
+                        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+                            <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);white-space:nowrap;">Select Variable</span>
+                            <select id="variable-select" onchange="updateVariableExplorer()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.65rem;font-family:var(--font-body);font-size:0.82rem;border-radius:3px;min-width:200px;">
+                                <option value="">— Grouped by Pillar —</option>
+                            </select>
+                        </div>
+                        <div id="variable-explorer-content" style="display:none;">
+                            <div id="variable-stats"></div>
+                            <div id="variable-histogram"></div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.25rem;">
+                                <div>
+                                    <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-gold);margin-bottom:0.65rem;">Top 5 Countries</div>
+                                    <div id="variable-top-countries"></div>
+                                </div>
+                                <div>
+                                    <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-red);margin-bottom:0.65rem;">Bottom 5 Countries</div>
+                                    <div id="variable-bottom-countries"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pillar performance matrix -->
+                <div class="analysis-card" style="margin-bottom:12px;">
+                    <div class="card-title">Pillar Performance Matrix · Global Statistics</div>
+                    <div id="pillar-performance-matrix" style="padding:0.5rem 0;"></div>
+                </div>
+
+                <!-- 22×22 norm var heatmap -->
+                <div class="analysis-card" style="margin-bottom:12px;">
+                    <div class="card-title">Normalised Variable Correlation Heatmap · 22 × 22</div>
+                    <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.65rem;">Pearson r across the 2025 cross-section for all normalised input variables</div>
+                    <div id="analytics-norm-heatmap" style="overflow-x:auto;font-size:0.62rem;padding:0 1.2rem 1rem;"></div>
+                </div>
+
+                <!-- Pillar correlation heatmap with controls -->
+                <div class="analysis-card">
+                    <div class="card-title">Pillar Correlation Heatmap</div>
+                    <div style="padding:0.75rem 1.2rem 1rem;">
+                        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+                            <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Filter</label>
+                            <select id="correlation-filter" onchange="drawCorrelationHeatmap()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.6rem;font-family:var(--font-body);font-size:0.8rem;border-radius:3px;">
+                                <option value="all">All Correlations</option>
+                                <option value="positive">Positive Only</option>
+                                <option value="negative">Negative Only</option>
+                            </select>
+                            <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Strength</label>
+                            <input type="range" id="correlation-threshold" min="0" max="1" step="0.1" value="0" onchange="drawCorrelationHeatmap()" style="width:110px;accent-color:var(--accent-gold);">
+                            <span id="correlation-threshold-value" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent-gold);">0.0+</span>
+                        </div>
+                        <div id="correlation-heatmap"></div>
+                        <div style="margin-top:1.25rem;">
+                            <button onclick="toggleFullCorrelationMatrix()" class="btn">
+                                <i class="ri-table-line"></i>
+                                <span id="correlation-matrix-toggle-text">Show Full Correlation Matrix</span>
+                            </button>
+                            <div id="full-correlation-matrix" style="display:none;margin-top:1rem;overflow-x:auto;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ IV · SIGNALS & MOMENTUM ══════════════════════════════════════════ -->
+            <div class="section-container glow-section glow-br" style="margin-top:0;padding-top:1.75rem;">
+                <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);">
+                    <span style="font-family:var(--font-minor);font-size:0.55rem;font-weight:600;text-transform:uppercase;letter-spacing:0.22em;color:var(--accent-gold);flex-shrink:0;">IV</span>
+                    <div>
+                        <div style="font-family:var(--font-head);font-size:1.25rem;color:var(--text-white);line-height:1.2;">Signals & Momentum</div>
+                        <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);margin-top:0.2rem;">Regional trend lines, pre-breakout detection, trajectory classification, and statistical anomalies</div>
+                    </div>
+                </div>
+
+                <!-- Regional trends (full width) -->
+                <div class="analysis-card" style="margin-bottom:12px;">
+                    <div class="card-title">Regional Mean RAO Trends · 2010–2025</div>
+                    <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.65rem;">Structural divergence across regions over 15 years of panel data</div>
+                    <div style="position:relative;height:300px;padding:0 1.2rem 1rem;">
+                        <canvas id="regional-trends-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 2-col: Pre-breakout leaders + Trajectory donut -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                    <div class="analysis-card">
+                        <div class="card-title">Pre-Breakout Signal Leaders · Top 10 by TOS</div>
+                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.4rem;">Click a country to open Country Analysis</div>
+                        <div id="prebreakout-leaders" style="padding:0 0 0.5rem;"></div>
+                    </div>
+                    <div class="analysis-card">
+                        <div class="card-title">Trajectory Distribution · 2025</div>
+                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.4rem;">Classification of country momentum trajectories</div>
+                        <div style="position:relative;height:260px;padding:0.25rem 1.2rem 1rem;">
+                            <canvas id="trajectory-donut-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2-col: Outliers + Fragility -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                    <div class="analysis-card">
+                        <div class="card-title">Statistical Outlier Detection</div>
+                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.4rem;">Countries beyond 2σ from the global mean</div>
+                        <div id="outlier-analysis" style="padding:0 1.2rem 1rem;"></div>
+                    </div>
+                    <div class="analysis-card">
+                        <div class="card-title">Fragility Analysis</div>
+                        <div id="fragility-analysis" style="padding:0.75rem 1.2rem 1rem;"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- TAB 6: INSIGHTS CHATBOT -->
