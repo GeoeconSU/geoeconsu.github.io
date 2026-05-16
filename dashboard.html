@@ -5987,10 +5987,10 @@ function renderPillarStrip(iso, year) {
     if (!row || !el) return;
 
     const pillars = [
-        { key:'pillar_opportunity',        label:'A · Growth Engine',  color:'#C2A56D', val: row.pillar_opportunity || 0 },
+        { key:'pillar_opportunity',        label:'A · Opportunity',  color:'#C2A56D', val: row.pillar_opportunity || 0 },
         { key:'pillar_stability',          label:'B · Stability',       color:'#607c98', val: row.pillar_stability || 0 },
-        { key:'pillar_absorptive_capacity',label:'C · Quality Filter', color:'#607c98', val: row.pillar_absorptive_capacity || 0 },
-        { key:'pillar_trajectory',         label:'D · Momentum',       color:'#5d8a72', val: row.pillar_trajectory || 0 }
+        { key:'pillar_absorptive_capacity',label:'C · Absorptive Capacity', color:'#607c98', val: row.pillar_absorptive_capacity || 0 },
+        { key:'pillar_trajectory',         label:'D · Trajectory',       color:'#5d8a72', val: row.pillar_trajectory || 0 }
     ];
 
     el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-subtle);border:1px solid var(--border-subtle);border-radius:3px;overflow:hidden;">
@@ -7445,7 +7445,7 @@ function _renderCompareRadar(isos) {
     const rows = isos.map(iso => getLatestRow(iso)).filter(Boolean);
     if (!rows.length) return;
 
-    const labels = ['Opportunity','Stability','Absorptive Cap.','Trajectory'];
+    const labels = ['Opportunity','Stability','Absorptive Capacity','Trajectory'];
     const datasets = rows.map((r, i) => ({
         label: r.country_name,
         data: [r.pillar_opportunity||0, r.pillar_stability||0, r.pillar_absorptive_capacity||0, r.pillar_trajectory||0],
@@ -7489,7 +7489,7 @@ function _renderComparePillarBars(isos) {
         ).join('');
     }
 
-    const labels = ['Opportunity','Stability','Absorptive Cap.','Trajectory'];
+    const labels = ['Opportunity','Stability','Absorptive Capacity','Trajectory'];
     const datasets = rows.map((r,i) => ({
         label: r.country_name,
         data: [r.pillar_opportunity||0, r.pillar_stability||0, r.pillar_absorptive_capacity||0, r.pillar_trajectory||0],
