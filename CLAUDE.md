@@ -21,17 +21,20 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 ### Core Pages (Production)
 - `index.html` - Main landing page with 3D globe, team carousel, service offerings
 - `dashboard.html` - RAO Insights Dashboard (Firebase-authenticated; 6 tabs: Overview, Analysis, Compare, Rankings, Analytics, Insights)
+- `admin.html` - User management console (level 1 directors only; light/beige theme)
+- `tracker.html` - Internal project tracker (auth-gated, role-based tabs; light/beige theme)
 - `map.html` - Interactive global RAO heatmap using Google GeoChart
 - `rao.html` - RAO scoring visualization and methodology explanation
 - `console.html` - Internal developer console/tools interface
-- `igpl.html` - IGPL (India Golf Premier League) partnership page
-- `igplscroll.html` - Alternate scrollable version of igpl.html
-- `angelone.html` - Client-specific proposal page (Angel One expansion)
 
-### Dev/Test Pages (not deployed to public; live in `dev/`)
-- `dev/dashboard_test.html` - Development copy of dashboard.html for testing
-- `dev/test.html` - General test/debug page
-- `dev/tracker.html` - Data tracking/monitoring page
+### Pitch Pages (live in `pitches/`)
+- `pitches/igpl.html` - IGPL Africa Swing sponsorship strategy
+- `pitches/igplscroll.html` - Alternate scrollable IGPL pitch (references root `igpl-config.js`)
+- `pitches/angelone.html` - Client-specific proposal page (Angel One expansion)
+- `pitches/igpl/` - ~46 IGPL company-specific pages + template + assets
+
+### Dev/Test Pages (not deployed; live in `dev/`, gitignored)
+- `dev/dashboard_dev.html` - Development copy of dashboard.html for testing
 
 ### Directory Structure
 
@@ -39,23 +42,29 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 /
 ├── index.html               - Landing page
 ├── dashboard.html           - RAO dashboard (Firebase-gated)
+├── admin.html               - User management (level 1 only)
+├── tracker.html             - Project tracker (auth-gated)
 ├── map.html, rao.html       - Public visualization pages
 ├── console.html             - Developer tools console
-├── igpl.html, igplscroll.html - IGPL partnership pages
-├── angelone.html            - Client proposal page
+├── igpl-config.js           - IGPL video timeline event config (used by pitches/igplscroll.html)
+├── pitches/                 - Client & partner pitch pages
+│   ├── igpl.html            - IGPL Africa Swing sponsorship pitch
+│   ├── igplscroll.html      - Scrollable IGPL pitch variant
+│   ├── angelone.html        - Angel One expansion proposal
+│   └── igpl/                - ~46 IGPL company pages + template + igpl.png + frames/
 ├── dev/                     - Dev/test pages (gitignored, not deployed)
-│   ├── dashboard_test.html
-│   ├── test.html
-│   └── tracker.html
-├── data/                    - RAO CSV datasets (all versions kept)
-│   ├── rao.csv              - RAO 1.0 (archive)
+│   └── dashboard_dev.html
+├── data/                    - RAO CSV datasets
 │   ├── rao2.csv             - RAO 2.0 (ACTIVE: used by map.html)
 │   ├── rao3.csv             - RAO 3.0 detailed (ACTIVE: used by console.html)
-│   ├── rao4.csv             - RAO 3.0 enhanced (archive)
-│   ├── rao5.csv             - RAO with scaled components (archive)
-│   ├── rao6.csv             - RAO 4.0 (archive)
-│   ├── rao7.csv             - RAO 5.0 with trajectory (archive)
-│   └── rao8.csv             - RAO panel 2010–2024 (ACTIVE: used by dashboard.html)
+│   ├── rao4.csv             - RAO 3.0 enhanced (ACTIVE: used by console.html)
+│   ├── rao9.csv             - RAO 9.0 panel 2010–2024 (ACTIVE: used by dashboard.html)
+│   └── legacy/              - Archived datasets (rao.csv, rao5–rao8.csv; not referenced)
+├── notes/                   - Internal documentation (not deployed as pages)
+│   ├── design.md            - Design system reference (tokens, typography, components)
+│   ├── structure.md         - Full project structure map
+│   ├── update.md            - Session change logs
+│   └── PDF_PIPELINE_README.md - Brief pipeline documentation
 ├── logos/                   - Client logos
 │   ├── ksr-logo.svg
 │   ├── tca-logo.png
@@ -65,37 +74,25 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 │   ├── brian.png, ishan.png, adip.png, pranoy.png
 │   ├── lauren.png, niamh.png, liliya.png, sreemayukha.png
 │   └── hillary.png, bhuvanya.jpeg, shubhangi.jpeg, ...
-├── insights/                - Strategic brief PDFs (11 files; auto-managed)
-│   ├── davos.pdf
-│   ├── SaudiArabiaForeignInvestment.pdf
-│   ├── Venezuela Crisis 2026.pdf
-│   ├── Rare Earth Chokepoint.pdf
-│   ├── The Tale of Two Giants.pdf
-│   ├── GSU Executive Note - China Shock 2.0.pdf
-│   ├── Iran at the Inflection Point -.pdf
-│   ├── Irish Support for Farmers...pdf
-│   ├── Oil Price Shocks...pdf
-│   ├── US-India Deal Announcement...pdf
-│   └── West Asia Conflict...pdf
-│   └── [new PDFs auto-processed here]
-├── igpl/                    - IGPL-specific assets (~46 company pages + template)
+├── insights/                - Strategic brief PDFs (auto-managed by pipeline)
+│   └── [PDF files auto-processed here]
 ├── gsu-gate/                - Cloudflare Worker for PDF gate & email
 │   ├── wrangler.toml        - Cloudflare config
 │   └── src/index.js         - Worker: PDF gating, Resend email, Firebase Realtime DB
 ├── assets/                  - Static images and icons
-│   ├── gsu.png              - GSU logo (navbar)
-│   ├── gsu.ico              - Favicon
+│   ├── gsu.png              - GSU logo (navbar, all pages)
+│   ├── gsu.ico              - Favicon (all pages)
 │   ├── world_alpha_mini.jpg - 3D globe texture (index.html)
-│   └── angelone.png         - Angel One client asset
-├── docs/                    - PDF documents and documentation
+│   ├── angelone.png         - Angel One client asset
+│   ├── GSU_Transparent.png  - GSU logo transparent variant
+│   └── GSU_Navy_Transparent.png - GSU navy logo transparent variant
+├── docs/                    - Core PDF documents only
 │   ├── GRB Q1 2026.pdf      - Latest Geoeconomic Risk Barometer (16 MB)
 │   ├── GRB Q4 2025.pdf      - Previous quarterly barometer (4.6 MB)
-│   ├── Thinking Geopolitically.pdf - Main GSU whitepaper
-│   └── PDF_PIPELINE_README.md   - Brief pipeline documentation
+│   └── Thinking Geopolitically.pdf - Main GSU whitepaper
 ├── firebase-config.js       - Firebase Auth + Firestore + Analytics setup
 ├── load-briefs.js           - Fetches briefs.json, renders brief cards on index.html
-├── igpl-config.js           - IGPL video timeline event configuration
-├── briefs.json              - Brief metadata (14 entries; auto-generated by pipeline)
+├── briefs.json              - Brief metadata (auto-generated by pipeline)
 ├── process_pdf.py           - PDF processing script (PyMuPDF + Gemini AI)
 ├── requirements.txt         - pymupdf==1.23.8, google-genai
 ├── .github/workflows/       - GitHub Actions (update_briefs.yml)
@@ -106,11 +103,12 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 - **Location**: `data/` directory
 - **Active datasets**:
   - `rao2.csv` → `map.html` (country + score + regime, single snapshot)
-  - `rao3.csv` → `console.html` (33-column detailed pillar data)
-  - `rao8.csv` → `dashboard.html` (ACTIVE MAIN: 46-column panel data 2010–2024, with TOS/SIS/DGI/RVS scores, archetypes, anomaly flags, 22+ normalized indicators)
-- **Archived datasets** (methodology history; not referenced by any page):
-  - `rao.csv`, `rao4.csv`, `rao5.csv`, `rao6.csv`, `rao7.csv`
-- Format varies by version; rao8.csv schema: `country_iso, country_name, year, rao_score, tos_score, sis_score, dgi_score, rvs_score, regime_label, archetype, anomaly_flag, [22+ normalized indicators]`
+  - `rao3.csv` / `rao4.csv` → `console.html` (detailed pillar data)
+  - `rao9.csv` → `dashboard.html` (ACTIVE MAIN: panel data 2010–2024)
+- **Archived datasets** (moved to `data/legacy/`; not referenced by any page):
+  - `rao.csv` (v1.0), `rao5.csv`, `rao6.csv`, `rao7.csv`, `rao8.csv`
+- **rao9.csv schema**: `country_iso, country_name, year, rao_score, rao_score_pre_overlay, overlay_adjustment, market_size_bonus, cvar25, volatility_band, pillar_opportunity, pillar_stability, pillar_absorptive_capacity, pillar_trajectory, tos_score, tos_signal_label, sis_score, dgi_score, rvs_score, regime, regime_label, archetype, trajectory_class, [normalized indicators]`
+- **4 pillars** (rao9): Opportunity · Stability · Absorptive Capacity · Trajectory
 
 ### Authentication
 - **Dashboard only** (`dashboard.html`) is protected — all other pages are public.
@@ -150,10 +148,10 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 ### Assets
 - **Team Photos**: `team/` directory (12 member photos)
 - **Client Logos**: `logos/` directory (4 logos: KSR Marine, TCA, Altmin x2)
-- **Strategic Briefs**: `insights/` directory (11 PDF files present; 14 entries in briefs.json — 3 PDFs are in briefs.json but not yet in the folder)
-- **Brand Icons & Images**: `assets/` directory — `gsu.png` (logo), `gsu.ico` (favicon), `world_alpha_mini.jpg` (globe texture), `angelone.png`
+- **Strategic Briefs**: `insights/` directory (PDF files; auto-managed by pipeline)
+- **Brand Icons & Images**: `assets/` directory — `gsu.png` (logo), `gsu.ico` (favicon), `world_alpha_mini.jpg` (globe texture), `angelone.png`, two GSU transparent logo variants
 - **Core PDFs**: `docs/` directory — `GRB Q1 2026.pdf`, `GRB Q4 2025.pdf`, `Thinking Geopolitically.pdf`
-- **igpl/**: ~46 individual company pages + template.html
+- **Pitch assets**: `pitches/igpl/` — 46 company pages, `igpl.png`, `frames/` (192 animation frames)
 
 ## Design System
 
@@ -171,6 +169,12 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 - `--accent-gold: #C2A56D` (slightly different shade)
 - Regime colors: RO (green), FO (gold), SL (blue), SR (red)
 - Data colors: green, lime, amber, orange, red, blue for visualizations
+
+**admin.html / tracker.html (light/beige theme):**
+- `--bg: #f5f1ea` - Warm beige background
+- `--bg-card: #ffffff`
+- `--text: #1a1f2e` - Dark navy text
+- `--accent-gold: #C2A56D`
 
 ### Typography
 **Public pages (index.html etc.):**
@@ -237,8 +241,8 @@ npx serve .
 ## Common Tasks
 
 ### Updating RAO Data
-1. Edit `data/rao8.csv` (dashboard) or `data/rao2.csv` (map)
-2. Schema for rao8.csv: panel data with country ISO, year, rao_score, pillar scores, regime_label, archetype, anomaly_flag, and 22+ normalized indicators
+1. Edit `data/rao9.csv` (dashboard) or `data/rao2.csv` (map)
+2. Schema for rao9.csv: panel data — see Data Files section above for full column list
 3. Changes reflect immediately after page reload
 
 ### Adding Team Members
@@ -266,7 +270,7 @@ npx serve .
 
 **Setup required:**
 - Add `GEMINI_API_KEY` as a GitHub repository secret
-- See `PDF_PIPELINE_README.md` for full documentation
+- See `notes/PDF_PIPELINE_README.md` for full documentation
 
 **Manual method (if needed):**
 1. Upload PDF to `insights/` directory
@@ -291,27 +295,28 @@ The `gsu-gate` Cloudflare Worker gates the GRB quarterly reports:
 ### Naming
 - Lowercase for standard pages (`index.html`, `dashboard.html`)
 - Client-specific pages use client name (`angelone.html`)
-- CSV files use descriptive names (`rao.csv`, `rao2.csv`)
+- CSV files use descriptive names (`rao2.csv`, `rao9.csv`)
 - Images use descriptive names, lowercase preferred
 
 ### Structure
 - Root directory contains only HTML files, core config files, and essential assets
 - Organized subdirectories:
-  - `data/` - All RAO CSV files (active + archived versions)
+  - `data/` - Active RAO CSV files; `data/legacy/` for archived versions
+  - `pitches/` - Client & partner pitch pages (igpl/, angelone, igplscroll)
+  - `notes/` - Internal markdown documentation (not deployed as pages)
   - `logos/` - All client logos
   - `team/` - All team member photos
-  - `insights/` - Strategic brief PDFs
-  - `igpl/` - IGPL client/project assets (~46 company pages)
+  - `insights/` - Strategic brief PDFs (auto-managed)
+  - `docs/` - Core PDF documents (GRB reports, whitepaper) only
   - `dev/` - Test/development pages (gitignored, not deployed)
   - `gsu-gate/` - Cloudflare Worker source code
-- Core PDFs (barometer, whitepaper) remain in root for easy linking
 - All dependencies via CDN - no node_modules or build artifacts
 
 ## Performance Considerations
 
 - **Globe rendering**: Computationally intensive, uses WebGL shaders
 - **Image optimization**: Team photos and logos can be large (1-2MB)
-- **CSV loading**: rao8.csv is 871 KB — largest dataset, loaded client-side
+- **CSV loading**: rao9.csv is the largest dataset, loaded client-side
 - **Mobile optimization**: Globe scales down, grids collapse to single column
 - **Chart instances**: dashboard.html maintains a chart registry (`_chartInstances`); instances are re-created on tab switch
 
@@ -325,17 +330,19 @@ The `gsu-gate` Cloudflare Worker gates the GRB quarterly reports:
 ## Gotchas
 
 1. **Three.js imports**: Must use Skypack CDN with specific version (v0.128.0)
-2. **Globe image path**: `world_alpha_mini.jpg` hardcoded, must exist in root
-3. **CSV parsing**: No header validation, ensure consistent format; rao8.csv uses RFC 4180 quoting
+2. **Globe image path**: `world_alpha_mini.jpg` is in `assets/` — referenced as `assets/world_alpha_mini.jpg` in `index.html`
+3. **CSV parsing**: No header validation, ensure consistent format; rao9.csv uses RFC 4180 quoting
 4. **Shader errors**: WebGL context issues on some browsers/devices
 5. **Scroll behavior**: `scroll-behavior: smooth` may conflict with Safari
 6. **Responsive breakpoint**: 900px is the main mobile threshold
 7. **Firebase config**: API keys in `firebase-config.js` are intentionally public (client-side SDK); access control is enforced via Firestore security rules on the backend
-8. **briefs.json vs insights/**: 3 briefs in `briefs.json` do not have corresponding PDFs in `insights/` — links will 404 until the PDFs are added
-9. **rao8.csv trend fields**: The fields `norm_gdp_growth_trend`, `norm_fdi_trend`, `norm_governance_trend`, `norm_debt_trend`, `norm_inflation_trend` are declared in dashboard.html's `NUMERIC_FIELDS` but absent from rao8.csv — they parse as `null`
+8. **briefs.json vs insights/**: Some briefs in `briefs.json` may not have corresponding PDFs in `insights/` — those links will 404 until the PDFs are added
+9. **pitches/ asset paths**: Pages in `pitches/` use `../assets/` (one level up) for icons and logos. `pitches/igpl/*.html` company pages use `igpl.png` directly (same directory). Do not add or remove `../` prefixes without checking the file's location.
 10. **Unverified Firebase users show as logged in**: Firebase's `onAuthStateChanged` fires with a non-null user immediately after `createUserWithEmailAndPassword`, before email is verified. `onAuthReady()` in dashboard.html treats these users as unauthenticated in the UI (shows Sign In button, not avatar) by checking `user.emailVerified && providerData[0].providerId === 'password'`. Do not remove this check.
 11. **`#search-results` portal**: The country search dropdown in the Analysis tab is a direct child of `<body>` (not inside `.search-box`). This is intentional — the `fadeIn` CSS animation on `.tab-content.active` uses `transform`, which creates a containing block that breaks `position:fixed` children during the animation. Moving it inside the search box again will cause the dropdown to be clipped.
 12. **Tab lock z-index**: `.tab-lock` is `position:fixed; z-index:999`. The fixed header is `z-index:1000`. Do not raise `.tab-lock` above 999 or the navigation tabs will be obscured and users will be stuck on the locked tab.
+13. **process_pdf.py and requirements.txt must stay in root**: The GitHub Actions workflow (`update_briefs.yml`) references both files by root-relative paths. Moving them requires updating the workflow too.
+14. **igpl-config.js must stay in root**: `pitches/igplscroll.html` loads it as `../igpl-config.js`. The copy that was in `pitches/igpl/igpl-config.js` has been removed (it was an unused template).
 
 ## Contact & Ownership
 
