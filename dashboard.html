@@ -3843,6 +3843,43 @@
             .chat-chart-wrapper { padding: 0.75rem; }
             .chat-chart-canvas { height: 220px !important; }
         }
+
+        /* ── MOBILE FIXES (supplements the blocks above) ─────────────────── */
+        @media (max-width: 768px) {
+            /* Flush header to top edge (2px gap looks wrong on 2-row layout) */
+            .header { top: 0; }
+
+            /* Insights tab: correct height for 2-row header (~125px) */
+            #tab-insights.tab-content.active { height: calc(100vh - 125px); }
+
+            /* Rankings filter selects: go full-width when controls stack */
+            .rankings-filter select { width: 100%; max-width: 100%; }
+
+            /* Tab lock: prevent paragraph overflow on narrow screens */
+            .tab-lock p { max-width: min(340px, calc(100vw - 3rem)); }
+        }
+
+        @media (max-width: 480px) {
+            /* Insights tab: correct for slightly shorter 2-row header at 480px */
+            #tab-insights.tab-content.active { height: calc(100vh - 115px); }
+
+            /* Tighter section padding */
+            .section-container { padding: 0.75rem; }
+
+            /* Auth modal: reduce side padding */
+            .auth-modal { padding: 1.75rem 1.5rem 1.5rem; }
+
+            /* Sign-in button: smaller at 480px */
+            .sign-in-btn { height: 30px; padding: 0 0.85rem; font-size: 0.65rem; }
+
+            /* iOS safe-area: prevent chat input hiding behind home indicator */
+            .chat-input-area {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+
+            /* Stacked scorecard on very small screens */
+            .scorecard-country { min-width: 0; }
+        }
         .chat-chart-wrapper {
             background: rgba(15, 20, 32, 0.6);
             border: 1px solid rgba(203, 168, 78, 0.2);
