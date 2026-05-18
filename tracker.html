@@ -873,18 +873,55 @@
     /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
     @media (max-width: 900px) {
       .stats-strip { grid-template-columns: repeat(2, 1fr); }
-      .vs-grid     { grid-template-columns: 1fr 1fr; }
       .vpc-grid    { grid-template-columns: 1fr 1fr; }
       .nav-item    { padding: 6px 10px; }
       .form-row-2  { grid-template-columns: 1fr; }
     }
     @media (max-width: 600px) {
-      .stats-strip  { grid-template-columns: 1fr 1fr; }
-      .header-title { display: none; }
-      .header-sep   { display: none; }
-      .tab-inner, .tab-inner-wide { padding: 20px 14px; }
-      .members-hero { flex-direction: column; align-items: flex-start; }
-      .welcome-banner { flex-direction: column; align-items: flex-start; }
+      /* Header */
+      .header-inner { padding: 0 12px; gap: 6px; }
+      .header-title, .header-sep { display: none; }
+      .nav-label  { display: none; }
+      .nav-item   { padding: 8px 10px; gap: 0; }
+
+      /* Page padding */
+      .tab-inner, .tab-inner-wide { padding: 16px 12px; }
+
+      /* Welcome banner */
+      .welcome-banner { flex-direction: column; align-items: flex-start; padding: 16px 18px; gap: 10px; }
+      .welcome-name   { font-size: 1.2rem; }
+
+      /* Stats */
+      .stats-strip     { gap: 10px; margin-bottom: 18px; }
+      .stat-card       { padding: 14px 16px; }
+      .stat-card-value { font-size: 1.65rem; }
+
+      /* Section headings */
+      .section-row    { flex-wrap: wrap; gap: 8px; }
+      .vertical-header { flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+      .vertical-title  { font-size: 1.3rem; }
+
+      /* Grids */
+      .vs-grid  { grid-template-columns: 1fr; }
+      .vpc-grid { grid-template-columns: 1fr 1fr; }
+
+      /* Tables: horizontal scroll */
+      .task-section { overflow-x: auto; }
+      .task-table   { min-width: 520px; }
+      .table-card   { overflow-x: auto; }
+      .team-table   { min-width: 480px; }
+
+      /* Project cards */
+      .project-header  { padding: 11px 12px; }
+      .progress-bar, .progress-label { display: none; }
+
+      /* Members + auth gate */
+      .members-hero { flex-direction: column; align-items: flex-start; padding: 18px 20px; }
+      .gate-panel   { padding: 2rem 1.5rem 1.75rem; }
+    }
+    @media (max-width: 380px) {
+      .stats-strip { grid-template-columns: 1fr; }
+      .vpc-grid    { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -1436,7 +1473,7 @@ function renderNav() {
   menu.innerHTML = tabs
     .filter(t => t.show)
     .map(t => `<div class="nav-item${activeTab === t.id ? ' active' : ''}" onclick="switchTab('${t.id}')">
-      <i class="${t.icon}"></i>${t.label}
+      <i class="${t.icon}"></i><span class="nav-label">${t.label}</span>
     </div>`)
     .join('');
 }
