@@ -180,7 +180,9 @@ async function handleGeminiChat(request, env, cors) {
         for (const tc of msg.tool_calls) {
           let args = {};
           try { args = JSON.parse(tc.function.arguments); } catch {}
-          parts.push({ functionCall: { name: tc.function.name, args } });
+          const part = { functionCall: { name: tc.function.name, args } };
+          if (msg._thought_signatures?.[tc.id]) part.thoughtSignature = msg._thought_signatures[tc.id];
+          parts.push(part);
         }
       }
       if (parts.length > 0) contents.push({ role: 'model', parts });
@@ -228,14 +230,20 @@ async function handleGeminiChat(request, env, cors) {
 
   let message;
   if (fnCallParts.length > 0) {
+    const ts = Date.now();
+    const toolCalls = fnCallParts.map((p, i) => ({
+      id: `call_${ts}_${i}`,
+      type: 'function',
+      function: { name: p.functionCall.name, arguments: JSON.stringify(p.functionCall.args || {}) }
+    }));
+    // Preserve thoughtSignatures so the next turn can round-trip them back to Gemini
+    const signatures = {};
+    fnCallParts.forEach((p, i) => { if (p.thoughtSignature) signatures[`call_${ts}_${i}`] = p.thoughtSignature; });
     message = {
       role: 'assistant',
       content: textParts.map(p => p.text).join('') || null,
-      tool_calls: fnCallParts.map((p, i) => ({
-        id: `call_${Date.now()}_${i}`,
-        type: 'function',
-        function: { name: p.functionCall.name, arguments: JSON.stringify(p.functionCall.args || {}) }
-      }))
+      tool_calls: toolCalls,
+      ...(Object.keys(signatures).length && { _thought_signatures: signatures })
     };
   } else {
     message = {

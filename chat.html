@@ -10410,7 +10410,7 @@ async function runAgentLoop(userText) {
                 addTraceStep('tool-result', summarizeToolResult(fnName, result));
                 toolResults.push({ role: 'tool', tool_call_id: tc.id, content: typeof result === 'string' ? result : JSON.stringify(result) });
             }
-            messages = [...messages, { role: 'assistant', content: response.content || null, tool_calls: response.tool_calls }, ...toolResults];
+            messages = [...messages, response, ...toolResults];
             updateChatStatus('thinking', 'Synthesizing…');
         } else {
             const reply = response.content || 'No response received.';
