@@ -3759,6 +3759,37 @@
         .trace-step.step-error { background: rgba(150,96,96,0.08); border-color: rgba(150,96,96,0.2); color: #966060; }
         .trace-step-lbl { font-family: var(--font-minor); font-size: 0.57rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.65; display: block; margin-bottom: 0.18rem; }
         .trace-step-body { font-family: var(--font-body); line-height: 1.35; word-break: break-word; }
+        .trace-step.expandable { cursor: pointer; transition: filter 0.12s; }
+        .trace-step.expandable:hover { filter: brightness(1.2); }
+        .trace-step.expandable .trace-step-lbl::after { content: ' ↗'; opacity: 0.45; font-style: normal; }
+        /* Trace modal */
+        .trace-modal { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.62); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+        .trace-modal.open { opacity: 1; pointer-events: all; }
+        .trace-modal-card { background: #1b2336; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; width: 100%; max-width: 660px; max-height: 82vh; display: flex; flex-direction: column; overflow: hidden; transform: translateY(10px); transition: transform 0.15s; }
+        .trace-modal.open .trace-modal-card { transform: translateY(0); }
+        .trace-modal-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.07); font-family: var(--font-minor); font-size: 0.57rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); flex-shrink: 0; }
+        .trace-modal-close { background: none; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); cursor: pointer; font-size: 0.9rem; padding: 0.15rem 0.45rem; border-radius: 3px; line-height: 1; transition: all 0.12s; }
+        .trace-modal-close:hover { color: var(--text-white); border-color: rgba(255,255,255,0.25); }
+        .trace-modal-body { overflow-y: auto; padding: 1rem; flex: 1; font-family: var(--font-body); font-size: 0.82rem; color: var(--text-muted); line-height: 1.65; }
+        .tm-answer { background: rgba(203,168,78,0.06); border: 1px solid rgba(203,168,78,0.15); border-radius: 5px; padding: 0.65rem 0.8rem; margin-bottom: 0.9rem; color: rgba(203,168,78,0.85); font-size: 0.8rem; line-height: 1.6; }
+        .tm-section-lbl { font-family: var(--font-minor); font-size: 0.54rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; margin-bottom: 0.45rem; }
+        .tm-source { border: 1px solid rgba(255,255,255,0.07); border-radius: 5px; padding: 0.65rem 0.8rem; margin-bottom: 0.5rem; }
+        .tm-source-title { font-size: 0.8rem; color: var(--text-white); margin-bottom: 0.18rem; font-weight: 500; }
+        .tm-source-url { font-size: 0.68rem; margin-bottom: 0.4rem; word-break: break-all; }
+        .tm-source-url a { color: #5d8ca8; text-decoration: none; }
+        .tm-source-url a:hover { text-decoration: underline; }
+        .tm-source-snippet { font-size: 0.76rem; line-height: 1.55; }
+        .tm-code { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; padding: 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: rgba(255,255,255,0.55); overflow-x: auto; white-space: pre-wrap; word-break: break-word; margin: 0; max-height: 420px; overflow-y: auto; }
+        .tm-fn-name { color: var(--accent-gold); font-family: var(--font-minor); font-size: 0.7rem; letter-spacing: 0.05em; margin-bottom: 0.55rem; }
+        .tm-md h3 { font-size: 0.85rem; color: var(--text-white); margin: 0.8rem 0 0.3rem; font-weight: 600; }
+        .tm-md h4 { font-size: 0.78rem; color: rgba(255,255,255,0.8); margin: 0.6rem 0 0.25rem; }
+        .tm-md p { margin: 0 0 0.5rem; }
+        .tm-md ul, .tm-md ol { padding-left: 1.2rem; margin: 0.3rem 0; }
+        .tm-md li { margin-bottom: 0.2rem; }
+        .tm-md strong { color: var(--text-white); }
+        .tm-md table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin: 0.6rem 0; }
+        .tm-md th { background: rgba(255,255,255,0.05); padding: 0.3rem 0.5rem; text-align: left; border: 1px solid rgba(255,255,255,0.08); }
+        .tm-md td { padding: 0.28rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); }
         @media (max-width: 900px) { .sessions-sidebar, .trace-panel { display: none; } }
 
         /* ===== MOBILE RESPONSIVENESS ===== */
@@ -10059,6 +10090,7 @@ function closeAllModals() {
     });
     const infoModal = document.getElementById('info-modal');
     if (infoModal) infoModal.style.display = 'none';
+    document.getElementById('trace-modal')?.classList.remove('open');
 }
 
 // Helper function to get country region
@@ -10397,7 +10429,7 @@ async function runAgentLoop(userText) {
                 let fnArgs = {};
                 try { fnArgs = JSON.parse(tc.function.arguments); } catch {}
 
-                addTraceStep('tool-call', fnName.replace(/_/g, ' ') + '(' + formatToolArgs(fnArgs) + ')');
+                addTraceStep('tool-call', fnName.replace(/_/g, ' ') + '(' + formatToolArgs(fnArgs) + ')', { fnName, fnArgs });
                 updateChatStatus('thinking', 'Retrieving: ' + fnName.replace(/_/g, ' ') + '…');
 
                 let result;
@@ -10407,14 +10439,14 @@ async function runAgentLoop(userText) {
                 if (fnName === 'web_search') _agentSources.push({ type: 'web', query: fnArgs.query });
                 else if (!fnName.startsWith('render_')) _agentSources.push({ type: 'rao', tool: fnName });
 
-                addTraceStep('tool-result', summarizeToolResult(fnName, result));
+                addTraceStep('tool-result', summarizeToolResult(fnName, result), { fnName, result: typeof result === 'string' ? result : JSON.stringify(result) });
                 toolResults.push({ role: 'tool', tool_call_id: tc.id, content: typeof result === 'string' ? result : JSON.stringify(result) });
             }
             messages = [...messages, response, ...toolResults];
             updateChatStatus('thinking', 'Synthesizing…');
         } else {
             const reply = response.content || 'No response received.';
-            addTraceStep('respond', reply.slice(0, 100) + (reply.length > 100 ? '…' : ''));
+            addTraceStep('respond', reply.slice(0, 100) + (reply.length > 100 ? '…' : ''), reply);
             return reply;
         }
     }
@@ -10551,7 +10583,7 @@ function clearTrace() {
     if (el) el.innerHTML = '<div class="trace-empty">Reasoning trace for current query.</div>';
 }
 
-function addTraceStep(type, content) {
+function addTraceStep(type, content, fullData) {
     const el = document.getElementById('trace-steps');
     if (!el) return;
     const emp = el.querySelector('.trace-empty');
@@ -10559,10 +10591,61 @@ function addTraceStep(type, content) {
     const icons = { think: 'ri-brain-line', 'tool-call': 'ri-flashlight-line', 'tool-result': 'ri-checkbox-circle-line', respond: 'ri-sparkling-line', 'step-error': 'ri-error-warning-line' };
     const labels = { think: 'Reasoning', 'tool-call': 'Tool', 'tool-result': 'Result', respond: 'Response', 'step-error': 'Error' };
     const div = document.createElement('div');
-    div.className = 'trace-step ' + type;
+    const expandable = fullData !== undefined;
+    div.className = 'trace-step ' + type + (expandable ? ' expandable' : '');
     div.innerHTML = '<span class="trace-step-lbl"><i class="' + (icons[type] || 'ri-circle-line') + '"></i> ' + (labels[type] || type) + '</span><div class="trace-step-body">' + escapeHTMLSafe(content) + '</div>';
+    if (expandable) div.onclick = () => openTraceModal(type, fullData);
     el.appendChild(div);
     el.scrollTop = el.scrollHeight;
+}
+
+function openTraceModal(type, data) {
+    const labels = { think: 'Reasoning', 'tool-call': 'Tool Call', 'tool-result': 'Result', respond: 'Response', 'step-error': 'Error' };
+    document.getElementById('trace-modal-title').textContent = labels[type] || type;
+    document.getElementById('trace-modal-body').innerHTML = buildTraceModalContent(type, data);
+    document.getElementById('trace-modal').classList.add('open');
+}
+
+function closeTraceModal(e) {
+    if (e && e.target !== document.getElementById('trace-modal')) return;
+    document.getElementById('trace-modal').classList.remove('open');
+}
+
+function buildTraceModalContent(type, data) {
+    if (type === 'respond') {
+        return '<div class="tm-md">' + chatMarkdownToHTML(String(data)) + '</div>';
+    }
+    if (type === 'tool-call') {
+        return '<div class="tm-fn-name">' + escapeHTMLSafe(data.fnName) + '</div>' +
+               '<pre class="tm-code">' + escapeHTMLSafe(JSON.stringify(data.fnArgs, null, 2)) + '</pre>';
+    }
+    if (type === 'tool-result') {
+        if (data.fnName === 'web_search') return buildWebSearchModal(data.result);
+        try {
+            return '<pre class="tm-code">' + escapeHTMLSafe(JSON.stringify(JSON.parse(data.result), null, 2)) + '</pre>';
+        } catch { return '<pre class="tm-code">' + escapeHTMLSafe(String(data.result)) + '</pre>'; }
+    }
+    return '<div style="white-space:pre-wrap;">' + escapeHTMLSafe(String(data)) + '</div>';
+}
+
+function buildWebSearchModal(resultStr) {
+    let data;
+    try { data = JSON.parse(resultStr); } catch { return '<pre class="tm-code">' + escapeHTMLSafe(resultStr) + '</pre>'; }
+    let html = '';
+    if (data.answer) {
+        html += '<div class="tm-answer"><div class="tm-section-lbl">Answer</div>' + escapeHTMLSafe(data.answer) + '</div>';
+    }
+    if (data.results?.length) {
+        html += '<div class="tm-section-lbl">Sources (' + data.results.length + ')</div>';
+        for (const r of data.results) {
+            html += '<div class="tm-source">' +
+                '<div class="tm-source-title">' + escapeHTMLSafe(r.title || '') + '</div>' +
+                '<div class="tm-source-url"><a href="' + escapeHTMLSafe(r.url || '') + '" target="_blank" rel="noopener">' + escapeHTMLSafe(r.url || '') + '</a></div>' +
+                '<div class="tm-source-snippet">' + escapeHTMLSafe(r.content || '') + '</div>' +
+                '</div>';
+        }
+    }
+    return html || '<div>No results.</div>';
 }
 
 function toggleTracePanel() {
@@ -11294,5 +11377,14 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
 <!-- Firebase config & auth helpers -->
 <script src="firebase-config.js"></script>
 
+<div id="trace-modal" class="trace-modal" onclick="closeTraceModal(event)">
+    <div class="trace-modal-card">
+        <div class="trace-modal-hdr">
+            <span id="trace-modal-title">Detail</span>
+            <button class="trace-modal-close" onclick="closeTraceModal()"><i class="ri-close-line"></i></button>
+        </div>
+        <div class="trace-modal-body" id="trace-modal-body"></div>
+    </div>
+</div>
 </body>
 </html>
