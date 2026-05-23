@@ -33,6 +33,9 @@ export default {
       if (url.pathname === '/send-report' && request.method === 'POST') {
         return await handleSendReport(request, env, cors);
       }
+      if (url.pathname === '/search' && request.method === 'POST') {
+        return await handleSearch(request, env, cors);
+      }
       return respond({ error: 'Not found' }, 404, cors);
     } catch (err) {
       console.error(err);
@@ -135,4 +138,41 @@ async function dbWrite(env, path, data) {
 
 function respond(body, status, headers) {
   return new Response(JSON.stringify(body), { status, headers });
+}
+
+// ── Tavily Web Search ─────────────────────────────────────────────────────────
+
+async function handleSearch(request, env, cors) {
+  const { query } = await request.json();
+  if (!query || typeof query !== 'string' || query.trim().length < 2) {
+    return respond({ error: 'Invalid query.' }, 400, cors);
+  }
+  if (!env.TAVILY_API_KEY) {
+    return respond({ error: 'Search not configured on server.' }, 503, cors);
+  }
+  const res = await fetch('https://api.tavily.com/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      api_key: env.TAVILY_API_KEY,
+      query: query.trim().slice(0, 400),
+      search_depth: 'basic',
+      max_results: 5,
+      include_answer: true
+    })
+  });
+  if (!res.ok) {
+    console.error('Tavily error:', await res.text());
+    return respond({ error: 'Search upstream failed.' }, 502, cors);
+  }
+  const data = await res.json();
+  return respond({
+    answer: data.answer || null,
+    results: (data.results || []).map(r => ({
+      title: r.title,
+      url: r.url,
+      content: (r.content || '').slice(0, 500),
+      score: r.score
+    }))
+  }, 200, cors);
 }
