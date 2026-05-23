@@ -4846,7 +4846,8 @@
 
 // ===== GROQ / KIMI K2 CONFIG =====
 // Requests are proxied through the Cloudflare Worker (WORKER_URL from firebase-config.js)
-const GROQ_MODEL = 'groq/compound-mini';
+const GROQ_MODEL = 'openai/gpt-oss-120b';
+const MODEL_SUPPORTS_TOOLS = !GROQ_MODEL.startsWith('openai/'); // reasoning models don't support tool use
 
 const CHART_TOOLS = [
     {
@@ -10965,8 +10966,8 @@ async function sendChatMessage() {
             chatHistory.push({ role: 'assistant', content: reply });
 
         } else {
-            // Non-streaming path with chart tool support
-            const msg = await callGroqAPI(messages, CHART_TOOLS);
+            // Non-streaming path (chart tools only if model supports them)
+            const msg = await callGroqAPI(messages, MODEL_SUPPORTS_TOOLS ? CHART_TOOLS : null);
 
             if (msg.tool_calls && msg.tool_calls.length > 0) {
                 const toolCall = msg.tool_calls[0];
@@ -11034,11 +11035,9 @@ async function callGroqAPI(messages, tools = null, onToken = null) {
 
     if (isCompound) {
         body.compound_custom = { tools: { enabled_tools: ['web_search'] } };
-    } else if (tools) {
+    } else if (tools && MODEL_SUPPORTS_TOOLS) {
         body.tools = tools;
         body.tool_choice = 'auto';
-    } else {
-        body.tool_choice = 'none';
     }
 
     const response = await fetch(WORKER_URL, {
