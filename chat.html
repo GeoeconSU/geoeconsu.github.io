@@ -4155,7 +4155,7 @@
 <script>
 
 // ===== AGENT CONFIG =====
-const GROQ_MODEL = 'qwen-qwq-32b';
+const GROQ_MODEL = 'qwen/qwen3-32b';
 const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
 const MAX_AGENT_STEPS = 5;
 
@@ -10339,7 +10339,9 @@ ANALYTICAL STANDARD:
 Lead with strategic insight. Build causal chains. Numbers as evidence not argument. Base/upside/downside scenarios with conditional triggers. Specific, actionable closing sentence. Full paragraphs; bullet points only when comparing 3+ items, followed by synthesis paragraph. ### headers for sections. ### Bottom Line: decision-relevant.
 
 TOOL USE PROTOCOL:
-Always retrieve data with tools before synthesizing. Use get_country_profile for any named country. Use web_search for current events, post-2024 data, sanctions, elections, or news. Use chart tools when visual output adds value. Execute all needed tool calls, then synthesize once you have the data.`;
+Always retrieve data with tools before synthesizing. Use get_country_profile for any named country. Use web_search for current events, post-2024 data, sanctions, elections, or news. Use chart tools when visual output adds value. Execute all needed tool calls, then synthesize once you have the data.
+
+/no_think`;
 }
 
 // ===== AGENTIC LOOP =====
@@ -10404,7 +10406,9 @@ async function callGroqAPIAgent(messages, tools = null, maxTokens = 2500) {
         throw new Error(err?.error?.message || `HTTP ${response.status}`);
     }
     const data = await response.json();
-    return data.choices?.[0]?.message || { content: 'No response.' };
+    const msg = data.choices?.[0]?.message || { content: 'No response.' };
+    if (msg.content) msg.content = msg.content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    return msg;
 }
 
 // ===== TOOL IMPLEMENTATIONS =====
