@@ -807,9 +807,9 @@
 
     <!-- ── Fullpage Scroll ────────────────────────────────────────────── -->
     <style>
-        /* Scroll container */
-        html { height: 100%; }
-        body {
+        /* Scroll container: use an explicit wrapper div — body scroll-snap is unreliable across browsers */
+        html, body { height: 100%; overflow: hidden; }
+        #fp-wrapper {
             height: 100%;
             overflow-y: scroll;
             scroll-snap-type: y mandatory;
@@ -901,8 +901,8 @@
 
         /* ── Mobile: revert to normal scroll ── */
         @media (max-width: 900px) {
-            html { height: auto; }
-            body { height: auto; overflow-y: auto; scroll-snap-type: none; }
+            html, body { height: auto; overflow: auto; }
+            #fp-wrapper { height: auto; overflow-y: auto; scroll-snap-type: none; }
             header#hero { scroll-snap-align: none; scroll-snap-stop: unset; }
             section, footer#contact {
                 height: auto;
@@ -938,6 +938,8 @@
             <a href="mailto:geoecon@16thcouncil.uk?subject=Inquiry regarding Strategic Advice">Contact</a>
         </div>
     </nav>
+
+    <div id="fp-wrapper">
 
     <header id="hero" class="container">
         <div class="hero-layout">
@@ -2035,6 +2037,8 @@
         });
     </script>
 
+    </div><!-- /#fp-wrapper -->
+
     <!-- ── Fullpage navigation dots + counter ── -->
     <div id="fp-nav" aria-label="Section navigation" role="navigation"></div>
     <span class="fp-counter" aria-hidden="true"></span>
@@ -2044,6 +2048,7 @@
         (function () {
             if (window.matchMedia('(max-width: 900px)').matches) return;
 
+            const wrapper = document.getElementById('fp-wrapper');
             const panels  = Array.from(document.querySelectorAll('header#hero, section, footer#contact'));
             const nav     = document.getElementById('fp-nav');
             const counter = document.querySelector('.fp-counter');
@@ -2078,10 +2083,10 @@
 
             function goTo(idx) {
                 if (idx < 0 || idx >= total) return;
-                panels[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                wrapper.scrollTo({ top: idx * wrapper.clientHeight, behavior: 'smooth' });
             }
 
-            /* IntersectionObserver tracks which panel is in view */
+            /* IntersectionObserver tracks which panel is in view, rooted to the wrapper */
             const io = new IntersectionObserver(entries => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -2089,7 +2094,7 @@
                         if (idx !== -1) setActive(idx);
                     }
                 });
-            }, { threshold: 0.5 });
+            }, { root: wrapper, threshold: 0.5 });
 
             panels.forEach(p => io.observe(p));
 
