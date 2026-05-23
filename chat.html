@@ -3701,6 +3701,21 @@
         }
         .tpl-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(203,168,78,0.05); }
         .tpl-btn i { font-size: 0.8rem; }
+        .model-selector {
+            display: flex; gap: 0.3rem; padding: 0.3rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0; align-items: center; flex-wrap: wrap;
+            background: rgba(0,0,0,0.08);
+        }
+        .model-pill {
+            background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
+            font-family: var(--font-minor); font-size: 0.56rem; font-weight: 500;
+            letter-spacing: 0.05em; text-transform: uppercase;
+            padding: 0.22rem 0.6rem; border-radius: 20px; cursor: pointer;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .model-pill:hover { border-color: rgba(203,168,78,0.4); color: rgba(203,168,78,0.7); }
+        .model-pill.active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(203,168,78,0.07); }
         .coverage-bar {
             padding: 0.32rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);
             flex-shrink: 0; font-family: var(--font-minor); font-size: 0.59rem; color: var(--text-muted);
@@ -4126,6 +4141,12 @@
             <button class="tpl-btn" onclick="applyTemplate('comparison')"><i class="ri-bar-chart-grouped-line"></i> Compare</button>
             <button class="tpl-btn" onclick="clearChatHistory()" style="margin-left:auto;" title="Clear chat"><i class="ri-delete-bin-line"></i></button>
         </div>
+        <div class="model-selector">
+            <button class="model-pill active" data-model="gemini-3.1-flash-lite" onclick="selectModel('gemini-3.1-flash-lite')">Gemini 3.1 Lite</button>
+            <button class="model-pill" data-model="gemini-3.5-flash" onclick="selectModel('gemini-3.5-flash')">Gemini 3.5</button>
+            <button class="model-pill" data-model="openai/gpt-oss-120b" onclick="selectModel('openai/gpt-oss-120b')">GPT OSS 120B</button>
+            <button class="model-pill" data-model="qwen/qwen3-32b" onclick="selectModel('qwen/qwen3-32b')">Qwen3 32B</button>
+        </div>
         <div class="coverage-bar" id="coverage-bar" style="display:none;"></div>
         <div class="chat-messages" id="chat-messages-container"></div>
         <div class="chat-input-area">
@@ -4157,6 +4178,14 @@
 // ===== AGENT CONFIG =====
 const GEMINI_CHAT_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-chat';
 const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
+let selectedModel = 'gemini-3.1-flash-lite';
+
+function selectModel(modelId) {
+    selectedModel = modelId;
+    document.querySelectorAll('.model-pill').forEach(p => {
+        p.classList.toggle('active', p.dataset.model === modelId);
+    });
+}
 const MAX_AGENT_STEPS = 5;
 
 const ALL_TOOLS = [
@@ -10396,9 +10425,14 @@ async function runAgentLoop(userText) {
 }
 
 async function callGroqAPIAgent(messages, tools = null, maxTokens = 2500) {
-    const body = { messages, temperature: 0.2, max_tokens: maxTokens };
-    if (tools && tools.length) body.tools = tools;
-    const response = await fetch(GEMINI_CHAT_URL, {
+    const isGemini = selectedModel.startsWith('gemini-');
+    const url = isGemini ? GEMINI_CHAT_URL : WORKER_URL;
+    const body = { model: selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
+    if (tools && tools.length) {
+        body.tools = tools;
+        if (!isGemini) body.tool_choice = 'auto';
+    }
+    const response = await fetch(url, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
     });
     if (!response.ok) {
@@ -10406,7 +10440,9 @@ async function callGroqAPIAgent(messages, tools = null, maxTokens = 2500) {
         throw new Error(err?.error?.message || `HTTP ${response.status}`);
     }
     const data = await response.json();
-    return data.choices?.[0]?.message || { content: 'No response.' };
+    const msg = data.choices?.[0]?.message || { content: 'No response.' };
+    if (!isGemini && msg.content) msg.content = msg.content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    return msg;
 }
 
 // ===== TOOL IMPLEMENTATIONS =====
