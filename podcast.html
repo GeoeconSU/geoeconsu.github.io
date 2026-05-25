@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSU Podcast Generator</title>
+    <link rel="icon" type="image/x-icon" href="assets/gsu.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+    /* ═══════════════════════════════════════════════
+       TOKENS
+    ═══════════════════════════════════════════════ */
+    :root {
+        --primary-bg:   #192030;
+        --secondary-bg: #1f283b;
+        --tertiary-bg:  #232d44;
+        --accent-gold:  #C2A56D;
+        --text-white:   #eeeae0;
+        --text-muted:   rgba(238,234,224,.68);
+        --gold-dim:     rgba(194,165,109,0.3);
+        --gold-faint:   rgba(194,165,109,.07);
+        --border:       rgba(255,255,255,.07);
+        --border-hover: rgba(194,165,109,0.35);
+        --easing:       cubic-bezier(.25,1,.35,1);
+        --font-head:    'Playfair Display', 'EB Garamond', Georgia, serif;
+        --font-body:    'EB Garamond', Georgia, serif;
+        --font-ui:      'Montserrat', sans-serif;
+        --font-mono:    'JetBrains Mono', monospace;
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════════ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; overflow:hidden; }
+
+    body {
+        background: var(--primary-bg);
+        color: var(--text-white);
+        font-family: var(--font-ui);
+        font-size: 0.88rem;
+        -webkit-font-smoothing: antialiased;
+        display: flex;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SIDEBAR
+    ═══════════════════════════════════════════════ */
+    .sidebar {
+        width: 290px;
+        flex-shrink: 0;
+        background: var(--secondary-bg);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .sidebar-header {
+        padding: 20px 22px 18px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    .sidebar-logo {
+        height: 28px;
+        width: auto;
+        opacity: 0.88;
+    }
+
+    .sidebar-title {
+        font-family: var(--font-head);
+        font-size: 0.92rem;
+        font-weight: 400;
+        color: var(--text-white);
+        line-height: 1;
+    }
+    .sidebar-sub {
+        font-size: 0.52rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        opacity: 0.6;
+        margin-top: 4px;
+    }
+
+    .sidebar-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 18px 20px 24px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--gold-dim) transparent;
+    }
+    .sidebar-body::-webkit-scrollbar { width: 4px; }
+    .sidebar-body::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+    /* ── Form sections ── */
+    .form-section {
+        margin-bottom: 22px;
+    }
+
+    .form-section-label {
+        font-size: 0.52rem;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: var(--accent-gold);
+        opacity: 0.7;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .form-section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+    .form-group:last-child { margin-bottom: 0; }
+
+    .form-group label {
+        display: block;
+        font-size: 0.55rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.09);
+        border-radius: 3px;
+        color: var(--text-white);
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        padding: 7px 10px;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        resize: none;
+        outline: none;
+    }
+    .form-group textarea { line-height: 1.5; }
+    .form-group input:focus,
+    .form-group textarea:focus {
+        border-color: rgba(194,165,109,0.5);
+        box-shadow: 0 0 0 2px rgba(194,165,109,0.08);
+    }
+
+    .form-row-3 {
+        display: grid;
+        grid-template-columns: 1fr 1.6fr 1fr;
+        gap: 8px;
+    }
+
+    .speaker-block {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .speaker-block:last-child { margin-bottom: 0; }
+
+    .speaker-index {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--gold-faint);
+        border: 1px solid var(--gold-dim);
+        color: var(--accent-gold);
+        font-size: 0.58rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 22px;
+    }
+
+    .speaker-fields { flex: 1; }
+
+    /* ═══════════════════════════════════════════════
+       PREVIEW AREA
+    ═══════════════════════════════════════════════ */
+    .preview-area {
+        flex: 1;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 28px 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--gold-dim) transparent;
+    }
+    .preview-area::-webkit-scrollbar { width: 4px; }
+    .preview-area::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+    .preview-block {}
+
+    .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .preview-label {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 0.58rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-family: var(--font-ui);
+    }
+
+    .preview-badge {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--gold-faint);
+        border: 1px solid var(--gold-dim);
+        color: var(--accent-gold);
+        font-size: 0.52rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-download {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 15px;
+        background: var(--accent-gold);
+        color: var(--primary-bg);
+        border: none;
+        border-radius: 3px;
+        font-family: var(--font-ui);
+        font-size: 0.55rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s var(--easing), opacity 0.2s;
+    }
+    .btn-download i { font-size: 0.78rem; }
+    .btn-download:hover { background: #d4b87e; transform: translateY(-1px); }
+    .btn-download:active { transform: translateY(0); }
+    .btn-download:disabled { opacity: 0.55; cursor: wait; transform: none; }
+    .btn-download .btn-loading-text { display: none; }
+    .btn-download.loading .btn-idle-content { display: none; }
+    .btn-download.loading .btn-loading-text { display: inline; font-size: 0.55rem; }
+
+    /* Preview wrapper clips the scaled frame */
+    .preview-wrapper {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+    }
+
+    /* ═══════════════════════════════════════════════
+       PODCAST FRAME — shared between cover + bg
+       Fixed 1280×720; scaled via JS transform
+    ═══════════════════════════════════════════════ */
+    .podcast-frame {
+        width: 1280px;
+        height: 720px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin: top left;
+        background: #192030;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .fm-map {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        object-position: center;
+        opacity: 0.12;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .fm-glow {
+        position: absolute; inset: 0;
+        background:
+            radial-gradient(ellipse 55% 35% at 50% 18%, rgba(194,165,109,0.055) 0%, transparent 70%),
+            radial-gradient(ellipse 90% 70% at 50% 50%, rgba(20,32,58,0.5) 0%, transparent 100%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .fm-vignette {
+        position: absolute; inset: 0;
+        background: radial-gradient(ellipse 85% 85% at 50% 48%, transparent 28%, rgba(12,17,28,0.55) 65%, rgba(8,12,22,0.88) 100%);
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .fm-content {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 40px 49px;
+    }
+
+    /* ── Frame header ── */
+    .fm-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 22px;
+        flex-shrink: 0;
+    }
+
+    .fm-logo {
+        height: 32px;
+        width: auto;
+        opacity: 0.92;
+        filter: brightness(1.08);
+    }
+
+    .fm-series-tag {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #C2A56D;
+        opacity: 0.8;
+    }
+
+    .fm-divider {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, rgba(194,165,109,0.22) 18%, rgba(194,165,109,0.22) 82%, transparent 100%);
+        margin-bottom: 28px;
+        flex-shrink: 0;
+    }
+
+    /* ── Title section (cover only) ── */
+    .fm-title-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 10px;
+        animation: fm-fadeInUp 0.9s cubic-bezier(.25,1,.35,1) both;
+    }
+
+    .fm-eyebrow {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 9.5px;
+        font-weight: 500;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: #C2A56D;
+        opacity: 0.7;
+    }
+
+    .fm-main-title {
+        font-family: 'Playfair Display', 'EB Garamond', Georgia, serif;
+        font-weight: 600;
+        font-size: 46px;
+        color: #eeeae0;
+        line-height: 1.14;
+        letter-spacing: -0.01em;
+        max-width: 82%;
+    }
+
+    .fm-subtitle {
+        font-family: 'EB Garamond', Georgia, serif;
+        font-style: italic;
+        font-size: 16px;
+        color: rgba(238,234,224,.70);
+        max-width: 600px;
+        line-height: 1.55;
+        opacity: 0.72;
+        margin-top: 4px;
+    }
+
+    /* ── Speakers row ── */
+    .fm-speakers-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 58px;
+        padding-top: 18px;
+        padding-bottom: 8px;
+        animation: fm-fadeInUp 0.9s cubic-bezier(.25,1,.35,1) both 0.2s;
+    }
+
+    /* BG variant: fills remaining space, centers vertically, larger gap */
+    .fm-speakers-row--bg {
+        flex: 1;
+        align-items: center;
+        gap: 80px;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .fm-speaker {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 11px;
+    }
+
+    /* ── Squircle ── */
+    .fm-squircle {
+        border-radius: 24%;
+        background: linear-gradient(148deg, #232d44 0%, #1f283b 100%);
+        border: 2px solid rgba(194,165,109,0.42);
+        box-shadow:
+            0 0 0 1px rgba(194,165,109,0.07) inset,
+            0 4px 22px rgba(0,0,0,0.38),
+            0 0 28px rgba(194,165,109,0.04);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        animation: fm-squircle-glow 3.8s ease-in-out infinite;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .fm-squircle--cover {
+        width: 173px;
+        height: 173px;
+    }
+
+    .fm-squircle--bg {
+        width: 358px;
+        height: 358px;
+    }
+
+    .fm-initials {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 22px;
+        font-weight: 500;
+        color: #C2A56D;
+        opacity: 0.42;
+        letter-spacing: 0.06em;
+        user-select: none;
+    }
+
+    .fm-initials--bg {
+        font-size: 52px;
+    }
+
+    /* hide initials when photo is set */
+    .fm-squircle[style*="background-image"] .fm-initials { display: none; }
+
+    .fm-speaker-name {
+        font-family: 'Playfair Display', 'EB Garamond', Georgia, serif;
+        font-size: 15px;
+        font-weight: 400;
+        color: #eeeae0;
+        text-align: center;
+        letter-spacing: 0.01em;
+    }
+
+    .fm-speaker-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 8px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+        color: #C2A56D;
+        opacity: 0.58;
+        text-align: center;
+    }
+
+    /* ── Footer ── */
+    .fm-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255,255,255,.055);
+        flex-shrink: 0;
+        animation: fm-fadeInUp 0.9s cubic-bezier(.25,1,.35,1) both 0.35s;
+    }
+
+    .fm-footer-l {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #C2A56D;
+        opacity: 0.62;
+    }
+
+    .fm-footer-r {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 8px;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        color: rgba(238,234,224,.70);
+        opacity: 0.38;
+    }
+
+    /* ═══════════════════════════════════════════════
+       KEYFRAMES
+    ═══════════════════════════════════════════════ */
+    @keyframes fm-fadeInUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fm-squircle-glow {
+        0%, 100% {
+            box-shadow:
+                0 0 0 1px rgba(194,165,109,0.06) inset,
+                0 4px 22px rgba(0,0,0,0.38),
+                0 0 18px rgba(194,165,109,0.02);
+        }
+        50% {
+            box-shadow:
+                0 0 0 1px rgba(194,165,109,0.11) inset,
+                0 4px 26px rgba(0,0,0,0.42),
+                0 0 38px rgba(194,165,109,0.09);
+        }
+    }
+    </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <img src="assets/GSU_Transparent.png" alt="GSU" class="sidebar-logo">
+        <div>
+            <div class="sidebar-title">Podcast Generator</div>
+            <div class="sidebar-sub">GSU</div>
+        </div>
+    </div>
+
+    <div class="sidebar-body">
+
+        <div class="form-section">
+            <div class="form-section-label">Episode</div>
+            <div class="form-row-3">
+                <div class="form-group">
+                    <label>No.</label>
+                    <input type="text" id="ep-number" value="01">
+                </div>
+                <div class="form-group">
+                    <label>Month</label>
+                    <input type="text" id="ep-month" value="May">
+                </div>
+                <div class="form-group">
+                    <label>Year</label>
+                    <input type="text" id="ep-year" value="2025">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-section-label">Content</div>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="ep-title" value="Trade Wars & the New World Order">
+            </div>
+            <div class="form-group">
+                <label>Caption</label>
+                <textarea id="ep-caption" rows="3">How shifting geopolitical alliances are redrawing the map of global commerce</textarea>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-section-label">Speakers</div>
+
+            <div class="speaker-block">
+                <div class="speaker-index">1</div>
+                <div class="speaker-fields">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="s1-name" value="Dr. Alexandra Blake">
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input type="text" id="s1-role" value="Director of Strategy · GSU">
+                    </div>
+                </div>
+            </div>
+
+            <div class="speaker-block">
+                <div class="speaker-index">2</div>
+                <div class="speaker-fields">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="s2-name" value="Marcus Reid">
+                    </div>
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input type="text" id="s2-role" value="Senior Fellow · Atlantic Council">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</aside>
+
+<!-- ── Preview area ── -->
+<main class="preview-area" id="preview-area">
+
+    <!-- Cover / Thumbnail -->
+    <div class="preview-block">
+        <div class="preview-header">
+            <div class="preview-label">
+                <span class="preview-badge">1</span>
+                Thumbnail &nbsp;/&nbsp; Cover
+            </div>
+            <button class="btn-download" onclick="downloadFrame('frame-cover','gsu-podcast-cover.png',this)">
+                <span class="btn-idle-content"><i class="ri-download-2-line"></i>&nbsp; Download PNG</span>
+                <span class="btn-loading-text">Rendering&thinsp;···</span>
+            </button>
+        </div>
+        <div class="preview-wrapper" id="wrapper-cover">
+            <div class="podcast-frame" id="frame-cover">
+                <img class="fm-map" src="GSUMapGold.png" alt="">
+                <div class="fm-glow"></div>
+                <div class="fm-vignette"></div>
+                <div class="fm-content">
+                    <div class="fm-header">
+                        <img src="assets/GSU_Transparent.png" alt="GSU" class="fm-logo">
+                        <div class="fm-series-tag">Geoeconomic Conversations</div>
+                    </div>
+                    <div class="fm-divider"></div>
+                    <div class="fm-title-section">
+                        <div class="fm-eyebrow" id="cover-eyebrow">Episode 01 &nbsp;·&nbsp; May 2025</div>
+                        <h1 class="fm-main-title" id="cover-title">Trade Wars &amp; the New World Order</h1>
+                        <p class="fm-subtitle" id="cover-subtitle">How shifting geopolitical alliances are redrawing the map of global commerce</p>
+                    </div>
+                    <div class="fm-speakers-row">
+                        <div class="fm-speaker">
+                            <div class="fm-squircle fm-squircle--cover" id="cover-s1-frame">
+                                <span class="fm-initials" id="cover-s1-initials">AB</span>
+                            </div>
+                            <div class="fm-speaker-name" id="cover-s1-name">Dr. Alexandra Blake</div>
+                            <div class="fm-speaker-title" id="cover-s1-role">Director of Strategy &middot; GSU</div>
+                        </div>
+                        <div class="fm-speaker">
+                            <div class="fm-squircle fm-squircle--cover" id="cover-s2-frame" style="animation-delay:1.9s">
+                                <span class="fm-initials" id="cover-s2-initials">MR</span>
+                            </div>
+                            <div class="fm-speaker-name" id="cover-s2-name">Marcus Reid</div>
+                            <div class="fm-speaker-title" id="cover-s2-role">Senior Fellow &middot; Atlantic Council</div>
+                        </div>
+                    </div>
+                    <div class="fm-footer">
+                        <div class="fm-footer-l">GSU Podcast</div>
+                        <div class="fm-footer-r">geoecon.solutions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Background -->
+    <div class="preview-block">
+        <div class="preview-header">
+            <div class="preview-label">
+                <span class="preview-badge">2</span>
+                Video Background
+            </div>
+            <button class="btn-download" onclick="downloadFrame('frame-bg','gsu-podcast-bg.png',this)">
+                <span class="btn-idle-content"><i class="ri-download-2-line"></i>&nbsp; Download PNG</span>
+                <span class="btn-loading-text">Rendering&thinsp;···</span>
+            </button>
+        </div>
+        <div class="preview-wrapper" id="wrapper-bg">
+            <div class="podcast-frame" id="frame-bg">
+                <img class="fm-map" src="GSUMapGold.png" alt="">
+                <div class="fm-glow"></div>
+                <div class="fm-vignette"></div>
+                <div class="fm-content">
+                    <div class="fm-header">
+                        <img src="assets/GSU_Transparent.png" alt="GSU" class="fm-logo">
+                        <div class="fm-series-tag" id="bg-title">Trade Wars &amp; the New World Order</div>
+                    </div>
+                    <div class="fm-divider"></div>
+                    <div class="fm-speakers-row fm-speakers-row--bg">
+                        <div class="fm-speaker">
+                            <div class="fm-squircle fm-squircle--bg" id="bg-s1-frame">
+                                <span class="fm-initials fm-initials--bg" id="bg-s1-initials">AB</span>
+                            </div>
+                        </div>
+                        <div class="fm-speaker">
+                            <div class="fm-squircle fm-squircle--bg" id="bg-s2-frame" style="animation-delay:1.9s">
+                                <span class="fm-initials fm-initials--bg" id="bg-s2-initials">MR</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fm-footer">
+                        <div class="fm-footer-l">GSU Podcast</div>
+                        <div class="fm-footer-r">geoecon.solutions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+/* ── helpers ── */
+function initials(name) {
+    return name.trim().split(/\s+/).map(w => w[0] || '').join('').substring(0, 2).toUpperCase();
+}
+
+function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+
+/* ── live update ── */
+function update() {
+    const num     = document.getElementById('ep-number').value.trim();
+    const month   = document.getElementById('ep-month').value.trim();
+    const year    = document.getElementById('ep-year').value.trim();
+    const title   = document.getElementById('ep-title').value.trim();
+    const caption = document.getElementById('ep-caption').value.trim();
+    const s1name  = document.getElementById('s1-name').value.trim();
+    const s1role  = document.getElementById('s1-role').value.trim();
+    const s2name  = document.getElementById('s2-name').value.trim();
+    const s2role  = document.getElementById('s2-role').value.trim();
+
+    const eyebrow = `Episode ${num} · ${month} ${year}`;
+
+    setText('cover-eyebrow',   eyebrow);
+    setText('cover-title',     title);
+    setText('cover-subtitle',  caption);
+    setText('cover-s1-name',   s1name);
+    setText('cover-s1-role',   s1role);
+    setText('cover-s1-initials', initials(s1name));
+    setText('cover-s2-name',   s2name);
+    setText('cover-s2-role',   s2role);
+    setText('cover-s2-initials', initials(s2name));
+
+    setText('bg-title',        title);
+    setText('bg-s1-initials',  initials(s1name));
+    setText('bg-s2-initials',  initials(s2name));
+}
+
+document.querySelectorAll('#ep-number,#ep-month,#ep-year,#ep-title,#ep-caption,#s1-name,#s1-role,#s2-name,#s2-role')
+    .forEach(el => el.addEventListener('input', update));
+
+/* ── scale previews to fit container ── */
+function scaleFrames() {
+    const area  = document.getElementById('preview-area');
+    const avail = area.clientWidth - 64;
+    const scale = Math.min(avail / 1280, 1);
+    document.querySelectorAll('.podcast-frame').forEach(f => {
+        f.style.transform = `scale(${scale})`;
+    });
+    document.querySelectorAll('.preview-wrapper').forEach(w => {
+        w.style.width  = (1280 * scale) + 'px';
+        w.style.height = (720  * scale) + 'px';
+    });
+}
+
+window.addEventListener('resize', scaleFrames);
+document.fonts.ready.then(scaleFrames);
+scaleFrames();
+
+/* ── download as PNG ── */
+async function downloadFrame(frameId, filename, btn) {
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    const el = document.getElementById(frameId);
+
+    /* temporarily render at natural 1280×720 off-screen */
+    const savedTransform = el.style.transform;
+    const savedPosition  = el.style.position;
+    el.style.transform = 'scale(1)';
+    el.style.position  = 'fixed';
+    el.style.top       = '-9999px';
+    el.style.left      = '-9999px';
+    el.style.zIndex    = '-1';
+
+    try {
+        const canvas = await html2canvas(el, {
+            scale:       2,
+            useCORS:     true,
+            allowTaint:  true,
+            width:       1280,
+            height:      720,
+            x:           0,
+            y:           0,
+            logging:     false,
+            windowWidth: 1280,
+            windowHeight:720
+        });
+
+        const a = document.createElement('a');
+        a.download = filename;
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+    } catch (err) {
+        console.error('Download failed:', err);
+    } finally {
+        el.style.transform = savedTransform;
+        el.style.position  = savedPosition || 'absolute';
+        el.style.top       = '0';
+        el.style.left      = '0';
+        el.style.zIndex    = '';
+        btn.classList.remove('loading');
+        btn.disabled = false;
+    }
+}
+</script>
+</body>
+</html>
