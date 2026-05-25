@@ -800,15 +800,32 @@ async function downloadFrame(frameId, filename, btn) {
     btn.classList.add('loading');
     btn.disabled = true;
 
-    const el = document.getElementById(frameId);
-    const savedTransform = el.style.transform;
+    const original = document.getElementById(frameId);
 
-    /* reset scale so html2canvas sees the full 1280×720 element in-place;
-       the wrapper overflow:hidden is irrelevant to html2canvas */
-    el.style.transform = 'scale(1)';
+    /* Clone the frame and attach directly to <body> — this removes it from
+       the preview-wrapper's overflow:hidden context, which was causing
+       html2canvas to clip the capture to the wrapper's visible area only. */
+    const clone = original.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.style.cssText =
+        'position:fixed;top:0;left:0;width:1280px;height:720px;' +
+        'transform:none;z-index:99999;pointer-events:none;';
+
+    /* Disable CSS animations so html2canvas gets a stable paint */
+    const noAnim = document.createElement('style');
+    noAnim.textContent = '.h2c-clone,.h2c-clone *{animation:none!important;transition:none!important;}';
+    clone.classList.add('h2c-clone');
+    document.head.appendChild(noAnim);
+    document.body.appendChild(clone);
+
+    /* Wait for any images in the clone to be ready, then let the browser paint */
+    await Promise.all([...clone.querySelectorAll('img')].map(img =>
+        img.complete ? Promise.resolve() : new Promise(res => { img.onload = res; img.onerror = res; })
+    ));
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
     try {
-        const canvas = await html2canvas(el, {
+        const canvas = await html2canvas(clone, {
             scale:      2,
             useCORS:    true,
             allowTaint: true,
@@ -824,7 +841,8 @@ async function downloadFrame(frameId, filename, btn) {
     } catch (err) {
         console.error('Download failed:', err);
     } finally {
-        el.style.transform = savedTransform;
+        document.body.removeChild(clone);
+        document.head.removeChild(noAnim);
         btn.classList.remove('loading');
         btn.disabled = false;
     }
