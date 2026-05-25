@@ -801,28 +801,20 @@ async function downloadFrame(frameId, filename, btn) {
     btn.disabled = true;
 
     const el = document.getElementById(frameId);
-
-    /* temporarily render at natural 1280×720 off-screen */
     const savedTransform = el.style.transform;
-    const savedPosition  = el.style.position;
+
+    /* reset scale so html2canvas sees the full 1280×720 element in-place;
+       the wrapper overflow:hidden is irrelevant to html2canvas */
     el.style.transform = 'scale(1)';
-    el.style.position  = 'fixed';
-    el.style.top       = '-9999px';
-    el.style.left      = '-9999px';
-    el.style.zIndex    = '-1';
 
     try {
         const canvas = await html2canvas(el, {
-            scale:       2,
-            useCORS:     true,
-            allowTaint:  true,
-            width:       1280,
-            height:      720,
-            x:           0,
-            y:           0,
-            logging:     false,
-            windowWidth: 1280,
-            windowHeight:720
+            scale:      2,
+            useCORS:    true,
+            allowTaint: true,
+            width:      1280,
+            height:     720,
+            logging:    false
         });
 
         const a = document.createElement('a');
@@ -833,10 +825,6 @@ async function downloadFrame(frameId, filename, btn) {
         console.error('Download failed:', err);
     } finally {
         el.style.transform = savedTransform;
-        el.style.position  = savedPosition || 'absolute';
-        el.style.top       = '0';
-        el.style.left      = '0';
-        el.style.zIndex    = '';
         btn.classList.remove('loading');
         btn.disabled = false;
     }
