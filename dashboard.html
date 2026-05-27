@@ -3264,6 +3264,55 @@
             margin-top: 0.15rem;
         }
 
+        /* ===== Regional Explorer ===== */
+        .re-continent { border-bottom: 1px solid var(--border-subtle); }
+        .re-continent:last-child { border-bottom: none; }
+
+        .re-continent-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.95rem 1.4rem; cursor: pointer;
+            transition: background 0.15s;
+            gap: 1rem;
+        }
+        .re-continent-header:hover { background: rgba(255,255,255,0.025); }
+
+        .re-continent-name {
+            font-family: var(--font-head); font-size: 1rem;
+            color: var(--text-white); font-weight: 400;
+        }
+
+        .re-chevron {
+            font-size: 0.5rem; color: var(--text-muted);
+            transition: transform 0.25s ease; display: inline-block;
+            margin-right: 0.8rem; flex-shrink: 0;
+        }
+        .re-chevron.open { transform: rotate(90deg); color: var(--accent-gold); }
+
+        .re-subregions { transition: max-height 0.35s var(--easing); overflow: hidden; }
+
+        .re-subregion-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.6rem 1.4rem 0.6rem 2.6rem; cursor: pointer;
+            border-top: 1px solid var(--border-subtle);
+            transition: background 0.15s;
+            gap: 1rem;
+        }
+        .re-subregion-header:hover { background: rgba(255,255,255,0.02); }
+
+        .re-sub-chevron {
+            font-size: 0.45rem; color: var(--text-muted);
+            transition: transform 0.25s ease; display: inline-block;
+            margin-right: 0.65rem; flex-shrink: 0;
+        }
+        .re-sub-chevron.open { transform: rotate(90deg); color: var(--accent-gold); }
+
+        .re-timeseries-panel { overflow: hidden; transition: max-height 0.4s var(--easing); }
+        .re-ts-inner {
+            padding: 0.85rem 1.4rem 1rem 2.6rem;
+            background: rgba(0,0,0,0.18);
+            border-top: 1px solid var(--border-subtle);
+        }
+
         /* Rank badge styles removed */
 
         .pillar-breakdown-tooltip {
@@ -4141,21 +4190,11 @@
                 </div>
             </div>
 
-            <!-- Regional Overview -->
+            <!-- Regional Explorer -->
             <div style="padding:1.5rem 2rem 0;" class="fade-up">
-                <div class="bento-cell">
-                    <span class="bento-label">Regional Overview</span>
-                    <div id="regional-overview" style="padding:0.5rem 0;"></div>
-                </div>
-            </div>
-
-            <div class="section-divider"></div>
-
-            <!-- Regional Breakdown -->
-            <div class="bento-grid glow-section fade-up">
-                <div class="bento-cell bento-span-3">
-                    <span class="bento-label">Regional Breakdown</span>
-                    <div style="padding: 0.75rem 1rem 1rem;" id="regional-section"></div>
+                <div class="bento-cell" style="padding:0;">
+                    <span class="bento-label" style="padding:0.75rem 1.4rem;display:block;">Regional Overview</span>
+                    <div id="regional-explorer"></div>
                 </div>
             </div>
 
@@ -5376,6 +5415,12 @@ function getGlobalMean(field, year) {
 
 // Pre-computed regional means keyed by [region][year][field]
 let _regionalMeans = {};
+
+// Regional Explorer state
+let _reOpenContinents = new Set();
+let _reOpenSubRegions = new Set();
+let _reChartInstances = {};
+const _RE_COLORS = { Africa:'#E8943A', Americas:'#2DC87A', Asia:'#4B96E8', Europe:'#E05B7A', Oceania:'#A96EDB' };
 function precomputeRegionalMeans() {
     const fields = ['rao_score','pillar_opportunity','pillar_stability',
                     'pillar_absorptive_capacity','pillar_trajectory','tos_score'];
@@ -5473,9 +5518,7 @@ function initializeOverviewTab() {
     _renderTop10Bottom10();
     renderGlobalTimeseries();
     renderScoreDistributionChart();
-    renderRegionalOverview();
-
-    renderRegionalSection();
+    renderRegionalExplorer();
 }
 
 function _renderTop10Bottom10() {
@@ -5564,9 +5607,8 @@ function setLandscapeYear(y) {
     drawMap();
     renderGlobalTimeseries();
     renderScoreDistributionChart();
-    renderRegionalOverview();
+    renderRegionalExplorer();
     _renderTop10Bottom10();
-    renderRegionalSection();
 }
 
 function renderKPIStrip() {
@@ -5760,56 +5802,188 @@ function renderScoreDistributionChart() {
     registerChart(chart);
 }
 
-function renderRegionalOverview() {
+function renderRegionalExplorer() {
     const slice = getSlice(_landscapeYear);
-    const regionOrder = ['Asia','Europe','Americas','Africa','Oceania'];
-    const header = `<div style="display:grid;grid-template-columns:150px 65px 1fr 130px;align-items:center;gap:1rem;padding:0.4rem 1.4rem;border-bottom:1px solid var(--border-subtle);">
-        <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Continent</span>
-        <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Avg RAO</span>
-        <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Opportunity · Stability · Absorptive Capacity · Trajectory</span>
-        <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Regime Mix</span>
-    </div>`;
 
-    const rows = regionOrder.map(region => {
-        const countries = slice.filter(r => getContinent(r.country) === region);
-        if (!countries.length) return '';
-        const n = countries.length;
-        const avg = f => countries.reduce((s,r)=>s+(r[f]||0),0)/n;
+    const html = Object.keys(CONTINENTS).map(continent => {
+        const cCode = continent.replace(/[^a-zA-Z0-9]/g, '');
+        const contCountries = slice.filter(c => CONTINENTS[continent].includes(c.country));
+        if (!contCountries.length) return '';
+        const n = contCountries.length;
+        const avg = f => contCountries.reduce((s, r) => s + (r[f] || 0), 0) / n;
         const meanRAO = avg('rao_score');
-        const meanA   = avg('pillar_opportunity');
-        const meanB   = avg('pillar_stability');
-        const meanC   = avg('pillar_absorptive_capacity');
-        const meanD   = avg('pillar_trajectory');
-
-        const pillarBar = (val, col) => `<div style="flex:1;height:6px;background:var(--tertiary-bg);border-radius:2px;overflow:hidden;"><div class="score-bar-animated" data-width="${val*100}" style="height:100%;background:${col};width:0%;transition:width 1s var(--easing);border-radius:2px;"></div></div>`;
-        const pillarLabel = (letter, val, col) => `<span style="font-family:var(--font-mono);font-size:0.6rem;color:${col};min-width:14px;">${letter}</span>`;
+        const meanA = avg('pillar_opportunity');
+        const meanB = avg('pillar_stability');
+        const meanC = avg('pillar_absorptive_capacity');
+        const meanD = avg('pillar_trajectory');
+        const color = _RE_COLORS[continent] || '#aaa';
 
         const regDots = ['RO','FO','SL','SR'].map(reg => {
-            const cnt = countries.filter(r=>r.regime===reg).length;
+            const cnt = contCountries.filter(r => r.regime === reg).length;
             if (!cnt) return '';
-            const w = Math.max(8, Math.round(cnt/n*60));
-            return `<span title="${REGIME_COLORS[reg].label}: ${cnt}" style="display:inline-block;width:${w}px;height:8px;border-radius:2px;background:${REGIME_COLORS[reg].solid};margin-right:2px;"></span>`;
+            const w = Math.max(6, Math.round(cnt / n * 80));
+            return `<span title="${REGIME_COLORS[reg].label}: ${cnt}" style="display:inline-block;width:${w}px;height:6px;border-radius:2px;background:${REGIME_COLORS[reg].solid};margin-right:2px;"></span>`;
         }).join('');
 
-        return `<div style="display:grid;grid-template-columns:150px 65px 1fr 130px;align-items:center;gap:1rem;padding:0.65rem 1.4rem;border-bottom:1px solid var(--border-subtle);">
-            <span style="font-family:var(--font-minor);font-size:0.73rem;font-weight:600;color:var(--w65);">${region} <span style="font-size:0.6rem;color:var(--text-muted);font-weight:400;">(${n})</span></span>
-            <span style="font-family:var(--font-mono);font-size:0.88rem;color:var(--accent-gold);">${meanRAO.toFixed(2)}</span>
-            <div style="display:flex;gap:5px;align-items:center;">
-                ${pillarLabel('A',meanA,'var(--accent-gold)')}${pillarBar(meanA,'var(--accent-gold)')}
-                ${pillarLabel('B',meanB,'var(--accent-blue)')}${pillarBar(meanB,'var(--accent-blue)')}
-                ${pillarLabel('C',meanC,'var(--accent-blue)')}${pillarBar(meanC,'var(--accent-blue)')}
-                ${pillarLabel('D',meanD,'var(--accent-green)')}${pillarBar(meanD,'var(--accent-green)')}
+        const pillarBar = (pct, col) => `<div style="width:56px;height:4px;background:var(--tertiary-bg);border-radius:2px;overflow:hidden;flex-shrink:0;"><div style="height:100%;width:${pct}%;background:${col};border-radius:2px;"></div></div>`;
+
+        const subRegions = Object.entries(REGION_TO_CONTINENT)
+            .filter(([, c]) => c === continent).map(([r]) => r);
+
+        const subHtml = subRegions.map(region => {
+            const rCode = region.replace(/[^a-zA-Z0-9]/g, '');
+            const regCountries = slice.filter(c => REGIONS[region].includes(c.country));
+            if (!regCountries.length) return '';
+            const rn = regCountries.length;
+            const rAvg = f => regCountries.reduce((s, r) => s + (r[f] || 0), 0) / rn;
+            const rRAO = rAvg('rao_score');
+            const rOpp = rAvg('pillar_opportunity');
+            const rStab = rAvg('pillar_stability');
+            const rTraj = rAvg('pillar_trajectory');
+            const leader = [...regCountries].sort((a, b) => b.rao_score - a.rao_score)[0];
+            const top5 = [...regCountries].sort((a, b) => b.rao_score - a.rao_score).slice(0, 5);
+
+            return `
+            <div id="re-sub-${rCode}">
+                <div class="re-subregion-header" onclick="reToggleSubRegion('${region}','${continent}')">
+                    <div style="display:flex;align-items:center;flex:1;min-width:0;gap:0.5rem;">
+                        <span class="re-sub-chevron" id="re-subchev-${rCode}">▶</span>
+                        <span style="font-family:var(--font-minor);font-size:0.72rem;font-weight:600;color:var(--text-white);">${region}</span>
+                        <span style="font-family:var(--font-minor);font-size:0.58rem;color:var(--text-muted);">${rn} countries</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:1.2rem;flex-shrink:0;">
+                        <div style="display:flex;gap:3px;align-items:center;">
+                            ${pillarBar(rOpp * 10, 'var(--accent-gold)')}
+                            ${pillarBar(rStab * 10, 'var(--accent-blue)')}
+                            ${pillarBar(rTraj * 10, 'var(--accent-green)')}
+                        </div>
+                        <span style="font-family:var(--font-mono);font-size:0.88rem;color:${color};min-width:36px;text-align:right;">${rRAO.toFixed(2)}</span>
+                        <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);min-width:96px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                              onclick="event.stopPropagation();openCountryAnalysis('${leader.country}')"
+                              onmouseenter="this.style.color='var(--accent-gold)'" onmouseleave="this.style.color='var(--text-muted)'">${leader.country_name}</span>
+                    </div>
+                </div>
+                <div class="re-timeseries-panel" id="re-ts-${rCode}" style="max-height:0;">
+                    <div class="re-ts-inner">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                            <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.14em;color:${color};">${region} · RAO Trends 2010–${window.LATEST_YEAR || 2024}</span>
+                            <div style="display:flex;gap:1rem;align-items:center;">
+                                <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);cursor:pointer;"
+                                      onclick="filterRankingsByRegion('${region}');switchTab('rankings');"
+                                      onmouseenter="this.style.color='var(--accent-gold)'" onmouseleave="this.style.color='var(--text-muted)'">View in Rankings ↗</span>
+                                <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);cursor:pointer;"
+                                      onclick="reToggleSubRegion('${region}','${continent}')"
+                                      onmouseenter="this.style.color='var(--w65)'" onmouseleave="this.style.color='var(--text-muted)'">collapse ↑</span>
+                            </div>
+                        </div>
+                        <div style="position:relative;height:160px;">
+                            <canvas id="re-chart-${rCode}"></canvas>
+                        </div>
+                        <div style="display:flex;gap:1.25rem;margin-top:0.85rem;flex-wrap:wrap;padding-top:0.5rem;border-top:1px solid var(--border-subtle);">
+                            ${top5.map(c => `<span style="font-family:var(--font-minor);font-size:0.6rem;cursor:pointer;color:var(--text-muted);white-space:nowrap;"
+                                onclick="openCountryAnalysis('${c.country}')"
+                                onmouseenter="this.style.color='var(--accent-gold)'" onmouseleave="this.style.color='var(--text-muted)'">
+                                ${c.country_name} <span style="font-family:var(--font-mono);color:${color};">${c.rao_score.toFixed(2)}</span>
+                            </span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+
+        const isOpen = _reOpenContinents.has(continent);
+        return `
+        <div class="re-continent" id="re-continent-${cCode}">
+            <div class="re-continent-header" onclick="reToggleContinent('${continent}')">
+                <div style="display:flex;align-items:center;flex:1;min-width:0;gap:0.75rem;">
+                    <span class="re-chevron${isOpen ? ' open' : ''}" id="re-chev-${cCode}">▶</span>
+                    <span class="re-continent-name">${continent}</span>
+                    <span style="font-family:var(--font-minor);font-size:0.58rem;color:var(--text-muted);">${n} countries</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:1.6rem;flex-shrink:0;">
+                    <div style="display:flex;gap:4px;align-items:center;">
+                        ${pillarBar(meanA * 10, 'var(--accent-gold)')}
+                        ${pillarBar(meanB * 10, 'var(--accent-blue)')}
+                        ${pillarBar(meanC * 10, 'var(--accent-blue)')}
+                        ${pillarBar(meanD * 10, 'var(--accent-green)')}
+                    </div>
+                    <div style="display:flex;align-items:center;gap:2px;">${regDots}</div>
+                    <span style="font-family:var(--font-mono);font-size:1.05rem;color:${color};min-width:40px;text-align:right;">${meanRAO.toFixed(2)}</span>
+                </div>
             </div>
-            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;">${regDots}</div>
+            <div class="re-subregions" id="re-subs-${cCode}" style="max-height:${isOpen ? '3000px' : '0'};">
+                ${subHtml}
+            </div>
         </div>`;
     }).join('');
 
-    document.getElementById('regional-overview').innerHTML = header + rows;
-    setTimeout(() => {
-        document.querySelectorAll('#regional-overview .score-bar-animated').forEach(bar => {
-            bar.style.width = bar.dataset.width + '%';
-        });
-    }, 120);
+    document.getElementById('regional-explorer').innerHTML = html;
+}
+
+function reToggleContinent(continent) {
+    const cCode = continent.replace(/[^a-zA-Z0-9]/g, '');
+    const panel = document.getElementById(`re-subs-${cCode}`);
+    const chev  = document.getElementById(`re-chev-${cCode}`);
+    if (!panel) return;
+    if (_reOpenContinents.has(continent)) {
+        _reOpenContinents.delete(continent);
+        panel.style.maxHeight = '0';
+        chev && chev.classList.remove('open');
+    } else {
+        _reOpenContinents.add(continent);
+        panel.style.maxHeight = '3000px';
+        chev && chev.classList.add('open');
+    }
+}
+
+function reToggleSubRegion(region, continent) {
+    const rCode = region.replace(/[^a-zA-Z0-9]/g, '');
+    const panel = document.getElementById(`re-ts-${rCode}`);
+    const chev  = document.getElementById(`re-subchev-${rCode}`);
+    if (!panel) return;
+    if (_reOpenSubRegions.has(region)) {
+        _reOpenSubRegions.delete(region);
+        panel.style.maxHeight = '0';
+        chev && chev.classList.remove('open');
+        if (_reChartInstances[rCode]) { _reChartInstances[rCode].destroy(); delete _reChartInstances[rCode]; }
+    } else {
+        _reOpenSubRegions.add(region);
+        panel.style.maxHeight = '600px';
+        chev && chev.classList.add('open');
+        requestAnimationFrame(() => _renderRegionTimeseries(region, continent));
+    }
+}
+
+function _renderRegionTimeseries(region, continent) {
+    const rCode = region.replace(/[^a-zA-Z0-9]/g, '');
+    const canvas = document.getElementById(`re-chart-${rCode}`);
+    if (!canvas) return;
+    if (_reChartInstances[rCode]) { _reChartInstances[rCode].destroy(); }
+    const color = _RE_COLORS[continent] || '#C2A56D';
+    const latestYear = window.LATEST_YEAR || 2024;
+    const years = Array.from({ length: latestYear - 2010 + 1 }, (_, i) => 2010 + i);
+    _reChartInstances[rCode] = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                { label: 'RAO Score',    data: years.map(y => _regionalMeans[region]?.[y]?.rao_score ?? null),            borderColor: color,        backgroundColor: color + '18', borderWidth: 2, tension: 0.35, spanGaps: true, pointRadius: 3, fill: true },
+                { label: 'Opportunity',  data: years.map(y => _regionalMeans[region]?.[y]?.pillar_opportunity ?? null),   borderColor: '#C2A56D',    backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [4,3], tension: 0.35, spanGaps: true, pointRadius: 0 },
+                { label: 'Stability',    data: years.map(y => _regionalMeans[region]?.[y]?.pillar_stability ?? null),     borderColor: '#607c98',    backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [4,3], tension: 0.35, spanGaps: true, pointRadius: 0 }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 500 },
+            plugins: {
+                legend: { display: true, position: 'top', labels: { font: { family:"'StyreneB',sans-serif", size:10 }, color:'rgba(238,234,224,0.45)', boxWidth:18, padding:10 } },
+                tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2) ?? '—'}` } }
+            },
+            scales: {
+                x: { ticks: { color:'rgba(238,234,224,0.3)', font:{ size:10 } }, grid: { color:'rgba(255,255,255,0.04)' } },
+                y: { min:0, max:10, ticks: { color:'rgba(238,234,224,0.3)', font:{ size:10 }, stepSize:2 }, grid: { color:'rgba(255,255,255,0.04)' } }
+            }
+        }
+    });
 }
 
 function openCountryAnalysis(code) {
@@ -10208,145 +10382,6 @@ function renderScatterPlot() {
     document.getElementById('scatter-plot-section').innerHTML = html;
 }
 
-// Enhancement #9: Regional Comparison Enhanced Chart
-function renderRegionalSection() {
-    const combined = {};
-    const yearSlice = getSlice(_landscapeYear);
-
-    Object.keys(REGIONS).forEach(region => {
-        const countries = yearSlice.filter(c => REGIONS[region].includes(c.country));
-        if (countries.length === 0) return;
-        const sorted = [...countries].sort((a, b) => b.calculated_rao - a.calculated_rao);
-        const raoScores = countries.map(c => c.calculated_rao);
-        const oppScores = countries.map(c => c.calculated_opportunity);
-        const stabScores = countries.map(c => c.calculated_stability);
-        const raoAvg = raoScores.reduce((a, b) => a + b, 0) / raoScores.length;
-        const oppAvg = oppScores.reduce((a, b) => a + b, 0) / oppScores.length;
-        const stabAvg = stabScores.reduce((a, b) => a + b, 0) / stabScores.length;
-        combined[region] = {
-            count: countries.length, rao: raoAvg,
-            opp: { avg: oppAvg, min: Math.min(...oppScores), max: Math.max(...oppScores) },
-            stab: { avg: stabAvg, min: Math.min(...stabScores), max: Math.max(...stabScores) },
-            variance: (Math.sqrt(oppScores.reduce((s, v) => s + Math.pow(v - oppAvg, 2), 0) / oppScores.length) +
-                       Math.sqrt(stabScores.reduce((s, v) => s + Math.pow(v - stabAvg, 2), 0) / stabScores.length)) / 2,
-            leader: sorted[0], second: sorted[1]
-        };
-    });
-
-    const sortedRegions = Object.entries(combined).sort((a, b) => b[1].rao - a[1].rao);
-
-    const html = sortedRegions.map(([region, data]) => {
-        const raoClass = data.rao >= 7 ? 'score-color-excellent' : data.rao >= 6.5 ? 'score-color-good' : data.rao >= 5 ? 'score-color-moderate' : 'score-color-concerning';
-        const leader = data.leader;
-        const distanceAhead = data.second ? (leader.calculated_rao - data.second.calculated_rao).toFixed(2) : '—';
-        const oppPillars = OPPORTUNITY_PILLARS.map(p => ({ name: p.name, score: calculatePillarScore(leader, p.vars) }));
-        const stabPillars = STABILITY_PILLARS.map(p => ({ name: p.name, score: calculatePillarScore(leader, p.vars) }));
-
-        const vsRegion = (leader.calculated_rao - data.rao).toFixed(2);
-        const vsRegionColor = leader.calculated_rao >= data.rao ? 'var(--accent-green)' : 'var(--accent-red)';
-
-        return `
-        <div class="regional-comparison-card" style="cursor:pointer;"
-             onclick="filterRankingsByRegion('${region}'); switchTab('rankings');">
-
-            <!-- Header: region + count + variance -->
-            <div class="regional-name">
-                ${region} &nbsp;·&nbsp; ${data.count} countries
-                <span class="regional-variance">σ: ${data.variance.toFixed(2)}</span>
-            </div>
-
-            <!-- Regional avg: same layout as leader row below -->
-            <div style="padding:0.85rem 1.2rem 0.6rem; display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem;">
-                <div style="font-family:var(--font-minor); font-size:0.55rem; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; color:var(--w45); padding-top:0.3rem;">Regional Average</div>
-                <div style="text-align:right; flex-shrink:0;">
-                    <div style="font-family:var(--font-mono); font-size:1.7rem; font-weight:500; line-height:1;" class="${raoClass}">${data.rao.toFixed(2)}</div>
-                    <div style="font-family:var(--font-minor); font-size:0.58rem; color:var(--w45); margin-top:0.2rem; letter-spacing:0.06em;">avg RAO</div>
-                </div>
-            </div>
-
-            <!-- Opp/Stab bars -->
-            <div class="regional-bars" style="padding-top:0;">
-                <div class="regional-bar-row">
-                    <div class="regional-bar-container">
-                        <div class="regional-bar score-bar-animated" data-width="${data.opp.avg * 10}"
-                             style="background:linear-gradient(90deg,var(--accent-gold),var(--accent-amber));"></div>
-                        <div class="regional-bar-text">
-                            <span style="font-family:var(--font-minor);font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#192030;">Opportunity</span>
-                            <span style="font-family:var(--font-mono);font-size:0.72rem;font-weight:600;color:var(--accent-gold);">${data.opp.avg.toFixed(2)}</span>
-                        </div>
-                    </div>
-                    <div class="regional-bar-range">${data.opp.min.toFixed(1)} – ${data.opp.max.toFixed(1)}</div>
-                </div>
-                <div class="regional-bar-row">
-                    <div class="regional-bar-container">
-                        <div class="regional-bar score-bar-animated" data-width="${data.stab.avg * 10}"
-                             style="background:linear-gradient(90deg,var(--accent-blue),#6fa3c4);"></div>
-                        <div class="regional-bar-text">
-                            <span style="font-family:var(--font-minor);font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#192030;">Stability</span>
-                            <span style="font-family:var(--font-mono);font-size:0.72rem;font-weight:600;color:var(--accent-blue);">${data.stab.avg.toFixed(2)}</span>
-                        </div>
-                    </div>
-                    <div class="regional-bar-range">${data.stab.min.toFixed(1)} – ${data.stab.max.toFixed(1)}</div>
-                </div>
-            </div>
-
-            <!-- Leader: same layout as regional avg row above -->
-            <div style="border-top:1px solid var(--border-subtle);"
-                 onclick="event.stopPropagation(); openCountryAnalysis('${leader.country}');"
-                 onmouseenter="showPillarBreakdown(event, ${JSON.stringify(oppPillars).replace(/"/g, '&quot;')}, ${JSON.stringify(stabPillars).replace(/"/g, '&quot;')})"
-                 onmouseleave="hidePillarBreakdown()">
-
-                <div style="padding:0.85rem 1.2rem 0.6rem; display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem;">
-                    <div style="flex:1; min-width:0;">
-                        <div style="font-family:var(--font-minor); font-size:0.55rem; font-weight:600; text-transform:uppercase; letter-spacing:0.18em; color:var(--accent-gold); margin-bottom:0.35rem;">Regional Leader</div>
-                        <div style="font-family:var(--font-head); font-size:1.15rem; color:var(--text-white); font-weight:400; line-height:1.1;">${leader.country_name}</div>
-                    </div>
-                    <div style="text-align:right; flex-shrink:0;">
-                        <div style="font-family:var(--font-mono); font-size:1.35rem; font-weight:500; line-height:1;" class="${getScoreClass(leader.calculated_rao)}">${leader.calculated_rao.toFixed(2)}</div>
-                        <div style="font-family:var(--font-minor); font-size:0.58rem; color:var(--w45); margin-top:0.2rem; letter-spacing:0.06em;">Global #${leader.rank}</div>
-                    </div>
-                </div>
-
-                <div style="display:flex; border-top:1px solid var(--border-subtle); border-bottom:1px solid var(--border-subtle);">
-                    <div style="flex:1; padding:0.45rem 1.2rem; display:flex; justify-content:space-between; align-items:center; border-right:1px solid var(--border-subtle);">
-                        <span style="font-family:var(--font-minor); font-size:0.6rem; color:var(--w45);">vs Region</span>
-                        <span style="font-family:var(--font-mono); font-size:0.82rem; color:${vsRegionColor};">+${vsRegion}</span>
-                    </div>
-                    <div style="flex:1; padding:0.45rem 1.2rem; display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-family:var(--font-minor); font-size:0.6rem; color:var(--w45);">Ahead of 2nd</span>
-                        <span style="font-family:var(--font-mono); font-size:0.82rem; color:var(--accent-green);">+${distanceAhead}</span>
-                    </div>
-                </div>
-
-                <div style="display:grid; grid-template-columns:1fr 1fr;">
-                    <div style="padding:0.65rem 1.2rem; border-right:1px solid var(--border-subtle);">
-                        <div style="font-family:var(--font-minor); font-size:0.55rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:var(--w45); margin-bottom:0.25rem;">Opportunity</div>
-                        <div style="font-family:var(--font-mono); font-size:1.05rem; font-weight:500; position:relative; overflow:hidden; padding-bottom:4px;" class="${getScoreClass(leader.calculated_opportunity)}">
-                            ${leader.calculated_opportunity.toFixed(2)}
-                            <div style="position:absolute; bottom:0; left:0; height:2px; background:currentColor; opacity:0.4; width:${leader.calculated_opportunity * 10}%;"></div>
-                        </div>
-                    </div>
-                    <div style="padding:0.65rem 1.2rem;">
-                        <div style="font-family:var(--font-minor); font-size:0.55rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:var(--w45); margin-bottom:0.25rem;">Stability</div>
-                        <div style="font-family:var(--font-mono); font-size:1.05rem; font-weight:500; position:relative; overflow:hidden; padding-bottom:4px;" class="${getScoreClass(leader.calculated_stability)}">
-                            ${leader.calculated_stability.toFixed(2)}
-                            <div style="position:absolute; bottom:0; left:0; height:2px; background:currentColor; opacity:0.4; width:${leader.calculated_stability * 10}%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-    }).join('');
-
-    document.getElementById('regional-section').innerHTML =
-        `<div class="regional-comparison-grid">${html}</div>`;
-
-    setTimeout(() => {
-        document.querySelectorAll('#regional-section .score-bar-animated').forEach(bar => {
-            bar.style.width = bar.dataset.width + '%';
-        });
-    }, 100);
-}
 
 // Toggle tier countries visibility (Enhancement #5)
 function toggleTierCountries(tierId) {
