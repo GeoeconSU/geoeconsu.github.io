@@ -1231,24 +1231,23 @@ const VERTICAL_ICON = {
   technology: 'ri-code-s-slash-line', bespoke: 'ri-briefcase-line'
 };
 const ROLE_LABEL = {
-  'director':'Director','founder':'Founder',
-  'research-head':'Research Head','tech-head':'Tech Head',
-  'social-head':'Social Head','ops-head':'Ops Head','head':'Head',
-  'researcher':'Researcher','developer':'Developer','analyst':'Analyst',
-  'writer':'Writer','social-media':'Social Media',
-  'client':'Client','free':'Free'
+  'founder':        'Founder',
+  'ops-lead':       'Operations Lead',
+  'cto':            'Chief Technology Officer',
+  'cdo':            'Chief Data Officer',
+  'cso':            'Chief Strategy Officer',
+  'marketing-lead': 'Marketing Lead',
+  'research-lead':  'Research Lead',
+  'client':         'Client',
+  'free':           'Free',
 };
 const ROLE_VERTICAL = {
-  'research-head': ['research'],
-  'tech-head':     ['technology'],
-  'social-head':   ['marketing'],
-  'ops-head':      VERTICALS,
-  'head':          VERTICALS,
-  'researcher':    ['research'],
-  'analyst':       ['research'],
-  'developer':     ['technology'],
-  'writer':        ['marketing'],
-  'social-media':  ['marketing'],
+  'cto':            ['technology'],
+  'cdo':            ['research'],
+  'cso':            ['research', 'marketing', 'technology', 'bespoke'],
+  'marketing-lead': ['marketing'],
+  'research-lead':  ['research'],
+  // founder and ops-lead are level 1 → isDirector() gives all verticals
 };
 
 // ─── Access helpers ─────────────────────────────────────────────────────────

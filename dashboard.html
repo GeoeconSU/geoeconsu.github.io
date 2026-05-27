@@ -11948,7 +11948,13 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
                 .split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
             avatar.textContent = initials;
             ddName.textContent = user.displayName || user.email;
-            ddRole.textContent = currentUserRole ? capitalize(currentUserRole) : 'Member';
+            const ROLE_DISPLAY = {
+                'founder':'Founder','ops-lead':'Operations Lead',
+                'cto':'Chief Technology Officer','cdo':'Chief Data Officer',
+                'cso':'Chief Strategy Officer','marketing-lead':'Marketing Lead',
+                'research-lead':'Research Lead','client':'Client','free':'Free Member'
+            };
+            ddRole.textContent = ROLE_DISPLAY[currentUserRole] || (currentUserRole ? capitalize(currentUserRole) : 'Member');
             ddAdminLink.style.display = isDirector() ? 'flex' : 'none';
             if (_authModalContext) {
                 const ctx = _authModalContext; _authModalContext = null;

@@ -747,14 +747,14 @@
             <div class="stat-sub">registered users</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Directors</div>
+            <div class="stat-label">Leadership</div>
             <div class="stat-value" id="stat-directors" style="font-size:1.8rem;">—</div>
-            <div class="stat-sub">full access</div>
+            <div class="stat-sub">founder + ops</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Employees</div>
+            <div class="stat-label">Executives</div>
             <div class="stat-value" id="stat-employees" style="font-size:1.8rem;">—</div>
-            <div class="stat-sub">team members</div>
+            <div class="stat-sub">c-suite + leads</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Free</div>
@@ -771,9 +771,8 @@
         </div>
         <select class="filter-select" id="role-filter" onchange="filterUsers()">
             <option value="">All Roles</option>
-            <optgroup label="Level 1"><option value="founder">Founder</option><option value="director">Director</option></optgroup>
-            <optgroup label="Level 2"><option value="head">Head</option><option value="research-head">Research Head</option><option value="tech-head">Tech Head</option><option value="social-head">Social Head</option><option value="ops-head">Ops Head</option></optgroup>
-            <optgroup label="Level 3"><option value="employee">Employee</option><option value="researcher">Researcher</option><option value="developer">Developer</option><option value="analyst">Analyst</option><option value="writer">Writer</option><option value="social-media">Social Media</option></optgroup>
+            <optgroup label="Level 1"><option value="founder">Founder</option><option value="ops-lead">Operations Lead</option></optgroup>
+            <optgroup label="Level 2"><option value="cto">Chief Technology Officer</option><option value="cdo">Chief Data Officer</option><option value="cso">Chief Strategy Officer</option><option value="marketing-lead">Marketing Lead</option><option value="research-lead">Research Lead</option></optgroup>
             <optgroup label="Level 4"><option value="client">Client</option></optgroup>
             <optgroup label="Level 5"><option value="free">Free</option></optgroup>
         </select>
@@ -851,29 +850,27 @@
 <script>
 // ── Role ↔ Level maps ──────────────────────────────────────────────────────
 const ROLE_LEVEL_MAP = {
-    'founder':1,'director':1,
-    'head':2,'research-head':2,'tech-head':2,'social-head':2,'ops-head':2,
-    'employee':3,'researcher':3,'developer':3,'analyst':3,'writer':3,'social-media':3,
-    'client':4,
-    'free':5,
+    'founder':        1,
+    'ops-lead':       1,
+    'cto':            2,
+    'cdo':            2,
+    'cso':            2,
+    'marketing-lead': 2,
+    'research-lead':  2,
+    'client':         4,
+    'free':           5,
 };
-const LEVEL_DEFAULT_ROLE = { 1:'director', 2:'head', 3:'employee', 4:'client', 5:'free' };
+const LEVEL_DEFAULT_ROLE = { 1:'founder', 2:'cto', 4:'client', 5:'free' };
 const ALL_ROLES = [
-    { value:'founder',       label:'Founder',            group:'1 — Director' },
-    { value:'director',      label:'Director',           group:'1 — Director' },
-    { value:'head',          label:'Head (General)',     group:'2 — Head' },
-    { value:'research-head', label:'Research Head',      group:'2 — Head' },
-    { value:'tech-head',     label:'Tech Head',          group:'2 — Head' },
-    { value:'social-head',   label:'Social Media Head',  group:'2 — Head' },
-    { value:'ops-head',      label:'Operations Head',    group:'2 — Head' },
-    { value:'employee',      label:'Employee (General)', group:'3 — Employee' },
-    { value:'researcher',    label:'Researcher',         group:'3 — Employee' },
-    { value:'developer',     label:'Developer',          group:'3 — Employee' },
-    { value:'analyst',       label:'Analyst',            group:'3 — Employee' },
-    { value:'writer',        label:'Writer',             group:'3 — Employee' },
-    { value:'social-media',  label:'Social Media',       group:'3 — Employee' },
-    { value:'client',        label:'Client',             group:'4 — Client' },
-    { value:'free',          label:'Free',               group:'5 — Free' },
+    { value:'founder',        label:'Founder',                  group:'1 — Leadership' },
+    { value:'ops-lead',       label:'Operations Lead',          group:'1 — Leadership' },
+    { value:'cto',            label:'Chief Technology Officer', group:'2 — Executive' },
+    { value:'cdo',            label:'Chief Data Officer',       group:'2 — Executive' },
+    { value:'cso',            label:'Chief Strategy Officer',   group:'2 — Executive' },
+    { value:'marketing-lead', label:'Marketing Lead',           group:'2 — Executive' },
+    { value:'research-lead',  label:'Research Lead',            group:'2 — Executive' },
+    { value:'client',         label:'Client',                   group:'4 — Client' },
+    { value:'free',           label:'Free',                     group:'5 — Free' },
 ];
 function getAdminIsFounder() {
     return allUsers.find(u => u.uid === currentAdminUid)?.role === 'founder';
@@ -944,17 +941,16 @@ function hideGate(user) {
     const badge = document.getElementById('header-badge');
     badge.style.display = 'flex';
     if (isDirector()) {
-        badge.innerHTML = '<i class="ri-shield-user-line"></i> ' +
-            (currentUserRole === 'founder' ? 'Founder' : 'Director');
-        document.getElementById('dd-role-label').textContent =
-            currentUserRole === 'founder' ? 'Founder' : 'Director';
+        const roleLabel = ALL_ROLES.find(r => r.value === currentUserRole)?.label || 'Leadership';
+        badge.innerHTML = `<i class="ri-shield-user-line"></i> ${roleLabel}`;
+        document.getElementById('dd-role-label').textContent = roleLabel;
     } else {
         badge.innerHTML = '<i class="ri-eye-line"></i> Read-Only';
         badge.style.background = 'rgba(74,106,136,0.1)';
         badge.style.borderColor = 'rgba(74,106,136,0.3)';
         badge.style.color = 'var(--role-employee)';
         document.getElementById('dd-role-label').textContent =
-            currentUserRole || 'Employee';
+            ALL_ROLES.find(r => r.value === currentUserRole)?.label || currentUserRole || 'Member';
         // Show read-only notice
         const notice = document.getElementById('readonly-notice');
         if (notice) notice.style.display = '';
@@ -1011,7 +1007,7 @@ function startRealtimeUsers() {
         // Sync badge with live role — handles role changes without requiring re-login
         const me = allUsers.find(u => u.uid === currentAdminUid);
         if (me && me.level === 1) {
-            const text  = me.role === 'founder' ? 'Founder' : 'Director';
+            const text  = ALL_ROLES.find(r => r.value === me.role)?.label || 'Leadership';
             const badge = document.getElementById('header-badge');
             const label = document.getElementById('dd-role-label');
             if (badge) badge.innerHTML = `<i class="ri-shield-user-line"></i> ${text}`;
@@ -1029,7 +1025,7 @@ function startRealtimeUsers() {
 // ── Stats ──────────────────────────────────────────────────────────────────
 function updateStats() {
     const directors = allUsers.filter(u => u.level === 1).length;
-    const employees = allUsers.filter(u => u.level === 3).length;
+    const employees = allUsers.filter(u => u.level === 2).length;
     const free      = allUsers.filter(u => !u.level || u.level >= 5).length;
     document.getElementById('stat-total').textContent     = allUsers.length;
     document.getElementById('stat-directors').textContent = directors;

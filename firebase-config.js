@@ -68,8 +68,8 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 // ── Current user state (updated by onAuthStateChanged) ───────────────────────
 let currentUser      = null;
-let currentUserRole  = null;  // semantic label: 'director' | 'research-head' | 'researcher' | 'client' | 'free' | …
-let currentUserLevel = null;  // access tier: null=not in DB (unregistered), 1=director, 2=head, 3=employee, 4=client, 5=free; 6+ reserved
+let currentUserRole  = null;  // semantic label: 'founder' | 'ops-lead' | 'cto' | 'cdo' | 'cso' | 'marketing-lead' | 'research-lead' | 'client' | 'free'
+let currentUserLevel = null;  // access tier: null=not in DB (unregistered), 1=leadership (founder/ops-lead), 2=executive, 4=client, 5=free; 6+ reserved
 
 // ── Access helpers (lower level number = more privilege) ──────────────────────
 // levelAtMost(n): true if user has a DB record AND their level ≤ n
