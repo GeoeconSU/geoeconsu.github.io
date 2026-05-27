@@ -1214,7 +1214,13 @@ function stageChange(uid, field, value) {
             if (row) { const s = row.querySelector('.level-select'); if (s) s.value = autoLevel; }
         }
     } else if (field === 'level') {
-        const defaultRole = LEVEL_DEFAULT_ROLE[value];
+        let defaultRole = LEVEL_DEFAULT_ROLE[value];
+        // For heads: default to their vertical's role, not the global default
+        if (getAdminIsHead()) {
+            const allowed = getAdminAssignableRoles();
+            const first = ALL_ROLES.find(r => ROLE_LEVEL_MAP[r.value] === value && allowed.includes(r.value));
+            if (first) defaultRole = first.value;
+        }
         if (defaultRole) {
             pendingChanges[uid].role = defaultRole;
             // Rebuild role options filtered to this level

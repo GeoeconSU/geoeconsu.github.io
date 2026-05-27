@@ -64,6 +64,15 @@ service cloud.firestore {
                     && request.auth.uid != userId
                     && (isFounder() || resource.data.get('level', 999) > 1);
 
+      // Heads (level 2) can update employees/clients/free (level 3+) — role and level only,
+      // and cannot promote the target above level 3.
+      allow update: if isSignedIn()
+                    && callerLevel() == 2
+                    && request.auth.uid != userId
+                    && resource.data.get('level', 999) >= 3
+                    && request.resource.data.get('level', 999) >= 3
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['role', 'level']);
+
       // Same authority restriction for delete.
       allow delete: if isDirectorOrFounder()
                     && request.auth.uid != userId
