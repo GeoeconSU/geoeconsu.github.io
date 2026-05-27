@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAO Insights Dashboard | GSU</title>
+    <title>RAO Intelligence Assistant | GSU</title>
     <link rel="icon" type="image/x-icon" href="assets/gsu.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,6 @@
         @font-face { font-family: 'StyreneB'; src: local('StyreneB Medium'), url('fonts/StyreneB-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -3645,6 +3644,154 @@
         .chat-copy-btn:hover { color: var(--accent-gold); border-color: var(--accent-gold-dim); }
         .chat-copy-btn.copied { color: #50c878; border-color: rgba(80,200,120,0.4); opacity: 1; }
 
+        /* ===== AGENT RESEARCH LAYOUT ===== */
+        .sessions-sidebar {
+            width: 210px; flex-shrink: 0;
+            background: var(--secondary-bg);
+            border-right: 1px solid var(--border-subtle);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .sessions-hdr {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--border-subtle);
+            font-family: var(--font-minor); font-size: 0.59rem; font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+            flex-shrink: 0;
+        }
+        .sessions-hdr-btn {
+            background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
+            cursor: pointer; width: 22px; height: 22px; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; transition: all 0.15s;
+        }
+        .sessions-hdr-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .sessions-list { flex: 1; overflow-y: auto; padding: 0.35rem 0; }
+        .session-item {
+            display: flex; align-items: center; padding: 0.45rem 0.9rem;
+            cursor: pointer; font-size: 0.79rem; color: var(--text-muted);
+            border-left: 2px solid transparent; transition: all 0.12s; gap: 0.3rem;
+        }
+        .session-item:hover { background: rgba(255,255,255,0.04); color: var(--text-white); }
+        .session-item.active { border-left-color: var(--accent-gold); background: rgba(203,168,78,0.05); color: var(--text-white); }
+        .session-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-body); font-size: 0.79rem; }
+        .session-time { font-size: 0.6rem; color: var(--text-muted); flex-shrink: 0; }
+        .session-del { display: none; background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0 0.15rem; font-size: 0.75rem; line-height: 1; }
+        .session-item:hover .session-del { display: block; }
+        .sessions-footer { padding: 0.6rem; border-top: 1px solid var(--border-subtle); display: flex; gap: 0.35rem; flex-shrink: 0; }
+        .sessions-export-btn {
+            flex: 1; background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
+            font-family: var(--font-minor); font-size: 0.58rem; font-weight: 500; letter-spacing: 0.04em;
+            padding: 0.38rem 0.3rem; border-radius: 4px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.15s;
+        }
+        .sessions-export-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .chat-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+        .template-row {
+            display: flex; gap: 0.35rem; padding: 0.4rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0; align-items: center;
+            background: rgba(255,255,255,0.01); flex-wrap: wrap;
+        }
+        .tpl-btn {
+            background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
+            font-family: var(--font-minor); font-size: 0.58rem; font-weight: 500;
+            letter-spacing: 0.05em; text-transform: uppercase;
+            padding: 0.28rem 0.65rem; border-radius: 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 0.25rem; transition: all 0.15s; white-space: nowrap;
+        }
+        .tpl-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(203,168,78,0.05); }
+        .tpl-btn i { font-size: 0.8rem; }
+        .model-selector {
+            display: flex; gap: 0.3rem; padding: 0.3rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            flex-shrink: 0; align-items: center; flex-wrap: wrap;
+            background: rgba(0,0,0,0.08);
+        }
+        .model-pill {
+            background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
+            font-family: var(--font-minor); font-size: 0.56rem; font-weight: 500;
+            letter-spacing: 0.05em; text-transform: uppercase;
+            padding: 0.22rem 0.6rem; border-radius: 20px; cursor: pointer;
+            transition: all 0.15s; white-space: nowrap;
+        }
+        .model-pill:hover { border-color: rgba(203,168,78,0.4); color: rgba(203,168,78,0.7); }
+        .model-pill.active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(203,168,78,0.07); }
+        .coverage-bar {
+            padding: 0.32rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);
+            flex-shrink: 0; font-family: var(--font-minor); font-size: 0.59rem; color: var(--text-muted);
+            display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center;
+            background: rgba(0,0,0,0.1);
+        }
+        .cov-label { letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.6; }
+        .cov-chip { display: inline-flex; align-items: center; gap: 0.2rem; background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); padding: 0.12rem 0.45rem; border-radius: 3px; }
+        .cov-chip.rao { border-color: rgba(203,168,78,0.25); color: rgba(203,168,78,0.7); }
+        .cov-chip.web { border-color: rgba(93,140,168,0.25); color: #5d8ca8; }
+        .trace-panel {
+            width: 268px; flex-shrink: 0;
+            background: var(--secondary-bg); border-left: 1px solid var(--border-subtle);
+            display: flex; flex-direction: column; overflow: hidden;
+            transition: width 0.22s ease;
+        }
+        .trace-panel.collapsed { width: 38px; }
+        .trace-hdr {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--border-subtle);
+            font-family: var(--font-minor); font-size: 0.59rem; font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+            flex-shrink: 0; gap: 0.4rem;
+        }
+        .trace-panel.collapsed .trace-hdr-title,
+        .trace-panel.collapsed .trace-steps { display: none; }
+        .trace-toggle {
+            background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
+            cursor: pointer; width: 22px; height: 22px; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; flex-shrink: 0; transition: all 0.15s;
+        }
+        .trace-toggle:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .trace-steps { flex: 1; overflow-y: auto; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.4rem; }
+        .trace-empty { font-family: var(--font-body); font-size: 0.78rem; color: var(--text-muted); font-style: italic; text-align: center; padding: 1.5rem 0.5rem; }
+        .trace-step { padding: 0.42rem 0.55rem; border-radius: 5px; font-size: 0.73rem; animation: fadeIn 0.18s ease; border: 1px solid transparent; }
+        .trace-step.think { background: rgba(255,255,255,0.025); border-color: rgba(255,255,255,0.07); color: var(--text-muted); }
+        .trace-step.tool-call { background: rgba(203,168,78,0.06); border-color: rgba(203,168,78,0.18); color: rgba(203,168,78,0.8); }
+        .trace-step.tool-result { background: rgba(93,138,114,0.06); border-color: rgba(93,138,114,0.18); color: rgba(100,165,130,0.8); }
+        .trace-step.respond { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); color: var(--text-white); }
+        .trace-step.step-error { background: rgba(150,96,96,0.08); border-color: rgba(150,96,96,0.2); color: #966060; }
+        .trace-step-lbl { font-family: var(--font-minor); font-size: 0.57rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; opacity: 0.65; display: block; margin-bottom: 0.18rem; }
+        .trace-step-body { font-family: var(--font-body); line-height: 1.35; word-break: break-word; }
+        .trace-step.expandable { cursor: pointer; transition: filter 0.12s; }
+        .trace-step.expandable:hover { filter: brightness(1.2); }
+        .trace-step.expandable .trace-step-lbl::after { content: ' ↗'; opacity: 0.45; font-style: normal; }
+        /* Trace modal */
+        .trace-modal { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.62); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+        .trace-modal.open { opacity: 1; pointer-events: all; }
+        .trace-modal-card { background: #1b2336; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; width: 100%; max-width: 660px; max-height: 82vh; display: flex; flex-direction: column; overflow: hidden; transform: translateY(10px); transition: transform 0.15s; }
+        .trace-modal.open .trace-modal-card { transform: translateY(0); }
+        .trace-modal-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.07); font-family: var(--font-minor); font-size: 0.57rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); flex-shrink: 0; }
+        .trace-modal-close { background: none; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); cursor: pointer; font-size: 0.9rem; padding: 0.15rem 0.45rem; border-radius: 3px; line-height: 1; transition: all 0.12s; }
+        .trace-modal-close:hover { color: var(--text-white); border-color: rgba(255,255,255,0.25); }
+        .trace-modal-body { overflow-y: auto; padding: 1rem; flex: 1; font-family: var(--font-body); font-size: 0.82rem; color: var(--text-muted); line-height: 1.65; }
+        .tm-answer { background: rgba(203,168,78,0.06); border: 1px solid rgba(203,168,78,0.15); border-radius: 5px; padding: 0.65rem 0.8rem; margin-bottom: 0.9rem; color: rgba(203,168,78,0.85); font-size: 0.8rem; line-height: 1.6; }
+        .tm-section-lbl { font-family: var(--font-minor); font-size: 0.54rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; margin-bottom: 0.45rem; }
+        .tm-source { border: 1px solid rgba(255,255,255,0.07); border-radius: 5px; padding: 0.65rem 0.8rem; margin-bottom: 0.5rem; }
+        .tm-source-title { font-size: 0.8rem; color: var(--text-white); margin-bottom: 0.18rem; font-weight: 500; }
+        .tm-source-url { font-size: 0.68rem; margin-bottom: 0.4rem; word-break: break-all; }
+        .tm-source-url a { color: #5d8ca8; text-decoration: none; }
+        .tm-source-url a:hover { text-decoration: underline; }
+        .tm-source-snippet { font-size: 0.76rem; line-height: 1.55; }
+        .tm-code { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; padding: 0.7rem; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: rgba(255,255,255,0.55); overflow-x: auto; white-space: pre-wrap; word-break: break-word; margin: 0; max-height: 420px; overflow-y: auto; }
+        .tm-fn-name { color: var(--accent-gold); font-family: var(--font-minor); font-size: 0.7rem; letter-spacing: 0.05em; margin-bottom: 0.55rem; }
+        .tm-md h3 { font-size: 0.85rem; color: var(--text-white); margin: 0.8rem 0 0.3rem; font-weight: 600; }
+        .tm-md h4 { font-size: 0.78rem; color: rgba(255,255,255,0.8); margin: 0.6rem 0 0.25rem; }
+        .tm-md p { margin: 0 0 0.5rem; }
+        .tm-md ul, .tm-md ol { padding-left: 1.2rem; margin: 0.3rem 0; }
+        .tm-md li { margin-bottom: 0.2rem; }
+        .tm-md strong { color: var(--text-white); }
+        .tm-md table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin: 0.6rem 0; }
+        .tm-md th { background: rgba(255,255,255,0.05); padding: 0.3rem 0.5rem; text-align: left; border: 1px solid rgba(255,255,255,0.08); }
+        .tm-md td { padding: 0.28rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); }
+        @media (max-width: 900px) { .sessions-sidebar, .trace-panel { display: none; } }
+
         /* ===== MOBILE RESPONSIVENESS ===== */
 
         /* Tablet + Mobile: stack grids earlier than 1200px breakpoint already handles */
@@ -3990,943 +4137,159 @@
     </style>
 </head>
 <body>
-    <!-- Progress Bar -->
-    <div id="progress-bar"></div>
 
-    <!-- Header -->
-    <header class="header glass-panel">
-        <div class="logo">
-            <img src="assets/GSU_Transparent.png" alt="GSU" class="logo-icon">
-            <span>RAO INSIGHTS</span>
+<header class="header glass-panel" style="display:flex;align-items:center;gap:1rem;">
+    <a href="index.html" style="display:flex;align-items:center;gap:0.6rem;text-decoration:none;flex-shrink:0;">
+        <img src="assets/GSU_Transparent.png" alt="GSU" class="logo-icon">
+        <span style="font-family:var(--font-minor);font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-white);">GSU</span>
+    </a>
+    <div style="width:1px;height:20px;background:var(--border-subtle);flex-shrink:0;"></div>
+    <span style="font-family:var(--font-head);font-size:0.95rem;color:var(--text-muted);font-style:italic;">RAO Intelligence Assistant</span>
+    <a href="dashboard.html" style="margin-left:auto;display:flex;align-items:center;gap:0.4rem;font-family:var(--font-minor);font-size:0.68rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;border:1px solid var(--border-subtle);padding:0.35rem 0.9rem;border-radius:30px;">
+        <i class="ri-arrow-left-line"></i> Dashboard
+    </a>
+</header>
+
+<div style="position:fixed;top:56px;left:0;right:0;bottom:0;overflow:hidden;display:flex;">
+    <!-- Sessions sidebar -->
+    <div class="sessions-sidebar">
+        <div class="sessions-hdr">
+            <span>Sessions</span>
+            <button class="sessions-hdr-btn" onclick="newSession()" title="New session"><i class="ri-add-line"></i></button>
         </div>
-
-        <nav class="nav-menu">
-            <div class="nav-item active" onclick="switchTab('overview')">
-                <i class="ri-dashboard-line"></i> Overview
-            </div>
-            <div class="nav-item" onclick="switchTab('analysis')">
-                <i class="ri-search-line"></i> Analysis
-            </div>
-            <div class="nav-item" onclick="switchTab('compare')">
-                <i class="ri-scales-line"></i> Compare
-            </div>
-            <div class="nav-item" onclick="switchTab('rankings')">
-                <i class="ri-trophy-line"></i> Rankings
-            </div>
-            <div class="nav-item" onclick="switchTab('analytics')">
-                <i class="ri-bar-chart-line"></i> Analytics
-            </div>
-            <div class="nav-item" onclick="switchTab('insights')">
-                <i class="ri-sparkling-line"></i> Insights
-            </div>
-        </nav>
-
-        <div class="header-actions">
-            <!-- Enhancement #55: Favorites Dropdown -->
-            <div class="favorites-dropdown">
-                <div class="icon-btn" onclick="toggleFavoritesMenu()" title="Favorites (★)" id="favorites-btn">
-                    <i class="ri-star-line"></i>
-                    <span id="favorites-count" style="position: absolute; top: -5px; right: -5px; background: var(--accent-gold); color: var(--primary-bg); border-radius: 50%; width: 18px; height: 18px; font-size: 0.6rem; display: none; align-items: center; justify-content: center; font-weight: 600;"></span>
-                </div>
-                <div class="favorites-menu" id="favorites-menu">
-                    <div id="favorites-list"></div>
-                </div>
-            </div>
-
-            <div class="icon-btn" onclick="toggleInfoModal()" title="About the RAO Index">
-                <i class="ri-information-line"></i>
-            </div>
-
-            <!-- Auth / User menu -->
-            <div id="auth-header-area">
-                <button class="sign-in-btn" onclick="openAuthModal('login')" id="sign-in-btn">SIGN IN</button>
-                <div class="user-menu-wrap" id="user-menu-wrap" style="display:none;">
-                    <div class="user-avatar" id="user-avatar" onclick="toggleUserDropdown()"></div>
-                    <div class="user-dropdown" id="user-dropdown">
-                        <div class="user-dropdown-header">
-                            <div class="user-dropdown-name" id="dd-name"></div>
-                            <div class="user-dropdown-role" id="dd-role"></div>
-                        </div>
-                        <div class="user-dropdown-item" onclick="window.location.href='dev/tracker.html'">
-                            <i class="ri-task-line"></i> Task Tracker
-                        </div>
-                        <div class="user-dropdown-item" onclick="window.location.href='methodology.html'">
-                            <i class="ri-file-text-line"></i> Methodology
-                        </div>
-                        <div class="user-dropdown-item" id="dd-admin-link" style="display:none;"
-                            onclick="window.location.href='admin.html'">
-                            <i class="ri-shield-user-line"></i> Admin Panel
-                        </div>
-                        <div class="user-dropdown-item danger" onclick="handleSignOut()">
-                            <i class="ri-logout-box-line"></i> Sign Out
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Enhancement #51: Loading Overlay -->
-    <!-- Enhancement #59: Tooltip Container -->
-    <div class="tooltip" id="global-tooltip"></div>
-
-    <!-- Main Container -->
-    <div class="main-container" style="padding-bottom: 60px;">
-        <!-- TAB 1: OVERVIEW -->
-        <div id="tab-overview" class="tab-content active">
-
-            <!-- Hero Section -->
-            <div class="section-container glow-section glow-tl">
-                <div style="text-align: center; padding: 3.5rem 0 2rem;">
-                    <div class="eyebrow" style="text-align:center; display:block; margin-bottom:1.2rem;">Geoeconomic Strategy Unit</div>
-                    <h1 style="font-size: clamp(2rem,3vw,2.8rem); color: var(--text-white); margin-bottom: 1.2rem; font-weight: 400; font-family: var(--font-head); line-height:1.1; letter-spacing:-.01em;">Live Global <em style="color:var(--accent-gold); font-style:italic;">Intelligence</em></h1>
-                    <p style="font-size: 1.05rem; color: var(--text-muted); max-width: 800px; margin: 0 auto; line-height: 1.8; opacity:.75; font-family: var(--font-body);">
-                        The <strong style="color: var(--text-white); font-weight:600;">Risk-Adjusted Opportunity Framework</strong> scores 162 countries by combining <strong style="color: var(--text-white); font-weight:600;">structural opportunity</strong>, <strong style="color: var(--text-white); font-weight:600;">macroeconomic stability</strong>, <strong style="color: var(--text-white); font-weight:600;">absorptive capacity</strong>, and <strong style="color: var(--text-white); font-weight:600;">momentum</strong> — surfacing markets where fundamentals are strengthening before capital has followed.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Map view controls — sits above the map section -->
-            <div class="map-controls" id="landscape-controls">
-                <button class="map-control-btn active" onclick="setMapView('rao')" id="view-rao">RAO Score</button>
-                <button class="map-control-btn" onclick="setMapView('pillar_a')" id="view-pillar_a">Opportunity</button>
-                <button class="map-control-btn" onclick="setMapView('pillar_b')" id="view-pillar_b">Stability</button>
-                <button class="map-control-btn" onclick="setMapView('pillar_c')" id="view-pillar_c">Absorptive Capacity</button>
-                <button class="map-control-btn" onclick="setMapView('pillar_d')" id="view-pillar_d">Trajectory</button>
-                <button class="map-control-btn" onclick="setMapView('tos')" id="view-tos">TOS</button>
-                <button class="map-control-btn" onclick="setMapView('regime')" id="view-regime">Regime</button>
-                <select id="landscape-year-select" onchange="setLandscapeYear(parseInt(this.value))"
-                    style="background:rgba(25,33,50,.97);border:1px solid var(--border-subtle);color:var(--w65);padding:5px 8px;font-family:var(--font-minor);font-size:.63rem;cursor:pointer;border-radius:3px;margin-left:0.5rem;"></select>
-            </div>
-
-            <!-- Map Section -->
-            <section class="map-section">
-                <div class="map-legend" id="map-legend-dynamic">
-                    <div class="legend-title" id="legend-title-text">RAO Score (1–10)</div>
-                    <div class="legend-gradient" id="legend-gradient-bar"></div>
-                    <div class="legend-labels"><span id="legend-label-lo">Low</span><span id="legend-label-hi">High</span></div>
-                </div>
-                <div id="map-container">
-                    <div id="regions_div"></div>
-                </div>
-            </section>
-
-
-
-            <!-- Top 10 + Bottom 10 -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 1.5rem 2rem 0;" class="glow-section glow-br fade-up">
-                <div class="bento-cell">
-                    <span class="bento-label">Top 10 Countries</span>
-                    <div id="top-10-list"></div>
-                </div>
-                <div class="bento-cell">
-                    <span class="bento-label">Bottom 10 Countries</span>
-                    <div id="bottom-10-list"></div>
-                </div>
-            </div>
-
-            <!-- Global RAO Timeseries + Score Distribution -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:1.5rem 2rem 0;" class="fade-up">
-                <div class="bento-cell">
-                    <span class="bento-label">Global RAO Trends 2010–Latest</span>
-                    <div style="padding:1rem;position:relative;height:300px;">
-                        <canvas id="global-timeseries-chart"></canvas>
-                    </div>
-                </div>
-                <div class="bento-cell" style="display:flex;flex-direction:column;">
-                    <span class="bento-label">Score Distribution</span>
-                    <div id="score-dist-chart-wrap" style="padding:0.75rem;position:relative;flex:1;min-height:260px;">
-                        <canvas id="score-dist-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Regional Overview -->
-            <div style="padding:1.5rem 2rem 0;" class="fade-up">
-                <div class="bento-cell">
-                    <span class="bento-label">Regional Overview</span>
-                    <div id="regional-overview" style="padding:0.5rem 0;"></div>
-                </div>
-            </div>
-
-            <div class="section-divider"></div>
-
-            <!-- Regional Breakdown -->
-            <div class="bento-grid glow-section fade-up">
-                <div class="bento-cell bento-span-3">
-                    <span class="bento-label">Regional Breakdown</span>
-                    <div style="padding: 0.75rem 1rem 1rem;" id="regional-section"></div>
-                </div>
-            </div>
-
-            <div style="height:2rem;"></div>
-
-        </div>
-
-        <!-- TAB 2: COUNTRY ANALYSIS -->
-        <div id="tab-analysis" class="tab-content">
-            <div class="section-container glow-section glow-br" style="overflow:visible;">
-                <div class="country-selector-bar" style="display:flex;align-items:flex-end;gap:1.5rem;flex-wrap:wrap;">
-                    <div style="flex:1;min-width:260px;">
-                        <label style="margin-bottom:0.5rem;">Search for a Country</label>
-                        <div class="search-box" style="position:relative;">
-                            <input type="text" placeholder="Search countries..." id="global-search" autocomplete="off" autocorrect="off" spellcheck="false" oninput="handleGlobalSearch(this.value)" onfocus="showSearchResults()" onkeydown="handleSearchKeydown(event)">
-                        </div>
-                        <select id="analysis-country-select" onchange="loadCountryAnalysis(this.value)" style="display:none;">
-                            <option value=""></option>
-                        </select>
-                    </div>
-                    <div style="display:flex;flex-direction:column;gap:0.4rem;min-width:150px;">
-                        <label style="margin-bottom:0;">Year</label>
-                        <select id="analysis-year-select" onchange="setAnalysisYear(parseInt(this.value))"
-                            style="background:var(--card-bg);border:1px solid var(--border-subtle);color:var(--w65);padding:10px 12px;font-family:var(--font-minor);font-size:0.95rem;cursor:pointer;border-radius:1px;width:100%;min-width:300px"></select>
-                    </div>
-                </div>
-
-                <div id="analysis-content" style="display:none;">
-
-                    <!-- ── ROW 1: Headline ── -->
-                    <div id="profile-headline" class="analysis-card" style="margin-bottom:12px;"></div>
-
-                    <!-- ── ROW 2: Pillar Strip (full width, 4-column horizontal) ── -->
-                    <div id="country-pillar-strip" class="analysis-card" style="margin-bottom:12px;"></div>
-
-                    <!-- ── ROW 3: 4-Pillar Radar (L) + Score Decomp + TDM stacked (R) ── -->
-                    <div class="analysis-split-row" style="display:grid;grid-template-columns:44fr 56fr;gap:12px;margin-bottom:12px;align-items:stretch;">
-                        <div class="analysis-card">
-                            <div class="card-title">4-Pillar Profile</div>
-                            <div style="padding:0.5rem 1.2rem 1rem;position:relative;min-height:clamp(200px,28vh,300px);">
-                                <canvas id="country-pillar-radar"></canvas>
-                            </div>
-                        </div>
-                        <div style="display:flex;flex-direction:column;gap:12px;">
-                            <div id="score-decomp" class="analysis-card"></div>
-                            <div class="analysis-card" style="flex:1;display:flex;flex-direction:column;">
-                                <div class="card-title">Take-off Detection Module</div>
-                                <div id="tdm-panel" style="flex:1;overflow:hidden;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ── ROW 4: RAO Score Trajectory (full width) ── -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div class="card-title">RAO Score Trajectory (2010–2025)</div>
-                        <div style="padding:0.5rem 1.2rem 1rem;position:relative;aspect-ratio:3/1;min-height:180px;">
-                            <canvas id="country-rao-timeseries"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- ── ROW 5: Regime History (full width) ── -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div class="card-title">Regime History</div>
-                        <div id="regime-timeline-bar" style="padding:0.8rem 1.2rem 1rem;"></div>
-                    </div>
-
-                    <!-- ── ROW 5: Variable Breakdown (full) ── -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div class="card-title">Variable Breakdown by Pillar</div>
-                        <div id="country-norm-vars-table" style="padding:0 0 0.5rem;"></div>
-                    </div>
-
-                    <!-- ── ROW 6: Archetype Peers + Strengths & Weaknesses ── -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-                        <div class="analysis-card">
-                            <div class="card-title">Archetype Peer Comparison</div>
-                            <div id="archetype-peers" style="padding:0.5rem 0;"></div>
-                        </div>
-                        <div class="analysis-card">
-                            <div class="card-title">Strengths & Weaknesses</div>
-                            <div id="strengths-weaknesses-content" style="padding:0.75rem 1.2rem 1rem;"></div>
-                        </div>
-                    </div>
-
-                    <!-- Hidden legacy containers (required by JS) -->
-                    <div id="profile-content" style="display:none;"></div>
-                    <div id="pillar-balance-content" style="display:none;"></div>
-
-                    <!-- ── ROW 7: Country Connections (full) ── -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.85rem 1.2rem 0.4rem;border-bottom:1px solid var(--border-subtle);">
-                            <span style="font-family:var(--font-minor);font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.16em;color:var(--accent-gold);">Country Connections</span>
-                            <div id="similar-filter-btns" style="display:flex;gap:0.4rem;"></div>
-                        </div>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;">
-                            <div style="border-right:1px solid var(--border-subtle);">
-                                <div style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);padding:0.6rem 1.2rem 0.4rem;border-bottom:1px solid var(--border-subtle);">Regional Peers</div>
-                                <div id="neighbors-content"></div>
-                            </div>
-                            <div>
-                                <div style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);padding:0.6rem 1.2rem 0.4rem;border-bottom:1px solid var(--border-subtle);">Similar RAO Profiles</div>
-                                <div id="similar-content"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ── ROW 8: Regional Context + Global Benchmarking ── -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-                        <div class="analysis-card">
-                            <div class="card-title">Regional Context</div>
-                            <div id="regional-context-content"></div>
-                        </div>
-                        <div class="analysis-card">
-                            <div class="card-title">Global Benchmarking</div>
-                            <div id="global-benchmark-content"></div>
-                        </div>
-                    </div>
-
-                    <!-- ── ROW 9: Peer Comparison (full) ── -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div class="card-title">Peer Comparison · All Pillars</div>
-                        <div id="peer-comparison-content"></div>
-                    </div>
-
-                    <!-- deep-dive-content stub retained for legacy JS compatibility -->
-                    <div id="deep-dive-content" style="display:none;"></div>
-                </div>
-
-                <div id="analysis-empty" style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
-                    <div style="font-size: 1.1rem;">Select a country to begin detailed analysis</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3: COMPARE -->
-        <div id="tab-compare" class="tab-content">
-            <div class="section-container glow-section glow-tl">
-                <div class="country-selector">
-                    <label>Select Countries to Compare</label>
-                    <div class="selector-row">
-                        <select id="compare-country-1" onchange="updateComparison()">
-                            <option value="">-- Select Country 1 --</option>
-                        </select>
-                        <select id="compare-country-2" onchange="updateComparison()">
-                            <option value="">-- Select Country 2 --</option>
-                        </select>
-                        <select id="compare-country-3" onchange="updateComparison()">
-                            <option value="">-- Select Country 3 (Optional) --</option>
-                        </select>
-                    </div>
-                    <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
-                        <button class="btn btn-primary" onclick="findSimilarCountries()">
-                            <i class="ri-shuffle-line"></i> Find Similar
-                        </button>
-                        <span style="color: var(--text-muted); font-size: 0.82rem;">Presets:</span>
-                        <button class="btn" onclick="loadComparisonPreset('top10')">Top 10</button>
-                        <button class="btn" onclick="loadComparisonPreset('prebreakout')" style="border-color:rgba(194,165,109,0.4);color:var(--accent-gold);">Pre-Breakout</button>
-                        <button class="btn" onclick="loadComparisonPreset('reform_stories')" style="border-color:rgba(93,138,114,0.4);color:#5d8a72;">Reform Stories</button>
-                        <button class="btn" onclick="loadComparisonPreset('brics')">BRICS+</button>
-                        <button class="btn" onclick="loadComparisonPreset('g7')">G7</button>
-                    </div>
-                </div>
-
-                <!-- Comparison Summary Card (Item 20) -->
-                <div id="comparison-summary"></div>
-
-                <!-- Comparison Cards (Items 22) -->
-                <div class="compare-grid" id="compare-cards"></div>
-
-                <div id="compare-details" style="display: none; margin-top: 0;">
-
-                    <!-- ── RAO v8: Score Decomposition Table ── -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div class="card-title">Score Decomposition</div>
-                        <div id="compare-decomp-table" style="padding:0.5rem 1.2rem 1rem;overflow-x:auto;"></div>
-                    </div>
-
-                    <!-- ── RAO v8: Radar + Pillar Cluster ── -->
-                    <div style="display:grid;grid-template-columns:38fr 62fr;gap:12px;margin-bottom:12px;">
-                        <div class="analysis-card">
-                            <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
-                                <span>4-Pillar Profile Overlay</span>
-                                <span id="compare-radar-legend" style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:flex-end;"></span>
-                            </div>
-                            <div style="padding:0.25rem 1.2rem 0.75rem;"><canvas id="compare-radar-chart" height="160"></canvas></div>
-                        </div>
-                        <div class="analysis-card" style="display:flex;flex-direction:column;">
-                            <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
-                                <span>Pillar Comparison</span>
-                                <span id="compare-pillar-legend" style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:flex-end;"></span>
-                            </div>
-                            <div style="padding:0.25rem 1.2rem 0.75rem;flex:1;display:flex;align-items:center;">
-                                <canvas id="compare-pillar-bars" height="160" style="width:100%;"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ── RAO v8: Time Series Overlay ── -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div class="card-title">RAO Score History (2010–2025)</div>
-                        <div style="padding:0.5rem 1.2rem 1rem;"><canvas id="compare-timeseries-chart" height="90"></canvas></div>
-                    </div>
-
-                    <!-- ── RAO v8: Stacked Regime Timelines ── -->
-                    <div class="analysis-card" style="margin-bottom:12px;">
-                        <div class="card-title">Regime History Comparison</div>
-                        <div id="compare-regime-history" style="padding:0.8rem 1.2rem 1rem;"></div>
-                    </div>
-
-                    <!-- Waterfall Breakdown (Item 24 - Visual Upgrade) -->
-                    <div class="waterfall-panel" id="waterfall-panel"></div>
-
-                    <!-- Pillar Winners Scorecard (Item 25) -->
-                    <div id="pillar-scorecard"></div>
-
-                    <!-- Enhanced Pillar Comparison Table (Item 23) -->
-                    <div class="pillar-comparison" id="pillar-comparison"></div>
-
-                    <!-- Differential Analysis - Expanded (Item 21) -->
-                    <div class="differential-panel" id="differential-panel"></div>
-
-                    <!-- Gap Analysis View (Item 26) -->
-                    <div id="gap-analysis"></div>
-
-                    <!-- All Variables Comparison (Item 27) -->
-                    <div class="all-variables-section" id="all-variables-section"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 4: RANKINGS -->
-        <div id="tab-rankings" class="tab-content">
-            <div class="section-container glow-section glow-br">
-
-                <!-- ── RAO v8: Quick Screens ── -->
-                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;padding:0.25rem 0 0.75rem;border-bottom:1px solid var(--border-subtle);margin-bottom:0.75rem;">
-                    <span style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin-right:0.25rem;">Quick Screens:</span>
-                    <button class="screener-chip" onclick="applyQuickScreen('prebreakout')" style="border-color:rgba(194,165,109,0.45);color:var(--accent-gold);">Pre-Breakout Candidates</button>
-                    <button class="screener-chip" onclick="applyQuickScreen('high_conviction')">High Conviction</button>
-                    <button class="screener-chip" onclick="applyQuickScreen('reform_story')" style="border-color:rgba(93,138,114,0.45);color:#5d8a72;">Reform Stories</button>
-                    <button class="screener-chip" onclick="applyQuickScreen('commodity_trap')">Commodity Trap Watch</button>
-                    <button class="screener-chip" onclick="applyQuickScreen('sr_monitor')" style="border-color:rgba(150,96,96,0.45);color:#966060;">Structural Risk Monitor</button>
-                    <button class="screener-chip" onclick="applyQuickScreen('clear')" style="border-color:rgba(255,255,255,0.15);color:var(--text-muted);">Clear ✕</button>
-                </div>
-
-                <!-- ── RAO v8: Regime + TOS Filter Chips + Search ── -->
-                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);margin-bottom:0.75rem;">
-                    <span style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin-right:0.25rem;">Regime:</span>
-                    <label class="screener-chip" style="cursor:pointer;"><input type="checkbox" value="RO" class="regime-chip-cb" onchange="filterRankings()" checked style="display:none;"> <span style="color:#5d8a72;">RO</span></label>
-                    <label class="screener-chip" style="cursor:pointer;"><input type="checkbox" value="FO" class="regime-chip-cb" onchange="filterRankings()" checked style="display:none;"> <span style="color:#C2A56D;">FO</span></label>
-                    <label class="screener-chip" style="cursor:pointer;"><input type="checkbox" value="SL" class="regime-chip-cb" onchange="filterRankings()" checked style="display:none;"> <span style="color:#607c98;">SL</span></label>
-                    <label class="screener-chip" style="cursor:pointer;"><input type="checkbox" value="SR" class="regime-chip-cb" onchange="filterRankings()" checked style="display:none;"> <span style="color:#966060;">SR</span></label>
-                    <span style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--text-muted);margin:0 0.25rem 0 0.75rem;">TOS ≥</span>
-                    <input type="range" id="tos-min-slider" min="0" max="1" step="0.05" value="0" oninput="document.getElementById('tos-min-val').textContent=parseFloat(this.value).toFixed(2);filterRankings();" style="width:100px;accent-color:var(--accent-gold);">
-                    <span id="tos-min-val" style="font-family:var(--font-mono);font-size:0.72rem;color:var(--accent-gold);">0.00</span>
-                    <!-- Search — right-aligned -->
-                    <div class="rankings-search" style="margin-left:auto;">
-                        <input type="text" placeholder="Search countries..." id="rankings-search" oninput="filterRankings()">
-                    </div>
-                </div>
-
-                <!-- ── Advanced Filters row: Score Range · Tier · Percentile · Region ── -->
-                <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);margin-bottom:1rem;">
-                    <div class="filter-group">
-                        <div class="filter-label">Score Range</div>
-                        <div class="score-range-slider">
-                            <span class="score-value" id="min-score-display">0.0</span>
-                            <input type="range" id="min-score-slider" min="0" max="10" step="0.1" value="0" oninput="updateScoreRange()">
-                            <span style="color: var(--text-muted);">to</span>
-                            <input type="range" id="max-score-slider" min="0" max="10" step="0.1" value="10" oninput="updateScoreRange()">
-                            <span class="score-value" id="max-score-display">10.0</span>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <div class="filter-label">Tier Filter</div>
-                        <div class="tier-filter-checkboxes" id="tier-filter-checkboxes">
-                            <label class="tier-checkbox"><input type="checkbox" value="excellent" checked onchange="filterRankings()"><span style="color: var(--accent-green);">Excellent</span></label>
-                            <label class="tier-checkbox"><input type="checkbox" value="good" checked onchange="filterRankings()"><span style="color: var(--accent-lime);">Good</span></label>
-                            <label class="tier-checkbox"><input type="checkbox" value="moderate" checked onchange="filterRankings()"><span style="color: var(--accent-amber);">Moderate</span></label>
-                            <label class="tier-checkbox"><input type="checkbox" value="concerning" checked onchange="filterRankings()"><span style="color: var(--accent-orange);">Concerning</span></label>
-                            <label class="tier-checkbox"><input type="checkbox" value="critical" checked onchange="filterRankings()"><span style="color: var(--accent-red);">Critical</span></label>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <div class="filter-label">Percentile</div>
-                        <div class="percentile-filter">
-                            <select id="percentile-filter" onchange="filterRankings()">
-                                <option value="">All Countries</option>
-                                <option value="top10">Top 10%</option>
-                                <option value="top25">Top 25%</option>
-                                <option value="top50">Top 50%</option>
-                                <option value="bottom50">Bottom 50%</option>
-                                <option value="bottom25">Bottom 25%</option>
-                                <option value="bottom10">Bottom 10%</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="filter-group">
-                        <div class="filter-label">Region</div>
-                        <div class="rankings-filter">
-                            <select id="rankings-region-filter" onchange="handleRegionFilter(this.value)">
-                                <option value="">All Regions</option>
-                                <option value="favorites">My Favorites</option>
-                                <option value="" disabled>──────────</option>
-                                <option value="Africa">Africa</option>
-                                <option value="Americas">Americas</option>
-                                <option value="Asia-Pacific">Asia-Pacific</option>
-                                <option value="Europe">Europe</option>
-                                <option value="Middle East">Middle East</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Enhancement #35: Quick Stats Banner -->
-                <div class="quick-stats-banner" id="quick-stats-banner">
-                    <div class="quick-stat-item">
-                        <div class="quick-stat-value" id="filtered-count">0</div>
-                        <div class="quick-stat-label">Countries Shown</div>
-                    </div>
-                    <div class="quick-stat-item">
-                        <div class="quick-stat-value" id="filtered-avg">0.00</div>
-                        <div class="quick-stat-label">Average Score</div>
-                    </div>
-                    <div class="quick-stat-item">
-                        <div class="quick-stat-value" id="filtered-range">0.00 - 0.00</div>
-                        <div class="quick-stat-label">Score Range</div>
-                    </div>
-                    <div class="quick-stat-item" style="grid-column: span 2;">
-                        <div class="quick-stat-label" style="margin-bottom: 0.5rem;">Regional Breakdown</div>
-                        <div class="regional-breakdown-chart" id="regional-breakdown"></div>
-                    </div>
-                </div>
-
-                <!-- Score Distribution Bar Chart -->
-                <div class="rank-distribution-histogram">
-                    <div class="histogram-title">Score Distribution</div>
-                    <div style="position:relative;height:160px;">
-                        <canvas id="score-dist-rankings-chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Enhancement #36: Bulk Selection Controls -->
-                <div id="bulk-compare-controls" class="bulk-compare-controls" style="display: none;">
-                    <div class="selected-countries-list" id="selected-countries-list"></div>
-                    <button class="compare-selected-btn" onclick="compareSelectedCountries()">
-                        Compare Selected (<span id="selected-count">0</span>)
-                    </button>
-                </div>
-
-                <div class="rankings-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 40px;"><input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll()" title="Select/Deselect All"></th>
-                                <th style="width: 50px;"></th>
-                                <th onclick="sortRankings('rank')" class="sortable">Rank</th>
-                                <th onclick="sortRankings('country')" class="sortable">Country</th>
-                                <th style="width:36px;padding:0 6px;text-align:center;" title="Favorites"><i class="ri-star-line" style="color:var(--text-muted);font-size:0.9rem;"></i></th>
-                                <th onclick="sortRankings('rao')" class="sortable">
-                                    RAO Score
-                                    <span class="info-icon" onclick="event.stopPropagation(); showTooltip(event, 'rao_score')" onmouseenter="showTooltip(event, 'rao_score')" onmouseleave="hideGlobalTooltip()">?</span>
-                                </th>
-                                <th onclick="sortRankings('percentile')" class="sortable">Percentile</th>
-                                <th onclick="sortRankings('opportunity')" class="sortable">
-                                    Opportunity
-                                    <span class="info-icon" onclick="event.stopPropagation(); showTooltip(event, 'opportunity')" onmouseenter="showTooltip(event, 'opportunity')" onmouseleave="hideGlobalTooltip()">?</span>
-                                </th>
-                                <th onclick="sortRankings('stability')" class="sortable">
-                                    Stability
-                                    <span class="info-icon" onclick="event.stopPropagation(); showTooltip(event, 'stability')" onmouseenter="showTooltip(event, 'stability')" onmouseleave="hideGlobalTooltip()">?</span>
-                                </th>
-                                <th>Region</th>
-                                <th onclick="sortRankings('regime')" class="sortable">Regime</th>
-                                <th onclick="sortRankings('tos')" class="sortable">TOS</th>
-                                <th onclick="sortRankings('yoy')" class="sortable">Δ YoY</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rankings-tbody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 5: ANALYTICS -->
-        <div id="tab-analytics" class="tab-content">
-
-            <!-- ══ I · SCORE INTELLIGENCE ══════════════════════════════════════════ -->
-            <div class="section-container glow-section glow-tl">
-                <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);">
-                    <span style="font-family:var(--font-minor);font-size:0.55rem;font-weight:600;text-transform:uppercase;letter-spacing:0.22em;color:var(--accent-gold);flex-shrink:0;">I</span>
-                    <div>
-                        <div style="font-family:var(--font-head);font-size:1.25rem;color:var(--text-white);line-height:1.2;">Score Intelligence</div>
-                        <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);margin-top:0.2rem;">Descriptive statistics, score distribution, and tier structure across 162 countries · 2025 cross-section</div>
-                    </div>
-                </div>
-
-                <!-- KPI strip -->
-                <div class="analysis-card" style="margin-bottom:12px;">
-                    <div class="card-title">Global RAO Statistics</div>
-                    <div style="display:grid;grid-template-columns:repeat(9,1fr);">
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
-                            <div id="analytics-mean" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--accent-gold);">—</div>
-                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Mean</div>
-                        </div>
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
-                            <div id="analytics-median" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--accent-gold);">—</div>
-                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Median</div>
-                        </div>
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
-                            <div id="analytics-stddev" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
-                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Std Dev</div>
-                        </div>
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
-                            <div id="analytics-range" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
-                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Range</div>
-                        </div>
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
-                            <div id="analytics-iqr" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
-                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">IQR</div>
-                        </div>
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
-                            <div id="analytics-cv" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
-                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">CV</div>
-                        </div>
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
-                            <div id="analytics-min" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--accent-red);">—</div>
-                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Min</div>
-                        </div>
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;border-right:1px solid var(--border-subtle);">
-                            <div id="analytics-max" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--accent-green);">—</div>
-                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Max</div>
-                        </div>
-                        <div style="display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.75rem 0.5rem;">
-                            <div id="analytics-skewness" style="font-family:var(--font-mono);font-size:1.25rem;color:var(--text-white);">—</div>
-                            <div style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Skewness</div>
-                            <div id="analytics-skewness-label" style="font-family:var(--font-minor);font-size:0.46rem;color:var(--accent-amber);text-align:center;line-height:1.3;">—</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2-col: Distribution + Regional -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-                    <div class="analysis-card">
-                        <div class="card-title">Score Distribution</div>
-                        <div id="distribution-histogram" style="padding:0.75rem 1.2rem 1rem;"></div>
-                    </div>
-                    <div class="analysis-card">
-                        <div class="card-title">Regional Performance</div>
-                        <div id="regional-chart" style="padding:0.75rem 1.2rem 1rem;"></div>
-                    </div>
-                </div>
-
-                <!-- Percentile tiers -->
-                <div class="analysis-card">
-                    <div class="card-title">Score Tier Breakdown</div>
-                    <div id="percentile-breakdown" style="padding:0.75rem 1.2rem 1rem;"></div>
-                </div>
-            </div>
-
-            <!-- ══ II · REGIME LANDSCAPE ════════════════════════════════════════════ -->
-            <div class="section-container glow-section glow-tr" style="margin-top:0;padding-top:1.75rem;">
-                <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);">
-                    <span style="font-family:var(--font-minor);font-size:0.55rem;font-weight:600;text-transform:uppercase;letter-spacing:0.22em;color:var(--accent-gold);flex-shrink:0;">II</span>
-                    <div>
-                        <div style="font-family:var(--font-head);font-size:1.25rem;color:var(--text-white);line-height:1.2;">Regime Landscape</div>
-                        <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);margin-top:0.2rem;">Investment regime positioning, archetype clusters, structural transitions, and pillar leaders</div>
-                    </div>
-                </div>
-
-                <!-- Regime × TOS scatter (full width) -->
-                <div class="analysis-card" style="margin-bottom:12px;">
-                    <div class="card-title">Regime × Trade-off Signal Positioning</div>
-                    <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.65rem;">X = TOS score (0–1) · Y = RAO score · Size = volatility band · Colour = regime · Click a point to open Country Analysis</div>
-                    <div style="position:relative;height:400px;padding:0 1.2rem 1rem;">
-                        <canvas id="regime-scatter-chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- 2-col: Archetypes + Transitions -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-                    <div class="analysis-card">
-                        <div class="card-title">Archetype Cluster Map</div>
-                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.5rem;">Opportunity vs Absorptive Capacity · Colour = archetype</div>
-                        <div style="position:relative;height:320px;padding:0 1.2rem 1rem;">
-                            <canvas id="archetype-scatter-chart"></canvas>
-                        </div>
-                    </div>
-                    <div class="analysis-card">
-                        <div class="card-title">Regime Transition Tracker</div>
-                        <div style="padding:0.75rem 1.2rem 1rem;">
-                            <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
-                                <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">From</label>
-                                <select id="regime-trans-from" onchange="renderRegimeTransitionTracker()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.6rem;font-family:var(--font-body);font-size:0.8rem;border-radius:3px;"></select>
-                                <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">To</label>
-                                <select id="regime-trans-to" onchange="renderRegimeTransitionTracker()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.6rem;font-family:var(--font-body);font-size:0.8rem;border-radius:3px;"></select>
-                            </div>
-                            <div id="regime-transitions" style="overflow-x:auto;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pillar leaders & laggards (4-col) -->
-                <div class="analysis-card">
-                    <div class="card-title">Pillar Leaders & Laggards · 2025</div>
-                    <div style="display:grid;grid-template-columns:repeat(4,1fr);">
-                        <div style="padding:0.75rem 1.2rem 1rem;border-right:1px solid var(--border-subtle);">
-                            <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-green);margin-bottom:0.65rem;">Opportunity Leaders</div>
-                            <div id="opp-leaders"></div>
-                        </div>
-                        <div style="padding:0.75rem 1.2rem 1rem;border-right:1px solid var(--border-subtle);">
-                            <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-blue);margin-bottom:0.65rem;">Stability Leaders</div>
-                            <div id="stab-leaders"></div>
-                        </div>
-                        <div style="padding:0.75rem 1.2rem 1rem;border-right:1px solid var(--border-subtle);">
-                            <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-red);margin-bottom:0.65rem;">Opportunity Laggards</div>
-                            <div id="opp-laggards"></div>
-                        </div>
-                        <div style="padding:0.75rem 1.2rem 1rem;">
-                            <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-red);margin-bottom:0.65rem;">Stability Laggards</div>
-                            <div id="stab-laggards"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ III · STRUCTURAL DRIVERS ═════════════════════════════════════════ -->
-            <div class="section-container glow-section glow-cl" style="margin-top:0;padding-top:1.75rem;">
-                <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);">
-                    <span style="font-family:var(--font-minor);font-size:0.55rem;font-weight:600;text-transform:uppercase;letter-spacing:0.22em;color:var(--accent-gold);flex-shrink:0;">III</span>
-                    <div>
-                        <div style="font-family:var(--font-head);font-size:1.25rem;color:var(--text-white);line-height:1.2;">Structural Drivers</div>
-                        <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);margin-top:0.2rem;">Variable-level distributions, pillar performance statistics, and cross-variable correlations</div>
-                    </div>
-                </div>
-
-                <!-- Variable explorer -->
-                <div class="analysis-card" style="margin-bottom:12px;">
-                    <div class="card-title">Variable Explorer</div>
-                    <div style="padding:0.75rem 1.2rem 1rem;">
-                        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
-                            <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);white-space:nowrap;">Select Variable</span>
-                            <select id="variable-select" onchange="updateVariableExplorer()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.65rem;font-family:var(--font-body);font-size:0.82rem;border-radius:3px;min-width:200px;">
-                                <option value="">— Grouped by Pillar —</option>
-                            </select>
-                        </div>
-                        <div id="variable-explorer-content" style="display:none;">
-                            <div id="variable-stats"></div>
-                            <div id="variable-histogram"></div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.25rem;">
-                                <div>
-                                    <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-gold);margin-bottom:0.65rem;">Top 5 Countries</div>
-                                    <div id="variable-top-countries"></div>
-                                </div>
-                                <div>
-                                    <div style="font-family:var(--font-minor);font-size:0.52rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-red);margin-bottom:0.65rem;">Bottom 5 Countries</div>
-                                    <div id="variable-bottom-countries"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pillar performance matrix -->
-                <div class="analysis-card" style="margin-bottom:12px;">
-                    <div class="card-title">Pillar Performance Matrix · Global Statistics</div>
-                    <div id="pillar-performance-matrix" style="padding:0.5rem 0;"></div>
-                </div>
-
-                <!-- 22×22 heatmap (left) + Pillar Correlation (right) -->
-                <div style="display:grid;grid-template-columns:3fr 2fr;gap:12px;align-items:start;">
-                    <div class="analysis-card">
-                        <div class="card-title">Normalised Variable Correlation Heatmap · 22 × 22</div>
-                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.65rem;">Pearson r across the 2025 cross-section for all normalised input variables</div>
-                        <div id="analytics-norm-heatmap" style="overflow-x:auto;font-size:0.62rem;padding:0 1.2rem 1rem;"></div>
-                    </div>
-                    <div class="analysis-card">
-                        <div class="card-title">Pillar Correlation Heatmap</div>
-                        <div style="padding:0.75rem 1.2rem 1rem;">
-                            <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
-                                <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Filter</label>
-                                <select id="correlation-filter" onchange="drawCorrelationHeatmap()" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.3rem 0.6rem;font-family:var(--font-body);font-size:0.8rem;border-radius:3px;">
-                                    <option value="all">All Correlations</option>
-                                    <option value="positive">Positive Only</option>
-                                    <option value="negative">Negative Only</option>
-                                </select>
-                                <label style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);">Strength</label>
-                                <input type="range" id="correlation-threshold" min="0" max="1" step="0.1" value="0" onchange="drawCorrelationHeatmap()" style="width:90px;accent-color:var(--accent-gold);">
-                                <span id="correlation-threshold-value" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--accent-gold);">0.0+</span>
-                            </div>
-                            <div id="correlation-heatmap"></div>
-                            <div style="margin-top:1.25rem;">
-                                <button onclick="toggleFullCorrelationMatrix()" class="btn">
-                                    <i class="ri-table-line"></i>
-                                    <span id="correlation-matrix-toggle-text">Show Full Correlation Matrix</span>
-                                </button>
-                                <div id="full-correlation-matrix" style="display:none;margin-top:1rem;overflow-x:auto;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ IV · SIGNALS & MOMENTUM ══════════════════════════════════════════ -->
-            <div class="section-container glow-section glow-br" style="margin-top:0;padding-top:1.75rem;">
-                <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);">
-                    <span style="font-family:var(--font-minor);font-size:0.55rem;font-weight:600;text-transform:uppercase;letter-spacing:0.22em;color:var(--accent-gold);flex-shrink:0;">IV</span>
-                    <div>
-                        <div style="font-family:var(--font-head);font-size:1.25rem;color:var(--text-white);line-height:1.2;">Signals & Momentum</div>
-                        <div style="font-family:var(--font-minor);font-size:0.65rem;color:var(--text-muted);margin-top:0.2rem;">Regional trend lines, pre-breakout detection, trajectory classification, and statistical anomalies</div>
-                    </div>
-                </div>
-
-                <!-- Regional trends (full width) -->
-                <div class="analysis-card" style="margin-bottom:12px;">
-                    <div class="card-title">Regional Mean RAO Trends · 2010–2025</div>
-                    <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.65rem;">Structural divergence across regions over 15 years of panel data</div>
-                    <div style="position:relative;height:300px;padding:0 1.2rem 1rem;">
-                        <canvas id="regional-trends-chart"></canvas>
-                    </div>
-                </div>
-
-                <!-- 2-col: Pre-breakout leaders + Trajectory donut -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-                    <div class="analysis-card">
-                        <div class="card-title">Pre-Breakout Signal Leaders · Top 10 by TOS</div>
-                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.4rem;">Click a country to open Country Analysis</div>
-                        <div id="prebreakout-leaders" style="padding:0 0 0.5rem;"></div>
-                    </div>
-                    <div class="analysis-card">
-                        <div class="card-title">Trajectory Distribution · 2025</div>
-                        <div style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);padding:0.15rem 1.2rem 0.4rem;">Classification of country momentum trajectories</div>
-                        <div style="position:relative;height:260px;padding:0.25rem 1.2rem 1rem;">
-                            <canvas id="trajectory-donut-chart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Stability Analysis (full-width, compact) -->
-                <div class="analysis-card">
-                    <div class="card-title">Stability Analysis</div>
-                    <div id="fragility-analysis" style="padding:0.6rem 1.2rem 1rem;"></div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- TAB 6: INSIGHTS CHATBOT -->
-        <div id="tab-insights" class="tab-content">
-            <div class="chat-layout">
-                <button class="chat-clear-btn" onclick="clearChatHistory()" title="Clear conversation">
-                    <i class="ri-delete-bin-line"></i> Clear
-                </button>
-                <div class="chat-messages" id="chat-messages-container"></div>
-                <div class="chat-input-area">
-                    <div class="chat-input-wrapper">
-                        <textarea
-                            id="chat-input"
-                            class="chat-input"
-                            placeholder="Ask about any country, region, or investment theme…"
-                            rows="1"
-                            onkeydown="handleChatKeydown(event)"
-                            oninput="autoResizeChatInput(this)"
-                        ></textarea>
-                    </div>
-                    <div class="chat-status" id="chat-status-indicator">Analyzing…</div>
-                    <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="Send (Enter)">
-                        <i class="ri-send-plane-fill"></i>
-                    </button>
-                </div>
-            </div>
+        <div class="sessions-list" id="sessions-list"></div>
+        <div class="sessions-footer">
+            <button class="sessions-export-btn" onclick="exportToMarkdown()" title="Export as Markdown"><i class="ri-markdown-line"></i> MD</button>
+            <button class="sessions-export-btn" onclick="exportToPDF()" title="Print / Save as PDF"><i class="ri-printer-line"></i> PDF</button>
         </div>
     </div>
+    <!-- Main chat -->
+    <div class="chat-main">
+        <div class="template-row">
+            <button class="tpl-btn" onclick="applyTemplate('risk-brief')"><i class="ri-file-shield-2-line"></i> Risk Brief</button>
+            <button class="tpl-btn" onclick="applyTemplate('country-note')"><i class="ri-map-pin-line"></i> Country Note</button>
+            <button class="tpl-btn" onclick="applyTemplate('screening')"><i class="ri-scan-line"></i> Screening</button>
+            <button class="tpl-btn" onclick="applyTemplate('comparison')"><i class="ri-bar-chart-grouped-line"></i> Compare</button>
+            <button class="tpl-btn" onclick="clearChatHistory()" style="margin-left:auto;" title="Clear chat"><i class="ri-delete-bin-line"></i></button>
+        </div>
+        <div class="model-selector">
+            <button class="model-pill active" data-model="gemini-3.1-flash-lite" onclick="selectModel('gemini-3.1-flash-lite')">Gemini 3.1 Lite</button>
+            <button class="model-pill" data-model="gemini-3.5-flash" onclick="selectModel('gemini-3.5-flash')">Gemini 3.5</button>
+            <button class="model-pill" data-model="openai/gpt-oss-120b" onclick="selectModel('openai/gpt-oss-120b')">GPT OSS 120B</button>
+            <button class="model-pill" data-model="qwen/qwen3-32b" onclick="selectModel('qwen/qwen3-32b')">Qwen3 32B</button>
+        </div>
+        <div class="coverage-bar" id="coverage-bar" style="display:none;"></div>
+        <div class="chat-messages" id="chat-messages-container"></div>
+        <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+                <textarea id="chat-input" class="chat-input" placeholder="Ask about any country, region, or investment theme…" rows="1" onkeydown="handleChatKeydown(event)" oninput="autoResizeChatInput(this)"></textarea>
+            </div>
+            <div class="chat-status" id="chat-status-indicator">Analyzing…</div>
+            <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="Send (Enter)">
+                <i class="ri-send-plane-fill"></i>
+            </button>
+        </div>
+    </div>
+    <!-- Trace panel -->
+    <div class="trace-panel" id="trace-panel">
+        <div class="trace-hdr">
+            <span class="trace-hdr-title"><i class="ri-flow-chart"></i> Trace</span>
+            <button class="trace-toggle" id="trace-toggle" onclick="toggleTracePanel()" title="Collapse"><i class="ri-arrow-right-s-line"></i></button>
+        </div>
+        <div class="trace-steps" id="trace-steps">
+            <div class="trace-empty">Agent reasoning steps appear here.</div>
+        </div>
+    </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-// ===== PROGRESS BAR =====
-(function() {
-    const bar = document.getElementById('progress-bar');
-    function updateProgress() {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-        if (bar) bar.style.width = pct + '%';
-    }
-    window.addEventListener('scroll', updateProgress, { passive: true });
-})();
 
-// ===== GROQ / KIMI K2 CONFIG =====
-// Requests are proxied through the Cloudflare Worker (WORKER_URL from firebase-config.js)
-const GROQ_MODEL = 'openai/gpt-oss-120b';
-const MODEL_SUPPORTS_TOOLS = !GROQ_MODEL.startsWith('openai/'); // reasoning models don't support tool use
+// ===== AGENT CONFIG =====
+const GEMINI_CHAT_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-chat';
+const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
+let selectedModel = 'gemini-3.1-flash-lite';
 
-const CHART_TOOLS = [
-    {
-        type: 'function',
-        function: {
-            name: 'render_scatter_plot',
-            description: 'Render an Opportunity vs Absorptive Capacity scatter plot positioning all countries. Points coloured by investment regime (RO/FO/SL/SR). Use when the user asks about positioning, quadrant analysis, where countries cluster, structural landscape, or opportunity screening. Optionally highlight specific countries.',
-            parameters: {
-                type: 'object',
-                properties: {
-                    highlight: { type: 'array', items: { type: 'string' }, description: 'Country names or ISO codes to highlight with gold labels.' },
-                    title: { type: 'string', description: 'Short chart title.' }
-                }
-            }
-        }
-    },
-    {
-        type: 'function',
-        function: {
-            name: 'render_radar_chart',
-            description: 'Render a radar/spider chart of all four pillar scores (Opportunity, Stability, Absorptive Capacity, Trajectory) for one or two countries. Use when comparing structural profiles, analysing strengths and weaknesses, or when the user asks about a country\'s pillar composition.',
-            parameters: {
-                type: 'object',
-                properties: {
-                    countries: { type: 'array', items: { type: 'string' }, description: 'One or two country names or ISO codes. Required.' },
-                    title: { type: 'string', description: 'Short chart title.' }
-                },
-                required: ['countries']
-            }
-        }
-    },
-    {
-        type: 'function',
-        function: {
-            name: 'render_bar_chart',
-            description: 'Render a horizontal bar chart. Use for pillar profile of a single country, or to rank countries by a metric.',
-            parameters: {
-                type: 'object',
-                properties: {
-                    mode: { type: 'string', enum: ['pillar_profile', 'country_ranking'], description: 'pillar_profile: all four pillar scores for one country. country_ranking: rank countries by a score.' },
-                    country: { type: 'string', description: 'Country name or ISO (for pillar_profile mode).' },
-                    metric: { type: 'string', description: 'Metric to rank by. One of: rao_score, tos_score, sis_score, dgi_score, rvs_score, pillar_opportunity, pillar_stability, pillar_absorptive_capacity, pillar_trajectory.' },
-                    top_n: { type: 'number', description: 'Countries to show in ranking (default 15).' },
-                    title: { type: 'string', description: 'Short chart title.' }
-                },
-                required: ['mode']
-            }
-        }
-    },
-    {
-        type: 'function',
-        function: {
-            name: 'render_line_chart',
-            description: 'Render a RAO score or pillar time-series for 1–3 countries from 2010 to 2024. Use when the user asks about evolution, trajectory, history, trend, how a country has changed over time, or comparisons across years.',
-            parameters: {
-                type: 'object',
-                properties: {
-                    countries: { type: 'array', items: { type: 'string' }, description: 'One to three country names or ISO codes. Required.' },
-                    metric: { type: 'string', enum: ['rao_score','pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory','tos_score','sis_score','dgi_score','rvs_score'], description: 'Metric to plot over time. Default: rao_score.' },
-                    title: { type: 'string', description: 'Short chart title.' }
-                },
-                required: ['countries']
-            }
-        }
-    },
-    {
-        type: 'function',
-        function: {
-            name: 'render_regime_matrix',
-            description: 'Render the 2×2 Regime × TOS Investment Priority Matrix showing country distribution across the four investment regimes (RO/FO/SL/SR) and high/low TOS levels. Use when asked about pre-breakout screening, investment landscape overview, portfolio construction, or which countries are in which regime.',
-            parameters: {
-                type: 'object',
-                properties: {
-                    year: { type: 'number', description: 'Year to display. Default 2024.' },
-                    title: { type: 'string', description: 'Short chart title.' }
-                }
-            }
-        }
-    }
+function selectModel(modelId) {
+    selectedModel = modelId;
+    document.querySelectorAll('.model-pill').forEach(p => {
+        p.classList.toggle('active', p.dataset.model === modelId);
+    });
+}
+const MAX_AGENT_STEPS = 5;
+
+const ALL_TOOLS = [
+    { type: 'function', function: { name: 'get_country_profile',
+        description: 'Retrieve full RAO profile for 1–5 countries: all pillars, TOS/SIS/DGI/RVS scores, regime, archetype, trajectory class, and all normalized indicator variables. Use for any country-level analysis.',
+        parameters: { type: 'object', required: ['countries'], properties: {
+            countries: { type: 'array', items: { type: 'string' }, description: 'Country names or ISO-3 codes.' },
+            include_history: { type: 'boolean', description: 'Include 2010–2024 panel history.' }
+        }}
+    }},
+    { type: 'function', function: { name: 'compare_countries',
+        description: 'Side-by-side structured comparison of 2–5 countries across all RAO pillars, TOS signal, regime, and rank.',
+        parameters: { type: 'object', required: ['countries'], properties: {
+            countries: { type: 'array', items: { type: 'string' } }
+        }}
+    }},
+    { type: 'function', function: { name: 'rank_by_pillar',
+        description: 'Return ranked list of all countries by a specific RAO metric. Use for screening, global context, or finding where a country sits.',
+        parameters: { type: 'object', required: ['metric'], properties: {
+            metric: { type: 'string', enum: ['rao_score','pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory','tos_score','sis_score','dgi_score','rvs_score'] },
+            top_n: { type: 'number', description: 'Number to return (default 20).' },
+            year: { type: 'number' }
+        }}
+    }},
+    { type: 'function', function: { name: 'find_anomalies',
+        description: 'Identify countries with unusual metric combinations: FO/SR + high TOS, regional outliers, high volatility. Use for opportunity screening, risk alerts.',
+        parameters: { type: 'object', properties: {
+            focus: { type: 'string', enum: ['opportunity','risk','all'] },
+            year: { type: 'number' }
+        }}
+    }},
+    { type: 'function', function: { name: 'web_search',
+        description: 'Search the web for current geopolitical news, economic data, sanctions, elections, policy changes, or post-2024 events. Always use for current-events questions.',
+        parameters: { type: 'object', required: ['query'], properties: {
+            query: { type: 'string' }
+        }}
+    }},
+    { type: 'function', function: { name: 'render_scatter_plot',
+        description: 'Render Opportunity vs Absorptive Capacity scatter plot coloured by regime. Use for structural landscape, quadrant analysis, opportunity screening.',
+        parameters: { type: 'object', properties: {
+            highlight: { type: 'array', items: { type: 'string' } },
+            title: { type: 'string' }
+        }}
+    }},
+    { type: 'function', function: { name: 'render_radar_chart',
+        description: 'Render 4-pillar radar chart for up to 3 countries.',
+        parameters: { type: 'object', required: ['countries'], properties: {
+            countries: { type: 'array', items: { type: 'string' } },
+            title: { type: 'string' }
+        }}
+    }},
+    { type: 'function', function: { name: 'render_bar_chart',
+        description: 'Horizontal bar chart: pillar profile for one country, or country ranking by metric.',
+        parameters: { type: 'object', properties: {
+            mode: { type: 'string', enum: ['pillar_profile','country_ranking'] },
+            country: { type: 'string' }, metric: { type: 'string' },
+            top_n: { type: 'number' }, title: { type: 'string' }
+        }}
+    }},
+    { type: 'function', function: { name: 'render_line_chart',
+        description: 'Time-series line chart 2010–2024 for up to 3 countries.',
+        parameters: { type: 'object', required: ['countries'], properties: {
+            countries: { type: 'array', items: { type: 'string' } },
+            metric: { type: 'string', enum: ['rao_score','pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory','tos_score','sis_score','dgi_score','rvs_score'] },
+            title: { type: 'string' }
+        }}
+    }},
+    { type: 'function', function: { name: 'render_regime_matrix',
+        description: 'Regime × TOS Investment Priority Matrix. Use for pre-breakout screening, landscape overview.',
+        parameters: { type: 'object', properties: {
+            year: { type: 'number' }, title: { type: 'string' }
+        }}
+    }}
 ];
 
 // ===== DATA & STATE =====
@@ -4958,6 +4321,9 @@ let favoriteCountries = new Set(JSON.parse(localStorage.getItem('raoFavorites') 
 let chatHistory = [];
 let isChatLoading = false;
 let datasetContextCache = null;
+let currentSessionId = null;
+let _agentSources = [];
+const SESSION_STORAGE_KEY = 'gsu_chat_sessions';
 
 // Comparison Presets
 const COMPARISON_PRESETS = {
@@ -5141,14 +4507,14 @@ const VARIABLE_NAMES = Object.assign({}, NORM_VAR_LABELS);
 const INVERSE_VARIABLES = ['norm_cpi_inflation','norm_government_debt_pct_gdp','norm_external_debt_pct_gni','norm_youth_unemployment','norm_vulnerable_employment','norm_natural_resource_rents_pct_gdp'];
 
 // ===== INITIALIZATION =====
-google.charts.load('current', { packages: ['geochart', 'corechart'] });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     loadDefaultCSV();
-    updateFavoritesUI();
+
 
     // Enhancement #50: Keyboard Shortcuts
-    setupKeyboardShortcuts();
+
 });
 
 document.addEventListener('click', (e) => {
@@ -5297,7 +4663,7 @@ function parseMainCSV(text) {
 
     console.log(`RAO v9 loaded: ${panelData.length} rows | ${countryMap.size} countries | ${allYears[0]}–${LATEST_YEAR} | ${latestSlice.length} in ${LATEST_YEAR}`);
 
-    google.charts.setOnLoadCallback(initializeAllTabs);
+    initializeChatbotTab();
 }
 
 // ===== RAO v8 DATA HELPERS =====
@@ -10427,7 +9793,7 @@ function showNoResultsMessage(container, type = 'search') {
 }
 
 // ===== ENHANCEMENT #50: KEYBOARD SHORTCUTS =====
-function setupKeyboardShortcuts() {
+
     document.addEventListener('keydown', (e) => {
         // Tab switching: 1-5 keys
         if (!e.target.matches('input, textarea, select')) {
@@ -10461,7 +9827,7 @@ function setupKeyboardShortcuts() {
             document.getElementById('favorites-menu')?.classList.remove('active');
         }
     });
-}
+
 
 // ===== ENHANCEMENT #52: MICRO-INTERACTIONS & POLISH =====
 // Add pulse effect to important metrics
@@ -10724,6 +10090,7 @@ function closeAllModals() {
     });
     const infoModal = document.getElementById('info-modal');
     if (infoModal) infoModal.style.display = 'none';
+    document.getElementById('trace-modal')?.classList.remove('open');
 }
 
 // Helper function to get country region
@@ -10906,8 +10273,10 @@ ${buildStaticContext()}${retrievePillarContext(tier2ISOs)}${retrieveVariableCont
 function initializeChatbotTab() {
     chatHistory = [];
     datasetContextCache = null;
+    if (!currentSessionId) currentSessionId = 'sess_' + Date.now();
     showWelcomeState();
     updateChatStatus('ready', 'Ready');
+    renderSessionsSidebar();
 }
 
 async function sendChatMessage() {
@@ -10916,6 +10285,8 @@ async function sendChatMessage() {
     const userText = input.value.trim();
     if (!userText || isChatLoading) return;
 
+    if (!currentSessionId) currentSessionId = 'sess_' + Date.now();
+
     renderChatMessage('user', userText);
     input.value = '';
     input.style.height = '52px';
@@ -10923,95 +10294,20 @@ async function sendChatMessage() {
 
     isChatLoading = true;
     sendBtn.disabled = true;
-    updateChatStatus('thinking', 'Analyzing...');
+    updateChatStatus('thinking', 'Reasoning…');
     const typingId = showTypingIndicator();
 
     try {
-        const recentHistory = chatHistory.slice(-4);
-        const messages = [
-            { role: 'system', content: buildSystemPrompt(userText) },
-            ...recentHistory
-        ];
-
-        if (GROQ_MODEL.startsWith('groq/compound')) {
-            // Streaming path for compound models — web search handled internally by Groq
-            const msgContainer = document.getElementById('chat-messages-container');
-            let streamBubble = null;
-            let accumulated = '';
-
-            const onToken = (chunk) => {
-                if (!streamBubble) {
-                    removeTypingIndicator(typingId);
-                    updateChatStatus('thinking', 'Responding...');
-                    const div = document.createElement('div');
-                    div.className = 'chat-message assistant';
-                    div.innerHTML = `<div class="chat-avatar"><i class="ri-sparkling-line"></i></div><div class="chat-bubble"></div><button class="chat-copy-btn" onclick="copyChatMessage(this)" title="Copy to clipboard"><i class="ri-file-copy-line"></i></button>`;
-                    msgContainer.appendChild(div);
-                    streamBubble = div.querySelector('.chat-bubble');
-                }
-                accumulated += chunk;
-                streamBubble.textContent = accumulated;
-                msgContainer.scrollTop = msgContainer.scrollHeight;
-            };
-
-            const msg = await callGroqAPI(messages, null, onToken);
-            const reply = msg.content || accumulated || 'No response received.';
-
-            if (streamBubble) {
-                streamBubble.innerHTML = chatMarkdownToHTML(reply);
-            } else {
-                removeTypingIndicator(typingId);
-                renderChatMessage('assistant', reply);
-            }
-            chatHistory.push({ role: 'assistant', content: reply });
-
-        } else {
-            // Non-streaming path (chart tools only if model supports them)
-            const msg = await callGroqAPI(messages, MODEL_SUPPORTS_TOOLS ? CHART_TOOLS : null);
-
-            if (msg.tool_calls && msg.tool_calls.length > 0) {
-                const toolCall = msg.tool_calls[0];
-                const fnName = toolCall.function.name;
-                let fnArgs = {};
-                try { fnArgs = JSON.parse(toolCall.function.arguments); } catch {}
-
-                removeTypingIndicator(typingId);
-                const chartEl = dispatchChartRender(fnName, fnArgs);
-                if (chartEl) {
-                    renderChatChart(chartEl);
-                    setTimeout(() => {
-                        const canvas = chartEl.querySelector('canvas');
-                        const chartTitle = chartEl.querySelector('.chat-chart-title')?.textContent || '';
-                        if (canvas) {
-                            chatHistory.push({ role: 'chart', imageData: canvas.toDataURL('image/png'), title: chartTitle });
-                        }
-                    }, 500);
-                }
-
-                updateChatStatus('thinking', 'Analyzing...');
-                const typingId2 = showTypingIndicator();
-                const followupMessages = [
-                    ...messages,
-                    { role: 'assistant', content: msg.content || null, tool_calls: msg.tool_calls },
-                    { role: 'tool', tool_call_id: toolCall.id, content: 'Chart rendered successfully in the chat interface.' }
-                ];
-                const msg2 = await callGroqAPI(followupMessages);
-                removeTypingIndicator(typingId2);
-                const reply = msg2.content || '';
-                if (reply) renderChatMessage('assistant', reply);
-                chatHistory.push({ role: 'assistant', content: `[chart rendered] ${reply}` });
-            } else {
-                removeTypingIndicator(typingId);
-                const reply = msg.content || 'No response received.';
-                renderChatMessage('assistant', reply);
-                chatHistory.push({ role: 'assistant', content: reply });
-            }
-        }
-
+        const reply = await runAgentLoop(userText);
+        removeTypingIndicator(typingId);
+        renderChatMessage('assistant', reply);
+        chatHistory.push({ role: 'assistant', content: reply });
+        renderCoverage(_agentSources);
+        autoSaveSession();
         updateChatStatus('ready', 'Ready');
     } catch (err) {
         removeTypingIndicator(typingId);
-        renderChatMessage('assistant', `**Error:** ${err.message || 'Network error — check your API key and connection.'}`, true);
+        renderChatMessage('assistant', `**Error:** ${err.message || 'Network error — check connection.'}`, true);
         chatHistory.pop();
         updateChatStatus('ready', 'Ready');
     } finally {
@@ -11035,7 +10331,7 @@ async function callGroqAPI(messages, tools = null, onToken = null) {
 
     if (isCompound) {
         body.compound_custom = { tools: { enabled_tools: ['web_search'] } };
-    } else if (tools && MODEL_SUPPORTS_TOOLS) {
+    } else if (tools) {
         body.tools = tools;
         body.tool_choice = 'auto';
     }
@@ -11084,6 +10380,409 @@ async function callGroqAPI(messages, tools = null, onToken = null) {
     const data = await response.json();
     return data.choices?.[0]?.message || { content: 'No response received.' };
 }
+
+// ===== AGENT SYSTEM PROMPT =====
+function buildAgentSystemPrompt() {
+    return `You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You analyze country risk and opportunity using the Risk-Adjusted Opportunity (RAO) Framework v2.1. Your standard is that of a decision-grade intelligence product: explain what data means, why it matters, and what a sophisticated investor should do.
+
+THE RAO FRAMEWORK:
+RAO Score (1–10): Bayesian CVaR₂₅ — worst-25% simulated scenario. Higher = better. Wide volatility_band = scenario sensitivity.
+4 Pillars (0–1 each):
+- Opportunity: GDP growth, export growth, net FDI, gross capital formation, secondary school enrolment
+- Stability (higher=better): inflation, gov debt, current account, external debt, political stability, rule of law, corruption control
+- Absorptive Capacity (geometric mean — collapses near zero if any component fails): resource rents, GDP/capita growth, youth unemployment, vulnerable employment, regulatory quality
+- Trajectory: OLS trends × R² for GDP growth, FDI, governance, debt, inflation
+Regimes: RO (Robust Opportunity) · FO (Fragile Opportunity) · SL (Stable/Limited) · SR (Structural Risk)
+TOS = geometric mean of SIS (S-curve inflection) × DGI (discovery gap) × RVS (reform velocity). TOS ≥ 0.70 = Strong Pre-Breakout. TOS ≥ 0.55 = Pre-Breakout.
+Primary signal: FO/SR + TOS ≥ 0.55 = entry/due-diligence trigger. SR→FO or FO→RO transitions = primary signals.
+
+ANALYTICAL STANDARD:
+Lead with strategic insight. Build causal chains. Numbers as evidence not argument. Base/upside/downside scenarios with conditional triggers. Specific, actionable closing sentence. Full paragraphs; bullet points only when comparing 3+ items, followed by synthesis paragraph. ### headers for sections. ### Bottom Line: decision-relevant.
+
+TOOL USE PROTOCOL:
+Always retrieve data with tools before synthesizing. Use get_country_profile for any named country. Use web_search for current events, post-2024 data, sanctions, elections, or news. Use chart tools when visual output adds value. Execute all needed tool calls, then synthesize once you have the data.
+
+`;
+}
+
+// ===== AGENTIC LOOP =====
+async function runAgentLoop(userText) {
+    _agentSources = [];
+    clearTrace();
+    addTraceStep('think', 'Analyzing query and selecting data strategy…');
+    updateChatStatus('thinking', 'Reasoning…');
+
+    const recentHistory = chatHistory.slice(-3);
+    let messages = [
+        { role: 'system', content: buildAgentSystemPrompt() },
+        ...recentHistory
+    ];
+
+    for (let step = 0; step < MAX_AGENT_STEPS; step++) {
+        const maxTok = step === 0 ? 500 : 2500;
+        const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok);
+
+        if (response.tool_calls && response.tool_calls.length > 0) {
+            const toolResults = [];
+            for (const tc of response.tool_calls) {
+                const fnName = tc.function.name;
+                let fnArgs = {};
+                try { fnArgs = JSON.parse(tc.function.arguments); } catch {}
+
+                addTraceStep('tool-call', fnName.replace(/_/g, ' ') + '(' + formatToolArgs(fnArgs) + ')', { fnName, fnArgs });
+                updateChatStatus('thinking', 'Retrieving: ' + fnName.replace(/_/g, ' ') + '…');
+
+                let result;
+                try { result = await executeToolCall(fnName, fnArgs); }
+                catch (e) { result = 'Tool error: ' + e.message; addTraceStep('step-error', 'Failed: ' + fnName); }
+
+                if (fnName === 'web_search') _agentSources.push({ type: 'web', query: fnArgs.query });
+                else if (!fnName.startsWith('render_')) _agentSources.push({ type: 'rao', tool: fnName });
+
+                addTraceStep('tool-result', summarizeToolResult(fnName, result), { fnName, result: typeof result === 'string' ? result : JSON.stringify(result) });
+                toolResults.push({ role: 'tool', tool_call_id: tc.id, content: typeof result === 'string' ? result : JSON.stringify(result) });
+            }
+            messages = [...messages, response, ...toolResults];
+            updateChatStatus('thinking', 'Synthesizing…');
+        } else {
+            const reply = response.content || 'No response received.';
+            addTraceStep('respond', reply.slice(0, 100) + (reply.length > 100 ? '…' : ''), reply);
+            return reply;
+        }
+    }
+    // Fallback final call if loop exhausted without direct response
+    addTraceStep('respond', 'Generating final response…');
+    const final = await callGroqAPIAgent(messages, null, 2500);
+    return final.content || 'Analysis complete.';
+}
+
+async function callGroqAPIAgent(messages, tools = null, maxTokens = 2500) {
+    const isGemini = selectedModel.startsWith('gemini-');
+    const url = isGemini ? GEMINI_CHAT_URL : WORKER_URL;
+    const body = { model: selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
+    if (tools && tools.length) {
+        body.tools = tools;
+        if (!isGemini) body.tool_choice = 'auto';
+    }
+    const response = await fetch(url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    });
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    const msg = data.choices?.[0]?.message || { content: 'No response.' };
+    if (!isGemini && msg.content) msg.content = msg.content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    return msg;
+}
+
+// ===== TOOL IMPLEMENTATIONS =====
+async function executeToolCall(name, args) {
+    switch (name) {
+        case 'get_country_profile':  return toolGetCountryProfile(args);
+        case 'compare_countries':    return toolCompareCountries(args);
+        case 'rank_by_pillar':       return toolRankByPillar(args);
+        case 'find_anomalies':       return toolFindAnomalies(args);
+        case 'web_search':           return await toolWebSearch(args);
+        case 'render_scatter_plot':  { const el = buildScatterPlot(args);      if (el) renderChatChart(el); return 'Scatter plot rendered.'; }
+        case 'render_radar_chart':   { const el = buildRadarChart(args);       if (el) renderChatChart(el); return 'Radar chart rendered.'; }
+        case 'render_bar_chart':     { const el = buildBarChart(args);         if (el) renderChatChart(el); return 'Bar chart rendered.'; }
+        case 'render_line_chart':    { const el = buildLineChart(args);        if (el) renderChatChart(el); return 'Line chart rendered.'; }
+        case 'render_regime_matrix': { const el = buildChatRegimeMatrix(args); if (el) renderChatChart(el); return 'Regime matrix rendered.'; }
+        default: return 'Unknown tool: ' + name;
+    }
+}
+
+function toolGetCountryProfile({ countries = [], include_history = false } = {}) {
+    const results = [];
+    for (const name of countries.slice(0, 5)) {
+        const c = resolveCountry(name);
+        if (!c) { results.push({ error: 'Not found: ' + name }); continue; }
+        const row = getLatestRow(c.country) || c;
+        const profile = {
+            country: row.country, country_name: row.country_name, year: row.year,
+            rao_score: row.rao_score, rao_pre_overlay: row.rao_score_pre_overlay,
+            overlay_adjustment: row.overlay_adjustment, volatility_band: row.volatility_band,
+            pillars: { opportunity: row.pillar_opportunity, stability: row.pillar_stability, absorptive_capacity: row.pillar_absorptive_capacity, trajectory: row.pillar_trajectory },
+            tos_score: row.tos_score, tos_signal: row.tos_signal_label, sis_score: row.sis_score, dgi_score: row.dgi_score, rvs_score: row.rvs_score,
+            regime: row.regime, regime_label: row.regime_label, archetype: row.archetype, trajectory_class: row.trajectory_class, rank: row.rank
+        };
+        const indicators = {};
+        for (const [k, v] of Object.entries(row)) { if (k.startsWith('norm_')) indicators[k] = v; }
+        profile.normalized_indicators = indicators;
+        if (include_history) {
+            profile.history = getCountryHistory(c.country).map(r => ({ year: r.year, rao: r.rao_score, opp: r.pillar_opportunity, stab: r.pillar_stability, ac: r.pillar_absorptive_capacity, traj: r.pillar_trajectory, regime: r.regime, tos: r.tos_score }));
+        }
+        results.push(profile);
+    }
+    return JSON.stringify(results, null, 2);
+}
+
+function toolCompareCountries({ countries = [] } = {}) {
+    const resolved = countries.slice(0, 5).map(n => resolveCountry(n)).filter(Boolean);
+    if (!resolved.length) return 'No countries found.';
+    return JSON.stringify(resolved.map(c => {
+        const r = getLatestRow(c.country) || c;
+        return { country: r.country_name, iso: r.country, year: r.year, rao: +r.rao_score?.toFixed(2), opp: +r.pillar_opportunity?.toFixed(3), stab: +r.pillar_stability?.toFixed(3), ac: +r.pillar_absorptive_capacity?.toFixed(3), traj: +r.pillar_trajectory?.toFixed(3), tos: +r.tos_score?.toFixed(2), regime: r.regime, archetype: r.archetype, rank: r.rank };
+    }), null, 2);
+}
+
+function toolRankByPillar({ metric = 'rao_score', top_n = 20, year } = {}) {
+    const slice = year ? getSlice(year) : latestSlice;
+    const ranked = [...slice].filter(r => r[metric] != null).sort((a, b) => b[metric] - a[metric]).slice(0, Math.min(top_n || 20, 50)).map((r, i) => ({ rank: i + 1, country: r.country_name, iso: r.country, value: +r[metric]?.toFixed(3), regime: r.regime, tos: +r.tos_score?.toFixed(2) }));
+    return JSON.stringify({ metric, year: year || window.LATEST_YEAR, rankings: ranked }, null, 2);
+}
+
+function toolFindAnomalies({ focus = 'all', year } = {}) {
+    const slice = year ? getSlice(year) : latestSlice;
+    const regionScores = {};
+    slice.forEach(r => { const rg = r.region || 'Unknown'; if (!regionScores[rg]) regionScores[rg] = []; regionScores[rg].push(r.rao_score || 0); });
+    const regionMeans = {};
+    for (const [rg, scores] of Object.entries(regionScores)) regionMeans[rg] = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const anomalies = [];
+    for (const r of slice) {
+        const flags = [];
+        if ((focus === 'opportunity' || focus === 'all') && (r.regime === 'FO' || r.regime === 'SR') && (r.tos_score || 0) >= 0.55) flags.push(r.regime + ' + TOS ' + r.tos_score?.toFixed(2) + ' — pre-breakout signal');
+        const rm = regionMeans[r.region || 'Unknown'];
+        if (focus === 'all' && rm && Math.abs((r.rao_score || 0) - rm) > 1.5) flags.push('Regional outlier: ' + (((r.rao_score || 0) - rm) > 0 ? '+' : '') + ((r.rao_score || 0) - rm).toFixed(2) + ' vs ' + (r.region || 'regional') + ' mean');
+        if ((focus === 'risk' || focus === 'all') && (r.volatility_band || 0) > 1.8) flags.push('High volatility band: ' + r.volatility_band?.toFixed(2));
+        if (flags.length) anomalies.push({ country: r.country_name, iso: r.country, rao: +r.rao_score?.toFixed(2), regime: r.regime, tos: +r.tos_score?.toFixed(2), flags });
+    }
+    return JSON.stringify({ year: year || window.LATEST_YEAR, focus, anomalies: anomalies.slice(0, 25) }, null, 2);
+}
+
+async function toolWebSearch({ query = '' } = {}) {
+    if (!query) return 'No query provided.';
+    try {
+        const res = await fetch(SEARCH_WORKER_URL + '/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query.slice(0, 400) }) });
+        if (!res.ok) { const err = await res.json().catch(() => ({})); return 'Search failed: ' + (err.error || res.status); }
+        return await res.text();
+    } catch (e) { return 'Search error: ' + e.message; }
+}
+
+function formatToolArgs(args) {
+    return Object.entries(args).map(([k, v]) => Array.isArray(v) ? k + '=[' + v.slice(0, 3).join(',') + (v.length > 3 ? '…' : '') + ']' : k + '=' + JSON.stringify(v)).join(', ');
+}
+
+function summarizeToolResult(name, result) {
+    try {
+        if (name === 'web_search') { const d = JSON.parse(result); return 'Web: ' + (d.results?.length || 0) + ' results' + (d.answer ? ' + answer' : ''); }
+        if (name === 'get_country_profile') { const d = JSON.parse(result); return 'Profile: ' + d.map(c => c.country_name || c.error).join(', '); }
+        if (name === 'compare_countries') { const d = JSON.parse(result); return 'Compare: ' + d.length + ' countries'; }
+        if (name === 'rank_by_pillar') { const d = JSON.parse(result); return 'Rankings: top ' + d.rankings?.length + ' by ' + d.metric; }
+        if (name === 'find_anomalies') { const d = JSON.parse(result); return 'Anomalies: ' + d.anomalies?.length + ' flagged'; }
+    } catch {}
+    if (name.startsWith('render_')) return 'Chart rendered';
+    return String(result || '').slice(0, 60);
+}
+
+// ===== TRACE PANEL =====
+function clearTrace() {
+    const el = document.getElementById('trace-steps');
+    if (el) el.innerHTML = '<div class="trace-empty">Reasoning trace for current query.</div>';
+}
+
+function addTraceStep(type, content, fullData) {
+    const el = document.getElementById('trace-steps');
+    if (!el) return;
+    const emp = el.querySelector('.trace-empty');
+    if (emp) emp.remove();
+    const icons = { think: 'ri-brain-line', 'tool-call': 'ri-flashlight-line', 'tool-result': 'ri-checkbox-circle-line', respond: 'ri-sparkling-line', 'step-error': 'ri-error-warning-line' };
+    const labels = { think: 'Reasoning', 'tool-call': 'Tool', 'tool-result': 'Result', respond: 'Response', 'step-error': 'Error' };
+    const div = document.createElement('div');
+    const expandable = fullData !== undefined;
+    div.className = 'trace-step ' + type + (expandable ? ' expandable' : '');
+    div.innerHTML = '<span class="trace-step-lbl"><i class="' + (icons[type] || 'ri-circle-line') + '"></i> ' + (labels[type] || type) + '</span><div class="trace-step-body">' + escapeHTMLSafe(content) + '</div>';
+    if (expandable) div.onclick = () => openTraceModal(type, fullData);
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+}
+
+function openTraceModal(type, data) {
+    const labels = { think: 'Reasoning', 'tool-call': 'Tool Call', 'tool-result': 'Result', respond: 'Response', 'step-error': 'Error' };
+    document.getElementById('trace-modal-title').textContent = labels[type] || type;
+    document.getElementById('trace-modal-body').innerHTML = buildTraceModalContent(type, data);
+    document.getElementById('trace-modal').classList.add('open');
+}
+
+function closeTraceModal(e) {
+    if (e && e.target !== document.getElementById('trace-modal')) return;
+    document.getElementById('trace-modal').classList.remove('open');
+}
+
+function buildTraceModalContent(type, data) {
+    if (type === 'respond') {
+        return '<div class="tm-md">' + chatMarkdownToHTML(String(data)) + '</div>';
+    }
+    if (type === 'tool-call') {
+        return '<div class="tm-fn-name">' + escapeHTMLSafe(data.fnName) + '</div>' +
+               '<pre class="tm-code">' + escapeHTMLSafe(JSON.stringify(data.fnArgs, null, 2)) + '</pre>';
+    }
+    if (type === 'tool-result') {
+        if (data.fnName === 'web_search') return buildWebSearchModal(data.result);
+        try {
+            return '<pre class="tm-code">' + escapeHTMLSafe(JSON.stringify(JSON.parse(data.result), null, 2)) + '</pre>';
+        } catch { return '<pre class="tm-code">' + escapeHTMLSafe(String(data.result)) + '</pre>'; }
+    }
+    return '<div style="white-space:pre-wrap;">' + escapeHTMLSafe(String(data)) + '</div>';
+}
+
+function buildWebSearchModal(resultStr) {
+    let data;
+    try { data = JSON.parse(resultStr); } catch { return '<pre class="tm-code">' + escapeHTMLSafe(resultStr) + '</pre>'; }
+    let html = '';
+    if (data.answer) {
+        html += '<div class="tm-answer"><div class="tm-section-lbl">Answer</div>' + escapeHTMLSafe(data.answer) + '</div>';
+    }
+    if (data.results?.length) {
+        html += '<div class="tm-section-lbl">Sources (' + data.results.length + ')</div>';
+        for (const r of data.results) {
+            html += '<div class="tm-source">' +
+                '<div class="tm-source-title">' + escapeHTMLSafe(r.title || '') + '</div>' +
+                '<div class="tm-source-url"><a href="' + escapeHTMLSafe(r.url || '') + '" target="_blank" rel="noopener">' + escapeHTMLSafe(r.url || '') + '</a></div>' +
+                '<div class="tm-source-snippet">' + escapeHTMLSafe(r.content || '') + '</div>' +
+                '</div>';
+        }
+    }
+    return html || '<div>No results.</div>';
+}
+
+function toggleTracePanel() {
+    const panel = document.getElementById('trace-panel');
+    const btn = document.getElementById('trace-toggle');
+    if (!panel) return;
+    panel.classList.toggle('collapsed');
+    if (btn) btn.innerHTML = panel.classList.contains('collapsed') ? '<i class="ri-arrow-left-s-line"></i>' : '<i class="ri-arrow-right-s-line"></i>';
+}
+
+function escapeHTMLSafe(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ===== COVERAGE BAR =====
+function renderCoverage(sources) {
+    const bar = document.getElementById('coverage-bar');
+    if (!bar) return;
+    if (!sources || !sources.length) { bar.style.display = 'none'; return; }
+    const raoSrcs = sources.filter(s => s.type === 'rao');
+    const webSrcs = sources.filter(s => s.type === 'web');
+    let html = '<span class="cov-label"><i class="ri-database-line"></i> Data sources:</span>';
+    if (raoSrcs.length) html += '<span class="cov-chip rao"><i class="ri-bar-chart-box-line"></i> RAO9 Dataset</span>';
+    webSrcs.forEach(s => { html += '<span class="cov-chip web"><i class="ri-global-line"></i> Web: ' + escapeHTMLSafe((s.query || '').slice(0, 28)) + (s.query?.length > 28 ? '…' : '') + '</span>'; });
+    bar.innerHTML = html;
+    bar.style.display = 'flex';
+}
+
+// ===== TEMPLATE QUICK-FILL =====
+const TEMPLATES = {
+    'risk-brief': 'Produce a structured risk brief for [COUNTRY]. Include: executive summary (2 sentences), pillar breakdown with root-cause analysis, key risk factors and transmission mechanisms, TOS signal interpretation, base/upside/downside scenarios with conditional triggers, and one actionable recommendation for an institutional investor.',
+    'country-note': 'Write a Country Intelligence Note for [COUNTRY]. Structure: Headline verdict → RAO composite score with percentile context → Pillar analysis (strengths and weaknesses by sub-indicator) → Investment regime and what it implies for different capital types → TOS signal and sector implications → 3-month and 12-month outlook.',
+    'screening': 'Run a systematic screening of all countries in the RAO dataset. Identify: (1) top 10 by current RAO score, (2) highest TOS signal countries in FO or SR regime, (3) countries with recent regime upgrades (SR→FO or FO→RO), (4) regional anomalies. For each group provide 2–3 sentences of interpretive context.',
+    'comparison': 'Compare [COUNTRY1] and [COUNTRY2]. Include: RAO composite scores and what the differential implies, pillar-by-pillar breakdown with root causes, regime and TOS contrast, which is better suited for which capital type, and a side-by-side scenario table (base/upside/downside).'
+};
+
+function applyTemplate(id) {
+    const input = document.getElementById('chat-input');
+    if (!input || !TEMPLATES[id]) return;
+    input.value = TEMPLATES[id];
+    input.focus();
+    autoResizeChatInput(input);
+}
+
+// ===== SESSION MANAGEMENT =====
+function listSessions() {
+    try { return JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY) || '[]'); } catch { return []; }
+}
+
+function saveSessions(sessions) {
+    try { localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessions)); } catch {}
+}
+
+function newSession() {
+    currentSessionId = 'sess_' + Date.now();
+    chatHistory = [];
+    _chartInstances.forEach(c => { try { c.destroy(); } catch {} });
+    _chartInstances.length = 0;
+    showWelcomeState();
+    clearTrace();
+    const bar = document.getElementById('coverage-bar');
+    if (bar) bar.style.display = 'none';
+    updateChatStatus('ready', 'Ready');
+    renderSessionsSidebar();
+}
+
+function autoSaveSession() {
+    if (!chatHistory.length || !currentSessionId) return;
+    const sessions = listSessions();
+    const firstUser = chatHistory.find(m => m.role === 'user');
+    const name = firstUser ? firstUser.content.slice(0, 48) + (firstUser.content.length > 48 ? '…' : '') : 'Untitled';
+    const idx = sessions.findIndex(s => s.id === currentSessionId);
+    const entry = { id: currentSessionId, name, updatedAt: new Date().toISOString(), messages: chatHistory.filter(m => m.role !== 'chart').slice(-16) };
+    if (idx >= 0) sessions[idx] = entry; else sessions.unshift(entry);
+    saveSessions(sessions.slice(0, 15));
+    renderSessionsSidebar();
+}
+
+function loadSession(id) {
+    const sess = listSessions().find(s => s.id === id);
+    if (!sess) return;
+    currentSessionId = id;
+    chatHistory = sess.messages || [];
+    _chartInstances.forEach(c => { try { c.destroy(); } catch {} });
+    _chartInstances.length = 0;
+    const container = document.getElementById('chat-messages-container');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!chatHistory.length) { showWelcomeState(); }
+    else { hideWelcomeState(); chatHistory.forEach(m => { if (m.role === 'user') renderChatMessage('user', m.content); else if (m.role === 'assistant') renderChatMessage('assistant', m.content); }); }
+    clearTrace();
+    const bar = document.getElementById('coverage-bar');
+    if (bar) bar.style.display = 'none';
+    renderSessionsSidebar();
+}
+
+function deleteSession(id, evt) {
+    evt?.stopPropagation();
+    saveSessions(listSessions().filter(s => s.id !== id));
+    if (currentSessionId === id) { currentSessionId = null; newSession(); } else renderSessionsSidebar();
+}
+
+function renderSessionsSidebar() {
+    const list = document.getElementById('sessions-list');
+    if (!list) return;
+    const sessions = listSessions();
+    if (!sessions.length) {
+        list.innerHTML = '<div style="padding:1.2rem 0.9rem;font-size:0.77rem;color:var(--text-muted);font-style:italic;text-align:center;">No sessions yet</div>';
+        return;
+    }
+    list.innerHTML = sessions.map(s => {
+        const dt = new Date(s.updatedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        return '<div class="session-item' + (s.id === currentSessionId ? ' active' : '') + '" onclick="loadSession(\'' + s.id + '\')">'
+            + '<span class="session-name" title="' + escapeHTMLSafe(s.name) + '">' + escapeHTMLSafe(s.name) + '</span>'
+            + '<span class="session-time">' + dt + '</span>'
+            + '<button class="session-del" onclick="deleteSession(\'' + s.id + '\', event)" title="Delete"><i class="ri-delete-bin-line"></i></button>'
+            + '</div>';
+    }).join('');
+}
+
+// ===== EXPORT =====
+function exportToMarkdown() {
+    if (!chatHistory.length) { alert('No conversation to export.'); return; }
+    const lines = ['# GSU Research Session\n', '_' + new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) + '_\n\n---\n'];
+    chatHistory.forEach(m => {
+        if (m.role === 'user') lines.push('\n**You:** ' + m.content + '\n');
+        else if (m.role === 'assistant') lines.push('\n**RAO Assistant:** ' + m.content + '\n');
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'gsu-research-' + Date.now() + '.md';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+function exportToPDF() { window.print(); }
 
 function renderChatMessage(role, content, isError = false) {
     const container = document.getElementById('chat-messages-container');
@@ -11339,10 +11038,15 @@ function autoResizeChatInput(textarea) {
 
 function clearChatHistory() {
     chatHistory = [];
+    currentSessionId = 'sess_' + Date.now();
     _chartInstances.forEach(c => { try { c.destroy(); } catch {} });
     _chartInstances.length = 0;
     showWelcomeState();
+    clearTrace();
+    const bar = document.getElementById('coverage-bar');
+    if (bar) bar.style.display = 'none';
     updateChatStatus('ready', 'Ready');
+    renderSessionsSidebar();
 }
 
 function updateChatStatus(state, text) {
@@ -11673,589 +11377,14 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
 <!-- Firebase config & auth helpers -->
 <script src="firebase-config.js"></script>
 
-<!-- Auth Modal -->
-<div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
-    <div class="auth-modal" style="position:relative;">
-        <button class="auth-close-btn" onclick="closeAuthModal()"><i class="ri-close-line"></i></button>
-        <div class="auth-modal-logo">
-            <img src="assets/GSU_Transparent.png" alt="GSU">
-            <h2>RAO <em>Insights</em></h2>
-            <p id="auth-modal-subtitle">Sign in to access member features</p>
+<div id="trace-modal" class="trace-modal" onclick="closeTraceModal(event)">
+    <div class="trace-modal-card">
+        <div class="trace-modal-hdr">
+            <span id="trace-modal-title">Detail</span>
+            <button class="trace-modal-close" onclick="closeTraceModal()"><i class="ri-close-line"></i></button>
         </div>
-        <div class="auth-tabs">
-            <button class="auth-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">Sign In</button>
-            <button class="auth-tab-btn" id="tab-register-btn" onclick="switchAuthTab('register')">Register</button>
-        </div>
-        <div id="auth-login-form">
-            <div class="auth-form">
-                <input type="email" id="login-email" placeholder="Email address" autocomplete="email" onkeydown="handleAuthKeydown(event)">
-                <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" onkeydown="handleAuthKeydown(event)">
-                <div class="auth-error" id="login-error"></div>
-                <button class="auth-btn auth-btn-primary" onclick="handleEmailLogin()">Sign In</button>
-                <div class="auth-divider">or</div>
-                <button class="auth-btn auth-btn-google" onclick="handleGoogleLogin()">
-                    <svg width="18" height="18" viewBox="0 0 48 48">
-                        <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
-                        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
-                        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z"/>
-                        <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
-                    </svg>
-                    Continue with Google
-                </button>
-                <div class="auth-link" onclick="switchAuthTab('reset')">Forgot password?</div>
-            </div>
-        </div>
-        <div id="auth-register-form" style="display:none;">
-            <div class="auth-form">
-                <input type="text" id="reg-name" placeholder="Full name" autocomplete="name" onkeydown="handleAuthKeydown(event)">
-                <input type="email" id="reg-email" placeholder="Email address" autocomplete="email" onkeydown="handleAuthKeydown(event)">
-                <input type="password" id="reg-password" placeholder="Password (min 6 characters)" autocomplete="new-password" onkeydown="handleAuthKeydown(event)">
-                <div class="auth-error" id="register-error"></div>
-                <button class="auth-btn auth-btn-primary" onclick="handleEmailRegister()">Create Account</button>
-                <div class="auth-divider">or</div>
-                <button class="auth-btn auth-btn-google" onclick="handleGoogleLogin()">
-                    <svg width="18" height="18" viewBox="0 0 48 48">
-                        <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
-                        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
-                        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z"/>
-                        <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
-                    </svg>
-                    Continue with Google
-                </button>
-            </div>
-        </div>
-        <div id="auth-reset-form" style="display:none;">
-            <div class="auth-form">
-                <p style="color:var(--text-muted); font-family:var(--font-minor); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; line-height:1.6;">Enter your email and we'll send a reset link.</p>
-                <input type="email" id="reset-email" placeholder="Email address" onkeydown="handleAuthKeydown(event)">
-                <div class="auth-error" id="reset-error"></div>
-                <button class="auth-btn auth-btn-primary" onclick="handlePasswordReset()">Send Reset Link</button>
-                <div class="auth-link" onclick="switchAuthTab('login')">Back to Sign In</div>
-            </div>
-        </div>
-        <div id="auth-verify-form" style="display:none;">
-            <div class="auth-form" style="text-align:center;">
-                <div style="font-size:2.5rem; margin-bottom:0.75rem;">&#x2709;</div>
-                <p style="color:var(--text-primary); font-size:1rem; font-weight:500; margin-bottom:0.5rem;">Check your inbox</p>
-                <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1.25rem;">A verification link has been sent to <strong id="verify-email-shown"></strong>. Click it to activate your account, then sign in.</p>
-                <div class="auth-error" id="verify-error"></div>
-                <button class="auth-btn auth-btn-primary" onclick="handleResendVerification()">Resend Email</button>
-                <div class="auth-link" onclick="handleTryDifferentEmail()">Wrong email? Try a different one</div>
-                <div class="auth-link" onclick="switchAuthTab('login')" style="margin-top:0.25rem;">Back to Sign In</div>
-            </div>
-        </div>
+        <div class="trace-modal-body" id="trace-modal-body"></div>
     </div>
 </div>
-
-<script>
-    // ── Auth modal ────────────────────────────────────────────────────────────────
-    let _authModalContext = null;
-
-    function openAuthModal(tab, context) {
-        _authModalContext = context || null;
-        switchAuthTab(tab || 'login');
-        document.getElementById('auth-overlay').classList.add('visible');
-    }
-    function closeAuthModal() {
-        document.getElementById('auth-overlay').classList.remove('visible');
-        _authModalContext = null;
-    }
-    function handleOverlayClick(e) {
-        if (e.target === document.getElementById('auth-overlay')) closeAuthModal();
-    }
-    function switchAuthTab(tab) {
-        document.getElementById('auth-login-form').style.display    = tab === 'login'    ? '' : 'none';
-        document.getElementById('auth-register-form').style.display = tab === 'register' ? '' : 'none';
-        document.getElementById('auth-reset-form').style.display    = tab === 'reset'    ? '' : 'none';
-        document.getElementById('auth-verify-form').style.display   = tab === 'verify'   ? '' : 'none';
-        const hideTabs = tab === 'reset' || tab === 'verify';
-        document.querySelector('.auth-tabs').style.display = hideTabs ? 'none' : '';
-        document.getElementById('tab-login-btn').classList.toggle('active', tab === 'login');
-        document.getElementById('tab-register-btn').classList.toggle('active', tab === 'register');
-        ['login-error', 'register-error', 'reset-error', 'verify-error'].forEach(id => {
-            const el = document.getElementById(id); if (el) el.textContent = '';
-        });
-    }
-    function setAuthError(formId, msg) {
-        document.getElementById(formId + '-error').textContent = msg;
-    }
-    async function handleEmailLogin() {
-        const email = document.getElementById('login-email').value.trim();
-        const password = document.getElementById('login-password').value;
-        if (!email || !password) { setAuthError('login', 'Please fill in all fields.'); return; }
-        try {
-            const cred = await signInWithEmail(email, password);
-            if (cred.user && !cred.user.emailVerified) {
-                document.getElementById('verify-email-shown').textContent = email;
-                switchAuthTab('verify');
-                return;
-            }
-            Analytics.login('email');
-            closeAuthModal();
-        } catch (e) { setAuthError('login', friendlyAuthError(e.code)); }
-    }
-    async function handleEmailRegister() {
-        const name = document.getElementById('reg-name').value.trim();
-        const email = document.getElementById('reg-email').value.trim();
-        const password = document.getElementById('reg-password').value;
-        if (!name || !email || !password) { setAuthError('register', 'Please fill in all fields.'); return; }
-        if (password.length < 6) { setAuthError('register', 'Password must be at least 6 characters.'); return; }
-        try {
-            await signUpWithEmail(email, password, name);
-            Analytics.signUp('email');
-            showAuthToast('Verification email sent — check your inbox.');
-            document.getElementById('verify-email-shown').textContent = email;
-            switchAuthTab('verify');
-        } catch (e) {
-            if (e.code === 'auth/email-already-in-use') {
-                // Try signing in with the entered password to determine account state
-                try {
-                    const cred = await signInWithEmail(email, password);
-                    if (!cred.user.emailVerified) {
-                        // Unverified account exists — resend and redirect to verify panel
-                        await cred.user.sendEmailVerification();
-                        showAuthToast('Verification email resent — check your inbox.');
-                        document.getElementById('verify-email-shown').textContent = email;
-                        switchAuthTab('verify');
-                    } else {
-                        // Fully verified account exists
-                        setAuthError('register', 'This email already has a verified account. Please sign in instead.');
-                    }
-                } catch (signInErr) {
-                    if (signInErr.code === 'auth/wrong-password' || signInErr.code === 'auth/invalid-credential') {
-                        setAuthError('register', 'An account with this email already exists. Try signing in or reset your password.');
-                    } else {
-                        setAuthError('register', friendlyAuthError(signInErr.code));
-                    }
-                }
-            } else {
-                setAuthError('register', friendlyAuthError(e.code));
-            }
-        }
-    }
-    async function handleGoogleLogin() {
-        try {
-            await signInWithGoogle();
-            Analytics.login('google');
-            closeAuthModal();
-        } catch (e) { setAuthError('login', friendlyAuthError(e.code)); }
-    }
-    async function handleResendVerification() {
-        const user = auth.currentUser;
-        if (!user) { setAuthError('verify', 'Please sign in first.'); return; }
-        try {
-            await user.sendEmailVerification();
-            document.getElementById('verify-error').style.color = '#50c878';
-            setAuthError('verify', 'Verification email resent!');
-        } catch (e) {
-            document.getElementById('verify-error').style.color = '#e07070';
-            setAuthError('verify', 'Could not resend. Please wait a moment and try again.');
-        }
-    }
-    async function handleTryDifferentEmail() {
-        const user = auth.currentUser;
-        if (user && !user.emailVerified) {
-            try { await user.delete(); } catch (e) { /* ignore — may already be gone */ }
-        }
-        switchAuthTab('register');
-        document.getElementById('reg-name').value = '';
-        document.getElementById('reg-email').value = '';
-        document.getElementById('reg-password').value = '';
-    }
-    async function handlePasswordReset() {
-        const email = document.getElementById('reset-email').value.trim();
-        if (!email) { setAuthError('reset', 'Please enter your email.'); return; }
-        try {
-            await sendPasswordReset(email);
-            document.getElementById('reset-error').style.color = '#50c878';
-            setAuthError('reset', 'Reset link sent! Check your inbox.');
-        } catch (e) { setAuthError('reset', friendlyAuthError(e.code)); }
-    }
-    async function handleSignOut() {
-        Analytics.logout();
-        await signOut();
-        toggleUserDropdown(false);
-    }
-    function friendlyAuthError(code) {
-        const map = {
-            'auth/user-not-found': 'No account with that email.',
-            'auth/wrong-password': 'Incorrect password.',
-            'auth/email-already-in-use': 'That email is already registered.',
-            'auth/invalid-email': 'Please enter a valid email.',
-            'auth/weak-password': 'Password must be at least 6 characters.',
-            'auth/popup-closed-by-user': 'Google sign-in was cancelled.',
-            'auth/network-request-failed': 'Network error. Check your connection.',
-            'auth/invalid-credential': 'Incorrect email or password.',
-        };
-        return map[code] || 'Something went wrong. Please try again.';
-    }
-
-    function showAuthToast(msg) {
-        let toast = document.getElementById('auth-toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'auth-toast';
-            toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--secondary-bg);border:1px solid rgba(194,165,109,0.45);color:var(--text-white);padding:0.65rem 1.5rem;border-radius:4px;font-family:var(--font-body);font-size:0.9rem;z-index:20000;pointer-events:none;opacity:0;transition:opacity 0.25s;white-space:nowrap;';
-            document.body.appendChild(toast);
-        }
-        toast.textContent = msg;
-        toast.style.opacity = '1';
-        clearTimeout(toast._timer);
-        toast._timer = setTimeout(() => { toast.style.opacity = '0'; }, 3500);
-    }
-
-    function handleAuthKeydown(event) {
-        if (event.key !== 'Enter') return;
-        event.preventDefault();
-        const loginVisible    = document.getElementById('auth-login-form').style.display    !== 'none';
-        const registerVisible = document.getElementById('auth-register-form').style.display !== 'none';
-        const resetVisible    = document.getElementById('auth-reset-form').style.display    !== 'none';
-        if (loginVisible)    handleEmailLogin();
-        else if (registerVisible) handleEmailRegister();
-        else if (resetVisible)    handlePasswordReset();
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && document.getElementById('auth-overlay').classList.contains('visible')) {
-            closeAuthModal();
-        }
-    });
-
-    // ── User dropdown ─────────────────────────────────────────────────────────────
-    function toggleUserDropdown(force) {
-        const dd = document.getElementById('user-dropdown');
-        const open = typeof force === 'boolean' ? force : !dd.classList.contains('open');
-        dd.classList.toggle('open', open);
-    }
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.user-menu-wrap')) toggleUserDropdown(false);
-    });
-
-    // ── Auth state → UI ───────────────────────────────────────────────────────────
-    function onAuthReady(user) {
-        const signInBtn = document.getElementById('sign-in-btn');
-        const userWrap = document.getElementById('user-menu-wrap');
-        const avatar = document.getElementById('user-avatar');
-        const ddName = document.getElementById('dd-name');
-        const ddRole = document.getElementById('dd-role');
-        const ddAdminLink = document.getElementById('dd-admin-link');
-        const isUnverified = user && !user.emailVerified && user.providerData[0]?.providerId === 'password';
-        if (user && !isUnverified) {
-            signInBtn.style.display = 'none';
-            userWrap.style.display = 'block';
-            const initials = (user.displayName || user.email || '?')
-                .split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-            avatar.textContent = initials;
-            ddName.textContent = user.displayName || user.email;
-            const ROLE_DISPLAY = {
-                'founder':'Founder','ops-lead':'Operations Lead',
-                'cto':'Chief Technology Officer','cdo':'Chief Data Officer',
-                'cso':'Chief Strategy Officer','marketing-lead':'Marketing Lead',
-                'research-lead':'Research Lead','client':'Client','free':'Free Member'
-            };
-            ddRole.textContent = ROLE_DISPLAY[currentUserRole] || (currentUserRole ? capitalize(currentUserRole) : 'Member');
-            ddAdminLink.style.display = isDirector() ? 'flex' : 'none';
-            if (_authModalContext) {
-                const ctx = _authModalContext; _authModalContext = null;
-                setTimeout(() => switchTab(ctx), 300);
-            }
-        } else {
-            signInBtn.style.display = '';
-            userWrap.style.display = 'none';
-        }
-        refreshTabLocks();
-    }
-    function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-
-    // ── Tab locking ───────────────────────────────────────────────────────────────
-    // Values are the maximum level allowed (lower number = more privilege).
-    // null = public. Add new tabs here with the required level threshold.
-    const TAB_ACCESS = {
-        overview: null, analysis: null, compare: null, rankings: null,
-        analytics: 3,  // level 1–3 (director, head, employee)
-        insights:  5,  // level 1–5 (any registered user)
-    };
-    const LOCK_MESSAGES = {
-        3: {
-            title: 'Employee Access Required',
-            desc: 'The Analytics module is available to GSU team members. Contact the director to get access.',
-            btn: 'Sign In',
-        },
-        5: {
-            title: 'Sign In to Access Insights',
-            desc: 'Create a free account to use the AI chatbot and get personalised intelligence.',
-            btn: 'Sign In / Register',
-        },
-    };
-    function canAccessTab(tabName) {
-        const required = TAB_ACCESS[tabName];
-        if (required === null || required === undefined) return true;
-        return levelAtMost(required);
-    }
-    function refreshTabLocks() {
-        Object.keys(TAB_ACCESS).forEach(tabName => {
-            if (!TAB_ACCESS[tabName]) return;
-            const tabEl = document.getElementById('tab-' + tabName);
-            if (!tabEl) return;
-            const existing = tabEl.querySelector('.tab-lock');
-            if (canAccessTab(tabName)) {
-                if (existing) existing.remove();
-            } else {
-                if (!existing) {
-                    const msg = LOCK_MESSAGES[TAB_ACCESS[tabName]];
-                    const div = document.createElement('div');
-                    div.className = 'tab-lock';
-                    div.innerHTML = `
-                        <i class="ri-lock-2-line"></i>
-                        <h3>${msg.title}</h3>
-                        <p>${msg.desc}</p>
-                        <button class="auth-btn auth-btn-primary" onclick="openAuthModal('login','${tabName}')">${msg.btn}</button>
-                    `;
-                    tabEl.style.position = 'relative';
-                    tabEl.prepend(div);
-                }
-            }
-        });
-    }
-
-    // ── Override switchTab to check access ───────────────────────────────────────
-    (function() {
-        const _origSwitchTab = window.switchTab;
-        window.switchTab = function(tabName) {
-            _origSwitchTab(tabName);
-            if (!canAccessTab(tabName)) {
-                refreshTabLocks();
-                openAuthModal('login', tabName);
-                if (typeof Analytics !== 'undefined') Analytics.lockScreenShown(tabName);
-            } else {
-                if (typeof Analytics !== 'undefined') Analytics.tabView(tabName);
-            }
-        };
-    })();
-</script>
-
-<!-- Info Modal -->
-<style>
-#info-modal {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-}
-#info-modal.active {
-    opacity: 1;
-    pointer-events: all;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
-#info-modal .rao-modal-card {
-    transform: translateY(16px) scale(0.97);
-    opacity: 0;
-    transition: transform 0.32s cubic-bezier(0.25,1,0.35,1), opacity 0.28s ease;
-}
-#info-modal.active .rao-modal-card {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-}
-.rao-modal-var {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    padding: 0.32rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 0.8rem;
-}
-.rao-modal-var:last-child { border-bottom: none; }
-.rao-modal-var-name {
-    font-family: var(--font-minor);
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-white);
-    white-space: nowrap;
-    flex-shrink: 0;
-    min-width: 130px;
-}
-.rao-modal-var-desc { color: var(--text-muted); line-height: 1.5; }
-.rao-modal-section-label {
-    font-family: var(--font-minor);
-    font-size: 0.55rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--accent-gold);
-    margin-bottom: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-.rao-modal-section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(194,165,109,0.15);
-}
-</style>
-<div id="info-modal" style="display:none; position:fixed; inset:0; background:rgba(10,15,28,0.82); z-index:10000; align-items:flex-start; justify-content:center; padding:2.5rem 1.5rem; overflow-y:auto;" onclick="if(event.target===this)toggleInfoModal()">
-    <div class="rao-modal-card" style="background:linear-gradient(160deg,rgba(25,33,50,0.99) 0%,rgba(20,28,46,0.99) 100%); border:1px solid rgba(194,165,109,0.2); border-radius:4px; width:100%; max-width:1200px; box-shadow:0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03); overflow:hidden;">
-
-        <!-- Header -->
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:1.25rem 1.75rem; border-bottom:1px solid var(--border-subtle); background:rgba(194,165,109,0.04);">
-            <div>
-                <div style="font-family:var(--font-head); font-size:1.35rem; color:var(--text-white); line-height:1.2; margin-bottom:0.2rem;">Risk-Adjusted Opportunity Index</div>
-                <div style="font-family:var(--font-minor); font-size:0.58rem; text-transform:uppercase; letter-spacing:0.16em; color:var(--accent-gold);">Framework Overview</div>
-            </div>
-            <button onclick="toggleInfoModal()" style="background:none; border:1px solid var(--border-subtle); color:var(--text-muted); cursor:pointer; font-size:1rem; line-height:1; padding:0.4rem 0.5rem; border-radius:3px; transition:all 0.2s; display:flex; align-items:center;" onmouseover="this.style.borderColor='rgba(194,165,109,0.4)';this.style.color='var(--text-white)'" onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--text-muted)'"><i class="ri-close-line"></i></button>
-        </div>
-
-        <div style="padding:1.75rem; font-family:var(--font-body); font-size:0.875rem; line-height:1.75; color:var(--text-muted);">
-
-            <!-- Intro -->
-            <p style="margin-bottom:1.75rem; font-size:0.9rem; color:rgba(238,234,224,0.8); line-height:1.8;">
-                The <strong style="color:var(--text-white);">Risk-Adjusted Opportunity (RAO) Index</strong> ranks <strong style="color:var(--text-white);">162 countries</strong> on a <strong style="color:var(--text-white);">1–10 scale</strong> using a panel dataset spanning 2010–2025. It synthesises 22 normalised indicators across four structural pillars to produce a composite score that captures both growth potential and the conditions necessary to realise it. Higher scores indicate stronger, more stable investment environments. The framework is designed to surface countries building structural quality ahead of external market recognition.
-            </p>
-
-            <!-- THE FOUR PILLARS -->
-            <div class="rao-modal-section-label">The Four Structural Pillars</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.75rem;">
-
-                <!-- Opportunity -->
-                <div style="background:rgba(194,165,109,0.05); border:1px solid rgba(194,165,109,0.18); border-radius:3px; overflow:hidden;">
-                    <div style="padding:0.7rem 1rem 0.5rem; border-bottom:1px solid rgba(194,165,109,0.12); background:rgba(194,165,109,0.07);">
-                        <div style="font-family:var(--font-minor); font-size:0.58rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:#C2A56D;">A · Opportunity</div>
-                        <div style="font-family:var(--font-body); font-size:0.78rem; color:rgba(238,234,224,0.65); margin-top:0.25rem; line-height:1.5;">Measures a country's immediate growth engine — the pull factors that attract capital and generate economic expansion.</div>
-                    </div>
-                    <div style="padding:0.65rem 1rem;">
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">GDP Growth</span><span class="rao-modal-var-desc">Rate of expansion in overall economic output</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Export Growth</span><span class="rao-modal-var-desc">Momentum in goods and services sold to foreign markets</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Net FDI</span><span class="rao-modal-var-desc">Foreign direct investment inflows as a share of GDP</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Capital Formation</span><span class="rao-modal-var-desc">Investment in productive fixed assets and infrastructure</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Secondary Enrolment</span><span class="rao-modal-var-desc">Human capital development at secondary education level</span></div>
-                    </div>
-                </div>
-
-                <!-- Stability -->
-                <div style="background:rgba(96,124,152,0.05); border:1px solid rgba(96,124,152,0.2); border-radius:3px; overflow:hidden;">
-                    <div style="padding:0.7rem 1rem 0.5rem; border-bottom:1px solid rgba(96,124,152,0.12); background:rgba(96,124,152,0.07);">
-                        <div style="font-family:var(--font-minor); font-size:0.58rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:#607c98;">B · Stability</div>
-                        <div style="font-family:var(--font-body); font-size:0.78rem; color:rgba(238,234,224,0.65); margin-top:0.25rem; line-height:1.5;">Measures macroeconomic and institutional resilience — the foundations that sustain opportunity over time. Higher is better.</div>
-                    </div>
-                    <div style="padding:0.65rem 1rem;">
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">CPI Inflation</span><span class="rao-modal-var-desc">Price level stability — low inflation preserves purchasing power</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Government Debt</span><span class="rao-modal-var-desc">Fiscal headroom — lower debt creates policy flexibility</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">External Debt</span><span class="rao-modal-var-desc">Vulnerability to foreign currency obligations</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Current Account</span><span class="rao-modal-var-desc">External balance position and trade competitiveness</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Political Stability</span><span class="rao-modal-var-desc">Absence of violence, conflict, and political disruption</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Rule of Law</span><span class="rao-modal-var-desc">Strength of legal institutions, contracts, and property rights</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Control of Corruption</span><span class="rao-modal-var-desc">Quality of public sector governance and accountability</span></div>
-                    </div>
-                </div>
-
-                <!-- Absorptive Capacity -->
-                <div style="background:rgba(93,138,114,0.05); border:1px solid rgba(93,138,114,0.18); border-radius:3px; overflow:hidden;">
-                    <div style="padding:0.7rem 1rem 0.5rem; border-bottom:1px solid rgba(93,138,114,0.12); background:rgba(93,138,114,0.07);">
-                        <div style="font-family:var(--font-minor); font-size:0.58rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:#5d8a72;">C · Absorptive Capacity</div>
-                        <div style="font-family:var(--font-body); font-size:0.78rem; color:rgba(238,234,224,0.65); margin-top:0.25rem; line-height:1.5;">Measures whether a country can productively absorb investment — the structural conditions for capital to translate into real development.</div>
-                    </div>
-                    <div style="padding:0.65rem 1rem;">
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Regulatory Quality</span><span class="rao-modal-var-desc">Business environment, market openness, and policy predictability</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">GDP per Capita Growth</span><span class="rao-modal-var-desc">Per-person income improvement — broad-based development quality</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Youth Unemployment</span><span class="rao-modal-var-desc">Labour market health for younger cohorts — lower is better</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Vulnerable Employment</span><span class="rao-modal-var-desc">Share of workforce in precarious or informal arrangements — lower is better</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Resource Rents</span><span class="rao-modal-var-desc">Over-reliance on extractive industries — high rents crowd out diversification</span></div>
-                    </div>
-                </div>
-
-                <!-- Trajectory -->
-                <div style="background:rgba(122,142,98,0.05); border:1px solid rgba(122,142,98,0.18); border-radius:3px; overflow:hidden;">
-                    <div style="padding:0.7rem 1rem 0.5rem; border-bottom:1px solid rgba(122,142,98,0.12); background:rgba(122,142,98,0.07);">
-                        <div style="font-family:var(--font-minor); font-size:0.58rem; font-weight:600; text-transform:uppercase; letter-spacing:0.14em; color:#7a8e62;">D · Trajectory</div>
-                        <div style="font-family:var(--font-body); font-size:0.78rem; color:rgba(238,234,224,0.65); margin-top:0.25rem; line-height:1.5;">Measures the direction of travel — whether a country's fundamentals are improving or deteriorating across key dimensions over the medium term.</div>
-                    </div>
-                    <div style="padding:0.65rem 1rem;">
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">GDP Growth Trend</span><span class="rao-modal-var-desc">Sustained directional momentum in economic growth over time</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">FDI Trend</span><span class="rao-modal-var-desc">Directional change in foreign investor appetite and confidence</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Governance Trend</span><span class="rao-modal-var-desc">Improving or deteriorating institutional and governance quality</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Debt Trend</span><span class="rao-modal-var-desc">Direction of fiscal trajectory — rising or falling debt burden</span></div>
-                        <div class="rao-modal-var"><span class="rao-modal-var-name">Inflation Trend</span><span class="rao-modal-var-desc">Price stability trajectory — anchoring or drifting inflation</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TOS SIGNAL -->
-            <div class="rao-modal-section-label">Take-off Signal (TOS)</div>
-            <p style="margin-bottom:1.1rem; font-size:0.875rem; color:rgba(238,234,224,0.75); line-height:1.8;">
-                The TOS is a composite signal scored 0–1 that identifies countries approaching a structural pre-breakout — where fundamental quality is being built but has not yet been priced into external capital flows. It combines three independent sub-signals, each measuring a different dimension of readiness for structural acceleration.
-            </p>
-            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:1.25rem;">
-                <div style="background:rgba(194,165,109,0.05); border:1px solid rgba(194,165,109,0.15); border-radius:3px; padding:0.9rem 1rem;">
-                    <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#C2A56D; margin-bottom:0.4rem;">SIS — Structural Inflection Score</div>
-                    <div style="font-size:0.8rem; color:rgba(238,234,224,0.7); line-height:1.6;">Detects whether a country is approaching an inflection point in its growth and institutional trajectory — the moment before structural acceleration becomes visible to markets. High SIS countries are building momentum.</div>
-                </div>
-                <div style="background:rgba(96,124,152,0.05); border:1px solid rgba(96,124,152,0.15); border-radius:3px; padding:0.9rem 1rem;">
-                    <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#607c98; margin-bottom:0.4rem;">DGI — Discovery Gap Index</div>
-                    <div style="font-size:0.8rem; color:rgba(238,234,224,0.7); line-height:1.6;">Measures the gap between a country's fundamental quality and its recognition by external capital markets. A wide gap signals an underdiscovered opportunity — high fundamentals not yet reflected in capital flows or market pricing.</div>
-                </div>
-                <div style="background:rgba(93,138,114,0.05); border:1px solid rgba(93,138,114,0.15); border-radius:3px; padding:0.9rem 1rem;">
-                    <div style="font-family:var(--font-minor); font-size:0.6rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:#5d8a72; margin-bottom:0.4rem;">RVS — Reform Velocity Score</div>
-                    <div style="font-size:0.8rem; color:rgba(238,234,224,0.7); line-height:1.6;">Measures the pace and direction of institutional and policy reform. High RVS countries are actively improving their governance and economic frameworks — signalling structural intent rather than cyclical noise.</div>
-                </div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-subtle); border-radius:3px; padding:0.75rem 1.1rem; margin-bottom:1.75rem;">
-                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0; text-align:center;">
-                    <div style="padding:0.4rem 0.5rem; border-right:1px solid var(--border-subtle);">
-                        <div style="font-family:var(--font-mono); font-size:0.9rem; color:#C2A56D; font-weight:600;">≥ 0.70</div>
-                        <div style="font-family:var(--font-minor); font-size:0.52rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-top:0.2rem;">Strong Pre-Breakout</div>
-                    </div>
-                    <div style="padding:0.4rem 0.5rem; border-right:1px solid var(--border-subtle);">
-                        <div style="font-family:var(--font-mono); font-size:0.9rem; color:rgba(194,165,109,0.75); font-weight:600;">0.55 – 0.70</div>
-                        <div style="font-family:var(--font-minor); font-size:0.52rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-top:0.2rem;">Pre-Breakout Signal</div>
-                    </div>
-                    <div style="padding:0.4rem 0.5rem; border-right:1px solid var(--border-subtle);">
-                        <div style="font-family:var(--font-mono); font-size:0.9rem; color:rgba(238,234,224,0.5); font-weight:600;">0.35 – 0.55</div>
-                        <div style="font-family:var(--font-minor); font-size:0.52rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-top:0.2rem;">Moderate Potential</div>
-                    </div>
-                    <div style="padding:0.4rem 0.5rem;">
-                        <div style="font-family:var(--font-mono); font-size:0.9rem; color:rgba(238,234,224,0.3); font-weight:600;">< 0.35</div>
-                        <div style="font-family:var(--font-minor); font-size:0.52rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-top:0.2rem;">Low Signal</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- INVESTMENT REGIMES -->
-            <div class="rao-modal-section-label">Investment Regimes</div>
-            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:1.5rem;">
-                <div style="background:rgba(93,138,114,0.07); border:1px solid rgba(93,138,114,0.22); border-radius:3px; padding:0.85rem 1rem;">
-                    <div style="font-family:var(--font-minor); font-size:0.65rem; font-weight:600; letter-spacing:0.1em; color:#5d8a72; margin-bottom:0.4rem;">RO — Robust Opportunity</div>
-                    <div style="font-size:0.78rem; color:rgba(238,234,224,0.65); line-height:1.55;">High RAO score with low scenario uncertainty. Strong fundamentals, consistent performance. Core allocation territory.</div>
-                </div>
-                <div style="background:rgba(194,165,109,0.07); border:1px solid rgba(194,165,109,0.22); border-radius:3px; padding:0.85rem 1rem;">
-                    <div style="font-family:var(--font-minor); font-size:0.65rem; font-weight:600; letter-spacing:0.1em; color:#C2A56D; margin-bottom:0.4rem;">FO — Fragile Opportunity</div>
-                    <div style="font-size:0.78rem; color:rgba(238,234,224,0.65); line-height:1.55;">High RAO score with elevated scenario variance. Strong upside potential but path-dependent — monitor closely for structural confirmation.</div>
-                </div>
-                <div style="background:rgba(96,124,152,0.07); border:1px solid rgba(96,124,152,0.22); border-radius:3px; padding:0.85rem 1rem;">
-                    <div style="font-family:var(--font-minor); font-size:0.65rem; font-weight:600; letter-spacing:0.1em; color:#607c98; margin-bottom:0.4rem;">SL — Stable / Low</div>
-                    <div style="font-size:0.78rem; color:rgba(238,234,224,0.65); line-height:1.55;">Lower RAO score but low volatility. Stable, predictable environments with limited upside. Defensive or transitional positioning.</div>
-                </div>
-                <div style="background:rgba(150,96,96,0.07); border:1px solid rgba(150,96,96,0.22); border-radius:3px; padding:0.85rem 1rem;">
-                    <div style="font-family:var(--font-minor); font-size:0.65rem; font-weight:600; letter-spacing:0.1em; color:#966060; margin-bottom:0.4rem;">SR — Structural Risk</div>
-                    <div style="font-size:0.78rem; color:rgba(238,234,224,0.65); line-height:1.55;">Low RAO score with high scenario uncertainty. Weak fundamentals compounded by instability. Elevated risk; proceed with caution.</div>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div style="border-top:1px solid var(--border-subtle); padding-top:1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
-                <span style="font-family:var(--font-minor); font-size:0.55rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(238,234,224,0.3);">Data: World Bank · IMF · UNCTAD · WGI · 162 countries · 2010–2025</span>
-                <button onclick="toggleInfoModal()" style="font-family:var(--font-minor);font-size:0.58rem;text-transform:uppercase;letter-spacing:0.1em;background:none;border:1px solid var(--border-subtle);color:var(--text-muted);padding:0.4rem 0.85rem;border-radius:3px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(194,165,109,0.4)';this.style.color='var(--text-white)'" onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--text-muted)'">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Search results portal — direct child of body so no overflow:hidden ancestor can clip it -->
-<div class="search-results" id="search-results"></div>
-
 </body>
 </html>

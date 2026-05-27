@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSU Podcast · Trade Wars &amp; the New World Order</title>
+    <link rel="icon" type="image/x-icon" href="assets/gsu.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #192030;
+            --secondary-bg: #1f283b;
+            --tertiary-bg: #232d44;
+            --accent-gold: #C2A56D;
+            --text-white: #eeeae0;
+            --text-muted: rgba(238,234,224,.70);
+            --accent-gold-dim: rgba(194,165,109,0.3);
+            --accent-gold-faint: rgba(194,165,109,.07);
+            --border-subtle: rgba(255,255,255,.07);
+            --easing: cubic-bezier(.25,1,.35,1);
+            --font-head: 'Playfair Display', 'EB Garamond', Georgia, serif;
+            --font-body: 'EB Garamond', Georgia, serif;
+            --font-minor: 'Montserrat', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0f1520;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+            padding: 20px;
+        }
+
+        .card-wrapper {
+            width: 100%;
+            max-width: 1280px;
+            aspect-ratio: 16 / 9;
+            position: relative;
+        }
+
+        .podcast-card {
+            width: 100%;
+            height: 100%;
+            background: var(--primary-bg);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── WORLD MAP BACKGROUND ── */
+        .world-map {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            object-fit: cover;
+            object-position: center;
+            opacity: 0.12;
+        }
+
+        /* ── RADIAL GLOW ── */
+        .bg-glow {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 55% 35% at 50% 18%, rgba(194,165,109,0.055) 0%, transparent 70%),
+                radial-gradient(ellipse 90% 70% at 50% 50%, rgba(20,32,58,0.5) 0%, transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ── VIGNETTE ── */
+        .vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 85% 85% at 50% 48%, transparent 28%, rgba(12,17,28,0.55) 65%, rgba(8,12,22,0.88) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* ── CONTENT LAYER ── */
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: clamp(14px, 3.2%, 40px) clamp(18px, 3.8%, 50px);
+        }
+
+        /* ── HEADER ── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: clamp(10px, 1.8%, 22px);
+        }
+
+        .logo {
+            height: clamp(20px, 3vw, 34px);
+            width: auto;
+            opacity: 0.92;
+            filter: brightness(1.08);
+        }
+
+        .series-tag {
+            font-family: var(--font-minor);
+            font-size: clamp(0.38rem, 0.62vw, 0.62rem);
+            font-weight: 500;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            opacity: 0.8;
+        }
+
+        .header-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(194,165,109,0.22) 18%, rgba(194,165,109,0.22) 82%, transparent 100%);
+            margin-bottom: clamp(12px, 2.2%, 28px);
+            flex-shrink: 0;
+        }
+
+        /* ── TITLE SECTION ── */
+        .title-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: clamp(5px, 0.9%, 12px);
+            animation: fadeInUp 0.9s var(--easing) both;
+            animation-delay: 0.05s;
+        }
+
+        .eyebrow {
+            font-family: var(--font-minor);
+            font-size: clamp(0.38rem, 0.6vw, 0.6rem);
+            font-weight: 500;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            opacity: 0.7;
+        }
+
+        .main-title {
+            font-family: var(--font-head);
+            font-weight: 600;
+            font-size: clamp(1.5rem, 3vw, 3.1rem);
+            color: var(--text-white);
+            line-height: 1.14;
+            letter-spacing: -0.01em;
+            max-width: 82%;
+        }
+
+        .subtitle {
+            font-family: var(--font-body);
+            font-style: italic;
+            font-size: clamp(0.66rem, 1.05vw, 1.02rem);
+            color: var(--text-muted);
+            max-width: 500px;
+            line-height: 1.55;
+            opacity: 0.72;
+            margin-top: clamp(2px, 0.3%, 5px);
+        }
+
+        /* ── SPEAKERS ROW ── */
+        .speakers-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: clamp(18px, 4.5%, 58px);
+            padding-top: clamp(8px, 1.6%, 22px);
+            padding-bottom: clamp(4px, 0.8%, 10px);
+            animation: fadeInUp 0.9s var(--easing) both;
+            animation-delay: 0.2s;
+        }
+
+        .speaker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(6px, 1%, 12px);
+        }
+
+        /* squircle: border-radius 24% approximates a superellipse */
+        .squircle-frame {
+            width: clamp(88px, 13.5vw, 174px);
+            height: clamp(88px, 13.5vw, 174px);
+            border-radius: 24%;
+            background: linear-gradient(148deg, var(--tertiary-bg) 0%, var(--secondary-bg) 100%);
+            border: 2px solid rgba(194,165,109,0.42);
+            box-shadow:
+                0 0 0 1px rgba(194,165,109,0.07) inset,
+                0 4px 22px rgba(0,0,0,0.38),
+                0 0 28px rgba(194,165,109,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.45s var(--easing), border-color 0.45s var(--easing);
+            animation: squircleGlow 3.8s ease-in-out infinite;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .squircle-frame:hover {
+            box-shadow:
+                0 0 0 1px rgba(194,165,109,0.14) inset,
+                0 8px 32px rgba(0,0,0,0.48),
+                0 0 44px rgba(194,165,109,0.14);
+            border-color: rgba(194,165,109,0.72);
+        }
+
+        /* stagger glow for second speaker */
+        #speaker2-frame {
+            animation-delay: 1.9s;
+        }
+
+        .squircle-frame .initials {
+            font-family: var(--font-mono);
+            font-size: clamp(0.9rem, 1.8vw, 1.85rem);
+            font-weight: 500;
+            color: var(--accent-gold);
+            opacity: 0.42;
+            letter-spacing: 0.06em;
+            user-select: none;
+        }
+
+        /* hide initials once a real photo is applied via background-image */
+        .squircle-frame[style*="background-image"] .initials {
+            display: none;
+        }
+
+        .speaker-name {
+            font-family: var(--font-head);
+            font-size: clamp(0.65rem, 1.05vw, 1.05rem);
+            font-weight: 400;
+            color: var(--text-white);
+            text-align: center;
+            letter-spacing: 0.01em;
+        }
+
+        .speaker-title {
+            font-family: var(--font-minor);
+            font-size: clamp(0.34rem, 0.54vw, 0.54rem);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.13em;
+            color: var(--accent-gold);
+            opacity: 0.58;
+            text-align: center;
+        }
+
+        /* ── SPEAKER DIVIDER ── */
+        .speaker-divider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(5px, 0.8%, 10px);
+            padding-top: clamp(20px, 3.5vw, 46px);
+        }
+
+        .divider-line {
+            width: 1px;
+            height: clamp(16px, 2.8vw, 36px);
+            background: linear-gradient(180deg, transparent, rgba(194,165,109,0.28));
+        }
+
+        .divider-line.bottom {
+            background: linear-gradient(180deg, rgba(194,165,109,0.28), transparent);
+        }
+
+        .divider-symbol {
+            font-family: var(--font-head);
+            font-size: clamp(0.8rem, 1.35vw, 1.35rem);
+            color: var(--accent-gold);
+            opacity: 0.45;
+            line-height: 1;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: clamp(8px, 1.4%, 18px);
+            border-top: 1px solid rgba(255,255,255,.055);
+            animation: fadeInUp 0.9s var(--easing) both;
+            animation-delay: 0.35s;
+        }
+
+        .footer-podcast {
+            font-family: var(--font-minor);
+            font-size: clamp(0.34rem, 0.52vw, 0.52rem);
+            font-weight: 600;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            opacity: 0.62;
+        }
+
+        .footer-url {
+            font-family: var(--font-minor);
+            font-size: clamp(0.34rem, 0.52vw, 0.52rem);
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            opacity: 0.38;
+        }
+
+        /* ── KEYFRAMES ── */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes squircleGlow {
+            0%, 100% {
+                box-shadow:
+                    0 0 0 1px rgba(194,165,109,0.06) inset,
+                    0 4px 22px rgba(0,0,0,0.38),
+                    0 0 18px rgba(194,165,109,0.02);
+            }
+            50% {
+                box-shadow:
+                    0 0 0 1px rgba(194,165,109,0.11) inset,
+                    0 4px 26px rgba(0,0,0,0.42),
+                    0 0 38px rgba(194,165,109,0.09);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="card-wrapper">
+    <div class="podcast-card">
+
+        <!-- World Map background -->
+        <img class="world-map" src="GSUMapGold.png" alt="">
+
+        <!-- Radial background glow -->
+        <div class="bg-glow"></div>
+
+        <!-- Edge vignette -->
+        <div class="vignette"></div>
+
+        <!-- All content above backgrounds -->
+        <div class="content">
+
+            <!-- Header row -->
+            <div class="header">
+                <img src="assets/GSU_Transparent.png" alt="GSU" class="logo">
+                <div class="series-tag">Geoeconomic Conversations</div>
+            </div>
+            <div class="header-divider"></div>
+
+            <!-- Episode + title -->
+            <div class="title-section">
+                <div class="eyebrow">Episode 01 &nbsp;&middot;&nbsp; May 2025</div>
+                <h1 class="main-title">Trade Wars &amp; the New World Order</h1>
+                <p class="subtitle">How shifting geopolitical alliances are redrawing the map of global commerce</p>
+            </div>
+
+            <!-- Speakers -->
+            <div class="speakers-row">
+
+                <div class="speaker">
+                    <div class="squircle-frame" id="speaker1-frame">
+                        <!-- Replace with: style="background-image:url('path/to/photo.jpg')" to show a real photo -->
+                        <span class="initials">AB</span>
+                    </div>
+                    <div class="speaker-name">Dr. Alexandra Blake</div>
+                    <div class="speaker-title">Director of Strategy &middot; GSU</div>
+                </div>
+
+                <div class="speaker">
+                    <div class="squircle-frame" id="speaker2-frame">
+                        <span class="initials">MR</span>
+                    </div>
+                    <div class="speaker-name">Marcus Reid</div>
+                    <div class="speaker-title">Senior Fellow &middot; Atlantic Council</div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-podcast">GSU Podcast</div>
+                <div class="footer-url">geoecon.solutions</div>
+            </div>
+
+        </div><!-- /content -->
+
+    </div><!-- /podcast-card -->
+</div><!-- /card-wrapper -->
+</body>
+</html>

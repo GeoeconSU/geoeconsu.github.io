@@ -33,6 +33,12 @@ export default {
       if (url.pathname === '/send-report' && request.method === 'POST') {
         return await handleSendReport(request, env, cors);
       }
+      if (url.pathname === '/search' && request.method === 'POST') {
+        return await handleSearch(request, env, cors);
+      }
+      if (url.pathname === '/gemini-chat' && request.method === 'POST') {
+        return await handleGeminiChat(request, env, cors);
+      }
       return respond({ error: 'Not found' }, 404, cors);
     } catch (err) {
       console.error(err);
@@ -135,4 +141,154 @@ async function dbWrite(env, path, data) {
 
 function respond(body, status, headers) {
   return new Response(JSON.stringify(body), { status, headers });
+}
+
+// ── Gemini Chat (OpenAI-format ↔ Gemini API conversion) ──────────────────────
+
+const ALLOWED_GEMINI_MODELS = new Set(['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite']);
+
+async function handleGeminiChat(request, env, cors) {
+  const { messages, tools, max_tokens, temperature, model } = await request.json();
+  const safeModel = ALLOWED_GEMINI_MODELS.has(model) ? model : 'gemini-3.1-flash-lite';
+  if (!messages || !Array.isArray(messages)) {
+    return respond({ error: 'messages required.' }, 400, cors);
+  }
+  if (!env.GEMINI_API_KEY) {
+    return respond({ error: 'Gemini not configured.' }, 503, cors);
+  }
+
+  const systemMsg = messages.find(m => m.role === 'system');
+  const otherMessages = messages.filter(m => m.role !== 'system');
+
+  // Build tool_call_id → function name map (needed for functionResponse)
+  const toolCallMap = {};
+  for (const msg of otherMessages) {
+    if (msg.role === 'assistant' && msg.tool_calls) {
+      for (const tc of msg.tool_calls) toolCallMap[tc.id] = tc.function.name;
+    }
+  }
+
+  // Convert OpenAI messages → Gemini contents
+  const contents = [];
+  for (const msg of otherMessages) {
+    if (msg.role === 'user') {
+      contents.push({ role: 'user', parts: [{ text: msg.content || '' }] });
+    } else if (msg.role === 'assistant') {
+      const parts = [];
+      if (msg.content) parts.push({ text: msg.content });
+      if (msg.tool_calls) {
+        for (const tc of msg.tool_calls) {
+          let args = {};
+          try { args = JSON.parse(tc.function.arguments); } catch {}
+          const part = { functionCall: { name: tc.function.name, args } };
+          if (msg._thought_signatures?.[tc.id]) part.thoughtSignature = msg._thought_signatures[tc.id];
+          parts.push(part);
+        }
+      }
+      if (parts.length > 0) contents.push({ role: 'model', parts });
+    } else if (msg.role === 'tool') {
+      const fnName = toolCallMap[msg.tool_call_id] || 'unknown';
+      contents.push({
+        role: 'user',
+        parts: [{ functionResponse: { name: fnName, response: { output: msg.content || '' } } }]
+      });
+    }
+  }
+
+  // Convert OpenAI tools → Gemini functionDeclarations
+  const geminiTools = tools && tools.length
+    ? [{ functionDeclarations: tools.map(t => ({
+        name: t.function.name,
+        description: t.function.description,
+        parameters: t.function.parameters
+      })) }]
+    : undefined;
+
+  const body = {
+    contents,
+    generationConfig: { temperature: temperature ?? 0.2, maxOutputTokens: max_tokens ?? 2500 }
+  };
+  if (systemMsg) body.systemInstruction = { parts: [{ text: systemMsg.content }] };
+  if (geminiTools) body.tools = geminiTools;
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${safeModel}:generateContent?key=${env.GEMINI_API_KEY}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    console.error('Gemini error:', await res.text());
+    return respond({ error: 'Gemini upstream failed.' }, 502, cors);
+  }
+
+  const data = await res.json();
+  const parts = data.candidates?.[0]?.content?.parts || [];
+  const textParts = parts.filter(p => p.text);
+  const fnCallParts = parts.filter(p => p.functionCall);
+
+  let message;
+  if (fnCallParts.length > 0) {
+    const ts = Date.now();
+    const toolCalls = fnCallParts.map((p, i) => ({
+      id: `call_${ts}_${i}`,
+      type: 'function',
+      function: { name: p.functionCall.name, arguments: JSON.stringify(p.functionCall.args || {}) }
+    }));
+    // Preserve thoughtSignatures so the next turn can round-trip them back to Gemini
+    const signatures = {};
+    fnCallParts.forEach((p, i) => { if (p.thoughtSignature) signatures[`call_${ts}_${i}`] = p.thoughtSignature; });
+    message = {
+      role: 'assistant',
+      content: textParts.map(p => p.text).join('') || null,
+      tool_calls: toolCalls,
+      ...(Object.keys(signatures).length && { _thought_signatures: signatures })
+    };
+  } else {
+    message = {
+      role: 'assistant',
+      content: textParts.map(p => p.text).join('') || '',
+      tool_calls: null
+    };
+  }
+
+  return respond({ choices: [{ message }] }, 200, cors);
+}
+
+// ── Tavily Web Search ─────────────────────────────────────────────────────────
+
+async function handleSearch(request, env, cors) {
+  const { query } = await request.json();
+  if (!query || typeof query !== 'string' || query.trim().length < 2) {
+    return respond({ error: 'Invalid query.' }, 400, cors);
+  }
+  if (!env.TAVILY_API_KEY) {
+    return respond({ error: 'Search not configured on server.' }, 503, cors);
+  }
+  const res = await fetch('https://api.tavily.com/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      api_key: env.TAVILY_API_KEY,
+      query: query.trim().slice(0, 400),
+      search_depth: 'basic',
+      max_results: 5,
+      include_answer: true
+    })
+  });
+  if (!res.ok) {
+    console.error('Tavily error:', await res.text());
+    return respond({ error: 'Search upstream failed.' }, 502, cors);
+  }
+  const data = await res.json();
+  return respond({
+    answer: data.answer || null,
+    results: (data.results || []).map(r => ({
+      title: r.title,
+      url: r.url,
+      content: (r.content || '').slice(0, 500),
+      score: r.score
+    }))
+  }, 200, cors);
 }
