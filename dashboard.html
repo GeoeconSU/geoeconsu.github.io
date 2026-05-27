@@ -11989,7 +11989,9 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
                 'founder':'Founder','ops-lead':'Operations Lead',
                 'cto':'Chief Technology Officer','cdo':'Chief Data Officer',
                 'cso':'Chief Strategy Officer','marketing-lead':'Marketing Lead',
-                'research-lead':'Research Lead','client':'Client','free':'Free Member'
+                'research-lead':'Research Lead','analyst':'Research Analyst',
+                'associate':'Marketing Associate','developer':'Developer',
+                'consultant':'Consultant','client':'Client','free':'Free Member'
             };
             ddRole.textContent = ROLE_DISPLAY[currentUserRole] || (currentUserRole ? capitalize(currentUserRole) : 'Member');
             ddAdminLink.style.display = isDirector() ? 'flex' : 'none';

@@ -1238,6 +1238,10 @@ const ROLE_LABEL = {
   'cso':            'Chief Strategy Officer',
   'marketing-lead': 'Marketing Lead',
   'research-lead':  'Research Lead',
+  'analyst':        'Research Analyst',
+  'associate':      'Marketing Associate',
+  'developer':      'Developer',
+  'consultant':     'Consultant',
   'client':         'Client',
   'free':           'Free',
 };
@@ -1247,6 +1251,11 @@ const ROLE_VERTICAL = {
   'cso':            ['research', 'marketing', 'technology', 'bespoke'],
   'marketing-lead': ['marketing'],
   'research-lead':  ['research'],
+  // employees — restricted to their own vertical
+  'analyst':        ['research'],
+  'associate':      ['marketing'],
+  'developer':      ['technology'],
+  'consultant':     ['bespoke'],
   // founder and ops-lead are level 1 → isDirector() gives all verticals
 };
 

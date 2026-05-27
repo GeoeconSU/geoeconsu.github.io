@@ -752,9 +752,9 @@
             <div class="stat-sub">founder + ops</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">Executives</div>
+            <div class="stat-label">Team</div>
             <div class="stat-value" id="stat-employees" style="font-size:1.8rem;">—</div>
-            <div class="stat-sub">c-suite + leads</div>
+            <div class="stat-sub">executives + employees</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Free</div>
@@ -773,6 +773,7 @@
             <option value="">All Roles</option>
             <optgroup label="Level 1"><option value="founder">Founder</option><option value="ops-lead">Operations Lead</option></optgroup>
             <optgroup label="Level 2"><option value="cto">Chief Technology Officer</option><option value="cdo">Chief Data Officer</option><option value="cso">Chief Strategy Officer</option><option value="marketing-lead">Marketing Lead</option><option value="research-lead">Research Lead</option></optgroup>
+            <optgroup label="Level 3"><option value="analyst">Research Analyst</option><option value="associate">Marketing Associate</option><option value="developer">Developer</option><option value="consultant">Consultant</option></optgroup>
             <optgroup label="Level 4"><option value="client">Client</option></optgroup>
             <optgroup label="Level 5"><option value="free">Free</option></optgroup>
         </select>
@@ -857,10 +858,14 @@ const ROLE_LEVEL_MAP = {
     'cso':            2,
     'marketing-lead': 2,
     'research-lead':  2,
+    'analyst':        3,
+    'associate':      3,
+    'developer':      3,
+    'consultant':     3,
     'client':         4,
     'free':           5,
 };
-const LEVEL_DEFAULT_ROLE = { 1:'founder', 2:'cto', 4:'client', 5:'free' };
+const LEVEL_DEFAULT_ROLE = { 1:'founder', 2:'cto', 3:'analyst', 4:'client', 5:'free' };
 const ALL_ROLES = [
     { value:'founder',        label:'Founder',                  group:'1 — Leadership' },
     { value:'ops-lead',       label:'Operations Lead',          group:'1 — Leadership' },
@@ -869,6 +874,10 @@ const ALL_ROLES = [
     { value:'cso',            label:'Chief Strategy Officer',   group:'2 — Executive' },
     { value:'marketing-lead', label:'Marketing Lead',           group:'2 — Executive' },
     { value:'research-lead',  label:'Research Lead',            group:'2 — Executive' },
+    { value:'analyst',        label:'Research Analyst',         group:'3 — Employee' },
+    { value:'associate',      label:'Marketing Associate',      group:'3 — Employee' },
+    { value:'developer',      label:'Developer',                group:'3 — Employee' },
+    { value:'consultant',     label:'Consultant',               group:'3 — Employee' },
     { value:'client',         label:'Client',                   group:'4 — Client' },
     { value:'free',           label:'Free',                     group:'5 — Free' },
 ];
@@ -1025,7 +1034,7 @@ function startRealtimeUsers() {
 // ── Stats ──────────────────────────────────────────────────────────────────
 function updateStats() {
     const directors = allUsers.filter(u => u.level === 1).length;
-    const employees = allUsers.filter(u => u.level === 2).length;
+    const employees = allUsers.filter(u => u.level === 2 || u.level === 3).length;
     const free      = allUsers.filter(u => !u.level || u.level >= 5).length;
     document.getElementById('stat-total').textContent     = allUsers.length;
     document.getElementById('stat-directors').textContent = directors;
