@@ -4460,11 +4460,6 @@
                                 <option value="">All Regions</option>
                                 <option value="favorites">My Favorites</option>
                                 <option value="" disabled>──────────</option>
-                                <option value="Africa">Africa</option>
-                                <option value="Americas">Americas</option>
-                                <option value="Asia-Pacific">Asia-Pacific</option>
-                                <option value="Europe">Europe</option>
-                                <option value="Middle East">Middle East</option>
                             </select>
                         </div>
                     </div>
@@ -5036,7 +5031,9 @@ const ISO_DISPLAY_NAMES = {
     KOR:'South Korea', XKX:'Kosovo', YEM:'Yemen', ZAF:'South Africa', ZMB:'Zambia', ZWE:'Zimbabwe'
 };
 
-let REGIONS = {};
+let REGIONS = {};           // flat sub-region map: { "West Africa": [isos], ... }
+let CONTINENTS = {};        // flat continent map:   { "Africa": [isos], ... }
+let REGION_TO_CONTINENT = {}; // { "West Africa": "Africa", ... }
 
 const ISO_TO_NAME = {};   // populated at parse time
 const NAME_TO_ISO = {};   // populated at parse time (kept for legacy compat)
@@ -5167,7 +5164,17 @@ function loadDefaultCSV() {
         fetch('data/rao9.csv').then(r => r.text())
     ])
     .then(([regionsData, csvText]) => {
-        REGIONS = regionsData;
+        REGIONS = {};
+        CONTINENTS = {};
+        REGION_TO_CONTINENT = {};
+        for (const [continent, subRegions] of Object.entries(regionsData)) {
+            CONTINENTS[continent] = [];
+            for (const [region, isos] of Object.entries(subRegions)) {
+                REGIONS[region] = isos;
+                REGION_TO_CONTINENT[region] = continent;
+                CONTINENTS[continent].push(...isos);
+            }
+        }
         parseMainCSV(csvText);
     })
     .catch(err => {
@@ -5293,6 +5300,7 @@ function parseMainCSV(text) {
 
     // Pre-compute regional means for Analytics tab
     precomputeRegionalMeans();
+    populateRegionFilter();
 
     console.log(`RAO v9 loaded: ${panelData.length} rows | ${countryMap.size} countries | ${allYears[0]}–${LATEST_YEAR} | ${latestSlice.length} in ${LATEST_YEAR}`);
 
@@ -5373,15 +5381,16 @@ function precomputeRegionalMeans() {
                     'pillar_absorptive_capacity','pillar_trajectory','tos_score'];
     const years = [...new Set(panelData.map(r => r.year))].sort();
     _regionalMeans = {};
-    for (const [region, codes] of Object.entries(REGIONS)) {
-        _regionalMeans[region] = {};
+    const allGroups = { ...REGIONS, ...CONTINENTS };
+    for (const [key, codes] of Object.entries(allGroups)) {
+        _regionalMeans[key] = {};
         for (const y of years) {
-            _regionalMeans[region][y] = {};
+            _regionalMeans[key][y] = {};
             for (const f of fields) {
                 const vals = codes
                     .map(iso => getCountry(iso, y)?.[f])
                     .filter(v => v != null && !isNaN(v));
-                _regionalMeans[region][y][f] = vals.length
+                _regionalMeans[key][y][f] = vals.length
                     ? vals.reduce((a, b) => a + b, 0) / vals.length
                     : null;
             }
@@ -5593,11 +5602,11 @@ function renderGlobalTimeseries() {
     if (!canvas) return;
     const years = Array.from({length:15}, (_, i) => 2010 + i);
     const REGION_COLORS = {
-        'Africa':       '#E8943A',
-        'Americas':     '#2DC87A',
-        'Asia-Pacific': '#4B96E8',
-        'Europe':       '#E05B7A',
-        'Middle East':  '#A96EDB'
+        'Africa':   '#E8943A',
+        'Americas': '#2DC87A',
+        'Asia':     '#4B96E8',
+        'Europe':   '#E05B7A',
+        'Oceania':  '#A96EDB'
     };
 
     const globalMeans = years.map(y => {
@@ -5618,10 +5627,10 @@ function renderGlobalTimeseries() {
             pointHoverRadius: 5,
             fill: true
         },
-        ...Object.keys(REGIONS).map(region => ({
-            label: region,
-            data: years.map(y => _regionalMeans[region]?.[y]?.['rao_score'] ?? null),
-            borderColor: REGION_COLORS[region] || '#aaa',
+        ...Object.keys(CONTINENTS).map(continent => ({
+            label: continent,
+            data: years.map(y => _regionalMeans[continent]?.[y]?.['rao_score'] ?? null),
+            borderColor: REGION_COLORS[continent] || '#aaa',
             backgroundColor: 'transparent',
             borderWidth: 2,
             borderDash: [5, 3],
@@ -5753,16 +5762,16 @@ function renderScoreDistributionChart() {
 
 function renderRegionalOverview() {
     const slice = getSlice(_landscapeYear);
-    const regionOrder = ['Asia-Pacific','Europe','Americas','Africa','Middle East'];
+    const regionOrder = ['Asia','Europe','Americas','Africa','Oceania'];
     const header = `<div style="display:grid;grid-template-columns:150px 65px 1fr 130px;align-items:center;gap:1rem;padding:0.4rem 1.4rem;border-bottom:1px solid var(--border-subtle);">
-        <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Region</span>
+        <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Continent</span>
         <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Avg RAO</span>
         <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Opportunity · Stability · Absorptive Capacity · Trajectory</span>
         <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);">Regime Mix</span>
     </div>`;
 
     const rows = regionOrder.map(region => {
-        const countries = slice.filter(r => getRegion(r.country) === region);
+        const countries = slice.filter(r => getContinent(r.country) === region);
         if (!countries.length) return '';
         const n = countries.length;
         const avg = f => countries.reduce((s,r)=>s+(r[f]||0),0)/n;
@@ -8761,16 +8770,16 @@ function updateQuickStats() {
     // Regional breakdown
     const regionalCounts = {};
     filteredRankings.forEach(c => {
-        const region = getRegion(c.country);
+        const region = getContinent(c.country);
         regionalCounts[region] = (regionalCounts[region] || 0) + 1;
     });
 
     const colors = {
-        'Africa': '#a87a5e',
+        'Africa':   '#a87a5e',
         'Americas': '#5d8a72',
-        'Asia-Pacific': '#607c98',
-        'Europe': '#C2A56D',
-        'Middle East': '#9b7bb5'
+        'Asia':     '#607c98',
+        'Europe':   '#C2A56D',
+        'Oceania':  '#9b7bb5'
     };
 
     const regionalHTML = Object.entries(regionalCounts)
@@ -9011,8 +9020,8 @@ function _renderRegionalTrendLines() {
     const canvas = document.getElementById('regional-trends-chart');
     if (!canvas) return;
     const years = Array.from({length:15}, (_, i) => 2010 + i);
-    const REGION_COLORS = { 'Africa':'#C2A56D', 'Americas':'#5d8a72', 'Asia-Pacific':'#607c98', 'Europe':'#7aabb4', 'Middle East':'#9b8fc0' };
-    const datasets = Object.keys(REGIONS).map(region => ({
+    const REGION_COLORS = { 'Africa':'#C2A56D', 'Americas':'#5d8a72', 'Asia':'#607c98', 'Europe':'#7aabb4', 'Oceania':'#9b8fc0' };
+    const datasets = Object.keys(CONTINENTS).map(region => ({
         label: region,
         data: years.map(y => _regionalMeans[region]?.[y]?.['rao_score'] ?? null),
         borderColor: REGION_COLORS[region] || '#aaa',
@@ -9543,7 +9552,7 @@ function drawAnalyticsQuadrant() {
     const quadrantDots = rawData.map(c => {
         const x = (c.calculated_opportunity / 10) * 100;
         const y = (c.calculated_stability / 10) * 100;
-        const region = getRegion(c.country);
+        const region = getContinent(c.country);
         const size = 4 + (c.calculated_rao / 10) * 4; // Size based on RAO score
 
         // Categorize
@@ -9552,10 +9561,10 @@ function drawAnalyticsQuadrant() {
         else if (c.calculated_opportunity >= oppMedian && c.calculated_stability < stabMedian) quadrants.bottomRight.push(c);
         else quadrants.bottomLeft.push(c);
 
-        // Region colors
+        // Continent colors
         const regionColors = {
-            'Africa': '#a87a5e', 'Americas': '#5d8a72', 'Asia-Pacific': '#607c98',
-            'Europe': '#C2A56D', 'Middle East': '#9b7bb5'
+            'Africa': '#a87a5e', 'Americas': '#5d8a72', 'Asia': '#607c98',
+            'Europe': '#C2A56D', 'Oceania': '#9b7bb5'
         };
         const color = regionColors[region] || '#888';
 
@@ -10013,6 +10022,36 @@ function getRegion(code) {
     return 'Other';
 }
 
+function getContinent(code) {
+    for (const [continent, codes] of Object.entries(CONTINENTS)) {
+        if (codes.includes(code)) return continent;
+    }
+    return 'Other';
+}
+
+function populateRegionFilter() {
+    const sel = document.getElementById('rankings-region-filter');
+    if (!sel) return;
+    // Remove any previously generated options (keep the 3 static ones)
+    while (sel.options.length > 3) sel.remove(3);
+    const grouped = {};
+    for (const [region, continent] of Object.entries(REGION_TO_CONTINENT)) {
+        if (!grouped[continent]) grouped[continent] = [];
+        grouped[continent].push(region);
+    }
+    for (const [continent, regions] of Object.entries(grouped)) {
+        const grp = document.createElement('optgroup');
+        grp.label = continent;
+        regions.forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r;
+            opt.textContent = r;
+            grp.appendChild(opt);
+        });
+        sel.appendChild(grp);
+    }
+}
+
 // ===== SEARCH =====
 let _searchKbIndex = -1;
 
@@ -10109,15 +10148,15 @@ window.addEventListener('scroll', () => {
 // Enhancement #8: Opportunity vs Stability Scatter Plot
 function renderScatterPlot() {
     const regionColors = {
-        'Africa': '#a87a5e',
+        'Africa':   '#a87a5e',
         'Americas': '#5d8a72',
-        'Asia-Pacific': '#607c98',
-        'Europe': '#C2A56D',
-        'Middle East': '#9b7bb5'
+        'Asia':     '#607c98',
+        'Europe':   '#C2A56D',
+        'Oceania':  '#9b7bb5'
     };
 
     const dotsHTML = rawData.map((country, idx) => {
-        const region = getRegion(country.country);
+        const region = getContinent(country.country);
         const x = (country.calculated_opportunity / 10) * 100;
         const y = 100 - ((country.calculated_stability / 10) * 100);
         const color = regionColors[region] || '#888';

@@ -1,7 +1,31 @@
 {
-  "Africa": ["DZA","AGO","BEN","BWA","BFA","BDI","CMR","CPV","CAF","TCD","COM","COD","COG","CIV","DJI","EGY","GNQ","ERI","SWZ","ETH","GAB","GMB","GHA","GIN","GNB","KEN","LSO","LBR","LBY","MDG","MWI","MLI","MRT","MUS","MAR","MOZ","NAM","NER","NGA","RWA","STP","SEN","SYC","SLE","SOM","ZAF","SSD","SDN","TZA","TGO","TUN","UGA","ZMB","ZWE"],
-  "Americas": ["ARG","BHS","BRB","BLZ","BOL","BRA","CAN","CHL","COL","CRI","CUB","DMA","DOM","ECU","SLV","GTM","GUY","HTI","HND","JAM","MEX","NIC","PAN","PRY","PER","KNA","LCA","VCT","SUR","TTO","USA","URY","VEN"],
-  "Asia-Pacific": ["AFG","AUS","BGD","BTN","BRN","KHM","CHN","FJI","IND","IDN","JPN","KAZ","KIR","KGZ","LAO","MYS","MDV","MNG","MMR","NPL","NZL","PAK","PNG","PHL","WSM","SGP","SLB","KOR","LKA","TJK","THA","TLS","TON","TKM","TUV","UZB","VUT","VNM"],
-  "Europe": ["ALB","AND","AUT","BLR","BEL","BIH","BGR","HRV","CYP","CZE","DNK","EST","FIN","FRA","DEU","GRC","HUN","ISL","IRL","ITA","XKX","LVA","LIE","LTU","LUX","MLT","MDA","MCO","MNE","NLD","MKD","NOR","POL","PRT","ROU","RUS","SMR","SRB","SVK","SVN","ESP","SWE","CHE","UKR","GBR"],
-  "Middle East": ["ARE","BHR","IRN","IRQ","ISR","JOR","KWT","LBN","OMN","QAT","SAU","SYR","TUR","YEM"]
+  "Africa": {
+    "North Africa":   ["DZA","EGY","LBY","MAR","MRT","SDN","TUN"],
+    "West Africa":    ["BEN","BFA","CPV","CIV","GMB","GHA","GIN","GNB","LBR","MLI","NER","NGA","SEN","SLE","TGO"],
+    "East Africa":    ["BDI","COM","DJI","ERI","ETH","KEN","MDG","MOZ","RWA","SOM","SSD","TZA","UGA"],
+    "Central Africa": ["AGO","CAF","CMR","COD","COG","GAB","GNQ","STP","TCD"],
+    "Southern Africa":["BWA","LSO","MWI","MUS","NAM","SWZ","SYC","ZAF","ZMB","ZWE"]
+  },
+  "Americas": {
+    "North America":  ["CAN","MEX","USA"],
+    "Central America":["BLZ","CRI","SLV","GTM","HND","NIC","PAN"],
+    "Caribbean":      ["BHS","BRB","CUB","DMA","DOM","HTI","JAM","KNA","LCA","TTO","VCT"],
+    "South America":  ["ARG","BOL","BRA","CHL","COL","ECU","GUY","PRY","PER","SUR","URY","VEN"]
+  },
+  "Asia": {
+    "East Asia":      ["CHN","JPN","KOR","MNG"],
+    "Southeast Asia": ["BRN","KHM","IDN","LAO","MYS","MMR","PHL","SGP","THA","TLS","VNM"],
+    "South Asia":     ["AFG","BGD","BTN","IND","MDV","NPL","PAK","LKA"],
+    "Central Asia":   ["KAZ","KGZ","TJK","TKM","UZB"],
+    "Middle East":    ["ARE","BHR","IRN","IRQ","ISR","JOR","KWT","LBN","OMN","QAT","SAU","SYR","TUR","YEM"]
+  },
+  "Europe": {
+    "Western Europe": ["AND","AUT","BEL","CHE","DEU","DNK","ESP","FIN","FRA","GBR","IRL","ISL","ITA","LIE","LUX","MCO","NLD","NOR","PRT","SMR","SWE"],
+    "Eastern Europe": ["BLR","BGR","CZE","EST","HUN","LVA","LTU","MDA","POL","ROU","RUS","SVK","SVN","UKR"],
+    "Southern Europe":["ALB","BIH","HRV","CYP","GRC","MLT","MKD","MNE","SRB","XKX"]
+  },
+  "Oceania": {
+    "Australasia":    ["AUS","NZL"],
+    "Pacific Islands":["FJI","KIR","PNG","WSM","SLB","TON","TUV","VUT"]
+  }
 }
