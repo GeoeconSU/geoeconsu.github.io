@@ -749,12 +749,12 @@
         <div class="stat-card">
             <div class="stat-label">Leadership</div>
             <div class="stat-value" id="stat-directors" style="font-size:1.8rem;">—</div>
-            <div class="stat-sub">founder + ops</div>
+            <div class="stat-sub">founders, ops + all leads</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Team</div>
             <div class="stat-value" id="stat-employees" style="font-size:1.8rem;">—</div>
-            <div class="stat-sub">executives + employees</div>
+            <div class="stat-sub">leadership + employees</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">Free</div>
@@ -866,6 +866,22 @@ const ROLE_LEVEL_MAP = {
     'free':           5,
 };
 const LEVEL_DEFAULT_ROLE = { 1:'founder', 2:'cto', 3:'analyst', 4:'client', 5:'free' };
+
+// Which verticals each exec/lead role oversees
+const EXEC_VERTICAL = {
+    'cto':            ['technology'],
+    'cdo':            ['technology'],
+    'cso':            ['research','marketing','technology','bespoke'],
+    'marketing-lead': ['marketing'],
+    'research-lead':  ['research'],
+};
+// Which level-3 roles belong to each vertical
+const VERTICAL_ROLES = {
+    'research':   ['analyst'],
+    'marketing':  ['associate'],
+    'technology': ['developer'],
+    'bespoke':    ['consultant'],
+};
 const ALL_ROLES = [
     { value:'founder',        label:'Founder',                  group:'1 — Leadership' },
     { value:'ops-lead',       label:'Operations Lead',          group:'1 — Leadership' },
@@ -884,12 +900,23 @@ const ALL_ROLES = [
 function getAdminIsFounder() {
     return allUsers.find(u => u.uid === currentAdminUid)?.role === 'founder';
 }
+function getAdminIsHead() {
+    return (allUsers.find(u => u.uid === currentAdminUid)?.level ?? 5) === 2;
+}
+// Returns the set of roles an exec/lead may assign (their vertical's employee roles + client + free)
+function getAdminAssignableRoles() {
+    const adminRole = allUsers.find(u => u.uid === currentAdminUid)?.role;
+    const verticals = EXEC_VERTICAL[adminRole] || [];
+    const roles = verticals.flatMap(v => VERTICAL_ROLES[v] || []);
+    return [...new Set(roles), 'client', 'free'];
+}
 
-// levelFilter: if provided, only show roles whose ROLE_LEVEL_MAP value equals levelFilter
-function buildRoleOptions(currentRole, isFounderAdmin, levelFilter) {
+// levelFilter: if provided, only show roles at that level; allowedRoles: whitelist for exec edits
+function buildRoleOptions(currentRole, isFounderAdmin, levelFilter, allowedRoles) {
     const visible = ALL_ROLES.filter(r => {
         if (r.value === 'founder' && !isFounderAdmin) return false;
         if (levelFilter !== undefined && ROLE_LEVEL_MAP[r.value] !== levelFilter) return false;
+        if (allowedRoles !== undefined && !allowedRoles.includes(r.value)) return false;
         return true;
     });
     const groups = [...new Set(visible.map(r => r.group))];
@@ -1033,12 +1060,12 @@ function startRealtimeUsers() {
 
 // ── Stats ──────────────────────────────────────────────────────────────────
 function updateStats() {
-    const directors = allUsers.filter(u => u.level === 1).length;
-    const employees = allUsers.filter(u => u.level === 2 || u.level === 3).length;
-    const free      = allUsers.filter(u => !u.level || u.level >= 5).length;
+    const leadership = allUsers.filter(u => u.level === 1 || u.level === 2).length;
+    const team       = allUsers.filter(u => u.level >= 1 && u.level <= 3).length;
+    const free       = allUsers.filter(u => !u.level || u.level >= 5).length;
     document.getElementById('stat-total').textContent     = allUsers.length;
-    document.getElementById('stat-directors').textContent = directors;
-    document.getElementById('stat-employees').textContent = employees;
+    document.getElementById('stat-directors').textContent = leadership;
+    document.getElementById('stat-employees').textContent = team;
     document.getElementById('stat-free').textContent      = free;
 }
 
@@ -1092,18 +1119,23 @@ function renderTable(list) {
     const currentAdminRole  = allUsers.find(u => u.uid === currentAdminUid)?.role;
     const currentAdminLevel = allUsers.find(u => u.uid === currentAdminUid)?.level ?? 5;
     const adminIsFounder    = currentAdminRole === 'founder';
-    const adminIsDirector   = currentAdminLevel <= 1;   // director OR founder
-    const LEVELS = [[1,'1 — Director'],[2,'2 — Head'],[3,'3 — Employee'],[4,'4 — Client'],[5,'5 — Free']];
+    const adminIsDirector   = currentAdminLevel <= 1;
+    const adminIsHead       = currentAdminLevel === 2;
+    const headAssignable    = adminIsHead ? getAdminAssignableRoles() : undefined;
+    const ALL_LEVELS = [[1,'1 — Director'],[2,'2 — Head'],[3,'3 — Employee'],[4,'4 — Client'],[5,'5 — Free']];
+    const HEAD_LEVELS = [[3,'3 — Employee'],[4,'4 — Client'],[5,'5 — Free']];
 
     tbody.innerHTML = list.map(u => {
         const name     = u.displayName || u.email?.split('@')[0] || '—';
         const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
         const joined   = u.createdAt ? u.createdAt.toDate().toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) : '—';
-        const isSelf              = u.uid === currentAdminUid;
-        // Level-1 users (directors + founders) can only be edited by founders
-        const isProtectedLevel1   = (u.level === 1) && !adminIsFounder;
-        // Employees (level 2-3) always get read-only; directors/founders get full edit
-        const canEdit = adminIsDirector && !isSelf && !isProtectedLevel1;
+        const isSelf           = u.uid === currentAdminUid;
+        const isProtectedLevel1 = (u.level === 1) && !adminIsFounder;
+        const isProtectedHead   = adminIsHead && u.level <= 2;
+        // Directors edit all non-self non-protected; heads edit level 3+ only
+        const canEdit = !isSelf && !isProtectedLevel1 &&
+            (adminIsDirector || (adminIsHead && !isProtectedHead));
+        const canDelete = canEdit && adminIsDirector;
 
         // Use staged pending values if present, else DB values
         const p     = pendingChanges[u.uid];
@@ -1111,13 +1143,18 @@ function renderTable(list) {
         const level = p ? p.level : (u.level || 5);
         const isPending = !!p;
 
-        const dis   = canEdit ? '' : 'disabled';
-        const dtip  = isSelf ? ' title="Cannot edit your own record"'
-                    : isProtectedLevel1 ? ' title="Directors and founders can only be edited by other founders"' : '';
+        const dis  = canEdit ? '' : 'disabled';
+        const dtip = isSelf           ? ' title="Cannot edit your own record"'
+                   : isProtectedLevel1 ? ' title="Directors and founders can only be edited by other founders"'
+                   : isProtectedHead   ? ' title="Executives can only be edited by directors"' : '';
+
+        // Heads see their vertical's roles only; directors see all
+        const allowedRoles = (adminIsHead && canEdit) ? headAssignable : undefined;
+        const LEVELS = adminIsHead ? HEAD_LEVELS : ALL_LEVELS;
 
         const roleSelect = `<select class="inline-select" data-uid="${u.uid}"
             onchange="stageChange('${u.uid}','role',this.value)"
-            ${dis}${dtip} style="max-width:155px;">${buildRoleOptions(role, adminIsFounder, level)}</select>`;
+            ${dis}${dtip} style="max-width:155px;">${buildRoleOptions(role, adminIsFounder, level, allowedRoles)}</select>`;
 
         const levelSelect = `<select class="level-select" data-uid="${u.uid}"
             onchange="stageChange('${u.uid}','level',parseInt(this.value))"
@@ -1125,7 +1162,7 @@ function renderTable(list) {
             ${LEVELS.map(([n,lbl]) => `<option value="${n}"${level===n?' selected':''}>${lbl}</option>`).join('')}
         </select>`;
 
-        const deleteBtn = canEdit ? `<button class="action-btn danger" title="Remove member record"
+        const deleteBtn = canDelete ? `<button class="action-btn danger" title="Remove member record"
             data-uid="${u.uid}" onclick="confirmDeleteByEl(this)"><i class="ri-user-unfollow-line"></i></button>` : '';
 
         return `<tr id="row-${u.uid}" data-uid="${u.uid}" data-name="${escapeAttr(name)}"${isPending?' class="row-pending"':''}>
@@ -1183,7 +1220,8 @@ function stageChange(uid, field, value) {
             // Rebuild role options filtered to this level
             if (row) {
                 const s = row.querySelector('.inline-select');
-                if (s) s.innerHTML = buildRoleOptions(defaultRole, getAdminIsFounder(), value);
+                const allowed = getAdminIsHead() ? getAdminAssignableRoles() : undefined;
+                if (s) s.innerHTML = buildRoleOptions(defaultRole, getAdminIsFounder(), value, allowed);
             }
         }
     }
@@ -1194,7 +1232,8 @@ function stageChange(uid, field, value) {
         delete pendingChanges[uid];
         if (row) {
             const s = row.querySelector('.inline-select');
-            if (s) s.innerHTML = buildRoleOptions(p.originalRole, getAdminIsFounder(), p.originalLevel);
+            const allowed = getAdminIsHead() ? getAdminAssignableRoles() : undefined;
+            if (s) s.innerHTML = buildRoleOptions(p.originalRole, getAdminIsFounder(), p.originalLevel, allowed);
         }
     }
 
