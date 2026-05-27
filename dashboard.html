@@ -5036,13 +5036,7 @@ const ISO_DISPLAY_NAMES = {
     KOR:'South Korea', XKX:'Kosovo', YEM:'Yemen', ZAF:'South Africa', ZMB:'Zambia', ZWE:'Zimbabwe'
 };
 
-const REGIONS = {
-    'Africa': ['DZA','AGO','BEN','BWA','BFA','BDI','CMR','CPV','CAF','TCD','COM','COD','COG','CIV','DJI','EGY','GNQ','ERI','SWZ','ETH','GAB','GMB','GHA','GIN','GNB','KEN','LSO','LBR','LBY','MDG','MWI','MLI','MRT','MUS','MAR','MOZ','NAM','NER','NGA','RWA','STP','SEN','SYC','SLE','SOM','ZAF','SSD','SDN','TZA','TGO','TUN','UGA','ZMB','ZWE'],
-    'Americas': ['ARG','BHS','BRB','BLZ','BOL','BRA','CAN','CHL','COL','CRI','CUB','DMA','DOM','ECU','SLV','GTM','GUY','HTI','HND','JAM','MEX','NIC','PAN','PRY','PER','KNA','LCA','VCT','SUR','TTO','USA','URY','VEN'],
-    'Asia-Pacific': ['AFG','AUS','BGD','BTN','BRN','KHM','CHN','FJI','IND','IDN','JPN','KAZ','KIR','KGZ','LAO','MYS','MDV','MNG','MMR','NPL','NZL','PAK','PNG','PHL','WSM','SGP','SLB','KOR','LKA','TJK','THA','TLS','TON','TKM','TUV','UZB','VUT','VNM'],
-    'Europe': ['ALB','AND','AUT','BLR','BEL','BIH','BGR','HRV','CYP','CZE','DNK','EST','FIN','FRA','DEU','GRC','HUN','ISL','IRL','ITA','XKX','LVA','LIE','LTU','LUX','MLT','MDA','MCO','MNE','NLD','MKD','NOR','POL','PRT','ROU','RUS','SMR','SRB','SVK','SVN','ESP','SWE','CHE','UKR','GBR'],
-    'Middle East': ['ARE','BHR','IRN','IRQ','ISR','JOR','KWT','LBN','OMN','QAT','SAU','SYR','TUR','YEM']
-};
+let REGIONS = {};
 
 const ISO_TO_NAME = {};   // populated at parse time
 const NAME_TO_ISO = {};   // populated at parse time (kept for legacy compat)
@@ -5168,13 +5162,18 @@ document.addEventListener('click', (e) => {
 
 // ===== FILE HANDLING =====
 function loadDefaultCSV() {
-    fetch('data/rao9.csv')
-        .then(r => r.text())
-        .then(text => parseMainCSV(text))
-        .catch(err => {
-            console.error('Error loading data/rao9.csv:', err);
-            alert('Error loading data file. Please ensure data/rao9.csv is in the data/ directory.');
-        });
+    Promise.all([
+        fetch('regions.json').then(r => r.json()),
+        fetch('data/rao9.csv').then(r => r.text())
+    ])
+    .then(([regionsData, csvText]) => {
+        REGIONS = regionsData;
+        parseMainCSV(csvText);
+    })
+    .catch(err => {
+        console.error('Error loading data:', err);
+        alert('Error loading data files. Please ensure regions.json and data/rao9.csv exist.');
+    });
 }
 
 // RFC 4180-compliant CSV row parser — handles quoted fields containing commas
