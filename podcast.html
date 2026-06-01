@@ -476,7 +476,18 @@
     }
 
     /* hide initials when photo is set */
-    .fm-squircle[style*="background-image"] .fm-initials { display: none; }
+    .fm-squircle.has-photo .fm-initials { display: none; }
+
+    .fm-squircle-photo {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: none;
+    }
+    .fm-squircle.has-photo .fm-squircle-photo { display: block; }
 
     /* ── Photo upload ── */
     .photo-upload-label {
@@ -729,6 +740,7 @@
                     <div class="fm-speakers-row">
                         <div class="fm-speaker">
                             <div class="fm-squircle fm-squircle--cover" id="cover-s1-frame">
+                                <img class="fm-squircle-photo" id="cover-s1-photo" src="" alt="">
                                 <span class="fm-initials" id="cover-s1-initials">AB</span>
                             </div>
                             <div class="fm-speaker-name" id="cover-s1-name">Dr. Alexandra Blake</div>
@@ -736,6 +748,7 @@
                         </div>
                         <div class="fm-speaker">
                             <div class="fm-squircle fm-squircle--cover" id="cover-s2-frame" style="animation-delay:1.9s">
+                                <img class="fm-squircle-photo" id="cover-s2-photo" src="" alt="">
                                 <span class="fm-initials" id="cover-s2-initials">MR</span>
                             </div>
                             <div class="fm-speaker-name" id="cover-s2-name">Marcus Reid</div>
@@ -777,11 +790,13 @@
                     <div class="fm-speakers-row fm-speakers-row--bg">
                         <div class="fm-speaker">
                             <div class="fm-squircle fm-squircle--bg" id="bg-s1-frame">
+                                <img class="fm-squircle-photo" id="bg-s1-photo" src="" alt="">
                                 <span class="fm-initials fm-initials--bg" id="bg-s1-initials">AB</span>
                             </div>
                         </div>
                         <div class="fm-speaker">
                             <div class="fm-squircle fm-squircle--bg" id="bg-s2-frame" style="animation-delay:1.9s">
+                                <img class="fm-squircle-photo" id="bg-s2-photo" src="" alt="">
                                 <span class="fm-initials fm-initials--bg" id="bg-s2-initials">MR</span>
                             </div>
                         </div>
@@ -861,12 +876,20 @@ scaleFrames();
 
 /* ── photo upload ── */
 function applyPhoto(num, dataUrl) {
-    const ids = num === 1
-        ? ['cover-s1-frame', 'bg-s1-frame']
-        : ['cover-s2-frame', 'bg-s2-frame'];
-    ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.backgroundImage = dataUrl ? `url(${dataUrl})` : '';
+    const pairs = num === 1
+        ? [['cover-s1-frame', 'cover-s1-photo'], ['bg-s1-frame', 'bg-s1-photo']]
+        : [['cover-s2-frame', 'cover-s2-photo'], ['bg-s2-frame', 'bg-s2-photo']];
+    pairs.forEach(([frameId, photoId]) => {
+        const frame = document.getElementById(frameId);
+        const photo = document.getElementById(photoId);
+        if (!frame || !photo) return;
+        if (dataUrl) {
+            photo.src = dataUrl;
+            frame.classList.add('has-photo');
+        } else {
+            photo.src = '';
+            frame.classList.remove('has-photo');
+        }
     });
 }
 
