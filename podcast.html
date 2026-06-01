@@ -478,6 +478,52 @@
     /* hide initials when photo is set */
     .fm-squircle[style*="background-image"] .fm-initials { display: none; }
 
+    /* ── Photo upload ── */
+    .photo-upload-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 10px;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.09);
+        border-radius: 3px;
+        cursor: pointer;
+        transition: border-color 0.2s, color 0.2s;
+        overflow: hidden;
+        width: 100%;
+    }
+    .photo-upload-label:hover {
+        border-color: rgba(194,165,109,0.35);
+    }
+    .photo-upload-label:hover .photo-upload-icon { color: #d4b87e; }
+    .photo-upload-label input[type="file"] { display: none; }
+    .photo-upload-icon {
+        font-size: 0.9rem;
+        color: var(--accent-gold);
+        flex-shrink: 0;
+    }
+    .photo-upload-filename {
+        font-family: var(--font-body);
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+    }
+    .photo-clear-btn {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0 2px;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        display: none;
+        line-height: 1;
+    }
+    .photo-clear-btn:hover { color: var(--accent-gold); }
+
     .fm-speaker-name {
         font-family: 'Playfair Display', 'EB Garamond', Georgia, serif;
         font-size: 15px;
@@ -610,6 +656,15 @@
                         <label>Role</label>
                         <input type="text" id="s1-role" value="Director of Strategy · GSU">
                     </div>
+                    <div class="form-group">
+                        <label>Photo</label>
+                        <label class="photo-upload-label">
+                            <i class="ri-image-add-line photo-upload-icon"></i>
+                            <span class="photo-upload-filename" id="s1-photo-name">Upload image&hellip;</span>
+                            <input type="file" id="s1-photo" accept="image/*">
+                            <button type="button" class="photo-clear-btn" id="s1-photo-clear"><i class="ri-close-line"></i></button>
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -623,6 +678,15 @@
                     <div class="form-group">
                         <label>Role</label>
                         <input type="text" id="s2-role" value="Senior Fellow · Atlantic Council">
+                    </div>
+                    <div class="form-group">
+                        <label>Photo</label>
+                        <label class="photo-upload-label">
+                            <i class="ri-image-add-line photo-upload-icon"></i>
+                            <span class="photo-upload-filename" id="s2-photo-name">Upload image&hellip;</span>
+                            <input type="file" id="s2-photo" accept="image/*">
+                            <button type="button" class="photo-clear-btn" id="s2-photo-clear"><i class="ri-close-line"></i></button>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -794,6 +858,46 @@ function scaleFrames() {
 window.addEventListener('resize', scaleFrames);
 document.fonts.ready.then(scaleFrames);
 scaleFrames();
+
+/* ── photo upload ── */
+function applyPhoto(num, dataUrl) {
+    const ids = num === 1
+        ? ['cover-s1-frame', 'bg-s1-frame']
+        : ['cover-s2-frame', 'bg-s2-frame'];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.backgroundImage = dataUrl ? `url(${dataUrl})` : '';
+    });
+}
+
+function setupPhotoInput(num) {
+    const input    = document.getElementById(`s${num}-photo`);
+    const nameEl   = document.getElementById(`s${num}-photo-name`);
+    const clearBtn = document.getElementById(`s${num}-photo-clear`);
+
+    input.addEventListener('change', function() {
+        if (!this.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            nameEl.textContent = this.files[0].name;
+            clearBtn.style.display = 'block';
+            applyPhoto(num, e.target.result);
+        };
+        reader.readAsDataURL(this.files[0]);
+    });
+
+    clearBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        input.value = '';
+        nameEl.textContent = 'Upload image…';
+        clearBtn.style.display = 'none';
+        applyPhoto(num, null);
+    });
+}
+
+setupPhotoInput(1);
+setupPhotoInput(2);
 
 /* ── download as PNG ── */
 async function downloadFrame(frameId, filename, btn) {
