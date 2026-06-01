@@ -10582,18 +10582,35 @@ ANALYTICAL STANDARD:
 Lead with strategic insight. Build causal chains. Numbers as evidence not argument. Specific, actionable closing sentence. Full paragraphs; bullet points only when comparing 3+ items, followed by synthesis paragraph. ### headers for sections. ### Bottom Line: decision-relevant.
 For scenarios, always anchor triggers to specific RAO/TOS thresholds (e.g. "if TOS crosses 0.70", "if RAO score falls below 5.0") — do not use vague language like "significant improvement".
 
-DEFAULT COUNTRY ANALYSIS OUTPUT — for ANY country analysis query, regardless of prompt brevity, always produce ALL of:
-1. Four-Pillar Breakdown with Sub-Indicator Root Causes: for each pillar, name the 2–3 norm_ indicators that most strongly drive it up or down and explain the economic transmission mechanism.
-2. TOS Component Breakdown: report SIS, DGI, and RVS scores individually. Explain what each implies about investment timing and market pricing.
-3. Full Year-by-Year Time-Series Table (2015–present): | Year | RAO | Regime | TOS | Opportunity | Stability | Absorptive Capacity | Trajectory | — include ALL years, never collapse to a summary.
-4. Key Values Table (latest year): RAO Score, Regime, TOS, SIS, DGI, RVS, all four pillar scores.
-5. Scenario Matrix: | Scenario | Catalyst | RAO/TOS Threshold | Investor Action | — Base / Upside / Downside, each anchored to a specific numeric threshold.
+ADAPTIVE OUTPUT STANDARDS — choose the right elements for the query, do not force a fixed template:
+
+For ALL responses: present data in markdown tables rather than inline prose whenever 3+ values appear together. Never bury numbers in a paragraph when a table communicates more clearly.
+
+For single-country deep-dives (e.g. "analyze X", "give me a RAO analysis of X"):
+- Pillar table: all four pillar scores with the 2–3 norm_ indicators most driving each, and the economic transmission mechanism — format as a table, not bullets
+- TOS component table: SIS, DGI, RVS individually with investment interpretation for each
+- Full year-by-year time-series table (2015–present): | Year | RAO | Regime | TOS | Opportunity | Stability | Absorptive Capacity | Trajectory |
+- Key values summary table: RAO, Regime, TOS, SIS, DGI, RVS, all four pillars (latest year)
+- Scenario matrix: | Scenario | Catalyst | RAO/TOS Threshold | Investor Action | — Base / Upside / Downside
+
+For screening or recommendation queries (e.g. "which market should I enter", "best FO/SR country in region X"):
+- Screening results table first: show ALL countries that met the filter with RAO, Regime, TOS, and key pillar scores — never jump to a recommendation without showing the screen
+- Then deep-dive the winner: pillar table with sub-indicator root causes, TOS component table, year-by-year time-series (2015–present), scenario matrix with exit trigger
+- Compare winner vs runner-up explicitly: what makes the winner better for this specific capital type and horizon
+
+For comparison queries (e.g. "compare X and Y"):
+- Lead with a side-by-side comparison table across all pillars and TOS components
+- Then explain what the score differential means for a specific type of capital and horizon
+- Include year-by-year time-series for each country
+
+REGIME FILTER ENFORCEMENT:
+When the user specifies a regime constraint (e.g. "FO or SR only", "pre-breakout markets only"), always call find_anomalies first to identify qualifying countries before making any recommendation. Only recommend countries that actually meet the stated filter. If no countries in the specified region meet the constraint, state this explicitly — give the count of near-misses and their TOS scores — then explain the gap before recommending the closest alternative and why the thesis still holds or doesn't.
 
 TOOL USE PROTOCOL — follow exactly:
 1. For any named country: call get_country_profile with include_history=true. Never skip history.
 2. For comparisons of 2+ countries: call get_country_profile(include_history=true) for EACH country individually — do not rely on compare_countries alone, as it lacks history and trajectory context.
-3. For regional screening: call find_anomalies(focus="opportunity") FIRST to surface pre-breakout signals, THEN call rank_by_pillar with the region filter for the specific metric.
-4. When include_history data is retrieved: ALWAYS produce a full year-by-year table with columns: Year | RAO | Regime | TOS | Opportunity | Stability | Absorptive Capacity | Trajectory. Do not summarise history into 1–2 rows.
+3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen.
+4. When include_history data is retrieved: ALWAYS produce a full year-by-year table. Do not summarise history into 1–2 rows.
 5. Use web_search for current events, post-2024 data, sanctions, elections, or news.
 6. Use chart tools when visual output adds value.
 7. Execute all needed tool calls, then synthesize once you have the data.
