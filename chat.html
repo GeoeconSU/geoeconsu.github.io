@@ -3860,7 +3860,7 @@
         /* Trace modal */
         .trace-modal { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.62); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
         .trace-modal.open { opacity: 1; pointer-events: all; }
-        .trace-modal-card { background: #1b2336; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; width: 100%; max-width: 660px; max-height: 82vh; display: flex; flex-direction: column; overflow: hidden; transform: translateY(10px); transition: transform 0.15s; }
+        .trace-modal-card { background: #1b2336; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; width: 100%; max-width: 980px; max-height: 86vh; display: flex; flex-direction: column; overflow: hidden; transform: translateY(10px); transition: transform 0.15s; }
         .trace-modal.open .trace-modal-card { transform: translateY(0); }
         .trace-modal-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.07); font-family: var(--font-minor); font-size: 0.57rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); flex-shrink: 0; }
         .trace-modal-close { background: none; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); cursor: pointer; font-size: 0.9rem; padding: 0.15rem 0.45rem; border-radius: 3px; line-height: 1; transition: all 0.12s; }
@@ -11463,9 +11463,15 @@ function chatMarkdownToHTML(text) {
     html = html.replace(/^### (.+)$/gm,   '<h3>$1</h3>');
     html = html.replace(/^## (.+)$/gm,    '<h3>$1</h3>');
 
-    // Bold and italic
+    // Normalize * bullets to - bullets BEFORE bold/italic so the bullet
+    // asterisk never gets paired with inline asterisks like "word*" footnotes
+    html = html.replace(/^(\s*)\* (?!\*)/gm, '$1- ');
+
+    // Bold (process before italic so ** isn't consumed by * rule)
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/\*(.+?)\*/g,     '<em>$1</em>');
+    // Italic — opening * must not be followed by space; closing * must not
+    // be preceded by space; neither side touches another *
+    html = html.replace(/(?<!\*)\*(?!\s)([^*\n]+?)(?<!\s)\*(?!\*)/g, '<em>$1</em>');
 
     // Inline code -> stat tag
     html = html.replace(/`([^`]+)`/g, '<span class="stat-tag">$1</span>');
@@ -11486,7 +11492,7 @@ function chatMarkdownToHTML(text) {
     // Horizontal rules
     html = html.replace(/^---+$/gm, '<hr class="chat-hr">');
 
-    // Unordered lists
+    // Unordered lists (handles both - and any remaining * prefix)
     html = html.replace(/((?:^- .+$\n?)+)/gm, match => {
         const items = match.trim().split('\n')
             .map(l => `<li>${l.replace(/^- /, '')}</li>`).join('');
