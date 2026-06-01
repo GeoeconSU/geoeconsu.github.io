@@ -4375,18 +4375,20 @@ const ALL_TOOLS = [
         }}
     }},
     { type: 'function', function: { name: 'rank_by_pillar',
-        description: 'Return ranked list of all countries by a specific RAO metric. Use for screening, global context, or finding where a country sits.',
+        description: 'Return ranked list of countries by a specific RAO metric. Optionally filter by region. Use for screening, global context, or finding where a country sits within a region.',
         parameters: { type: 'object', required: ['metric'], properties: {
             metric: { type: 'string', enum: ['rao_score','pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory','tos_score','sis_score','dgi_score','rvs_score'] },
             top_n: { type: 'number', description: 'Number to return (default 20).' },
-            year: { type: 'number' }
+            year: { type: 'number' },
+            region: { type: 'string', description: 'Optional region filter. Values: "Sub-Saharan Africa", "South Asia", "East Asia & Pacific", "Middle East & North Africa", "Latin America & Caribbean", "Europe & Central Asia", "North America".' }
         }}
     }},
     { type: 'function', function: { name: 'find_anomalies',
-        description: 'Identify countries with unusual metric combinations: FO/SR + high TOS, regional outliers, high volatility. Use for opportunity screening, risk alerts.',
+        description: 'Identify countries with unusual metric combinations: FO/SR + high TOS, regional outliers, high volatility. CALL THIS FIRST for any regional screening or opportunity scanning query before rank_by_pillar.',
         parameters: { type: 'object', properties: {
             focus: { type: 'string', enum: ['opportunity','risk','all'] },
-            year: { type: 'number' }
+            year: { type: 'number' },
+            region: { type: 'string', description: 'Optional region filter (same values as rank_by_pillar).' }
         }}
     }},
     { type: 'function', function: { name: 'web_search',
@@ -10290,10 +10292,10 @@ ${indexRows}`;
 function retrievePillarContext(isos) {
     if (!isos.length) return '';
     const capped = isos.slice(0, 12);
-    const header = 'HISTORY(ISO|Year|RAO|Regime|TOS|Opp|Frag|AbsCap|Traj):';
+    const header = 'HISTORY(ISO|Year|RAO|Regime|TOS|Opp|Stab|AbsCap|Traj):';
     const rows = [];
     for (const iso of capped) {
-        const hist = getCountryHistory(iso).filter(r => r.year >= 2020);
+        const hist = getCountryHistory(iso).filter(r => r.year >= 2015);
         for (const r of hist) {
             rows.push(`${r.country}|${r.year}|${(r.rao_score||0).toFixed(2)}|${r.regime||''}|${(r.tos_score||0).toFixed(2)}|${(r.pillar_opportunity||0).toFixed(2)}|${(r.pillar_stability||0).toFixed(2)}|${(r.pillar_absorptive_capacity||0).toFixed(2)}|${(r.pillar_trajectory||0).toFixed(2)}`);
         }
@@ -10302,7 +10304,7 @@ function retrievePillarContext(isos) {
     return `\n${header}\n${rows.join('\n')}`;
 }
 
-// Tier 3 (on demand): key norm vars for explicitly named countries, 2023–2024 only
+// Tier 3: all 17 norm vars for explicitly named countries, 2022–2024 (always injected for named countries)
 function retrieveVariableContext(isos) {
     if (!isos.length) return '';
     const NORM_FIELDS = ['norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp','norm_gross_capital_formation','norm_secondary_school_enrolment',
@@ -10312,7 +10314,7 @@ function retrieveVariableContext(isos) {
     const header = `VARIABLES(ISO|Year|${NORM_FIELDS.join('|')}):`;
     const rows = [];
     for (const iso of isos) {
-        const hist = getCountryHistory(iso).filter(r => r.year >= 2023);
+        const hist = getCountryHistory(iso).filter(r => r.year >= 2022);
         for (const r of hist) {
             rows.push(`${r.country}|${r.year}|${NORM_FIELDS.map(f => r[f] != null ? (r[f]).toFixed(2) : 'N/A').join('|')}`);
         }
@@ -10369,7 +10371,7 @@ function resolveContext(query) {
 
 function buildSystemPrompt(query) {
     const { tier2ISOs, tier3ISOs, isTemporal } = resolveContext(query);
-    const dataNote = isTemporal ? 'TEMPORAL NOTE: User asked about trends/evolution — 2020–2024 history for named countries is included below.' : '';
+    const dataNote = isTemporal ? 'TEMPORAL NOTE: User asked about trends/evolution — 2015–2024 history for named countries is included below.' : '';
 
     return `You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You advise institutional investors on country risk and opportunity using the Risk-Adjusted Opportunity (RAO) Framework v2.1. Your analytical standard is that of a decision-grade intelligence product: you do not summarise what has happened, you explain what it means, why it matters, and what a sophisticated investor should do with that information.
 
@@ -10412,7 +10414,7 @@ RESPONSE STRUCTURE:
 
 ${dataNote}
 
-${buildStaticContext()}${retrievePillarContext(tier2ISOs)}${retrieveVariableContext(isTemporal ? tier3ISOs : [])}`;
+${buildStaticContext()}${retrievePillarContext(tier2ISOs)}${retrieveVariableContext(tier3ISOs)}`;
 }
 
 function initializeChatbotTab() {
@@ -10561,14 +10563,33 @@ RAO Score (1–10): Bayesian CVaR₂₅ — worst-25% simulated scenario. Higher
 - Absorptive Capacity (geometric mean — collapses near zero if any component fails): resource rents, GDP/capita growth, youth unemployment, vulnerable employment, regulatory quality
 - Trajectory: OLS trends × R² for GDP growth, FDI, governance, debt, inflation
 Regimes: RO (Robust Opportunity) · FO (Fragile Opportunity) · SL (Stable/Limited) · SR (Structural Risk)
-TOS = geometric mean of SIS (S-curve inflection) × DGI (discovery gap) × RVS (reform velocity). TOS ≥ 0.70 = Strong Pre-Breakout. TOS ≥ 0.55 = Pre-Breakout.
+
+TOS SIGNAL — exact component definitions:
+TOS = geometric mean of:
+  SIS (S-curve Inflection Score): measures proximity to structural acceleration — how close the country is to a non-linear growth inflection based on historical growth patterns.
+  DGI (Discovery Gap Index): measures the gap between fundamental quality and external capital recognition — high DGI means the market is under-valued relative to its structural indicators.
+  RVS (Reform Velocity Score): measures governance improvement trend × reform momentum — derived from WGI trend and GDELT event data.
+TOS ≥ 0.70 = Strong Pre-Breakout Signal. TOS ≥ 0.55 = Pre-Breakout Signal. TOS 0.35–0.55 = Moderate Potential.
 Primary signal: FO/SR + TOS ≥ 0.55 = entry/due-diligence trigger. SR→FO or FO→RO transitions = primary signals.
 
-ANALYTICAL STANDARD:
-Lead with strategic insight. Build causal chains. Numbers as evidence not argument. Base/upside/downside scenarios with conditional triggers. Specific, actionable closing sentence. Full paragraphs; bullet points only when comparing 3+ items, followed by synthesis paragraph. ### headers for sections. ### Bottom Line: decision-relevant.
+NORMALIZED INDICATOR DIRECTION — critical for correct interpretation:
+ALL norm_ values are scaled 0–1 where HIGHER IS ALWAYS BETTER. Negative indicators (inflation, government debt, youth unemployment, vulnerable employment, external debt) are ALREADY INVERTED. For example: norm_youth_unemployment = 0.85 means LOW youth unemployment (good). norm_cpi_inflation = 0.90 means LOW inflation (good). Never say a high norm_ value indicates a problem — it always indicates strength on that indicator.
 
-TOOL USE PROTOCOL:
-Always retrieve data with tools before synthesizing. Use get_country_profile for any named country. Use web_search for current events, post-2024 data, sanctions, elections, or news. Use chart tools when visual output adds value. Execute all needed tool calls, then synthesize once you have the data.
+ABSORPTIVE CAPACITY COLLAPSE RULE:
+The Absorptive Capacity pillar uses a geometric mean. If ANY sub-indicator (norm_natural_resource_rents_pct_gdp, norm_gdp_per_capita_growth, norm_youth_unemployment, norm_vulnerable_employment, norm_regulatory_quality) is below 0.15, flag it explicitly as an "Absorptive Capacity collapse risk" — the whole pillar is dragged toward zero regardless of other components.
+
+ANALYTICAL STANDARD:
+Lead with strategic insight. Build causal chains. Numbers as evidence not argument. Specific, actionable closing sentence. Full paragraphs; bullet points only when comparing 3+ items, followed by synthesis paragraph. ### headers for sections. ### Bottom Line: decision-relevant.
+Always include a markdown table of key RAO values. For scenarios, always anchor triggers to specific RAO/TOS thresholds (e.g. "if TOS crosses 0.70", "if RAO score falls below 5.0") — do not use vague language like "significant improvement".
+
+TOOL USE PROTOCOL — follow exactly:
+1. For any named country: call get_country_profile with include_history=true. Never skip history.
+2. For comparisons of 2+ countries: call get_country_profile(include_history=true) for EACH country individually — do not rely on compare_countries alone, as it lacks history and trajectory context.
+3. For regional screening: call find_anomalies(focus="opportunity") FIRST to surface pre-breakout signals, THEN call rank_by_pillar with the region filter for the specific metric.
+4. When include_history data is retrieved: ALWAYS produce a full year-by-year table with columns: Year | RAO | Regime | TOS | Opportunity | Stability | Absorptive Capacity | Trajectory. Do not summarise history into 1–2 rows.
+5. Use web_search for current events, post-2024 data, sanctions, elections, or news.
+6. Use chart tools when visual output adds value.
+7. Execute all needed tool calls, then synthesize once you have the data.
 
 `;
 }
@@ -10698,14 +10719,16 @@ function toolCompareCountries({ countries = [] } = {}) {
     }), null, 2);
 }
 
-function toolRankByPillar({ metric = 'rao_score', top_n = 20, year } = {}) {
-    const slice = year ? getSlice(year) : latestSlice;
-    const ranked = [...slice].filter(r => r[metric] != null).sort((a, b) => b[metric] - a[metric]).slice(0, Math.min(top_n || 20, 50)).map((r, i) => ({ rank: i + 1, country: r.country_name, iso: r.country, value: +r[metric]?.toFixed(3), regime: r.regime, tos: +r.tos_score?.toFixed(2) }));
-    return JSON.stringify({ metric, year: year || window.LATEST_YEAR, rankings: ranked }, null, 2);
+function toolRankByPillar({ metric = 'rao_score', top_n = 20, year, region } = {}) {
+    let slice = year ? getSlice(year) : latestSlice;
+    if (region) slice = slice.filter(r => (r.region || '').toLowerCase().includes(region.toLowerCase()));
+    const ranked = [...slice].filter(r => r[metric] != null).sort((a, b) => b[metric] - a[metric]).slice(0, Math.min(top_n || 20, 50)).map((r, i) => ({ rank: i + 1, country: r.country_name, iso: r.country, value: +r[metric]?.toFixed(3), regime: r.regime, tos: +r.tos_score?.toFixed(2), region: r.region || '' }));
+    return JSON.stringify({ metric, year: year || window.LATEST_YEAR, region: region || 'global', rankings: ranked }, null, 2);
 }
 
-function toolFindAnomalies({ focus = 'all', year } = {}) {
-    const slice = year ? getSlice(year) : latestSlice;
+function toolFindAnomalies({ focus = 'all', year, region } = {}) {
+    let slice = year ? getSlice(year) : latestSlice;
+    if (region) slice = slice.filter(r => (r.region || '').toLowerCase().includes(region.toLowerCase()));
     const regionScores = {};
     slice.forEach(r => { const rg = r.region || 'Unknown'; if (!regionScores[rg]) regionScores[rg] = []; regionScores[rg].push(r.rao_score || 0); });
     const regionMeans = {};
@@ -10717,9 +10740,9 @@ function toolFindAnomalies({ focus = 'all', year } = {}) {
         const rm = regionMeans[r.region || 'Unknown'];
         if (focus === 'all' && rm && Math.abs((r.rao_score || 0) - rm) > 1.5) flags.push('Regional outlier: ' + (((r.rao_score || 0) - rm) > 0 ? '+' : '') + ((r.rao_score || 0) - rm).toFixed(2) + ' vs ' + (r.region || 'regional') + ' mean');
         if ((focus === 'risk' || focus === 'all') && (r.volatility_band || 0) > 1.8) flags.push('High volatility band: ' + r.volatility_band?.toFixed(2));
-        if (flags.length) anomalies.push({ country: r.country_name, iso: r.country, rao: +r.rao_score?.toFixed(2), regime: r.regime, tos: +r.tos_score?.toFixed(2), flags });
+        if (flags.length) anomalies.push({ country: r.country_name, iso: r.country, rao: +r.rao_score?.toFixed(2), regime: r.regime, tos: +r.tos_score?.toFixed(2), region: r.region || '', flags });
     }
-    return JSON.stringify({ year: year || window.LATEST_YEAR, focus, anomalies: anomalies.slice(0, 25) }, null, 2);
+    return JSON.stringify({ year: year || window.LATEST_YEAR, focus, region: region || 'global', anomalies: anomalies.slice(0, 25) }, null, 2);
 }
 
 async function toolWebSearch({ query = '' } = {}) {
