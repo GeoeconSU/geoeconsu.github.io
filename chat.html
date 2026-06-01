@@ -11545,8 +11545,14 @@ function chatMarkdownToHTML(text) {
     // be preceded by space; neither side touches another *
     html = html.replace(/(?<!\*)\*(?!\s)([^*\n]+?)(?<!\s)\*(?!\*)/g, '<em>$1</em>');
 
-    // Inline code -> stat tag
-    html = html.replace(/`([^`]+)`/g, '<span class="stat-tag">$1</span>');
+    // Inline code -> stat tag, with norm_ variable names replaced by human-readable labels
+    html = html.replace(/`([^`]+)`/g, (_, inner) => {
+        const label = NORM_VAR_LABELS[inner.trim()];
+        return `<span class="stat-tag">${label || inner}</span>`;
+    });
+
+    // Also replace bare norm_ variable names in prose (not inside tags or already replaced)
+    html = html.replace(/\bnorm_[a-z_]+\b/g, m => NORM_VAR_LABELS[m] || m);
 
     // Markdown tables (process before lists/paragraphs)
     html = html.replace(/((?:^\|.+\|\n?)+)/gm, match => {
