@@ -3656,6 +3656,81 @@
         .followup-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0 max(1.5rem, calc(50% - 620px)) 0.75rem; }
         .followup-pill { background: rgba(194,165,109,0.06); border: 1px solid rgba(194,165,109,0.2); color: rgba(194,165,109,0.75); font-family: var(--font-minor); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.3rem 0.8rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
         .followup-pill:hover { background: rgba(194,165,109,0.12); color: var(--accent-gold); border-color: var(--accent-gold); }
+
+        /* ===== A1: WEB FOOTNOTES ===== */
+        .chat-footnotes { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 0.3rem; }
+        .chat-footnotes-label { font-family: var(--font-minor); font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); opacity: 0.6; margin-bottom: 0.15rem; display: flex; align-items: center; gap: 0.3rem; }
+        .chat-footnote-link { display: flex; align-items: baseline; gap: 0.45rem; text-decoration: none; font-size: 0.78rem; color: var(--text-muted); transition: color 0.15s; padding: 0.1rem 0; }
+        .chat-footnote-link:hover { color: var(--text-white); }
+        .fn-num { font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-gold); opacity: 0.75; flex-shrink: 0; }
+        .fn-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .fn-domain { font-family: var(--font-minor); font-size: 0.6rem; color: var(--text-muted); opacity: 0.55; flex-shrink: 0; padding: 0.05rem 0.35rem; background: var(--w04); border-radius: 3px; }
+        .fn-domain.authoritative { border: 1px solid rgba(194,165,109,0.25); color: rgba(194,165,109,0.7); background: rgba(194,165,109,0.05); opacity: 1; }
+
+        /* ===== C1: TOPIC MENU ===== */
+        .topic-menu { padding: 0.5rem max(1.5rem, calc(50% - 620px)) 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .topic-cat-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .topic-cat-btn { background: var(--w04); border: 1px solid var(--border-subtle); color: var(--text-muted); font-family: var(--font-minor); font-size: 0.6rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; padding: 0.3rem 0.75rem; border-radius: 20px; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.15s; white-space: nowrap; }
+        .topic-cat-btn i { font-size: 0.8rem; }
+        .topic-cat-btn:hover { border-color: var(--accent-gold-dim); color: var(--accent-gold); background: rgba(194,165,109,0.06); }
+        .topic-cat-btn.active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(194,165,109,0.1); }
+        .topic-queries-panel { flex-direction: column; gap: 0.35rem; padding: 0.5rem 0 0; }
+        .topic-query-row { display: flex; gap: 0.5rem; align-items: center; }
+        .topic-query-input { flex: 1; background: var(--w04); border: 1px solid var(--border-subtle); color: var(--text-white); font-family: var(--font-body); font-size: 0.82rem; padding: 0.4rem 0.75rem; border-radius: 4px; outline: none; transition: border-color 0.15s; }
+        .topic-query-input:focus { border-color: var(--accent-gold-dim); }
+        .topic-query-send { background: rgba(194,165,109,0.08); border: 1px solid rgba(194,165,109,0.25); color: var(--accent-gold); font-family: var(--font-minor); font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+        .topic-query-send:hover { background: rgba(194,165,109,0.16); border-color: var(--accent-gold); }
+
+        /* ===== C2: DRILL-DOWN BAR ===== */
+        .drill-down-bar { padding: 0.4rem max(1.5rem, calc(50% - 620px)) 0.25rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; border-top: 1px solid var(--border-subtle); background: rgba(0,0,0,0.08); }
+        .drill-label { font-family: var(--font-minor); font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); opacity: 0.55; flex-shrink: 0; margin-right: 0.2rem; }
+        .drill-btn { background: none; border: 1px solid var(--border-subtle); color: var(--text-muted); font-family: var(--font-minor); font-size: 0.58rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.22rem 0.6rem; border-radius: 20px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+        .drill-btn:hover { border-color: rgba(194,165,109,0.4); color: rgba(194,165,109,0.8); background: rgba(194,165,109,0.04); }
+
+        /* ===== D1: RESEARCH CANVAS ===== */
+        .canvas-panel { width: 300px; flex-shrink: 0; background: var(--secondary-bg); border-left: 1px solid var(--border-subtle); display: flex; flex-direction: column; overflow: hidden; }
+        .canvas-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--border-subtle); font-family: var(--font-minor); font-size: 0.59rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); flex-shrink: 0; }
+        .canvas-hdr-title { display: flex; align-items: center; gap: 0.4rem; }
+        .canvas-hdr-btn { background: none; border: 1px solid var(--border-subtle); color: var(--text-muted); cursor: pointer; width: 22px; height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; transition: all 0.15s; }
+        .canvas-hdr-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .canvas-items { flex: 1; overflow-y: auto; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .canvas-empty { font-family: var(--font-body); font-size: 0.78rem; color: var(--text-muted); font-style: italic; text-align: center; padding: 1.5rem 0.5rem; }
+        .canvas-item { background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 0.6rem 0.7rem; position: relative; }
+        .canvas-item-time { font-family: var(--font-minor); font-size: 0.55rem; color: var(--text-muted); opacity: 0.5; margin-bottom: 0.35rem; }
+        .canvas-item-body { font-family: var(--font-body); font-size: 0.78rem; line-height: 1.55; color: var(--text-muted); max-height: 120px; overflow: hidden; position: relative; }
+        .canvas-item-body::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 30px; background: linear-gradient(transparent, var(--secondary-bg)); }
+        .canvas-item-del { position: absolute; top: 0.4rem; right: 0.4rem; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.75rem; opacity: 0; transition: opacity 0.15s; }
+        .canvas-item:hover .canvas-item-del { opacity: 1; }
+        .canvas-item-del:hover { color: var(--accent-red, #e05c5c); }
+        .chat-pin-btn { position: absolute; top: 40px; right: 64px; background: var(--tertiary-bg); border: 1px solid var(--glass-border); color: var(--text-muted); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem; opacity: 0; transition: opacity 0.2s ease, color 0.2s ease; }
+        .chat-message.assistant:hover .chat-pin-btn { opacity: 1; }
+        .chat-pin-btn:hover { color: var(--accent-gold); border-color: var(--accent-gold-dim); }
+        .chat-pin-btn.pinned { color: var(--accent-gold); opacity: 1; }
+        @media (max-width: 900px) { .canvas-panel { position: fixed; top: 56px; right: 0; bottom: 0; z-index: 900; transform: translateX(100%); transition: transform 0.25s ease; width: 280px; } .canvas-panel.mobile-open { transform: translateX(0); box-shadow: -4px 0 24px rgba(0,0,0,0.5); } }
+
+        /* ===== E1: SESSION SEARCH MODAL ===== */
+        .session-search-modal { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); display: flex; align-items: flex-start; justify-content: center; padding-top: 10vh; }
+        .session-search-card { background: var(--secondary-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; width: 100%; max-width: 580px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+        .ssm-hdr { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); font-family: var(--font-minor); font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); }
+        .ssm-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-subtle); color: var(--text-white); font-family: var(--font-body); font-size: 1rem; padding: 0.85rem 1rem; outline: none; box-sizing: border-box; }
+        .ssm-results { max-height: 360px; overflow-y: auto; }
+        .ssm-empty { padding: 1.5rem 1rem; font-family: var(--font-body); font-size: 0.82rem; color: var(--text-muted); font-style: italic; text-align: center; }
+        .ssm-result { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border-subtle); cursor: pointer; transition: background 0.12s; }
+        .ssm-result:hover { background: rgba(255,255,255,0.04); }
+        .ssm-result-name { font-family: var(--font-body); font-size: 0.85rem; color: var(--text-white); margin-bottom: 0.2rem; }
+        .ssm-result-name mark { background: rgba(194,165,109,0.25); color: var(--accent-gold); border-radius: 2px; padding: 0 2px; }
+        .ssm-result-excerpt { font-family: var(--font-body); font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .ssm-result-excerpt mark { background: rgba(194,165,109,0.25); color: var(--accent-gold); border-radius: 2px; padding: 0 2px; }
+        .ssm-result-meta { font-family: var(--font-minor); font-size: 0.58rem; color: var(--text-muted); opacity: 0.55; margin-top: 0.2rem; }
+
+        /* ===== E2: ENTITY PANEL ===== */
+        .entity-panel { border-top: 1px solid var(--border-subtle); padding: 0.5rem 0.6rem; flex-shrink: 0; }
+        .entity-panel-hdr { font-family: var(--font-minor); font-size: 0.55rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); opacity: 0.6; margin-bottom: 0.4rem; }
+        .entity-list { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+        .entity-chip { font-family: var(--font-minor); font-size: 0.6rem; padding: 0.15rem 0.5rem; border-radius: 3px; cursor: pointer; transition: all 0.15s; border: 1px solid; white-space: nowrap; }
+        .entity-chip.country { background: rgba(96,124,152,0.08); border-color: rgba(96,124,152,0.25); color: #7a9ab8; }
+        .entity-chip.country:hover { background: rgba(96,124,152,0.15); border-color: rgba(96,124,152,0.45); }
+        .entity-chip.indicator { background: rgba(194,165,109,0.06); border-color: rgba(194,165,109,0.2); color: rgba(194,165,109,0.7); cursor: default; }
         .msg-time { display: block; font-family: var(--font-minor); font-size: 0.55rem; color: var(--text-muted); opacity: 0.5; margin-top: 0.4rem; text-align: right; letter-spacing: 0.04em; }
         .ctx-indicator { font-family: var(--font-minor); font-size: 0.55rem; color: var(--text-muted); opacity: 0.55; letter-spacing: 0.04em; flex-shrink: 0; white-space: nowrap; }
         .session-rename-input { background: transparent; border: none; border-bottom: 1px solid var(--accent-gold-dim); color: var(--text-white); font-family: var(--font-body); font-size: 0.79rem; width: 100%; outline: none; padding: 0; }
@@ -4194,6 +4269,7 @@
     <div class="sessions-sidebar">
         <div class="sessions-hdr">
             <span title="Ctrl+N for new session">Sessions</span>
+            <button class="sessions-hdr-btn" onclick="openSessionSearch()" title="Search sessions (Ctrl+F)"><i class="ri-search-line"></i></button>
             <button class="sessions-hdr-btn" onclick="newSession()" title="New session (Ctrl+N)"><i class="ri-add-line"></i></button>
         </div>
         <div class="sessions-search-wrap">
@@ -4213,6 +4289,8 @@
             <button class="tpl-btn" onclick="applyTemplate('country-note')"><i class="ri-map-pin-line"></i> Country Note</button>
             <button class="tpl-btn" onclick="applyTemplate('screening')"><i class="ri-scan-line"></i> Screening</button>
             <button class="tpl-btn" onclick="applyTemplate('comparison')"><i class="ri-bar-chart-grouped-line"></i> Compare</button>
+            <button class="tpl-btn" onclick="toggleCanvas()" title="Research canvas"><i class="ri-pushpin-line"></i> Canvas</button>
+            <button class="tpl-btn" onclick="generateBrief()" title="Generate structured intelligence brief"><i class="ri-file-text-line"></i> Brief</button>
             <button class="tpl-btn" onclick="clearChatHistory()" style="margin-left:auto;" title="Clear chat"><i class="ri-delete-bin-line"></i></button>
         </div>
         <div class="model-selector">
@@ -4243,6 +4321,24 @@
         <div class="trace-steps" id="trace-steps">
             <div class="trace-empty">Agent reasoning steps appear here.</div>
         </div>
+        <!-- E2: Entity panel -->
+        <div class="entity-panel" id="entity-panel" style="display:none;">
+            <div class="entity-panel-hdr">Entities</div>
+            <div class="entity-list" id="entity-list"></div>
+        </div>
+    </div>
+    <!-- D1: Research canvas panel -->
+    <div class="canvas-panel" id="canvas-panel" style="display:none;">
+        <div class="canvas-hdr">
+            <span class="canvas-hdr-title"><i class="ri-pushpin-line"></i> Research Canvas</span>
+            <div style="display:flex;gap:0.35rem;">
+                <button class="canvas-hdr-btn" onclick="exportCanvas()" title="Export canvas"><i class="ri-download-line"></i></button>
+                <button class="canvas-hdr-btn" onclick="toggleCanvas()" title="Close"><i class="ri-close-line"></i></button>
+            </div>
+        </div>
+        <div class="canvas-items" id="canvas-items">
+            <div class="canvas-empty">Pin responses to build your research document.</div>
+        </div>
     </div>
 </div>
 
@@ -4253,6 +4349,7 @@
 // ===== AGENT CONFIG =====
 const GEMINI_CHAT_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-chat';
 const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
+const TODAY_DATE = '1 June 2026';
 let selectedModel = 'gemini-3.1-flash-lite';
 
 function selectModel(modelId) {
@@ -4368,6 +4465,9 @@ let datasetContextCache = null;
 let currentSessionId = null;
 let _agentSources = [];
 let _abortController = null;
+let _webSearchResultsData = [];
+let _canvas = [];
+let _canvasOpen = false;
 const SESSION_STORAGE_KEY = 'gsu_chat_sessions';
 
 // Comparison Presets
@@ -10353,7 +10453,10 @@ async function sendChatMessage() {
         renderChatMessage('assistant', reply);
         chatHistory.push({ role: 'assistant', content: reply });
         updateCtxIndicator();
-        renderFollowupPills(userText, reply);
+        appendWebFootnotes();
+        detectAndRenderDrillDown(reply);
+        renderTopicMenu(userText, reply);
+        renderEntityPanel(reply);
         renderCoverage(_agentSources);
         autoSaveSession();
         updateChatStatus('ready', 'Ready');
@@ -10446,7 +10549,9 @@ async function callGroqAPI(messages, tools = null, onToken = null) {
 
 // ===== AGENT SYSTEM PROMPT =====
 function buildAgentSystemPrompt() {
-    return `You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You analyze country risk and opportunity using the Risk-Adjusted Opportunity (RAO) Framework v2.1. Your standard is that of a decision-grade intelligence product: explain what data means, why it matters, and what a sophisticated investor should do.
+    return `Today's date: ${TODAY_DATE}. The RAO dataset covers through 2024; for 2025–2026 developments, you must use web_search.
+
+You are the RAO Intelligence Assistant — a senior investment strategist at the Sixteenth Council. You analyze country risk and opportunity using the Risk-Adjusted Opportunity (RAO) Framework v2.1. Your standard is that of a decision-grade intelligence product: explain what data means, why it matters, and what a sophisticated investor should do.
 
 THE RAO FRAMEWORK:
 RAO Score (1–10): Bayesian CVaR₂₅ — worst-25% simulated scenario. Higher = better. Wide volatility_band = scenario sensitivity.
@@ -10471,6 +10576,7 @@ Always retrieve data with tools before synthesizing. Use get_country_profile for
 // ===== AGENTIC LOOP =====
 async function runAgentLoop(userText) {
     _agentSources = [];
+    _webSearchResultsData = [];
     clearTrace();
     addTraceStep('think', 'Analyzing query and selecting data strategy…');
     updateChatStatus('thinking', 'Reasoning…');
@@ -10619,9 +10725,35 @@ function toolFindAnomalies({ focus = 'all', year } = {}) {
 async function toolWebSearch({ query = '' } = {}) {
     if (!query) return 'No query provided.';
     try {
-        const res = await fetch(SEARCH_WORKER_URL + '/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query.slice(0, 400) }) });
-        if (!res.ok) { const err = await res.json().catch(() => ({})); return 'Search failed: ' + (err.error || res.status); }
-        return await res.text();
+        const authQuery = query.slice(0, 380) + ` site:un.org OR site:worldbank.org OR site:imf.org OR site:oecd.org OR site:chathamhouse.org OR site:rand.org OR site:brookings.edu OR site:csis.org ${new Date().getFullYear()}`;
+        const [newsRes, authRes] = await Promise.all([
+            fetch(SEARCH_WORKER_URL + '/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: query.slice(0, 400) }) }),
+            fetch(SEARCH_WORKER_URL + '/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: authQuery.slice(0, 400) }) })
+        ]);
+        let newsData = {}, authData = {};
+        if (newsRes.ok) { try { newsData = JSON.parse(await newsRes.text()); } catch {} }
+        if (authRes.ok) { try { authData = JSON.parse(await authRes.text()); } catch {} }
+
+        const authDomains = ['un.org','worldbank.org','imf.org','oecd.org','chathamhouse.org','rand.org','brookings.edu','csis.org'];
+        const isAuth = (url) => { try { return authDomains.some(d => new URL(url).hostname.replace('www.','').endsWith(d)); } catch { return false; } };
+
+        const newsResults = (newsData.results || []).map(r => ({ ...r, type: 'news' }));
+        const authResults = (authData.results || []).map(r => ({ ...r, type: 'authoritative' }));
+
+        // Deduplicate by URL
+        const seenUrls = new Set(newsResults.map(r => r.url));
+        const merged = [...newsResults, ...authResults.filter(r => r.url && !seenUrls.has(r.url))];
+
+        // Populate footnote data
+        merged.forEach(r => {
+            if (!r.url) return;
+            try {
+                const domain = new URL(r.url).hostname.replace('www.', '');
+                _webSearchResultsData.push({ title: r.title || r.url, url: r.url, domain, type: r.type || (isAuth(r.url) ? 'authoritative' : 'news') });
+            } catch {}
+        });
+
+        return JSON.stringify({ results: merged, answer: newsData.answer || authData.answer });
     } catch (e) { return 'Search error: ' + e.message; }
 }
 
@@ -10772,6 +10904,10 @@ function newSession() {
     clearTrace();
     const bar = document.getElementById('coverage-bar');
     if (bar) bar.style.display = 'none';
+    const ep = document.getElementById('entity-panel');
+    if (ep) ep.style.display = 'none';
+    const container = document.getElementById('chat-messages-container');
+    container?.querySelectorAll('.topic-menu, .drill-down-bar').forEach(el => el.remove());
     updateChatStatus('ready', 'Ready');
     renderSessionsSidebar();
 }
@@ -10869,52 +11005,346 @@ function copySessionToClipboard() {
     }).catch(() => {});
 }
 
-function renderFollowupPills(userQuery, assistantReply) {
+// ===== A1: INLINE FOOTNOTE CITATIONS =====
+function appendWebFootnotes() {
+    if (!_webSearchResultsData.length) return;
     const container = document.getElementById('chat-messages-container');
     if (!container) return;
-    // Remove existing pills
-    const existing = container.querySelector('.followup-pills');
-    if (existing) existing.remove();
+    const lastBubble = [...container.querySelectorAll('.chat-message.assistant .chat-bubble')].pop();
+    if (!lastBubble) return;
+    // Remove existing footnotes from this bubble
+    lastBubble.querySelectorAll('.chat-footnotes').forEach(el => el.remove());
+    const div = document.createElement('div');
+    div.className = 'chat-footnotes';
+    div.innerHTML = '<div class="chat-footnotes-label"><i class="ri-links-line"></i> Sources</div>' +
+        _webSearchResultsData.map((r, i) =>
+            `<a class="chat-footnote-link" href="${escapeHTMLSafe(r.url)}" target="_blank" rel="noopener">` +
+            `<span class="fn-num">[${i + 1}]</span>` +
+            `<span class="fn-title">${escapeHTMLSafe(r.title)}</span>` +
+            `<span class="fn-domain${r.type === 'authoritative' ? ' authoritative' : ''}">${escapeHTMLSafe(r.domain)}</span>` +
+            `</a>`
+        ).join('');
+    lastBubble.appendChild(div);
+}
 
-    let suggestions = [];
-    const q = userQuery.toLowerCase();
-    // Country detection — find a word that matches a known country name
-    const countryMatch = userQuery.match(/\b([A-Z][a-z]{3,}(?:\s[A-Z][a-z]+)?)\b/);
-    const country = countryMatch ? countryMatch[1] : null;
-
-    if (country && !q.includes('compare') && !q.includes('screen') && !q.includes('rank')) {
-        suggestions = [
-            `Compare ${country} with its regional peers`,
-            `Show ${country} RAO trend 2015–2024`,
-            `What sectors benefit most from ${country}'s regime?`
-        ];
-    } else if (q.includes('compare')) {
-        suggestions = [
-            'Show radar chart overlay',
-            'Which has better TOS signal?',
-            'Run screening across both regions'
-        ];
-    } else if (q.includes('screen') || q.includes('rank')) {
-        suggestions = [
-            'Filter to Sub-Saharan Africa',
-            'Show top 5 by TOS signal',
-            'Which have FO regime?'
-        ];
-    } else {
-        suggestions = [
-            'Run a global anomaly scan',
-            'Compare top 3 vs bottom 3',
-            'What countries changed regime in 2023?'
-        ];
+// ===== C1: TOPIC TREE & MENU =====
+function detectCountriesInText(text) {
+    const countries = ['India','China','Vietnam','Indonesia','Nigeria','Kenya','Brazil','Egypt','Saudi Arabia','UAE','Singapore','Bangladesh','Ethiopia','Ghana','Tanzania','Senegal','Colombia','Peru','Mexico','Pakistan','Philippines','Malaysia','Thailand','Morocco','Turkey','South Africa','Ukraine','Kazakhstan','Angola','Mozambique'];
+    for (const c of countries) {
+        if (new RegExp('\\b' + c.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b','i').test(text)) return c;
     }
+    return null;
+}
 
-    const pillsDiv = document.createElement('div');
-    pillsDiv.className = 'followup-pills';
-    pillsDiv.innerHTML = suggestions.map(s =>
-        `<button class="followup-pill" onclick="this.closest('.followup-pills').remove(); sendWelcomeQuery('${s.replace(/'/g, "\\'")}')">${s}</button>`
-    ).join('');
-    container.appendChild(pillsDiv);
+const TOPIC_TREE = {
+    'Political Risk': {
+        icon: 'ri-government-line',
+        queries: (c) => [
+            `What are the key political risk transmission mechanisms for ${c || 'this country'} in 2026?`,
+            `How does governance quality affect ${c || 'this country'}'s investment regime classification?`,
+            `What political events could trigger a regime downgrade for ${c || 'this country'}?`,
+            `Compare ${c || 'this country'}'s rule-of-law trend against its regional peers.`
+        ]
+    },
+    'Trade & FDI': {
+        icon: 'ri-ship-line',
+        queries: (c) => [
+            `What sectors are driving FDI inflows into ${c || 'this country'} and what is the structural basis?`,
+            `How exposed is ${c || 'this country'} to global trade disruption given its export structure?`,
+            `What are the primary FDI barriers and how do they compare to peer markets?`,
+            `Analyse ${c || 'this country'}'s current account trajectory and what it implies for capital flows.`
+        ]
+    },
+    'Macroeconomic': {
+        icon: 'ri-line-chart-line',
+        queries: (c) => [
+            `What does ${c || 'this country'}'s debt-to-GDP trajectory imply for fiscal space over 2026–2028?`,
+            `How does ${c || 'this country'}'s inflation profile interact with its absorptive capacity score?`,
+            `Identify the three macro variables most at risk of deteriorating for ${c || 'this country'}.`,
+            `What would a 200bps rate hike in the US do to ${c || 'this country'}'s external debt position?`
+        ]
+    },
+    'Sectoral': {
+        icon: 'ri-building-4-line',
+        queries: (c) => [
+            `Which sectors in ${c || 'this country'} are best positioned given its current RAO regime?`,
+            `What is the infrastructure investment opportunity in ${c || 'this country'} and key barriers?`,
+            `Analyse the digital economy and fintech opportunity in ${c || 'this country'} using RAO indicators.`,
+            `What natural resource sectors does ${c || 'this country'} have, and how do resource rents affect its absorptive capacity?`
+        ]
+    },
+    'Scenarios': {
+        icon: 'ri-git-branch-line',
+        queries: (c) => [
+            `Build a base/upside/downside scenario matrix for ${c || 'this country'} over the next 18 months.`,
+            `What is the bear case for ${c || 'this country'} and what early warning indicators should investors watch?`,
+            `Under what conditions could ${c || 'this country'} achieve an RAO regime upgrade in the next 3 years?`,
+            `Model the impact of a commodity price shock on ${c || 'this country'}'s RAO pillars.`
+        ]
+    },
+    'Comparisons': {
+        icon: 'ri-bar-chart-grouped-line',
+        queries: (c) => [
+            `Compare ${c || 'this country'} against its top 3 regional peers across all RAO pillars.`,
+            `Which frontier market offers better risk-adjusted opportunity: ${c || 'this country'} or Vietnam?`,
+            `How does ${c || 'this country'}'s TOS signal compare to similar-regime countries globally?`,
+            `Rank the top 5 countries for private equity entry based on FO regime + TOS signal.`
+        ]
+    }
+};
+
+function renderTopicMenu(userQuery, assistantReply) {
+    const container = document.getElementById('chat-messages-container');
+    if (!container) return;
+    container.querySelectorAll('.topic-menu').forEach(el => el.remove());
+
+    const country = detectCountriesInText(userQuery + ' ' + assistantReply);
+
+    const menuDiv = document.createElement('div');
+    menuDiv.className = 'topic-menu';
+
+    const catRow = document.createElement('div');
+    catRow.className = 'topic-cat-row';
+
+    const queriesPanel = document.createElement('div');
+    queriesPanel.className = 'topic-queries-panel';
+    queriesPanel.style.display = 'none';
+
+    let activeCat = null;
+
+    Object.entries(TOPIC_TREE).forEach(([catName, catData]) => {
+        const btn = document.createElement('button');
+        btn.className = 'topic-cat-btn';
+        btn.innerHTML = `<i class="${catData.icon}"></i> ${catName}`;
+        btn.onclick = () => {
+            if (activeCat === catName) {
+                queriesPanel.style.display = 'none';
+                activeCat = null;
+                catRow.querySelectorAll('.topic-cat-btn').forEach(b => b.classList.remove('active'));
+                return;
+            }
+            activeCat = catName;
+            catRow.querySelectorAll('.topic-cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const queries = catData.queries(country);
+            queriesPanel.innerHTML = queries.map(q =>
+                `<div class="topic-query-row">` +
+                `<input class="topic-query-input" value="${q.replace(/"/g, '&quot;')}" />` +
+                `<button class="topic-query-send" onclick="sendTopicQuery(this)">Send <i class="ri-arrow-right-line"></i></button>` +
+                `</div>`
+            ).join('');
+            queriesPanel.style.display = 'flex';
+        };
+        catRow.appendChild(btn);
+    });
+
+    menuDiv.appendChild(catRow);
+    menuDiv.appendChild(queriesPanel);
+    container.appendChild(menuDiv);
     container.scrollTop = container.scrollHeight;
+}
+
+function sendTopicQuery(btn) {
+    const input = btn.parentElement.querySelector('.topic-query-input');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+    document.getElementById('chat-messages-container').querySelectorAll('.topic-menu').forEach(el => el.remove());
+    document.getElementById('chat-messages-container').querySelectorAll('.drill-down-bar').forEach(el => el.remove());
+    document.getElementById('chat-input').value = text;
+    sendChatMessage();
+}
+
+// ===== C2: DRILL-DOWN BAR =====
+function detectAndRenderDrillDown(reply) {
+    if (!(reply.includes('RAO Score') || reply.includes('RAO score') || reply.includes('rao_score') || reply.includes('Pillar'))) return;
+    const country = detectCountriesInText(reply);
+    if (!country) return;
+    renderDrillDownBar(country);
+}
+
+function renderDrillDownBar(countryName) {
+    const container = document.getElementById('chat-messages-container');
+    if (!container) return;
+    container.querySelectorAll('.drill-down-bar').forEach(el => el.remove());
+
+    const tabs = [
+        { label: 'Overview', query: `Give me a full strategic overview of ${countryName} — RAO composite, regime interpretation, and primary investment thesis.` },
+        { label: 'Pillars', query: `Break down ${countryName}'s four RAO pillars in detail — what is driving each score and what are the root causes at the sub-indicator level?` },
+        { label: 'Sub-indicators', query: `Analyse ${countryName}'s normalized indicator variables — which are structural strengths, which are structural weaknesses, and which are most likely to change in 2026?` },
+        { label: 'Trajectory', query: `Analyse ${countryName}'s RAO trajectory from 2015 to 2024 — identify inflection points, explain what drove them, and project the 2025–2026 path.` },
+        { label: 'Peer Benchmarks', query: `Compare ${countryName} against its 3 closest regional peers — score differentials, pillar contrast, and what the comparison implies for capital allocation.` },
+        { label: 'Scenarios', query: `Generate a full base/upside/downside scenario matrix for ${countryName} with specific triggers, sector implications, and investor action thresholds for each scenario.` }
+    ];
+
+    const bar = document.createElement('div');
+    bar.className = 'drill-down-bar';
+    bar.innerHTML = `<span class="drill-label">${countryName}</span>` +
+        tabs.map(t => `<button class="drill-btn" onclick="sendDrillQuery(this, ${JSON.stringify(t.query)})">${t.label}</button>`).join('');
+    container.appendChild(bar);
+    container.scrollTop = container.scrollHeight;
+}
+
+function sendDrillQuery(btn, query) {
+    document.getElementById('chat-messages-container').querySelectorAll('.topic-menu').forEach(el => el.remove());
+    document.getElementById('chat-messages-container').querySelectorAll('.drill-down-bar').forEach(el => el.remove());
+    document.getElementById('chat-input').value = query;
+    sendChatMessage();
+}
+
+// ===== D1: RESEARCH CANVAS =====
+function toggleCanvas() {
+    const panel = document.getElementById('canvas-panel');
+    _canvasOpen = !_canvasOpen;
+    panel.style.display = _canvasOpen ? 'flex' : 'none';
+}
+
+function pinMessage(btn) {
+    const bubble = btn.closest('.chat-message')?.querySelector('.chat-bubble');
+    if (!bubble) return;
+    const text = bubble.innerText || bubble.textContent;
+    const id = 'pin_' + Date.now();
+    _canvas.push({ id, content: text, timestamp: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) });
+    btn.classList.add('pinned');
+    btn.innerHTML = '<i class="ri-pushpin-fill"></i>';
+    btn.title = 'Pinned';
+    if (!_canvasOpen) toggleCanvas();
+    renderCanvas();
+}
+
+function renderCanvas() {
+    const el = document.getElementById('canvas-items');
+    if (!el) return;
+    if (!_canvas.length) { el.innerHTML = '<div class="canvas-empty">Pin responses to build your research document.</div>'; return; }
+    el.innerHTML = _canvas.map(item =>
+        `<div class="canvas-item" id="${item.id}">` +
+        `<button class="canvas-item-del" onclick="removeCanvasItem('${item.id}')" title="Remove"><i class="ri-delete-bin-line"></i></button>` +
+        `<div class="canvas-item-time">${item.timestamp}</div>` +
+        `<div class="canvas-item-body">${escapeHTMLSafe(item.content.slice(0, 400))}</div>` +
+        `</div>`
+    ).join('');
+}
+
+function removeCanvasItem(id) {
+    _canvas = _canvas.filter(i => i.id !== id);
+    renderCanvas();
+}
+
+function exportCanvas() {
+    if (!_canvas.length) { alert('No pinned items to export.'); return; }
+    const lines = ['# GSU Research Canvas\n', '_' + new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) + '_\n\n---\n'];
+    _canvas.forEach((item, i) => { lines.push(`\n## Section ${i + 1} (${item.timestamp})\n\n${item.content}\n`); });
+    const blob = new Blob([lines.join('\n')], { type: 'text/markdown' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'gsu-canvas-' + Date.now() + '.md';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ===== D2: BRIEF GENERATOR =====
+async function generateBrief() {
+    if (!chatHistory.length) { alert('Start a conversation first — the brief is generated from your research session.'); return; }
+    if (isChatLoading) return;
+    const briefPrompt = `Based on this research session, generate a structured intelligence brief in the following format:
+
+# Intelligence Brief
+**Date:** ${TODAY_DATE}
+**Prepared by:** RAO Intelligence Assistant
+
+## 1. Executive Summary
+[2–3 sentences. Lead with the key investment conclusion.]
+
+## 2. Country / Market Coverage
+[List countries and regions discussed, with their current RAO regime and score.]
+
+## 3. Key Findings
+[3–5 bullet points, each a concrete finding with data reference.]
+
+## 4. Risk Assessment
+[Primary risks identified, ranked by probability × impact.]
+
+## 5. Opportunity Assessment
+[Primary opportunities identified, with RAO/TOS signal basis.]
+
+## 6. Scenario Matrix
+[Base / Upside / Downside for the primary market(s) discussed.]
+
+## 7. Bottom Line & Recommended Actions
+[Specific, actionable. Who should do what and under what conditions.]
+
+Generate this brief based on the research conversation above. Be specific and data-driven. Use all RAO data already retrieved.`;
+
+    document.getElementById('chat-input').value = briefPrompt;
+    sendChatMessage();
+}
+
+// ===== E1: CROSS-SESSION SEARCH =====
+function openSessionSearch() {
+    const modal = document.getElementById('session-search-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => { const inp = document.getElementById('ssm-input'); if (inp) { inp.value = ''; inp.focus(); } const res = document.getElementById('ssm-results'); if (res) res.innerHTML = '<div class="ssm-empty">Type to search your research history.</div>'; }, 50);
+}
+
+function closeSessionSearchModal(e) {
+    if (e && e.target !== document.getElementById('session-search-modal')) return;
+    document.getElementById('session-search-modal').style.display = 'none';
+}
+
+function runSessionSearch(query) {
+    const results = document.getElementById('ssm-results');
+    if (!query.trim()) { results.innerHTML = '<div class="ssm-empty">Type to search your research history.</div>'; return; }
+    const sessions = listSessions();
+    const q = query.toLowerCase();
+    const matches = [];
+    sessions.forEach(s => {
+        const nameMatch = s.name.toLowerCase().includes(q);
+        let excerpt = '';
+        let msgMatch = false;
+        (s.messages || []).forEach(m => {
+            if (m.content && m.content.toLowerCase().includes(q)) {
+                msgMatch = true;
+                if (!excerpt) {
+                    const idx = m.content.toLowerCase().indexOf(q);
+                    excerpt = '…' + m.content.slice(Math.max(0, idx - 40), idx + 120) + '…';
+                }
+            }
+        });
+        if (nameMatch || msgMatch) matches.push({ s, excerpt, nameMatch });
+    });
+    if (!matches.length) { results.innerHTML = '<div class="ssm-empty">No matches found.</div>'; return; }
+    const reQ = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    const highlight = (text) => escapeHTMLSafe(text).replace(reQ, m => `<mark>${m}</mark>`);
+    results.innerHTML = matches.map(({ s, excerpt }) =>
+        `<div class="ssm-result" onclick="loadSession('${s.id}'); closeSessionSearchModal();">` +
+        `<div class="ssm-result-name">${highlight(s.name)}</div>` +
+        (excerpt ? `<div class="ssm-result-excerpt">${highlight(excerpt)}</div>` : '') +
+        `<div class="ssm-result-meta">${new Date(s.updatedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</div>` +
+        `</div>`
+    ).join('');
+}
+
+// ===== E2: ENTITY EXTRACTION =====
+const KNOWN_COUNTRIES = ['India','China','Vietnam','Indonesia','Nigeria','Kenya','Brazil','Egypt','Saudi Arabia','UAE','Singapore','Bangladesh','Ethiopia','Ghana','Tanzania','Senegal','Colombia','Peru','Mexico','Pakistan','Philippines','Malaysia','Thailand','Morocco','Turkey','South Africa','Ukraine','Kazakhstan','Angola','Mozambique','Rwanda','Ivory Coast','Sri Lanka','Nepal','Myanmar','Cambodia','Laos','Zimbabwe','Zambia','Uganda','Cameroon','Algeria','Tunisia','Libya','Sudan','Iraq','Iran','Jordan','Lebanon','Kuwait','Qatar','Bahrain','Oman','Argentina','Chile','Bolivia','Ecuador','Venezuela','Guatemala','Honduras','Panama','Costa Rica','Dominican Republic','Cuba','Jamaica','Serbia','Albania','Georgia','Armenia','Azerbaijan','Uzbekistan','Mongolia'];
+
+const INDICATOR_TERMS = ['RAO Score','TOS signal','TOS','GDP growth','FDI','inflation','regime','absorptive capacity','trajectory','stability pillar','opportunity pillar','rule of law','governance','current account','external debt','capital formation','fiscal space','debt-to-GDP','youth unemployment','regulatory quality','resource rents','S-curve','reform velocity','discovery gap','Pre-Breakout','Structural Risk','Fragile Opportunity','Robust Opportunity'];
+
+function extractEntities(text) {
+    const countries = KNOWN_COUNTRIES.filter(c => new RegExp('\\b' + c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(text));
+    const indicators = INDICATOR_TERMS.filter(t => text.toLowerCase().includes(t.toLowerCase()));
+    return { countries: [...new Set(countries)], indicators: [...new Set(indicators.slice(0, 8))] };
+}
+
+function renderEntityPanel(text) {
+    const panel = document.getElementById('entity-panel');
+    const list = document.getElementById('entity-list');
+    if (!panel || !list) return;
+    const { countries, indicators } = extractEntities(text);
+    if (!countries.length && !indicators.length) { panel.style.display = 'none'; return; }
+    list.innerHTML =
+        countries.map(c => `<span class="entity-chip country" onclick="sendWelcomeQuery('Analyse ${c.replace(/'/g, "\\'")}s RAO profile')" title="Analyse ${c}">${c}</span>`).join('') +
+        indicators.map(t => `<span class="entity-chip indicator" title="${escapeHTMLSafe(t)}">${escapeHTMLSafe(t)}</span>`).join('');
+    panel.style.display = 'block';
 }
 
 function regenResponse(btn) {
@@ -10927,9 +11357,9 @@ function regenResponse(btn) {
     // Remove the message bubble from the DOM
     const msgDiv = btn.closest('.chat-message');
     if (msgDiv) msgDiv.remove();
-    // Remove followup pills if present
-    const pills = document.getElementById('chat-messages-container')?.querySelector('.followup-pills');
-    if (pills) pills.remove();
+    // Remove topic menus, drill bars, followup pills
+    const msgContainer = document.getElementById('chat-messages-container');
+    msgContainer?.querySelectorAll('.topic-menu, .drill-down-bar, .followup-pills').forEach(el => el.remove());
     const input = document.getElementById('chat-input');
     if (input) { input.value = lastUserMsg.content; sendChatMessage(); }
 }
@@ -10996,6 +11426,7 @@ function renderChatMessage(role, content, isError = false) {
             <div class="${bubbleClass}"></div>
             <button class="chat-regen-btn" onclick="regenResponse(this)" title="Regenerate response"><i class="ri-loop-left-line"></i></button>
             <button class="chat-copy-btn" onclick="copyChatMessage(this)" title="Copy to clipboard"><i class="ri-file-copy-line"></i></button>
+            <button class="chat-pin-btn" onclick="pinMessage(this)" title="Pin to research canvas"><i class="ri-pushpin-line"></i></button>
         `;
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
@@ -11248,6 +11679,10 @@ function clearChatHistory() {
     clearTrace();
     const bar = document.getElementById('coverage-bar');
     if (bar) bar.style.display = 'none';
+    const ep = document.getElementById('entity-panel');
+    if (ep) ep.style.display = 'none';
+    const container = document.getElementById('chat-messages-container');
+    container?.querySelectorAll('.topic-menu, .drill-down-bar').forEach(el => el.remove());
     updateChatStatus('ready', 'Ready');
     updateCtxIndicator();
     renderSessionsSidebar();
@@ -11604,6 +12039,8 @@ function handleGlobalKeydown(e) {
     const isMeta = e.ctrlKey || e.metaKey;
 
     if (e.key === 'Escape') {
+        const ssModal = document.getElementById('session-search-modal');
+        if (ssModal && ssModal.style.display !== 'none') { ssModal.style.display = 'none'; return; }
         const modal = document.getElementById('trace-modal');
         if (modal && modal.style.display !== 'none' && modal.style.display !== '') {
             closeTraceModal();
@@ -11612,6 +12049,7 @@ function handleGlobalKeydown(e) {
         }
         return;
     }
+    if (isMeta && e.key === 'f' && !isInput) { e.preventDefault(); openSessionSearch(); return; }
     if (isInput) return;
     if (isMeta && e.key === 'n') { e.preventDefault(); newSession(); }
     if (isMeta && e.key === 'e') { e.preventDefault(); exportToMarkdown(); }
@@ -11628,6 +12066,18 @@ document.addEventListener('keydown', handleGlobalKeydown);
     <button class="mobile-fab" onclick="toggleMobileSidebar()" title="Sessions"><i class="ri-history-line"></i></button>
     <button class="mobile-fab" onclick="toggleMobileTrace()" title="Trace"><i class="ri-flow-chart"></i></button>
 </div>
+<!-- E1: Session search modal -->
+<div class="session-search-modal" id="session-search-modal" style="display:none;" onclick="closeSessionSearchModal(event)">
+    <div class="session-search-card">
+        <div class="ssm-hdr">
+            <span><i class="ri-search-line"></i> Search Sessions</span>
+            <button onclick="closeSessionSearchModal()" class="trace-modal-close"><i class="ri-close-line"></i></button>
+        </div>
+        <input class="ssm-input" id="ssm-input" placeholder="Search across all sessions…" oninput="runSessionSearch(this.value)" />
+        <div class="ssm-results" id="ssm-results"><div class="ssm-empty">Type to search your research history.</div></div>
+    </div>
+</div>
+
 <div id="trace-modal" class="trace-modal" onclick="closeTraceModal(event)">
     <div class="trace-modal-card">
         <div class="trace-modal-hdr">
