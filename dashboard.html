@@ -85,6 +85,8 @@
             overflow-x: hidden;
         }
         h1, h2, h3, h4, h5 { font-family: var(--font-head); font-weight: 400; line-height: 1.25; }
+        h1 { font-size: clamp(1.6rem, 4vw, 2.8rem); }
+        h2 { font-size: clamp(1.2rem, 3vw, 2rem); }
         p { opacity: .82; line-height: 1.65; }
         strong { font-weight: 600; color: var(--text-white); opacity: 1; }
         em { font-style: italic; color: var(--accent-gold); opacity: 1; }
@@ -368,7 +370,7 @@
         /* Common Components */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
             gap: 10px;
             margin-bottom: 1.5rem;
         }
@@ -585,7 +587,7 @@
                 rgba(194,165,109,.14) 70%, transparent 100%);
         }
 
-        .grid-2 {
+        .grid-2, .grid-2-col {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 14px;
@@ -1253,7 +1255,7 @@
         /* Compare Split Screen */
         .compare-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
             gap: 12px;
             margin-bottom: 12px;
         }
@@ -1479,7 +1481,7 @@
         }
         .pillar-winners-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
             gap: 0.75rem;
         }
         .pillar-winner-item {
@@ -1770,6 +1772,77 @@
             font-size: 0.9rem;
             width: 100%;
             border-radius: 2px;
+        }
+
+        /* Score Decomposition */
+        .score-decomp-row {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .score-decomp-pills {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            flex: 1;
+            min-width: 0;
+        }
+        .score-decomp-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.4rem 0.5rem;
+            flex: 1;
+            min-width: 60px;
+        }
+        .score-decomp-pill .sdp-val {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .score-decomp-pill .sdp-label {
+            font-family: var(--font-minor);
+            font-size: 0.52rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.3;
+        }
+        .score-decomp-final {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.55rem 0.75rem;
+            background: rgba(194,165,109,0.1);
+            border: 1px solid rgba(194,165,109,0.25);
+            border-radius: 3px;
+            min-width: 72px;
+            flex-shrink: 0;
+        }
+        .score-decomp-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            align-self: center;
+            padding-left: 1rem;
+            border-left: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0;
+        }
+        .score-decomp-arrow { color: rgba(238,234,224,0.2); font-size: 1rem; align-self: center; flex-shrink: 0; }
+
+        /* At narrow widths: stack into 2×2 grid, meta below */
+        @media (max-width: 600px) {
+            .score-decomp-row { flex-direction: column; align-items: stretch; overflow-x: hidden; gap: 0.75rem; }
+            .score-decomp-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+            .score-decomp-arrow { display: none; }
+            .score-decomp-final { flex-direction: row; justify-content: center; gap: 1rem; min-width: 0; padding: 0.5rem 1rem; }
+            .score-decomp-meta { padding-left: 0; border-left: none; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem; flex-direction: row; justify-content: space-around; }
         }
 
         /* Waterfall Breakdown */
@@ -3269,10 +3342,9 @@
         .re-continent:last-child { border-bottom: none; }
 
         .re-continent-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0.95rem 1.4rem; cursor: pointer;
+            padding: 0.75rem 1.4rem; cursor: pointer;
             transition: background 0.15s;
-            gap: 1rem;
+            align-items: center; column-gap: 0.6rem;
         }
         .re-continent-header:hover { background: rgba(255,255,255,0.025); }
 
@@ -3291,11 +3363,10 @@
         .re-subregions { transition: max-height 0.35s var(--easing); overflow: hidden; }
 
         .re-subregion-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0.6rem 1.4rem 0.6rem 2.6rem; cursor: pointer;
+            padding: 0.55rem 1.4rem 0.55rem 1.4rem; cursor: pointer;
             border-top: 1px solid var(--border-subtle);
             transition: background 0.15s;
-            gap: 1rem;
+            align-items: center; column-gap: 0.5rem;
         }
         .re-subregion-header:hover { background: rgba(255,255,255,0.02); }
 
@@ -3339,6 +3410,249 @@
             transition: width 1s var(--easing);
         }
 
+        /* ===== Regional Explorer – Expanded Cards ===== */
+        .re-continent-card {
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(0,0,0,0.12);
+        }
+        .re-continent:last-child .re-continent-card { border-bottom: none; }
+
+        /* Card header bar — grid so columns align with collapsed rows */
+        .re-continent-card-top {
+            display: grid; align-items: center; column-gap: 0.6rem;
+            padding: 0.75rem 1.4rem; cursor: pointer;
+            transition: background 0.15s;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .re-continent-card-top:hover { background: rgba(255,255,255,0.02); }
+
+        .re-card-dot  { font-family: var(--font-minor); font-size: 0.6rem; color: var(--text-muted); flex-shrink: 0; }
+        .re-card-count { font-family: var(--font-minor); font-size: 0.6rem; color: var(--text-muted); flex-shrink: 0; }
+        .re-card-sigma { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); flex-shrink: 0; white-space: nowrap; }
+
+        /* Sub-region indent container */
+        .re-subs-container {
+            border-left: 2px solid rgba(255,255,255,0.07);
+            margin-left: 1.5rem;
+        }
+
+        /* "?" hint badge on countries count */
+        .re-count-hint {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 13px; height: 13px; border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            font-family: var(--font-minor); font-size: 0.44rem;
+            color: var(--text-muted); cursor: help;
+            vertical-align: middle; margin-left: 3px; flex-shrink: 0;
+            transition: all 0.15s;
+        }
+        .re-count-hint:hover { background: rgba(194,165,109,0.12); color: var(--accent-gold); border-color: var(--accent-gold-dim); }
+
+        /* Country chips strip below sub-region expanded card */
+        .re-country-strip {
+            display: flex; flex-wrap: wrap; gap: 0.32rem;
+            padding: 0.65rem 1.2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(0,0,0,0.08);
+        }
+        .re-country-chip {
+            font-family: var(--font-minor); font-size: 0.58rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-subtle);
+            padding: 0.15rem 0.5rem; border-radius: 2px;
+            cursor: pointer; transition: color 0.15s, border-color 0.15s;
+            white-space: nowrap;
+        }
+        .re-country-chip:hover { color: var(--accent-gold); border-color: var(--accent-gold-dim); }
+
+        /* Sub-region card */
+        .re-sub-card { border-top: 1px solid var(--border-subtle); background: rgba(0,0,0,0.08); }
+        .re-sub-card-top {
+            display: grid; align-items: center; column-gap: 0.5rem;
+            padding: 0.55rem 1.4rem; cursor: pointer;
+            transition: background 0.15s; border-bottom: 1px solid var(--border-subtle);
+        }
+        .re-sub-card-top:hover { background: rgba(255,255,255,0.02); }
+
+        /* ── Shared body: left (avg + bars) | right (leader) ── */
+        .re-card-split { display: flex; border-bottom: 1px solid var(--border-subtle); }
+
+        .re-card-left {
+            flex: 1; min-width: 0;
+            border-right: 1px solid var(--border-subtle);
+            padding: 0.85rem 1.2rem 0.9rem;
+            display: flex; flex-direction: column; gap: 0.45rem;
+        }
+        .re-card-right { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+        /* Regional Average row */
+        .re-avg-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.7rem; }
+        .re-avg-label {
+            font-family: var(--font-minor); font-size: 0.55rem;
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--text-muted);
+        }
+        .re-avg-score { font-family: var(--font-mono); font-size: 1.7rem; font-weight: 500; line-height: 1; }
+
+        /* Big pillar bars (left column) */
+        .re-card-bar-row { }
+        .re-card-bar-ctr {
+            position: relative; height: 26px;
+            background: rgba(255,255,255,0.04); border-radius: 2px; overflow: hidden;
+        }
+        .re-card-bar-fill {
+            position: absolute; left: 0; top: 0; bottom: 0;
+            height: 100%; width: 0%; border-radius: 2px;
+            transition: width 0.9s var(--easing);
+        }
+        .re-card-bar-text {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 0.65rem; pointer-events: none;
+        }
+        .re-card-bar-range {
+            font-family: var(--font-minor); font-size: 0.52rem;
+            color: var(--text-muted); margin-top: 0.1rem;
+        }
+
+        /* Right column – Leader */
+        .re-ldr-top {
+            padding: 0.8rem 1.2rem 0.55rem;
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem;
+        }
+        .re-ldr-label {
+            font-family: var(--font-minor); font-size: 0.52rem;
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--accent-gold); margin-bottom: 0.28rem;
+        }
+        .re-ldr-name {
+            font-family: var(--font-head); font-size: 1.1rem;
+            color: var(--text-white); font-weight: 400;
+            line-height: 1.1; cursor: pointer; transition: color 0.2s;
+        }
+        .re-ldr-name:hover { color: var(--accent-gold); }
+        .re-ldr-score { font-family: var(--font-mono); font-size: 1.35rem; font-weight: 500; line-height: 1; }
+        .re-ldr-rank { font-family: var(--font-minor); font-size: 0.56rem; color: var(--text-muted); margin-top: 0.2rem; letter-spacing: 0.06em; }
+
+        .re-ldr-stats { display: flex; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); }
+        .re-ldr-stat { flex: 1; padding: 0.4rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .re-ldr-stat + .re-ldr-stat { border-left: 1px solid var(--border-subtle); }
+        .re-ldr-stat-lbl { font-family: var(--font-minor); font-size: 0.56rem; color: var(--text-muted); }
+        .re-ldr-stat-val { font-family: var(--font-mono); font-size: 0.82rem; }
+
+        .re-ldr-pillars { display: grid; grid-template-columns: 1fr 1fr; flex: 1; }
+        .re-ldr-pillar { padding: 0.5rem 1rem; }
+        .re-ldr-pillar:nth-child(odd)  { border-right: 1px solid var(--border-subtle); }
+        .re-ldr-pillar:nth-child(n+3)  { border-top: 1px solid var(--border-subtle); }
+        .re-ldr-pillar-inner {
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .re-ldr-pillar-left {
+            flex: 1; min-width: 0;
+        }
+        .re-ldr-pillar-lbl {
+            font-family: var(--font-minor); font-size: 0.47rem;
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.09em; color: var(--text-muted);
+            margin-bottom: 0.22rem; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+        }
+        .re-ldr-pillar-val {
+            font-family: var(--font-mono); font-size: 1rem;
+            font-weight: 500; flex-shrink: 0;
+            min-width: 38px; text-align: right;
+        }
+        .re-ldr-pillar-track {
+            height: 4px; background: rgba(255,255,255,0.1);
+            border-radius: 2px; overflow: hidden;
+        }
+        .re-ldr-pillar-fill {
+            height: 100%; border-radius: 2px; opacity: 0.85;
+        }
+
+        /* ── Grid table layout ── */
+        /* Continent + header: name | countries | pillars(1fr) | regime | rao | leader */
+        .re-row-grid {
+            grid-template-columns: 150px 90px 1fr 90px 30px 100px;
+        }
+        /* Sub-region rows: name | countries | pillars(1fr) | rao | leader */
+        .re-subrow-grid {
+            grid-template-columns: 130px 80px 1fr 30px 100px;
+        }
+
+        /* Column header row above continent accordion */
+        .re-explorer-header {
+            display: grid; align-items: end;
+            padding: 0.25rem 1.4rem 0.3rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.015);
+            column-gap: 0.6rem;
+        }
+        .re-hdr-txt {
+            font-family: var(--font-minor); font-size: 0.47rem;
+            text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted);
+        }
+
+        /* Mobile: stack columns */
+        @media (max-width: 720px) {
+            .re-card-split { flex-direction: column; }
+            .re-card-left { border-right: none; border-bottom: 1px solid var(--border-subtle); }
+
+            /* Hide column header labels — don't match 3-line layout */
+            .re-explorer-header { display: none !important; }
+
+            /* ── Continent collapsed row: 6 children → 3 lines ── */
+            .re-continent-header.re-row-grid {
+                grid-template-columns: 1fr auto auto auto;
+                grid-template-rows: auto auto auto;
+                row-gap: 0.4rem;
+                padding: 0.65rem 1rem;
+            }
+            /* line 1: name (left) */
+            .re-continent-header.re-row-grid > *:nth-child(1) { grid-row: 1; grid-column: 1; }
+            /* line 1: countries (right) */
+            .re-continent-header.re-row-grid > *:nth-child(2) { grid-row: 1; grid-column: 2 / 5; justify-content: flex-end; }
+            /* line 2: 4 bars → 2×2 grid (display:!important overrides inline style="display:flex") */
+            .re-continent-header.re-row-grid > *:nth-child(3) {
+                grid-row: 2; grid-column: 1 / 5;
+                display: grid !important; grid-template-columns: 1fr 1fr; gap: 5px !important; padding: 0 !important;
+                align-items: stretch;
+            }
+            /* line 3: regime dots (left) */
+            .re-continent-header.re-row-grid > *:nth-child(4) { grid-row: 3; grid-column: 1; justify-content: flex-start !important; }
+            /* line 3: avg RAO (centre) */
+            .re-continent-header.re-row-grid > *:nth-child(5) { grid-row: 3; grid-column: 2 / 4; text-align: center; }
+            /* line 3: leader (right) */
+            .re-continent-header.re-row-grid > *:nth-child(6) { grid-row: 3; grid-column: 4; text-align: right; }
+
+            /* ── Sub-region collapsed row: 5 children → 3 lines ── */
+            .re-subregion-header.re-subrow-grid {
+                grid-template-columns: 1fr auto auto;
+                grid-template-rows: auto auto auto;
+                row-gap: 0.4rem;
+                padding: 0.5rem 1rem 0.5rem 1.5rem;
+            }
+            /* line 1: name (left) */
+            .re-subregion-header.re-subrow-grid > *:nth-child(1) { grid-row: 1; grid-column: 1; }
+            /* line 1: countries (right) */
+            .re-subregion-header.re-subrow-grid > *:nth-child(2) { grid-row: 1; grid-column: 2 / 4; justify-content: flex-end; }
+            /* line 2: 4 bars → 2×2 grid (display:!important overrides inline style="display:flex") */
+            .re-subregion-header.re-subrow-grid > *:nth-child(3) {
+                grid-row: 2; grid-column: 1 / 4;
+                display: grid !important; grid-template-columns: 1fr 1fr; gap: 5px !important; padding: 0 !important;
+                align-items: stretch;
+            }
+            /* line 3: avg RAO (left) */
+            .re-subregion-header.re-subrow-grid > *:nth-child(4) { grid-row: 3; grid-column: 1; text-align: left; }
+            /* line 3: leader (right) */
+            .re-subregion-header.re-subrow-grid > *:nth-child(5) { grid-row: 3; grid-column: 2 / 4; text-align: right; }
+
+            /* Reduce sub-region indent on mobile */
+            .re-subs-container { margin-left: 0.75rem; }
+        }
+
         .percentile-indicator {
             font-family: var(--font-minor);
             font-size: 0.65rem;
@@ -3370,8 +3684,8 @@
             color: var(--accent-gold);
         }
 
-        @media (max-width: 1200px) {
-            .grid-2 { grid-template-columns: 1fr; }
+        @media (max-width: 900px) {
+            .grid-2, .grid-2-col { grid-template-columns: 1fr; }
             .analysis-grid { grid-template-columns: 1fr; }
             .chart-grid { grid-template-columns: 1fr; }
             .compare-grid { grid-template-columns: 1fr; }
@@ -3770,7 +4084,7 @@
             .kpi-label { font-size: 0.75rem; }
 
             /* Grids already handled at 1200px but reinforce */
-            .grid-2 { grid-template-columns: 1fr; }
+            .grid-2, .grid-2-col { grid-template-columns: 1fr; }
             .analysis-grid { grid-template-columns: 1fr; }
             .insights-grid { grid-template-columns: 1fr; }
             .compare-grid { grid-template-columns: 1fr; }
@@ -3848,6 +4162,31 @@
             .btn { padding: 8px 14px; font-size: 0.65rem; }
         }
 
+        /* ── Mobile tab select (replaces nav-menu at xs) ─────────────────── */
+        .mobile-tab-select {
+            display: none;
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-white);
+            font-family: var(--font-minor);
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23C2A56D' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 10px;
+            padding-right: 2rem;
+            grid-column: 1 / -1;
+        }
+        .mobile-tab-select option { background: var(--secondary-bg); color: var(--text-white); }
+
         @media (max-width: 480px) {
             /* Tighter header */
             .header { padding: 8px 12px; }
@@ -3855,9 +4194,9 @@
             .logo { font-size: 1.1rem; gap: 0.5rem; }
             .logo span { font-size: 0.8rem; letter-spacing: 0.15em; }
 
-            /* Nav: icons only — collapse text nodes via font-size trick */
-            .nav-item { padding: 8px 10px; gap: 0; font-size: 0; }
-            .nav-item i { font-size: 1rem; }
+            /* Hide nav-menu, show mobile select dropdown instead */
+            .header .nav-menu { display: none; }
+            .mobile-tab-select { display: block; }
 
             /* Smaller main padding */
             .main-container { padding-top: 115px; }
@@ -3893,41 +4232,54 @@
             .chat-chart-canvas { height: 220px !important; }
         }
 
+        /* ── Chart container aspect ratios — consistent sizing across devices ── */
+        .bento-cell { min-height: 0; }
+        .bento-cell canvas,
+        .analysis-card canvas,
+        .compare-card canvas { max-width: 100%; }
+
+        @media (max-width: 768px) {
+            .bento-cell { min-height: 240px; }
+            .bento-cell canvas { height: clamp(200px, 35vw, 300px) !important; }
+            .analysis-card canvas { height: clamp(180px, 30vw, 260px) !important; }
+        }
+        @media (max-width: 480px) {
+            .bento-cell { min-height: 200px; }
+            .bento-cell canvas { height: clamp(180px, 55vw, 260px) !important; }
+            .analysis-card canvas,
+            .compare-card canvas { height: clamp(160px, 50vw, 240px) !important; }
+        }
+
         /* ── MOBILE FIXES (supplements the blocks above) ─────────────────── */
         @media (max-width: 768px) {
-            /* Flush header to top edge (2px gap looks wrong on 2-row layout) */
             .header { top: 0; }
-
-            /* Insights tab: correct height for 2-row header (~125px) */
             #tab-insights.tab-content.active { height: calc(100vh - 125px); }
-
-            /* Rankings filter selects: go full-width when controls stack */
             .rankings-filter select { width: 100%; max-width: 100%; }
-
-            /* Tab lock: prevent paragraph overflow on narrow screens */
             .tab-lock p { max-width: min(340px, calc(100vw - 3rem)); }
+            [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+            .rtm-grid { grid-template-columns: 80px repeat(4, 1fr) !important; overflow-x: auto; display: block; }
+            .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; }
+            .bento-span-2, .bento-span-3 { border-right: none !important; }
         }
 
         @media (max-width: 480px) {
-            /* Insights tab: correct for slightly shorter 2-row header at 480px */
-            #tab-insights.tab-content.active { height: calc(100vh - 115px); }
-
-            /* Tighter section padding */
-            .section-container { padding: 0.75rem; }
-
-            /* Auth modal: reduce side padding */
-            .auth-modal { padding: 1.75rem 1.5rem 1.5rem; }
-
-            /* Sign-in button: smaller at 480px */
-            .sign-in-btn { height: 30px; padding: 0 0.85rem; font-size: 0.65rem; }
-
-            /* iOS safe-area: prevent chat input hiding behind home indicator */
-            .chat-input-area {
-                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            .kpi-grid, .chart-grid, .analysis-grid, .compare-grid,
+            .insights-grid, .summary-stats, .pillar-winners-grid,
+            .detail-grid, .selector-row, .global-insights-grid,
+            .tt-pillars, [style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
             }
-
-            /* Stacked scorecard on very small screens */
+            .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; }
+            .compare-grid { gap: 0.75rem !important; }
+            .rtm-grid { grid-template-columns: 80px repeat(4, minmax(70px, 1fr)) !important; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            #tab-insights.tab-content.active { height: calc(100vh - 115px); }
+            .section-container { padding: 0.75rem; }
+            .auth-modal { padding: 1.75rem 1.5rem 1.5rem; }
+            .sign-in-btn { height: 30px; padding: 0 0.85rem; font-size: 0.65rem; }
+            .chat-input-area { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
             .scorecard-country { min-width: 0; }
+            .section-container, .analysis-card, .compare-card,
+            .bento-cell, .card { max-width: 100%; overflow-x: hidden; }
         }
         .chat-chart-wrapper {
             background: rgba(15, 20, 32, 0.6);
@@ -4036,6 +4388,91 @@
         .tab-lock h3 { font-family: var(--font-head); font-size: 1.4rem; font-weight: 400; color: var(--text-white); }
         .tab-lock p { color: var(--text-muted); font-size: 0.95rem; text-align: center; max-width: 340px; }
         .tab-lock .auth-btn { min-width: 160px; width: auto; }
+        /* ===== EXPERIMENTATION CONSOLE ===== */
+        .exp-console-grid { display: flex; align-items: start; gap: 0; }
+        .exp-config-panel { flex: 0 0 270px; min-width: 200px; max-width: 48%; display: flex; flex-direction: column; gap: 8px; position: sticky; top: 90px; max-height: calc(100vh - 96px); overflow-y: auto; overflow-x: hidden; }
+        .exp-divider { flex: 0 0 8px; align-self: stretch; min-height: 300px; cursor: col-resize; background: transparent; border-left: 2px solid var(--border-subtle); margin: 0 4px; border-radius: 2px; transition: border-color 0.2s; position: relative; }
+        .exp-divider::after { content: '⋮'; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: var(--text-muted); font-size: 0.8rem; pointer-events: none; }
+        .exp-divider:hover, .exp-divider.active { border-color: var(--accent-gold); }
+        .exp-results-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding-left: 8px; }
+        .exp-agg-row { display: flex; align-items: center; gap: 0.4rem; padding: 0.26rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .exp-agg-row:last-child { border-bottom: none; }
+        .exp-agg-label { font-family: var(--font-minor); font-size: 0.52rem; color: var(--text-muted); flex-shrink: 0; }
+        .exp-agg-select { flex: 1; background: var(--tertiary-bg); border: 1px solid var(--border-subtle); color: var(--text-white); padding: 0.18rem 0.35rem; font-family: var(--font-minor); font-size: 0.5rem; border-radius: 2px; cursor: pointer; }
+        .exp-agg-select:focus { outline: none; border-color: rgba(194,165,109,0.4); }
+        .exp-formula-desc { font-family: var(--font-mono); font-size: 0.44rem; color: rgba(194,165,109,0.5); padding: 0.3rem 0 0; line-height: 1.5; }
+        .exp-scatter-always { position: relative; height: 185px; }
+        .exp-card-toggle { cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+        .exp-card-toggle i { font-size: 0.85rem; color: var(--text-muted); transition: transform 0.2s; }
+        .exp-card-open i { transform: rotate(180deg); }
+        .exp-sub-tabs { display: flex; border-bottom: 1px solid var(--border-subtle); }
+        .exp-sub-tab { padding: 0.6rem 1rem; font-family: var(--font-minor); font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .exp-sub-tab:hover { color: var(--text-white); }
+        .exp-sub-tab.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+        .exp-sub-content { display: none; }
+        .exp-sub-content.active { display: block; }
+        .exp-slider-row { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; gap: 0.1rem 0.5rem; padding: 0.32rem 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .exp-slider-label { grid-column: 1 / 2; grid-row: 1; font-family: var(--font-minor); font-size: 0.54rem; color: var(--text-muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; align-self: center; }
+        .exp-slider-val { grid-column: 2 / 3; grid-row: 1; font-family: var(--font-mono); font-size: 0.6rem; color: var(--accent-gold); min-width: 30px; text-align: right; align-self: center; white-space: nowrap; }
+        .exp-slider { grid-column: 1 / -1; grid-row: 2; accent-color: var(--accent-gold); cursor: pointer; width: 100%; min-width: 0; margin: 0; }
+        .exp-pillar-tabs { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+        .exp-pillar-tab { padding: 0.28rem 0.6rem; font-family: var(--font-minor); font-size: 0.48rem; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--border-subtle); color: var(--text-muted); cursor: pointer; border-radius: 2px; transition: all 0.2s; background: transparent; }
+        .exp-pillar-tab:hover, .exp-pillar-tab.active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(194,165,109,0.08); }
+        .exp-kpi-strip { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--border-subtle); border-radius: 3px; overflow: hidden; }
+        .exp-kpi-cell { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; padding: 0.6rem 0.3rem; border-right: 1px solid var(--border-subtle); background: var(--secondary-bg); }
+        .exp-kpi-cell:last-child { border-right: none; }
+        .exp-kpi-val { font-family: var(--font-mono); font-size: 0.95rem; color: var(--accent-gold); }
+        .exp-kpi-label { font-family: var(--font-minor); font-size: 0.43rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); text-align: center; line-height: 1.3; }
+        .exp-rank-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+        .exp-rank-table th { font-family: var(--font-minor); font-size: 0.47rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding: 0.4rem 0.5rem; text-align: left; border-bottom: 1px solid var(--border-subtle); position: sticky; top: 0; background: var(--secondary-bg); cursor: pointer; }
+        .exp-rank-table th:hover { color: var(--accent-gold); }
+        .exp-rank-table td { padding: 0.32rem 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.025); }
+        .exp-rank-table tr:hover td { background: rgba(194,165,109,0.05); cursor: pointer; }
+        .exp-delta-pos { color: var(--accent-green); font-family: var(--font-mono); font-size: 0.68rem; }
+        .exp-delta-neg { color: var(--accent-red); font-family: var(--font-mono); font-size: 0.68rem; }
+        .exp-delta-neu { color: rgba(255,255,255,0.2); font-family: var(--font-mono); font-size: 0.68rem; }
+        .exp-score-bar-wrap { display: flex; align-items: center; gap: 0.4rem; }
+        .exp-score-bar-track { flex: 1; height: 3px; background: var(--tertiary-bg); border-radius: 2px; overflow: hidden; min-width: 35px; }
+        .exp-score-bar-fill { height: 100%; border-radius: 2px; background: var(--accent-gold); }
+        .exp-sense-cell { display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.52rem; border-radius: 2px; padding: 0.18rem 0.3rem; min-width: 36px; }
+        .exp-readonly-toggle { display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.52rem; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; padding: 0.35rem 0.65rem; border: 1px solid var(--border-subtle); border-radius: 3px; }
+        .exp-readonly-toggle:hover { color: var(--accent-gold); border-color: rgba(194,165,109,0.4); }
+        #analytics-readonly { display: block; margin-top: 8px; }
+        .exp-config-panel .analysis-card { overflow: visible; }
+        /* Variable Manager Modal */
+        .exp-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,14,25,0.82); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .exp-modal { background: var(--secondary-bg); border: 1px solid var(--border-subtle); border-radius: 8px; width: min(92vw, 860px); max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 24px 64px rgba(0,0,0,0.6); }
+        /* Country Filter Modal */
+        #exp-cf-overlay { align-items: center; justify-content: center; }
+        .exp-cf-modal { background: var(--secondary-bg); border: 1px solid var(--border-subtle); border-radius: 8px; width: min(94vw, 980px); height: min(88vh, 700px); display: flex; flex-direction: column; box-shadow: 0 24px 64px rgba(0,0,0,0.6); overflow: hidden; }
+        .exp-cf-body { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+        .exp-cf-list-panel { flex: 1; overflow-y: auto; border-right: 1px solid var(--border-subtle); }
+        .exp-cf-selected-panel { width: 210px; flex-shrink: 0; display: flex; flex-direction: column; }
+        .exp-cf-country-row:hover { background: rgba(255,255,255,0.04) !important; }
+        .exp-cf-filter-badge { display: none; font-family: var(--font-mono); font-size: 0.46rem; background: rgba(194,165,109,0.15); color: var(--accent-gold); border: 1px solid rgba(194,165,109,0.3); border-radius: 10px; padding: 0.1rem 0.45rem; white-space: nowrap; vertical-align: middle; }
+        .exp-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem 0.75rem; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0; }
+        .exp-modal-title { font-family: var(--font-head); font-size: 1rem; color: var(--text-white); }
+        .exp-modal-close { background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; padding: 0.2rem 0.4rem; border-radius: 3px; transition: color 0.2s; }
+        .exp-modal-close:hover { color: var(--accent-gold); }
+        .exp-modal-body { flex: 1; overflow-y: auto; padding: 1rem 1.25rem; }
+        .exp-modal-footer { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle); flex-shrink: 0; flex-wrap: wrap; }
+        .exp-modal-btn { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.4rem 0.9rem; font-family: var(--font-minor); font-size: 0.52rem; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 3px; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border-subtle); }
+        .exp-modal-btn.primary { background: var(--accent-gold); color: var(--primary-bg); border-color: var(--accent-gold); font-weight: 600; }
+        .exp-modal-btn.primary:hover { opacity: 0.85; }
+        .exp-modal-btn.secondary { background: transparent; color: var(--text-muted); }
+        .exp-modal-btn.secondary:hover { color: var(--accent-gold); border-color: rgba(194,165,109,0.4); }
+        .exp-modal-upload { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.4rem 0.9rem; font-family: var(--font-minor); font-size: 0.52rem; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 3px; cursor: pointer; border: 1px solid var(--border-subtle); color: var(--text-muted); transition: all 0.2s; }
+        .exp-modal-upload:hover { color: var(--accent-gold); border-color: rgba(194,165,109,0.4); }
+        /* Variable columns */
+        .exp-var-cols { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; min-height: 280px; }
+        .exp-var-col { display: flex; flex-direction: column; background: var(--tertiary-bg); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.6rem; min-height: 200px; transition: border-color 0.15s; }
+        .exp-var-col.drag-over { border-color: var(--accent-gold); background: rgba(194,165,109,0.06); }
+        .exp-var-col-header { font-family: var(--font-minor); font-size: 0.48rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0; }
+        .exp-var-list { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .exp-var-chip { background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 0.28rem 0.5rem; font-family: var(--font-minor); font-size: 0.5rem; color: var(--text-white); cursor: grab; user-select: none; transition: background 0.15s, border-color 0.15s; }
+        .exp-var-chip:hover { background: rgba(194,165,109,0.12); border-color: rgba(194,165,109,0.4); }
+        .exp-var-chip.dragging { opacity: 0.35; cursor: grabbing; }
+        .exp-var-col-empty { font-family: var(--font-minor); font-size: 0.48rem; color: rgba(255,255,255,0.2); text-align: center; padding: 1rem 0; border: 1px dashed rgba(255,255,255,0.1); border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -4069,6 +4506,14 @@
                 <i class="ri-sparkling-line"></i> Insights
             </div>
         </nav>
+        <select class="mobile-tab-select" id="mobile-tab-select" onchange="switchTab(this.value)">
+            <option value="overview">Overview</option>
+            <option value="analysis">Analysis</option>
+            <option value="compare">Compare</option>
+            <option value="rankings">Rankings</option>
+            <option value="analytics">Analytics</option>
+            <option value="insights">Insights</option>
+        </select>
 
         <div class="header-actions">
             <!-- Enhancement #55: Favorites Dropdown -->
@@ -4163,7 +4608,7 @@
 
 
             <!-- Top 10 + Bottom 10 -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 1.5rem 2rem 0;" class="glow-section glow-br fade-up">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 1.5rem 2rem 0;" class="glow-section glow-br fade-up grid-2-col">
                 <div class="bento-cell">
                     <span class="bento-label">Top 10 Countries</span>
                     <div id="top-10-list"></div>
@@ -4175,7 +4620,7 @@
             </div>
 
             <!-- Global RAO Timeseries + Score Distribution -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:1.5rem 2rem 0;" class="fade-up">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:1.5rem 2rem 0;" class="fade-up grid-2-col">
                 <div class="bento-cell">
                     <span class="bento-label">Global RAO Trends 2010–Latest</span>
                     <div style="padding:1rem;position:relative;height:300px;">
@@ -4234,7 +4679,7 @@
                     <div class="analysis-split-row" style="display:grid;grid-template-columns:44fr 56fr;gap:12px;margin-bottom:12px;align-items:stretch;">
                         <div class="analysis-card">
                             <div class="card-title">4-Pillar Profile</div>
-                            <div style="padding:0.5rem 1.2rem 1rem;position:relative;min-height:clamp(200px,28vh,300px);">
+                            <div style="padding:0.5rem 1.2rem 1rem;position:relative;">
                                 <canvas id="country-pillar-radar"></canvas>
                             </div>
                         </div>
@@ -4577,6 +5022,281 @@
         <!-- TAB 5: ANALYTICS -->
         <div id="tab-analytics" class="tab-content">
 
+            <!-- ══ EXPERIMENTATION CONSOLE HEADER ══════════════════════════════════ -->
+            <div class="section-container glow-section glow-tl" style="margin-bottom:8px;padding:0.85rem 0 0.85rem 1.5rem;">
+                <div style="display:flex;align-items:flex-start;gap:0;">
+                    <!-- LEFT: title + description — matches config panel width -->
+                    <div style="flex:0 0 270px;min-width:200px;max-width:48%;padding-right:1rem;">
+                        <div style="font-family:var(--font-head);font-size:1.1rem;color:var(--text-white);line-height:1.2;">RAO Experimentation Console</div>
+                        <div style="font-family:var(--font-minor);font-size:0.52rem;color:var(--text-muted);margin-top:0.25rem;letter-spacing:0.04em;line-height:1.5;">Adjust pillar &amp; variable weights · Real-time re-ranking · Bayesian Monte Carlo CVaR₂₅</div>
+                    </div>
+                    <!-- RIGHT: toolbar — matches results panel -->
+                    <div style="flex:1;min-width:0;display:flex;gap:0.4rem;flex-wrap:wrap;align-items:center;padding-right:1rem;">
+                        <select id="exp-preset-select" onchange="loadExpPreset(this.value)" style="background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.32rem 0.6rem;font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;border-radius:3px;cursor:pointer;">
+                            <option value="">Load Preset</option>
+                            <option value="actual_rao">≈ Actual Methodology</option>
+                            <option value="commercial">Commercial Default</option>
+                            <option value="frontier">Frontier Mandate</option>
+                            <option value="defensive">Defensive</option>
+                            <option value="conviction">High Conviction</option>
+                        </select>
+                        <!-- Choose Countries button with badge -->
+                        <button onclick="openCountryFilter()" style="display:inline-flex;align-items:center;gap:0.35rem;background:transparent;border:1px solid var(--border-subtle);color:var(--text-muted);padding:0.32rem 0.7rem;font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;border-radius:3px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(194,165,109,0.4)';this.style.color='var(--accent-gold)'" onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--text-muted)'"><i class="ri-earth-line"></i> Countries <span id="exp-cf-badge" class="exp-cf-filter-badge"></span></button>
+                        <button onclick="resetExpConfig()" style="display:inline-flex;align-items:center;gap:0.35rem;background:transparent;border:1px solid var(--border-subtle);color:var(--text-muted);padding:0.32rem 0.7rem;font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;border-radius:3px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(194,165,109,0.4)';this.style.color='var(--accent-gold)'" onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--text-muted)'"><i class="ri-refresh-line"></i> Reset</button>
+                        <button onclick="exportExpCSV()" style="display:inline-flex;align-items:center;gap:0.35rem;background:transparent;border:1px solid var(--border-subtle);color:var(--text-muted);padding:0.32rem 0.7rem;font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;border-radius:3px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(194,165,109,0.4)';this.style.color='var(--accent-gold)'" onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--text-muted)'"><i class="ri-download-line"></i> Export CSV</button>
+                        <button onclick="openVarManager()" style="display:inline-flex;align-items:center;gap:0.35rem;background:transparent;border:1px solid var(--border-subtle);color:var(--text-muted);padding:0.32rem 0.7rem;font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;border-radius:3px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(194,165,109,0.4)';this.style.color='var(--accent-gold)'" onmouseout="this.style.borderColor='var(--border-subtle)';this.style.color='var(--text-muted)'"><i class="ri-drag-drop-line"></i> Variables</button>
+                        <span class="exp-readonly-toggle" onclick="toggleAnalyticsReadonly()" style="font-size:0.5rem;"><i class="ri-bar-chart-2-line"></i> <span id="analytics-readonly-label">Hide Analytics</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ 2-COLUMN CONSOLE LAYOUT ═══════════════════════════════════════════ -->
+            <div class="exp-console-grid">
+
+                <!-- LEFT: CONFIG PANEL -->
+                <div class="exp-config-panel">
+
+                    <!-- Pillar blend weights -->
+                    <div class="analysis-card">
+                        <div class="card-title">Pillar Blend Weights</div>
+                        <div style="padding:0.4rem 0.85rem 0.75rem;">
+                            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.4rem;margin-bottom:0.6rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border-subtle);">
+                                <label style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);white-space:nowrap;">Auto-normalise</label>
+                                <input type="checkbox" id="exp-autonorm" checked onchange="recomputeExp()" style="accent-color:var(--accent-gold);cursor:pointer;flex-shrink:0;" title="ON: only weight ratios matter (×2 all = same score). OFF: divide by 4, so absolute values matter.">
+                                <span id="exp-pillar-sum-display" style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text-muted);margin-left:auto;white-space:nowrap;">Σ = 4.00</span>
+                            </div>
+                            <div id="exp-pillar-sliders"></div>
+                        </div>
+                    </div>
+
+                    <!-- Variable weights -->
+                    <div class="analysis-card">
+                        <div class="card-title">Variable Weights</div>
+                        <div style="padding:0.4rem 0.85rem 0.75rem;">
+                            <div class="exp-pillar-tabs" id="exp-var-pillar-tabs"></div>
+                            <div id="exp-var-sliders" style="max-height:34vh;overflow-y:auto;overflow-x:hidden;padding-right:2px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Scoring Methods (collapsible) -->
+                    <div class="analysis-card">
+                        <div class="card-title exp-card-toggle" id="exp-scoring-toggle" onclick="toggleExpScoringMethods()">
+                            Scoring Methods <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                        <div id="exp-scoring-body" style="display:none;padding:0.4rem 0.85rem 0.75rem;">
+                            <div style="font-family:var(--font-minor);font-size:0.48rem;color:var(--text-muted);margin-bottom:0.6rem;line-height:1.5;">Per-pillar aggregation of <code style="font-size:0.44rem;color:rgba(194,165,109,0.7);">norm_*</code> variables. Applied before pillar blending.</div>
+                            <div id="exp-agg-selectors"></div>
+                            <div id="exp-formula-desc" class="exp-formula-desc"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pipeline Overlays (collapsible) -->
+                    <div class="analysis-card">
+                        <div class="card-title exp-card-toggle" id="exp-overlays-toggle" onclick="toggleExpOverlays()">
+                            Pipeline Overlays <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                        <div id="exp-overlays-body" style="display:none;padding:0.4rem 0.85rem 0.85rem;">
+                            <div style="font-family:var(--font-minor);font-size:0.46rem;color:var(--text-muted);margin-bottom:0.6rem;line-height:1.6;">
+                                Blend published pipeline outputs into the experimental score. Uses pre-computed values from the 2025 dataset — no re-running required.
+                            </div>
+                            <!-- CVaR Blend -->
+                            <div class="exp-slider-row" style="border-bottom:none;">
+                                <span class="exp-slider-label" style="color:#607c98;">CVaR25 Depth</span>
+                                <span class="exp-slider-val" id="exp-ov-cvar-val">0.00</span>
+                                <input type="range" class="exp-slider" id="exp-ov-cvar" min="0" max="1" step="0.05" value="0"
+                                    oninput="updateExpOverlay('cvarBlend',+this.value,this)">
+                            </div>
+                            <div style="font-family:var(--font-minor);font-size:0.43rem;color:rgba(255,255,255,0.28);margin-bottom:0.5rem;padding-left:0.1rem;">0 = pure pillar blend · 1 = use published CVaR25</div>
+                            <!-- TOS Weight -->
+                            <div class="exp-slider-row" style="border-bottom:none;">
+                                <span class="exp-slider-label" style="color:#c9a961;">TOS Overlay Weight</span>
+                                <span class="exp-slider-val" id="exp-ov-tos-val">0.00</span>
+                                <input type="range" class="exp-slider" id="exp-ov-tos" min="0" max="0.5" step="0.05" value="0"
+                                    oninput="updateExpOverlay('tosWeight',+this.value,this)">
+                            </div>
+                            <div style="font-family:var(--font-minor);font-size:0.43rem;color:rgba(255,255,255,0.28);margin-bottom:0.65rem;padding-left:0.1rem;">COMMERCIAL_DEFAULT = 0.40 · DEFENSIVE = 0.15</div>
+                            <!-- Market Size Bonus -->
+                            <div style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0;">
+                                <label style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Market Size Bonus</label>
+                                <input type="checkbox" id="exp-ov-msb" onchange="updateExpOverlay('marketSizeBonus',this.checked,this)" style="accent-color:var(--accent-gold);cursor:pointer;flex-shrink:0;">
+                            </div>
+                            <div style="font-family:var(--font-minor);font-size:0.43rem;color:rgba(255,255,255,0.28);padding-left:0.1rem;">Adds log-GDP size adjustment (+0 to +1.5 pts)</div>
+                            <!-- Anomaly Haircut -->
+                            <div style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0;">
+                                <label style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Anomaly Haircut −0.50</label>
+                                <input type="checkbox" id="exp-ov-anomaly" onchange="toggleAnomalyHaircut(this.checked)" style="accent-color:var(--accent-gold);cursor:pointer;flex-shrink:0;">
+                            </div>
+                            <div style="font-family:var(--font-minor);font-size:0.43rem;color:rgba(255,255,255,0.28);padding-left:0.1rem;">ML Layer 1: deduct 0.50 pts if anomaly_flag is set</div>
+                            <!-- Dynamic Trajectory -->
+                            <div style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0;">
+                                <label style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Dynamic Pillar D (OLS)</label>
+                                <input type="checkbox" id="exp-bay-dynD" onchange="toggleDynamicTraj(this.checked)" style="accent-color:var(--accent-gold);cursor:pointer;flex-shrink:0;">
+                            </div>
+                            <div style="font-family:var(--font-minor);font-size:0.43rem;color:rgba(255,255,255,0.28);padding-left:0.1rem;">Recompute Pillar D via OLS trend on 5-year panel (norm_ proxy)</div>
+                            <!-- Live formula display -->
+                            <div id="exp-overlay-formula" style="margin-top:0.65rem;font-family:var(--font-mono);font-size:0.44rem;color:rgba(194,165,109,0.6);line-height:1.6;padding:0.4rem 0.5rem;background:rgba(0,0,0,0.2);border-radius:3px;border-left:2px solid rgba(194,165,109,0.25);">
+                                score = pillar_blend × 10
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bayesian Simulation card -->
+                    <div class="analysis-card">
+                        <div class="card-title exp-card-toggle" id="exp-bay-toggle" onclick="toggleExpBayesianCard()" style="display:flex;align-items:center;justify-content:space-between;">
+                            <span>Bayesian Simulation <i class="ri-arrow-down-s-line"></i></span>
+                            <span id="exp-mode-badge" style="font-family:var(--font-mono);font-size:0.42rem;color:var(--text-muted);font-weight:400;">LINEAR BLEND</span>
+                        </div>
+                        <div id="exp-bay-body" style="display:none;padding:0.4rem 0.85rem 0.85rem;">
+                            <div style="font-family:var(--font-minor);font-size:0.46rem;color:var(--text-muted);margin-bottom:0.6rem;line-height:1.6;">
+                                Run 1 000 Dirichlet-sampled simulations per country and compute CVaR₂₅ from scratch. Cross-section z+sigmoid normalised. Replaces linear pillar blend.
+                            </div>
+                            <!-- Enable toggle -->
+                            <div style="display:flex;align-items:center;gap:0.5rem;padding:0.3rem 0 0.6rem;">
+                                <input type="checkbox" id="exp-bay-enabled" onchange="toggleExpBayesian(this.checked)" style="accent-color:var(--accent-gold);cursor:pointer;flex-shrink:0;">
+                                <label for="exp-bay-enabled" style="font-family:var(--font-minor);font-size:0.52rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-gold);cursor:pointer;">Use Bayesian CVaR₂₅</label>
+                            </div>
+                            <!-- opp_weight -->
+                            <div class="exp-slider-row" style="border-bottom:none;">
+                                <span class="exp-slider-label">Opportunity Target Weight</span>
+                                <span class="exp-slider-val" id="exp-bay-opp-val">0.60</span>
+                                <input type="range" class="exp-slider" id="exp-bay-opp" min="0.40" max="0.80" step="0.05" value="0.60"
+                                    oninput="updateBayesianParam('opp_weight',this.value,'exp-bay-opp-val')">
+                            </div>
+                            <div style="font-family:var(--font-minor);font-size:0.43rem;color:rgba(255,255,255,0.28);margin-bottom:0.4rem;padding-left:0.1rem;">w_A = opp − 0.20 · w_D fixed at 0.20</div>
+                            <!-- stab_weight -->
+                            <div class="exp-slider-row" style="border-bottom:none;">
+                                <span class="exp-slider-label">Stability Target Weight</span>
+                                <span class="exp-slider-val" id="exp-bay-stab-val">0.40</span>
+                                <input type="range" class="exp-slider" id="exp-bay-stab" min="0.20" max="0.60" step="0.05" value="0.40"
+                                    oninput="updateBayesianParam('stab_weight',this.value,'exp-bay-stab-val')">
+                            </div>
+                            <!-- concentration -->
+                            <div class="exp-slider-row" style="border-bottom:none;">
+                                <span class="exp-slider-label">Dirichlet Concentration α</span>
+                                <span class="exp-slider-val" id="exp-bay-conc-val">3.00</span>
+                                <input type="range" class="exp-slider" id="exp-bay-conc" min="1.0" max="10.0" step="0.5" value="3.0"
+                                    oninput="updateBayesianParam('concentration',this.value,'exp-bay-conc-val')">
+                            </div>
+                            <div style="font-family:var(--font-minor);font-size:0.43rem;color:rgba(255,255,255,0.28);padding-left:0.1rem;">Higher = tighter weight distribution · 3.0 matches published pipeline</div>
+                        </div>
+                    </div>
+
+                    <!-- TOS Sub-Signals card -->
+                    <div class="analysis-card">
+                        <div class="card-title exp-card-toggle" id="exp-tos-toggle" onclick="toggleExpTOSCard()">
+                            TOS Sub-Signals <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                        <div id="exp-tos-body" style="display:none;padding:0.4rem 0.85rem 0.85rem;">
+                            <div style="font-family:var(--font-minor);font-size:0.46rem;color:var(--text-muted);margin-bottom:0.6rem;line-height:1.6;">
+                                Re-blend TOS from published SIS / DGI / RVS sub-scores using adjustable weights. Geometric mean is preserved; weights are auto-normalised.
+                            </div>
+                            <!-- w_SIS -->
+                            <div class="exp-slider-row" style="border-bottom:none;">
+                                <span class="exp-slider-label" style="color:#5d8a72;">SIS (S-Curve)</span>
+                                <span class="exp-slider-val" id="exp-tos-sis-val">0.35</span>
+                                <input type="range" class="exp-slider" id="exp-tos-sis" min="0" max="1" step="0.05" value="0.35"
+                                    oninput="updateExpTOSWeight('w_SIS',this.value,'exp-tos-sis-val')">
+                            </div>
+                            <!-- w_DGI -->
+                            <div class="exp-slider-row" style="border-bottom:none;">
+                                <span class="exp-slider-label" style="color:#607c98;">DGI (Discovery Gap)</span>
+                                <span class="exp-slider-val" id="exp-tos-dgi-val">0.35</span>
+                                <input type="range" class="exp-slider" id="exp-tos-dgi" min="0" max="1" step="0.05" value="0.35"
+                                    oninput="updateExpTOSWeight('w_DGI',this.value,'exp-tos-dgi-val')">
+                            </div>
+                            <!-- w_RVS -->
+                            <div class="exp-slider-row" style="border-bottom:none;">
+                                <span class="exp-slider-label" style="color:#c9a961;">RVS (Reform Velocity)</span>
+                                <span class="exp-slider-val" id="exp-tos-rvs-val">0.30</span>
+                                <input type="range" class="exp-slider" id="exp-tos-rvs" min="0" max="1" step="0.05" value="0.30"
+                                    oninput="updateExpTOSWeight('w_RVS',this.value,'exp-tos-rvs-val')">
+                            </div>
+                            <div id="exp-tos-norm-hint" style="font-family:var(--font-minor);font-size:0.43rem;color:rgba(255,255,255,0.28);margin-top:0.3rem;padding-left:0.1rem;">Sum=1.00 (auto-normalised)</div>
+                            <div style="font-family:var(--font-minor);font-size:0.43rem;color:rgba(255,255,255,0.28);margin-top:0.25rem;padding-left:0.1rem;">TOS overlay weight must be > 0 (in Pipeline Overlays) for this to affect score</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- DRAG DIVIDER -->
+                <div id="exp-divider" class="exp-divider" title="Drag to resize panels"></div>
+
+                <!-- RIGHT: RESULTS PANEL -->
+                <div class="exp-results-panel">
+
+                    <!-- KPI strip -->
+                    <div class="exp-kpi-strip">
+                        <div class="exp-kpi-cell">
+                            <div class="exp-kpi-val" id="exp-kpi-moved">—</div>
+                            <div class="exp-kpi-label">Δ Rank ≥ 3</div>
+                        </div>
+                        <div class="exp-kpi-cell">
+                            <div class="exp-kpi-val" id="exp-kpi-riser" style="color:var(--accent-green);font-size:0.72rem;text-align:center;">—</div>
+                            <div class="exp-kpi-label">Biggest Riser</div>
+                        </div>
+                        <div class="exp-kpi-cell">
+                            <div class="exp-kpi-val" id="exp-kpi-faller" style="color:var(--accent-red);font-size:0.72rem;text-align:center;">—</div>
+                            <div class="exp-kpi-label">Biggest Faller</div>
+                        </div>
+                        <div class="exp-kpi-cell">
+                            <div class="exp-kpi-val" id="exp-kpi-rho">—</div>
+                            <div class="exp-kpi-label">Rank Correlation ρ</div>
+                        </div>
+                        <div class="exp-kpi-cell">
+                            <div class="exp-kpi-val" id="exp-kpi-rmse">—</div>
+                            <div class="exp-kpi-label">Score RMSE</div>
+                        </div>
+                    </div>
+
+                    <!-- Mode disclaimer -->
+                    <div id="exp-mode-disclaimer" style="font-family:var(--font-minor);font-size:0.44rem;color:var(--text-muted);padding:0.25rem 0.5rem;line-height:1.5;opacity:0.7;">
+                        Simplified linear blend — excludes full CVaR/TOS pipeline. Enable Bayesian Simulation for Monte Carlo CVaR₂₅.
+                    </div>
+
+                    <!-- Results card with sub-tabs -->
+                    <div class="analysis-card" style="padding:0;flex:1;">
+                        <div class="exp-sub-tabs" style="padding:0 1rem;">
+                            <div class="exp-sub-tab active" onclick="switchExpSubTab('rankings')">Rankings</div>
+                            <div class="exp-sub-tab" onclick="switchExpSubTab('scatter')">Scatter</div>
+                            <div class="exp-sub-tab" onclick="switchExpSubTab('distribution')">Distribution</div>
+                            <div class="exp-sub-tab" onclick="switchExpSubTab('sensitivity')">Sensitivity</div>
+                        </div>
+
+                        <div id="exp-sub-rankings" class="exp-sub-content active" style="padding:0 0.6rem 0.75rem;max-height:480px;overflow-y:auto;">
+                            <table class="exp-rank-table">
+                                <thead><tr>
+                                    <th onclick="sortExpTable('exp_rank')">#</th>
+                                    <th onclick="sortExpTable('country')">Country</th>
+                                    <th onclick="sortExpTable('exp_rao')">Exp Score</th>
+                                    <th onclick="sortExpTable('delta_rank')">Δ Rank</th>
+                                    <th onclick="sortExpTable('delta_score')">Δ Score</th>
+                                </tr></thead>
+                                <tbody id="exp-rankings-body"></tbody>
+                            </table>
+                        </div>
+
+                        <div id="exp-sub-scatter" class="exp-sub-content" style="padding:0.6rem 1rem 0.75rem;">
+                            <div style="font-family:var(--font-minor);font-size:0.48rem;color:var(--text-muted);margin-bottom:0.4rem;">X = Original RAO · Y = Experimental RAO · Colour = regime · Click a point to open Country Analysis</div>
+                            <div style="position:relative;height:380px;">
+                                <canvas id="exp-scatter-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <div id="exp-sub-distribution" class="exp-sub-content" style="padding:0.6rem 1rem 0.75rem;">
+                            <div style="font-family:var(--font-minor);font-size:0.48rem;color:var(--text-muted);margin-bottom:0.4rem;">Score distribution — Original (gold) vs Experimental (blue)</div>
+                            <div style="position:relative;height:280px;">
+                                <canvas id="exp-dist-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <div id="exp-sub-sensitivity" class="exp-sub-content" style="padding:0.6rem 1rem 0.75rem;">
+                            <div style="font-family:var(--font-minor);font-size:0.48rem;color:var(--text-muted);margin-bottom:0.6rem;">Rank change if pillar weight +0.1 · Green = rises · Red = falls · Top 30 by experimental rank</div>
+                            <div id="exp-sense-grid" style="overflow-x:auto;"></div>
+                        </div>
+                    </div>
+
+                    <!-- ══ ANALYTICS CHARTS (collapsible) ═══════════════════════════════ -->
+                    <div id="analytics-readonly">
             <!-- ══ I · SCORE INTELLIGENCE ══════════════════════════════════════════ -->
             <div class="section-container glow-section glow-tl">
                 <div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-subtle);">
@@ -5479,23 +6199,28 @@ function initializeAllTabs() {
 }
 
 // ===== TAB SWITCHING =====
+const _tabScrollPos = {};
+
 function switchTab(tabName) {
+    _tabScrollPos[currentTab] = window.scrollY;
     currentTab = tabName;
 
-    // Update tab content visibility
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.getElementById('tab-' + tabName).classList.add('active');
 
-    // Update navigation active state (NEW - for nav-item)
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     const navItems = document.querySelectorAll('.nav-item');
     const tabIndex = ['overview', 'analysis', 'compare', 'rankings', 'analytics', 'insights'].indexOf(tabName);
-    if (navItems[tabIndex]) {
-        navItems[tabIndex].classList.add('active');
-    }
+    if (navItems[tabIndex]) navItems[tabIndex].classList.add('active');
 
-    // Prevent page scroll on full-page chat tab
+    const mobileSelect = document.getElementById('mobile-tab-select');
+    if (mobileSelect) mobileSelect.value = tabName;
+
     document.body.style.overflow = tabName === 'insights' ? 'hidden' : '';
+
+    requestAnimationFrame(() => {
+        window.scrollTo({ top: _tabScrollPos[tabName] ?? 0, behavior: 'instant' });
+    });
 }
 
 // ===== TAB 1: LANDSCAPE =====
@@ -5804,29 +6529,210 @@ function renderScoreDistributionChart() {
 
 function renderRegionalExplorer() {
     const slice = getSlice(_landscapeYear);
+    const ranked = [...slice].sort((a,b) => b.rao_score - a.rao_score);
+    const globalRank = {};
+    ranked.forEach((r,i) => { globalRank[r.country] = i + 1; });
+
+    function pillarStats(countries, field) {
+        const vals = countries.map(c => c[field] || 0);
+        const avg = vals.reduce((s,v) => s+v, 0) / vals.length;
+        return { avg, min: Math.min(...vals), max: Math.max(...vals) };
+    }
+
+    function calcStddev(countries) {
+        const vals = countries.map(c => c.rao_score || 0);
+        const mean = vals.reduce((s,v)=>s+v,0)/vals.length;
+        return Math.sqrt(vals.reduce((s,v)=>s+(v-mean)**2,0)/vals.length);
+    }
+
+    // Pillar bar for continent collapsed rows — flex:1 so they fill the grid cell evenly
+    const pillarBarTiny = (val, col) => `
+        <div style="flex:1;height:5px;background:var(--tertiary-bg);border-radius:2px;overflow:hidden;min-width:0;">
+            <div style="height:100%;width:${(val*100).toFixed(1)}%;background:${col};border-radius:2px;"></div>
+        </div>`;
+
+    // Proportional regime bars for the card-top header bar (thicker, dot-style)
+    function regStretchBars(countries) {
+        return ['RO','FO','SL','SR'].map(reg => {
+            const cnt = countries.filter(r => r.regime === reg).length;
+            if (!cnt) return '';
+            return `<span title="${REGIME_COLORS[reg].label}: ${cnt}" style="flex:${cnt};border-radius:2px;background:${REGIME_COLORS[reg].solid};"></span>`;
+        }).join('');
+    }
+
+    // Proportional regime dots for collapsed continent rows (fixed-area, consistent width)
+    function regDotsBars(countries, n) {
+        return ['RO','FO','SL','SR'].map(reg => {
+            const cnt = countries.filter(r => r.regime === reg).length;
+            if (!cnt) return '';
+            const w = Math.max(5, Math.round(cnt / n * 72));
+            return `<span title="${REGIME_COLORS[reg].label}: ${cnt}" style="display:inline-block;width:${w}px;height:6px;border-radius:2px;background:${REGIME_COLORS[reg].solid};"></span>`;
+        }).join('');
+    }
+
+    // Medium bars: dual-layer text — accent color (Layer 1, always visible) is overridden
+    // by dark #192030 text (Layer 2, clipped to fill width) wherever the bar is filled.
+    const pillarBarMed = (label, val, gradient, col) => {
+        const fillPct = (val * 100).toFixed(1);
+        const expandW  = val > 0.005 ? (100 / val).toFixed(2) : '20000';
+        const txtStyle1 = `font-family:var(--font-minor);font-size:0.4rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:clip;flex-shrink:1;`;
+        const valStyle1 = `font-family:var(--font-mono);font-size:0.56rem;font-weight:600;flex-shrink:0;`;
+        return `
+        <div style="flex:1;min-width:0;position:relative;height:14px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;">
+            <div style="position:absolute;left:0;top:0;bottom:0;height:100%;width:${fillPct}%;background:${gradient};border-radius:2px;transition:width 0.8s var(--easing);"></div>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 0.35rem;gap:0.2rem;pointer-events:none;">
+                <span style="${txtStyle1}color:${col};">${label}</span>
+                <span style="${valStyle1}color:${col};">${val.toFixed(2)}</span>
+            </div>
+            <div style="position:absolute;left:0;top:0;bottom:0;width:${fillPct}%;overflow:hidden;pointer-events:none;">
+                <div style="position:absolute;top:0;bottom:0;left:0;width:${expandW}%;display:flex;align-items:center;justify-content:space-between;padding:0 0.35rem;gap:0.2rem;">
+                    <span style="${txtStyle1}color:#192030;">${label}</span>
+                    <span style="${valStyle1}color:#192030;">${val.toFixed(2)}</span>
+                </div>
+            </div>
+        </div>`;
+    };
+
+    // Big bar: dual-layer text with animated clip in sync with animated fill.
+    // Layer 1 (accent color) always shows; Layer 2 (dark #192030) clips to the fill width.
+    const bigBar = (label, stats, gradient, col) => {
+        const dw       = (stats.avg * 100).toFixed(1);
+        const expandW  = stats.avg > 0.005 ? (100 / stats.avg).toFixed(2) : '20000';
+        const lStyle   = `font-family:var(--font-minor);font-size:0.56rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;`;
+        const vStyle   = `font-family:var(--font-mono);font-size:0.72rem;font-weight:600;`;
+        const inner    = (c) => `
+            <span style="${lStyle}color:${c};">${label}</span>
+            <span style="${vStyle}color:${c};">${stats.avg.toFixed(2)}</span>`;
+        return `
+        <div class="re-card-bar-row">
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+                <div class="re-card-bar-ctr" style="flex:1;">
+                    <div class="re-card-bar-fill score-bar-animated" data-width="${dw}" style="background:${gradient};"></div>
+                    <div class="re-card-bar-text" style="pointer-events:none;">${inner(col)}</div>
+                    <div class="score-bar-animated" data-width="${dw}"
+                         style="position:absolute;left:0;top:0;bottom:0;height:100%;width:0%;overflow:hidden;pointer-events:none;background:transparent;">
+                        <div style="position:absolute;top:0;bottom:0;left:0;width:${expandW}%;display:flex;align-items:center;justify-content:space-between;padding:0 0.65rem;">
+                            ${inner('#192030')}
+                        </div>
+                    </div>
+                </div>
+                <span class="re-card-bar-range" style="flex-shrink:0;min-width:68px;text-align:right;">${stats.min.toFixed(2)} – ${stats.max.toFixed(2)}</span>
+            </div>
+        </div>`;
+    };
+
+    // Leader pillar: left section has title + bar below; right has score (vertically centered)
+    const ldrPillar = (label, val, col) => `
+        <div class="re-ldr-pillar">
+            <div class="re-ldr-pillar-inner">
+                <div class="re-ldr-pillar-left">
+                    <div class="re-ldr-pillar-lbl">${label}</div>
+                    <div class="re-ldr-pillar-track">
+                        <div class="re-ldr-pillar-fill" style="width:${(val*100).toFixed(0)}%;background:${col};"></div>
+                    </div>
+                </div>
+                <span class="re-ldr-pillar-val" style="color:${col};">${val.toFixed(2)}</span>
+            </div>
+        </div>`;
+
+    // Shared card body — avgLabel lets continents say "Continental Average" vs "Regional Average"
+    function cardBody(meanRAO, oppSt, stabSt, absSt, trajSt, color, leader, leaderRank, deltaStr, deltaColor, aheadStr, leaderLabel, vsLabel, avgLabel) {
+        avgLabel = avgLabel || 'Regional Average';
+        const regime = leader.regime
+            ? `<span style="display:inline-flex;align-items:center;font-family:var(--font-minor);font-size:0.5rem;padding:2px 6px;border-radius:2px;background:${REGIME_COLORS[leader.regime].dim};color:${REGIME_COLORS[leader.regime].solid};border:1px solid ${REGIME_COLORS[leader.regime].solid}50;letter-spacing:0.06em;flex-shrink:0;">${leader.regime}</span>` : '';
+        return `
+        <div class="re-card-split">
+            <div class="re-card-left">
+                <div class="re-avg-row">
+                    <span class="re-avg-label">${avgLabel}</span>
+                    <span class="re-avg-score" style="color:${color};">${meanRAO.toFixed(2)}</span>
+                </div>
+                ${bigBar('Opportunity',         oppSt,  'linear-gradient(90deg,var(--accent-gold),var(--accent-amber))', 'var(--accent-gold)')}
+                ${bigBar('Stability',           stabSt, 'linear-gradient(90deg,var(--accent-blue),#6fa3c4)',             'var(--accent-blue)')}
+                ${bigBar('Absorptive Capacity', absSt,  'linear-gradient(90deg,#5e8fa8,#7ba3b8)',                        '#7ba3b8')}
+                ${bigBar('Trajectory',          trajSt, 'linear-gradient(90deg,var(--accent-green),#6db896)',            'var(--accent-green)')}
+            </div>
+            <div class="re-card-right">
+                <div class="re-ldr-top">
+                    <div style="flex:1;min-width:0;">
+                        <div class="re-ldr-label">${leaderLabel}</div>
+                        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+                            <div class="re-ldr-name"
+                                 onclick="openCountryAnalysis('${leader.country}')"
+                                 onmouseenter="this.style.color='var(--accent-gold)'"
+                                 onmouseleave="this.style.color='var(--text-white)'">${leader.country_name}</div>
+                            ${regime}
+                        </div>
+                    </div>
+                    <div style="text-align:right;flex-shrink:0;">
+                        <div class="re-ldr-score" style="color:${color};">${leader.rao_score.toFixed(2)}</div>
+                        <div class="re-ldr-rank">Global #${leaderRank}</div>
+                    </div>
+                </div>
+                <div class="re-ldr-stats">
+                    <div class="re-ldr-stat">
+                        <span class="re-ldr-stat-lbl">${vsLabel}</span>
+                        <span class="re-ldr-stat-val" style="color:${deltaColor};">${deltaStr}</span>
+                    </div>
+                    <div class="re-ldr-stat">
+                        <span class="re-ldr-stat-lbl">Ahead of 2nd</span>
+                        <span class="re-ldr-stat-val" style="color:var(--accent-green);">${aheadStr}</span>
+                    </div>
+                </div>
+                <div class="re-ldr-pillars">
+                    ${ldrPillar('Opportunity',         leader.pillar_opportunity||0,         'var(--accent-gold)')}
+                    ${ldrPillar('Stability',           leader.pillar_stability||0,           'var(--accent-blue)')}
+                    ${ldrPillar('Absorptive Capacity', leader.pillar_absorptive_capacity||0, '#7ba3b8')}
+                    ${ldrPillar('Trajectory',          leader.pillar_trajectory||0,          'var(--accent-green)')}
+                </div>
+            </div>
+        </div>`;
+    }
+
+    // Static column header row — 6-col re-row-grid, full pillar names on a single line
+    const headerRow = `
+        <div class="re-explorer-header re-row-grid">
+            <span class="re-hdr-txt" style="padding-left:1.3rem;">Region</span>
+            <span class="re-hdr-txt">Countries</span>
+            <div style="display:flex;gap:6px;align-items:flex-end;">
+                <span class="re-hdr-txt" style="flex:1;text-align:center;">Opportunity</span>
+                <span class="re-hdr-txt" style="flex:1;text-align:center;">Stability</span>
+                <span class="re-hdr-txt" style="flex:1;text-align:center;">Absorptive Capacity</span>
+                <span class="re-hdr-txt" style="flex:1;text-align:center;">Trajectory</span>
+            </div>
+            <span class="re-hdr-txt" style="text-align:center;">Regime</span>
+            <span class="re-hdr-txt" style="text-align:right;">Avg RAO</span>
+            <span class="re-hdr-txt" style="text-align:right;">Leader</span>
+        </div>`;
 
     const html = Object.keys(CONTINENTS).map(continent => {
         const cCode = continent.replace(/[^a-zA-Z0-9]/g, '');
         const contCountries = slice.filter(c => CONTINENTS[continent].includes(c.country));
         if (!contCountries.length) return '';
         const n = contCountries.length;
-        const avg = f => contCountries.reduce((s, r) => s + (r[f] || 0), 0) / n;
-        const meanRAO = avg('rao_score');
-        const meanA = avg('pillar_opportunity');
-        const meanB = avg('pillar_stability');
-        const meanC = avg('pillar_absorptive_capacity');
-        const meanD = avg('pillar_trajectory');
-        const color = _RE_COLORS[continent] || '#aaa';
 
-        const regDots = ['RO','FO','SL','SR'].map(reg => {
-            const cnt = contCountries.filter(r => r.regime === reg).length;
-            if (!cnt) return '';
-            const w = Math.max(6, Math.round(cnt / n * 80));
-            return `<span title="${REGIME_COLORS[reg].label}: ${cnt}" style="display:inline-block;width:${w}px;height:6px;border-radius:2px;background:${REGIME_COLORS[reg].solid};margin-right:2px;"></span>`;
-        }).join('');
+        const meanRAO   = contCountries.reduce((s,r) => s+(r.rao_score||0), 0) / n;
+        const oppStats  = pillarStats(contCountries, 'pillar_opportunity');
+        const stabStats = pillarStats(contCountries, 'pillar_stability');
+        const absStats  = pillarStats(contCountries, 'pillar_absorptive_capacity');
+        const trajStats = pillarStats(contCountries, 'pillar_trajectory');
+        const color     = _RE_COLORS[continent] || '#aaa';
+        const stddev    = calcStddev(contCountries);
 
-        const pillarBar = (pct, col) => `<div style="width:56px;height:4px;background:var(--tertiary-bg);border-radius:2px;overflow:hidden;flex-shrink:0;"><div style="height:100%;width:${pct}%;background:${col};border-radius:2px;"></div></div>`;
+        const sorted      = [...contCountries].sort((a,b) => b.rao_score - a.rao_score);
+        const countryTip  = sorted.map(c => c.country_name).join(', ');
+        const leader      = sorted[0];
+        const second      = sorted[1];
+        const leaderRank  = globalRank[leader.country] || '—';
+        const leaderDelta = leader.rao_score - meanRAO;
+        const deltaColor  = leaderDelta >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+        const deltaStr    = (leaderDelta >= 0 ? '+' : '') + leaderDelta.toFixed(2);
+        const aheadStr    = second ? '+' + (leader.rao_score - second.rao_score).toFixed(2) : '—';
 
+        const regDotsHtml  = regDotsBars(contCountries, n);
+        const regStretch   = regStretchBars(contCountries);
+
+        // ── Sub-regions ──────────────────────────────────────────────
         const subRegions = Object.entries(REGION_TO_CONTINENT)
             .filter(([, c]) => c === continent).map(([r]) => r);
 
@@ -5835,122 +6741,187 @@ function renderRegionalExplorer() {
             const regCountries = slice.filter(c => REGIONS[region].includes(c.country));
             if (!regCountries.length) return '';
             const rn = regCountries.length;
-            const rAvg = f => regCountries.reduce((s, r) => s + (r[f] || 0), 0) / rn;
-            const rRAO = rAvg('rao_score');
-            const rOpp = rAvg('pillar_opportunity');
-            const rStab = rAvg('pillar_stability');
-            const rTraj = rAvg('pillar_trajectory');
-            const leader = [...regCountries].sort((a, b) => b.rao_score - a.rao_score)[0];
-            const top5 = [...regCountries].sort((a, b) => b.rao_score - a.rao_score).slice(0, 5);
+
+            const rRAO    = regCountries.reduce((s,r) => s+(r.rao_score||0), 0) / rn;
+            const rOppSt  = pillarStats(regCountries, 'pillar_opportunity');
+            const rStabSt = pillarStats(regCountries, 'pillar_stability');
+            const rAbsSt  = pillarStats(regCountries, 'pillar_absorptive_capacity');
+            const rTrajSt = pillarStats(regCountries, 'pillar_trajectory');
+            const rStddev = calcStddev(regCountries);
+
+            const rSorted       = [...regCountries].sort((a,b) => b.rao_score - a.rao_score);
+            const rCountryTip   = rSorted.map(c => c.country_name).join(', ');
+            const rLeader      = rSorted[0];
+            const rSecond      = rSorted[1];
+            const rLeaderRank  = globalRank[rLeader.country] || '—';
+            const rLeaderDelta = rLeader.rao_score - rRAO;
+            const rDeltaColor  = rLeaderDelta >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            const rDeltaStr    = (rLeaderDelta >= 0 ? '+' : '') + rLeaderDelta.toFixed(2);
+            const rAheadStr    = rSecond ? '+' + (rLeader.rao_score - rSecond.rao_score).toFixed(2) : '—';
+            const isSubOpen    = _reOpenSubRegions.has(region);
+            const rRegStretch  = regStretchBars(regCountries);
 
             return `
             <div id="re-sub-${rCode}">
-                <div class="re-subregion-header" onclick="reToggleSubRegion('${region}','${continent}')">
-                    <div style="display:flex;align-items:center;flex:1;min-width:0;gap:0.5rem;">
+                <!-- Collapsed sub-region row: 5-col grid matching re-subrow-grid -->
+                <div class="re-subregion-header re-subrow-grid" id="re-subhdr-${rCode}"
+                     onclick="reToggleSubRegion('${region}','${continent}')"
+                     style="display:${isSubOpen ? 'none' : 'grid'};">
+                    <!-- col1: chevron + region name -->
+                    <div style="display:flex;align-items:center;gap:0.4rem;min-width:0;">
                         <span class="re-sub-chevron" id="re-subchev-${rCode}">▶</span>
-                        <span style="font-family:var(--font-minor);font-size:0.72rem;font-weight:600;color:var(--text-white);">${region}</span>
-                        <span style="font-family:var(--font-minor);font-size:0.58rem;color:var(--text-muted);">${rn} countries</span>
+                        <span style="font-family:var(--font-minor);font-size:0.72rem;font-weight:600;color:var(--text-white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${region}</span>
                     </div>
-                    <div style="display:flex;align-items:center;gap:1.2rem;flex-shrink:0;">
-                        <div style="display:flex;gap:3px;align-items:center;">
-                            ${pillarBar(rOpp * 10, 'var(--accent-gold)')}
-                            ${pillarBar(rStab * 10, 'var(--accent-blue)')}
-                            ${pillarBar(rTraj * 10, 'var(--accent-green)')}
-                        </div>
-                        <span style="font-family:var(--font-mono);font-size:0.88rem;color:${color};min-width:36px;text-align:right;">${rRAO.toFixed(2)}</span>
-                        <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);min-width:96px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
-                              onclick="event.stopPropagation();openCountryAnalysis('${leader.country}')"
-                              onmouseenter="this.style.color='var(--accent-gold)'" onmouseleave="this.style.color='var(--text-muted)'">${leader.country_name}</span>
+                    <!-- col2: n countries + tooltip -->
+                    <span style="font-family:var(--font-minor);font-size:0.58rem;color:var(--text-muted);white-space:nowrap;display:flex;align-items:center;">${rn} countries<span class="re-count-hint" title="${rCountryTip}">?</span></span>
+                    <!-- col3: 4 pillar bars filling 1fr -->
+                    <div style="display:flex;gap:7px;align-items:center;padding:0 0.5rem;">
+                        ${pillarBarMed('Opportunity',         rOppSt.avg,  'linear-gradient(90deg,var(--accent-gold),var(--accent-amber))', 'var(--accent-gold)')}
+                        ${pillarBarMed('Stability',           rStabSt.avg, 'linear-gradient(90deg,var(--accent-blue),#6fa3c4)',             'var(--accent-blue)')}
+                        ${pillarBarMed('Absorptive Capacity', rAbsSt.avg,  'linear-gradient(90deg,#5e8fa8,#7ba3b8)',                        '#7ba3b8')}
+                        ${pillarBarMed('Trajectory',          rTrajSt.avg, 'linear-gradient(90deg,var(--accent-green),#6db896)',            'var(--accent-green)')}
                     </div>
+                    <!-- col4: avg rao -->
+                    <span style="font-family:var(--font-mono);font-size:0.88rem;color:${color};text-align:right;">${rRAO.toFixed(2)}</span>
+                    <!-- col5: leader -->
+                    <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;"
+                          onclick="event.stopPropagation();openCountryAnalysis('${rLeader.country}')"
+                          onmouseenter="this.style.color='var(--accent-gold)'" onmouseleave="this.style.color='var(--text-muted)'">${rLeader.country_name}</span>
                 </div>
-                <div class="re-timeseries-panel" id="re-ts-${rCode}" style="max-height:0;">
-                    <div class="re-ts-inner">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
-                            <span style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.14em;color:${color};">${region} · RAO Trends 2010–${window.LATEST_YEAR || 2024}</span>
-                            <div style="display:flex;gap:1rem;align-items:center;">
-                                <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);cursor:pointer;"
-                                      onclick="filterRankingsByRegion('${region}');switchTab('rankings');"
-                                      onmouseenter="this.style.color='var(--accent-gold)'" onmouseleave="this.style.color='var(--text-muted)'">View in Rankings ↗</span>
-                                <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);cursor:pointer;"
-                                      onclick="reToggleSubRegion('${region}','${continent}')"
-                                      onmouseenter="this.style.color='var(--w65)'" onmouseleave="this.style.color='var(--text-muted)'">collapse ↑</span>
-                            </div>
+
+                <!-- Expanded sub-region card (NO timeseries) -->
+                <div class="re-sub-card" id="re-subcard-${rCode}" style="display:${isSubOpen ? 'block' : 'none'};">
+                    <div class="re-sub-card-top re-subrow-grid" onclick="reToggleSubRegion('${region}','${continent}')">
+                        <!-- col 1: chevron + name -->
+                        <div style="display:flex;align-items:center;gap:0.4rem;min-width:0;overflow:hidden;">
+                            <span class="re-sub-chevron open" style="font-size:0.45rem;flex-shrink:0;">▶</span>
+                            <span style="font-family:var(--font-minor);font-size:0.75rem;font-weight:600;color:var(--text-white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${region}</span>
                         </div>
-                        <div style="position:relative;height:160px;">
-                            <canvas id="re-chart-${rCode}"></canvas>
-                        </div>
-                        <div style="display:flex;gap:1.25rem;margin-top:0.85rem;flex-wrap:wrap;padding-top:0.5rem;border-top:1px solid var(--border-subtle);">
-                            ${top5.map(c => `<span style="font-family:var(--font-minor);font-size:0.6rem;cursor:pointer;color:var(--text-muted);white-space:nowrap;"
-                                onclick="openCountryAnalysis('${c.country}')"
-                                onmouseenter="this.style.color='var(--accent-gold)'" onmouseleave="this.style.color='var(--text-muted)'">
-                                ${c.country_name} <span style="font-family:var(--font-mono);color:${color};">${c.rao_score.toFixed(2)}</span>
-                            </span>`).join('')}
-                        </div>
+                        <!-- col 2: countries -->
+                        <span class="re-card-count" style="display:flex;align-items:center;">${rn} countries<span class="re-count-hint" title="${rCountryTip}">?</span></span>
+                        <!-- col 3-4: regime stretch bars (spans pillar + rao columns) -->
+                        <div style="display:flex;height:10px;gap:2px;grid-column:3/5;">${rRegStretch}</div>
+                        <!-- col 5: σ (same position as leader column) -->
+                        <span class="re-card-sigma" style="grid-column:5;text-align:right;">σ ${rStddev.toFixed(2)}</span>
+                    </div>
+                    ${cardBody(rRAO, rOppSt, rStabSt, rAbsSt, rTrajSt, color, rLeader, rLeaderRank, rDeltaStr, rDeltaColor, rAheadStr, 'Regional Leader', 'vs Region', 'Regional Average')}
+                    <div class="re-country-strip">
+                        ${rSorted.map(c => `<span class="re-country-chip" onclick="openCountryAnalysis('${c.country}')">${c.country_name} <span style="font-family:var(--font-mono);font-size:0.52rem;color:${color};">${c.rao_score.toFixed(1)}</span></span>`).join('')}
                     </div>
                 </div>
             </div>`;
         }).join('');
 
         const isOpen = _reOpenContinents.has(continent);
+
         return `
         <div class="re-continent" id="re-continent-${cCode}">
-            <div class="re-continent-header" onclick="reToggleContinent('${continent}')">
-                <div style="display:flex;align-items:center;flex:1;min-width:0;gap:0.75rem;">
-                    <span class="re-chevron${isOpen ? ' open' : ''}" id="re-chev-${cCode}">▶</span>
-                    <span class="re-continent-name">${continent}</span>
-                    <span style="font-family:var(--font-minor);font-size:0.58rem;color:var(--text-muted);">${n} countries</span>
+
+            <!-- Collapsed continent row: 5-col grid matching the header -->
+            <div class="re-continent-header re-row-grid" id="re-header-${cCode}"
+                 onclick="reToggleContinent('${continent}')"
+                 style="display:${isOpen ? 'none' : 'grid'};">
+                <!-- col1: chevron + name -->
+                <div style="display:flex;align-items:center;gap:0.45rem;min-width:0;">
+                    <span class="re-chevron" id="re-chev-${cCode}">▶</span>
+                    <span class="re-continent-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${continent}</span>
                 </div>
-                <div style="display:flex;align-items:center;gap:1.6rem;flex-shrink:0;">
-                    <div style="display:flex;gap:4px;align-items:center;">
-                        ${pillarBar(meanA * 10, 'var(--accent-gold)')}
-                        ${pillarBar(meanB * 10, 'var(--accent-blue)')}
-                        ${pillarBar(meanC * 10, 'var(--accent-blue)')}
-                        ${pillarBar(meanD * 10, 'var(--accent-green)')}
+                <!-- col2: n countries (fixed column, always same x-position) -->
+                <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);white-space:nowrap;display:flex;align-items:center;">${n} countries<span class="re-count-hint" title="${countryTip}">?</span></span>
+                <!-- col3: 4 pillar bars (flex:1 each, fills 1fr cell) -->
+                <div style="display:flex;gap:10px;align-items:center;">
+                    ${pillarBarTiny(oppStats.avg,  'var(--accent-gold)')}
+                    ${pillarBarTiny(stabStats.avg, 'var(--accent-blue)')}
+                    ${pillarBarTiny(absStats.avg,  '#7ba3b8')}
+                    ${pillarBarTiny(trajStats.avg, 'var(--accent-green)')}
+                </div>
+                <!-- col4: regime dots -->
+                <div style="display:flex;align-items:center;gap:2px;justify-content:center;">${regDotsHtml}</div>
+                <!-- col5: avg rao -->
+                <span style="font-family:var(--font-mono);font-size:1rem;color:${color};text-align:right;">${meanRAO.toFixed(2)}</span>
+                <!-- col6: leader -->
+                <span style="font-family:var(--font-minor);font-size:0.62rem;color:var(--text-muted);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;"
+                      onclick="event.stopPropagation();openCountryAnalysis('${leader.country}')"
+                      onmouseenter="this.style.color='var(--accent-gold)'" onmouseleave="this.style.color='var(--text-muted)'">${leader.country_name}</span>
+            </div>
+
+            <!-- Expanded continent card -->
+            <div class="re-continent-card" id="re-card-${cCode}" style="display:${isOpen ? 'block' : 'none'};">
+                <div class="re-continent-card-top re-row-grid" onclick="reToggleContinent('${continent}')">
+                    <!-- col 1: chevron + name -->
+                    <div style="display:flex;align-items:center;gap:0.45rem;min-width:0;overflow:hidden;">
+                        <span class="re-chevron open" style="font-size:0.5rem;flex-shrink:0;">▶</span>
+                        <span class="re-continent-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${continent}</span>
                     </div>
-                    <div style="display:flex;align-items:center;gap:2px;">${regDots}</div>
-                    <span style="font-family:var(--font-mono);font-size:1.05rem;color:${color};min-width:40px;text-align:right;">${meanRAO.toFixed(2)}</span>
+                    <!-- col 2: countries -->
+                    <span class="re-card-count" style="display:flex;align-items:center;">${n} countries<span class="re-count-hint" title="${countryTip}">?</span></span>
+                    <!-- col 3-5: regime stretch bars (spans pillar + regime + rao columns) -->
+                    <div style="display:flex;height:10px;gap:2px;grid-column:3/6;">${regStretch}</div>
+                    <!-- col 6: σ (same position as leader column) -->
+                    <span class="re-card-sigma" style="grid-column:6;text-align:right;">σ ${stddev.toFixed(2)}</span>
                 </div>
+                ${cardBody(meanRAO, oppStats, stabStats, absStats, trajStats, color, leader, leaderRank, deltaStr, deltaColor, aheadStr, 'Continental Leader', 'vs Continent', 'Continental Average')}
+                <div id="re-subs-${cCode}" class="re-subs-container">${subHtml}</div>
             </div>
-            <div class="re-subregions" id="re-subs-${cCode}" style="max-height:${isOpen ? '3000px' : '0'};">
-                ${subHtml}
-            </div>
+
         </div>`;
     }).join('');
 
-    document.getElementById('regional-explorer').innerHTML = html;
+    document.getElementById('regional-explorer').innerHTML = headerRow + html;
+
+    setTimeout(() => {
+        document.querySelectorAll('#regional-explorer .score-bar-animated').forEach(bar => {
+            bar.style.width = (bar.dataset.width || '0') + '%';
+        });
+    }, 80);
 }
 
 function reToggleContinent(continent) {
-    const cCode = continent.replace(/[^a-zA-Z0-9]/g, '');
-    const panel = document.getElementById(`re-subs-${cCode}`);
-    const chev  = document.getElementById(`re-chev-${cCode}`);
-    if (!panel) return;
+    const cCode  = continent.replace(/[^a-zA-Z0-9]/g, '');
+    const header = document.getElementById(`re-header-${cCode}`);
+    const card   = document.getElementById(`re-card-${cCode}`);
+    if (!header && !card) return;
+
     if (_reOpenContinents.has(continent)) {
         _reOpenContinents.delete(continent);
-        panel.style.maxHeight = '0';
-        chev && chev.classList.remove('open');
+        if (header) header.style.display = 'grid';
+        if (card)   card.style.display   = 'none';
     } else {
         _reOpenContinents.add(continent);
-        panel.style.maxHeight = '3000px';
-        chev && chev.classList.add('open');
+        if (header) header.style.display = 'none';
+        if (card)   card.style.display   = 'block';
+        // Animate pillar bars inside the newly shown card
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                card && card.querySelectorAll('.score-bar-animated').forEach(bar => {
+                    bar.style.width = (bar.dataset.width || '0') + '%';
+                });
+            }, 50);
+        });
     }
 }
 
 function reToggleSubRegion(region, continent) {
-    const rCode = region.replace(/[^a-zA-Z0-9]/g, '');
-    const panel = document.getElementById(`re-ts-${rCode}`);
-    const chev  = document.getElementById(`re-subchev-${rCode}`);
-    if (!panel) return;
+    const rCode   = region.replace(/[^a-zA-Z0-9]/g, '');
+    const rowHdr  = document.getElementById(`re-subhdr-${rCode}`);
+    const subCard = document.getElementById(`re-subcard-${rCode}`);
+    if (!rowHdr && !subCard) return;
+
     if (_reOpenSubRegions.has(region)) {
         _reOpenSubRegions.delete(region);
-        panel.style.maxHeight = '0';
-        chev && chev.classList.remove('open');
-        if (_reChartInstances[rCode]) { _reChartInstances[rCode].destroy(); delete _reChartInstances[rCode]; }
+        if (rowHdr)  rowHdr.style.display  = 'grid';
+        if (subCard) subCard.style.display = 'none';
     } else {
         _reOpenSubRegions.add(region);
-        panel.style.maxHeight = '600px';
-        chev && chev.classList.add('open');
-        requestAnimationFrame(() => _renderRegionTimeseries(region, continent));
+        if (rowHdr)  rowHdr.style.display  = 'none';
+        if (subCard) subCard.style.display = 'block';
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                subCard && subCard.querySelectorAll('.score-bar-animated').forEach(bar => {
+                    bar.style.width = (bar.dataset.width || '0') + '%';
+                });
+            }, 50);
+        });
     }
 }
 
@@ -6270,34 +7241,33 @@ function renderScoreDecompCard(iso, year) {
 
     const pre   = row.rao_score_pre_overlay ?? row.rao_score;
     const ov    = row.overlay_adjustment ?? 0;
-    const ovAdj = pre + ov;
     const ms    = row.market_size_bonus ?? 0;
     const fin   = row.rao_score;
     const ovCol = ov >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+    const sign  = v => (v > 0 ? '+' : '') + Math.abs(v).toFixed(2);
 
     const pill = (label, val, col, showSign=false) =>
-        `<div style="display:flex;flex-direction:column;align-items:center;gap:0.25rem;padding:0.4rem 0.7rem;flex:1;min-width:72px;">
-            <div style="font-family:var(--font-mono);font-size:1.15rem;color:${col};font-weight:500;">${showSign&&val>0?'+':''}${Math.abs(val).toFixed(2)}</div>
-            <div style="font-family:var(--font-minor);font-size:0.54rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);text-align:center;line-height:1.3;">${label}</div>
+        `<div class="score-decomp-pill">
+            <div class="sdp-val" style="color:${col};">${showSign ? sign(val) : Math.abs(val).toFixed(2)}</div>
+            <div class="sdp-label">${label}</div>
         </div>`;
-    const arrow = `<span style="color:rgba(238,234,224,0.2);font-size:1rem;align-self:center;">→</span>`;
 
     el.innerHTML = `<div style="padding:0.9rem 1.4rem 1rem;">
         <div style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent-gold);margin-bottom:0.75rem;">Score Decomposition</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:0.25rem;">
-            <div style="display:flex;align-items:center;gap:0.25rem;flex:1;">
+        <div class="score-decomp-row">
+            <div class="score-decomp-pills">
                 ${pill('Pre-Overlay', pre, 'var(--w65)')}
-                ${arrow}
+                <span class="score-decomp-arrow">→</span>
                 ${pill('Overlay Adj', ov, ovCol, true)}
-                ${arrow}
-                ${pill('Mkt Size Bonus', ms, 'var(--accent-blue)', true)}
-                ${arrow}
-                <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;padding:0.55rem 1rem;background:rgba(194,165,109,0.1);border:1px solid rgba(194,165,109,0.25);border-radius:3px;min-width:80px;">
-                    <div style="font-family:var(--font-mono);font-size:1.35rem;color:var(--accent-gold);font-weight:600;">${fin.toFixed(2)}</div>
-                    <div style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-gold);">Final RAO</div>
+                <span class="score-decomp-arrow">→</span>
+                ${pill('Mkt Bonus', ms, 'var(--accent-blue)', true)}
+                <span class="score-decomp-arrow">→</span>
+                <div class="score-decomp-final">
+                    <div style="font-family:var(--font-mono);font-size:1.3rem;color:var(--accent-gold);font-weight:600;">${fin.toFixed(2)}</div>
+                    <div style="font-family:var(--font-minor);font-size:0.52rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent-gold);">Final RAO</div>
                 </div>
             </div>
-            <div style="display:flex;flex-direction:column;gap:0.25rem;align-self:center;padding-left:1.25rem;border-left:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+            <div class="score-decomp-meta">
                 <div style="font-family:var(--font-minor);font-size:0.62rem;color:var(--text-muted);">CVaR₂₅ <span style="font-family:var(--font-mono);color:var(--text-white);margin-left:0.4rem;">${row.cvar25!=null?row.cvar25.toFixed(2):'—'}</span></div>
                 <div style="font-family:var(--font-minor);font-size:0.62rem;color:var(--text-muted);">Vol. Band <span style="font-family:var(--font-mono);color:var(--text-white);margin-left:0.4rem;">±${row.volatility_band!=null?row.volatility_band.toFixed(2):'—'}</span></div>
             </div>
@@ -6470,13 +7440,16 @@ function renderPillarRadar(iso, year) {
         borderWidth: 1.5, borderDash: [3,3], pointBackgroundColor: 'rgba(238,234,224,0.4)', pointRadius: 2
     });
 
+    const containerW = ctx.parentElement?.offsetWidth || 300;
+    const labelSize  = containerW < 260 ? 8 : containerW < 360 ? 9 : 10;
+
     registerChart(new Chart(ctx, {
         type: 'radar',
         data: { labels, datasets },
         options: {
-            responsive: true, maintainAspectRatio: true,
+            responsive: true, maintainAspectRatio: true, aspectRatio: 1,
             scales: { r: { min:0, max:1, grid:{color:'rgba(255,255,255,0.08)'}, angleLines:{color:'rgba(255,255,255,0.08)'},
-                ticks:{display:false}, pointLabels:{color:'rgba(238,234,224,0.6)',font:{size:10}} } },
+                ticks:{display:false}, pointLabels:{color:'rgba(238,234,224,0.6)',font:{size:labelSize}} } },
             plugins: { legend: { display: true, position:'bottom', labels:{color:'rgba(238,234,224,0.5)',font:{size:10},boxWidth:10,padding:10} } }
         }
     }));
@@ -11499,6 +12472,14 @@ function makeChartWrapper(title) {
 const _chartInstances = [];
 function registerChart(instance) { _chartInstances.push(instance); }
 
+let _chartResizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(_chartResizeTimer);
+    _chartResizeTimer = setTimeout(() => {
+        _chartInstances.forEach(c => { try { c.resize(); } catch(e) {} });
+    }, 150);
+});
+
 // ===== SCATTER PLOT (rao8: Opportunity vs Absorptive Capacity, colored by regime) =====
 function buildScatterPlot({ highlight = [], title } = {}) {
     if (!latestSlice.length) return null;
@@ -11739,6 +12720,1509 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
     div.innerHTML = html;
     wrapper.appendChild(div);
     return wrapper;
+}
+
+// ===== EXPERIMENTATION CONSOLE =====
+
+// ── ISO3 → {continent, region} mapping ───────────────────────────────────
+const EXP_CONTINENTS = { af:'Africa', as:'Asia', eu:'Europe', am:'Americas', oc:'Oceania', ot:'Other' };
+const EXP_REGIONS = {
+    caf:'Central Africa', eaf:'East Africa', naf:'North Africa', saf:'Southern Africa', waf:'West Africa',
+    cas:'Central Asia', eas:'East Asia', mea:'Middle East', sas:'South Asia', sea:'Southeast Asia',
+    cau:'Caucasus',
+    eeu:'Eastern Europe', neu:'Northern Europe', seu:'Southern Europe', weu:'Western Europe',
+    car:'Caribbean', cam:'Central America', nam:'North America', sam:'South America',
+    oce:'Oceania', oth:'Uncategorised'
+};
+// continent|region  (G-codes and unknown ISOs fall through to 'ot|oth')
+const EXP_ISO_GEO = {
+    AFG:'as|sas', AGO:'af|caf', ALB:'eu|seu', ARE:'as|mea', ARG:'am|sam', ARM:'eu|cau',
+    AUS:'oc|oce', AUT:'eu|weu', AZE:'eu|cau', BDI:'af|eaf', BEL:'eu|weu', BEN:'af|waf',
+    BFA:'af|waf', BGD:'as|sas', BGR:'eu|eeu', BHR:'as|mea', BIH:'eu|seu', BLR:'eu|eeu',
+    BLZ:'am|cam', BOL:'am|sam', BRA:'am|sam', BTN:'as|sas', BWA:'af|saf', CAF:'af|caf',
+    CAN:'am|nam', CHE:'eu|weu', CHL:'am|sam', CHN:'as|eas', CIV:'af|waf', CMR:'af|caf',
+    COD:'af|caf', COG:'af|caf', COL:'am|sam', CRI:'am|cam', CYP:'eu|seu', CZE:'eu|eeu',
+    DEU:'eu|weu', DJI:'af|eaf', DNK:'eu|neu', DOM:'am|car', DZA:'af|naf', ECU:'am|sam',
+    EGY:'af|naf', ERI:'af|eaf', ESP:'eu|seu', EST:'eu|neu', ETH:'af|eaf', FIN:'eu|neu',
+    FRA:'eu|weu', GAB:'af|caf', GBR:'eu|neu', GEO:'eu|cau', GHA:'af|waf', GIN:'af|waf',
+    GMB:'af|waf', GNB:'af|waf', GRC:'eu|seu', GTM:'am|cam', GUY:'am|sam', HND:'am|cam',
+    HRV:'eu|seu', HTI:'am|car', HUN:'eu|eeu', IDN:'as|sea', IND:'as|sas', IRL:'eu|neu',
+    IRN:'as|mea', IRQ:'as|mea', ISL:'eu|neu', ISR:'as|mea', ITA:'eu|seu', JAM:'am|car',
+    JOR:'as|mea', JPN:'as|eas', KAZ:'as|cas', KEN:'af|eaf', KGZ:'as|cas', KHM:'as|sea',
+    KOR:'as|eas', KOS:'eu|seu', KWT:'as|mea', LAO:'as|sea', LBN:'as|mea', LBR:'af|waf',
+    LBY:'af|naf', LIE:'eu|weu', LKA:'as|sas', LSO:'af|saf', LTU:'eu|neu', LUX:'eu|weu',
+    LVA:'eu|neu', MAR:'af|naf', MDA:'eu|eeu', MDG:'af|eaf', MEX:'am|nam', MKD:'eu|seu',
+    MLI:'af|waf', MLT:'eu|seu', MMR:'as|sea', MNE:'eu|seu', MNG:'as|eas', MOZ:'af|eaf',
+    MRT:'af|waf', MUS:'af|eaf', MWI:'af|saf', MYS:'as|sea', NAM:'af|saf', NER:'af|waf',
+    NGA:'af|waf', NIC:'am|cam', NLD:'eu|weu', NOR:'eu|neu', NPL:'as|sas', NZL:'oc|oce',
+    OMN:'as|mea', PAK:'as|sas', PAN:'am|cam', PER:'am|sam', PHL:'as|sea', PNG:'oc|oce',
+    POL:'eu|eeu', PRT:'eu|seu', PRY:'am|sam', QAT:'as|mea', ROU:'eu|eeu', RUS:'eu|eeu',
+    RWA:'af|eaf', SAU:'as|mea', SDN:'af|eaf', SEN:'af|waf', SGP:'as|sea', SLE:'af|waf',
+    SLV:'am|cam', SOM:'af|eaf', SRB:'eu|seu', SSD:'af|eaf', SUR:'am|sam', SVK:'eu|eeu',
+    SVN:'eu|seu', SWE:'eu|neu', SWZ:'af|saf', SYR:'as|mea', TCD:'af|caf', TGO:'af|waf',
+    THA:'as|sea', TJK:'as|cas', TKM:'as|cas', TLS:'as|sea', TTO:'am|car', TUN:'af|naf',
+    TUR:'eu|seu', TZA:'af|eaf', UGA:'af|eaf', UKR:'eu|eeu', URY:'am|sam', USA:'am|nam',
+    UVK:'eu|seu', UZB:'as|cas', VEN:'am|sam', VNM:'as|sea', YEM:'as|mea', ZAF:'af|saf',
+    ZMB:'af|saf', ZWE:'af|saf'
+};
+// Full display names (fallback: use country_name from data)
+const EXP_COUNTRY_NAMES = {
+    AFG:'Afghanistan', AGO:'Angola', ALB:'Albania', ARE:'UAE', ARG:'Argentina', ARM:'Armenia',
+    AUS:'Australia', AUT:'Austria', AZE:'Azerbaijan', BDI:'Burundi', BEL:'Belgium', BEN:'Benin',
+    BFA:'Burkina Faso', BGD:'Bangladesh', BGR:'Bulgaria', BHR:'Bahrain', BIH:'Bosnia & Herz.',
+    BLR:'Belarus', BLZ:'Belize', BOL:'Bolivia', BRA:'Brazil', BTN:'Bhutan', BWA:'Botswana',
+    CAF:'Cent. Afr. Rep.', CAN:'Canada', CHE:'Switzerland', CHL:'Chile', CHN:'China',
+    CIV:"Côte d'Ivoire", CMR:'Cameroon', COD:'DR Congo', COG:'Congo', COL:'Colombia',
+    CRI:'Costa Rica', CYP:'Cyprus', CZE:'Czech Rep.', DEU:'Germany', DJI:'Djibouti',
+    DNK:'Denmark', DOM:'Dominican Rep.', DZA:'Algeria', ECU:'Ecuador', EGY:'Egypt',
+    ERI:'Eritrea', ESP:'Spain', EST:'Estonia', ETH:'Ethiopia', FIN:'Finland', FRA:'France',
+    GAB:'Gabon', GBR:'United Kingdom', GEO:'Georgia', GHA:'Ghana', GIN:'Guinea',
+    GMB:'Gambia', GNB:'Guinea-Bissau', GRC:'Greece', GTM:'Guatemala', GUY:'Guyana',
+    HND:'Honduras', HRV:'Croatia', HTI:'Haiti', HUN:'Hungary', IDN:'Indonesia', IND:'India',
+    IRL:'Ireland', IRN:'Iran', IRQ:'Iraq', ISL:'Iceland', ISR:'Israel', ITA:'Italy',
+    JAM:'Jamaica', JOR:'Jordan', JPN:'Japan', KAZ:'Kazakhstan', KEN:'Kenya', KGZ:'Kyrgyzstan',
+    KHM:'Cambodia', KOR:'South Korea', KOS:'Kosovo', KWT:'Kuwait', LAO:'Laos', LBN:'Lebanon',
+    LBR:'Liberia', LBY:'Libya', LIE:'Liechtenstein', LKA:'Sri Lanka', LSO:'Lesotho',
+    LTU:'Lithuania', LUX:'Luxembourg', LVA:'Latvia', MAR:'Morocco', MDA:'Moldova',
+    MDG:'Madagascar', MEX:'Mexico', MKD:'North Macedonia', MLI:'Mali', MLT:'Malta',
+    MMR:'Myanmar', MNE:'Montenegro', MNG:'Mongolia', MOZ:'Mozambique', MRT:'Mauritania',
+    MUS:'Mauritius', MWI:'Malawi', MYS:'Malaysia', NAM:'Namibia', NER:'Niger', NGA:'Nigeria',
+    NIC:'Nicaragua', NLD:'Netherlands', NOR:'Norway', NPL:'Nepal', NZL:'New Zealand',
+    OMN:'Oman', PAK:'Pakistan', PAN:'Panama', PER:'Peru', PHL:'Philippines', PNG:'Papua N. Guinea',
+    POL:'Poland', PRT:'Portugal', PRY:'Paraguay', QAT:'Qatar', ROU:'Romania', RUS:'Russia',
+    RWA:'Rwanda', SAU:'Saudi Arabia', SDN:'Sudan', SEN:'Senegal', SGP:'Singapore',
+    SLE:'Sierra Leone', SLV:'El Salvador', SOM:'Somalia', SRB:'Serbia', SSD:'South Sudan',
+    SUR:'Suriname', SVK:'Slovakia', SVN:'Slovenia', SWE:'Sweden', SWZ:'Eswatini',
+    SYR:'Syria', TCD:'Chad', TGO:'Togo', THA:'Thailand', TJK:'Tajikistan', TKM:'Turkmenistan',
+    TLS:'Timor-Leste', TTO:'Trinidad & Tobago', TUN:'Tunisia', TUR:'Türkiye', TZA:'Tanzania',
+    UGA:'Uganda', UKR:'Ukraine', URY:'Uruguay', USA:'United States', UVK:'Kosovo (alt)',
+    UZB:'Uzbekistan', VEN:'Venezuela', VNM:'Vietnam', YEM:'Yemen', ZAF:'South Africa',
+    ZMB:'Zambia', ZWE:'Zimbabwe'
+};
+
+// ── Country filter state ──────────────────────────────────────────────────
+let EXP_COUNTRY_FILTER = {
+    mode: 'all',       // 'all' | 'cohort' | 'visual'
+    selected: new Set()
+};
+// Working copy inside the modal
+let _cfWorkingSelected = new Set();
+let _cfWorkingMode = 'all';
+let _cfActiveContinent = null;   // null = show all
+let _cfSearchQuery = '';
+
+const EXP_CFM_DESCS = {
+    all: 'All countries scored and shown — no filter applied.',
+    cohort: 'Only selected countries are scored. Rankings and KPIs are relative within the group.',
+    visual: 'All countries scored globally. Only selected countries are displayed in results.'
+};
+
+const EXP_PILLAR_MAP = {
+    opportunity: {
+        label: 'Opportunity', color: '#C2A56D',
+        vars: ['norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp','norm_gross_capital_formation','norm_secondary_school_enrolment']
+    },
+    stability: {
+        label: 'Stability', color: '#607c98',
+        vars: ['norm_cpi_inflation','norm_government_debt_pct_gdp','norm_current_account_pct_gdp','norm_external_debt_pct_gni','norm_political_stability','norm_rule_of_law','norm_control_of_corruption']
+    },
+    absorptive_capacity: {
+        label: 'Absorptive Capacity', color: '#5d8a72',
+        vars: ['norm_natural_resource_rents_pct_gdp','norm_gdp_per_capita_growth','norm_youth_unemployment','norm_vulnerable_employment','norm_regulatory_quality']
+    },
+    trajectory: {
+        label: 'Trajectory', color: '#c9a961',
+        vars: ['norm_gdp_growth_trend','norm_fdi_trend','norm_governance_trend','norm_debt_trend','norm_inflation_trend']
+    }
+};
+
+const EXP_VAR_LABELS = {
+    norm_gdp_growth: 'GDP Growth', norm_export_growth: 'Export Growth', norm_net_fdi_pct_gdp: 'Net FDI % GDP',
+    norm_gross_capital_formation: 'Capital Formation', norm_secondary_school_enrolment: 'School Enrolment',
+    norm_cpi_inflation: 'CPI Inflation', norm_government_debt_pct_gdp: "Gov't Debt % GDP",
+    norm_current_account_pct_gdp: 'Current Account % GDP', norm_external_debt_pct_gni: 'External Debt % GNI',
+    norm_political_stability: 'Political Stability', norm_rule_of_law: 'Rule of Law',
+    norm_control_of_corruption: 'Control of Corruption', norm_natural_resource_rents_pct_gdp: 'Resource Rents % GDP',
+    norm_gdp_per_capita_growth: 'GDP/Capita Growth', norm_youth_unemployment: 'Youth Unemployment',
+    norm_vulnerable_employment: 'Vulnerable Employment', norm_regulatory_quality: 'Regulatory Quality',
+    norm_gdp_growth_trend: 'GDP Growth Trend', norm_fdi_trend: 'FDI Trend',
+    norm_governance_trend: 'Governance Trend', norm_debt_trend: 'Debt Trend', norm_inflation_trend: 'Inflation Trend'
+};
+
+// actual_rao: Bayesian targets are w_A=40%, w_B=40%, w_D=20%; Pillar C is a capacity
+// multiplier on A (A_eff = A×C), not additive — best linear approximation uses 2:2:1:1.
+// Pillar C aggregation is geometric mean in the real pipeline; AbsCap agg defaults to geometric below.
+
+// ── Trajectory variable list for OLS computation ──────────────────────────
+const EXP_TRAJ_VARS = [
+    'norm_gdp_growth_trend','norm_fdi_trend','norm_governance_trend',
+    'norm_debt_trend','norm_inflation_trend'
+];
+
+// ── Gamma sampler (Marsaglia-Tsang, pure JS) ──────────────────────────────
+function sampleGamma(shape) {
+    if (shape <= 0) return 0;
+    if (shape < 1) return sampleGamma(1 + shape) * Math.pow(Math.random(), 1 / shape);
+    const d = shape - 1 / 3, c = 1 / Math.sqrt(9 * d);
+    for (;;) {
+        let x, v;
+        do { x = (Math.random() * 2 - 1) * 3.464; v = 1 + c * x; } while (v <= 0);
+        v = v * v * v;
+        const u = Math.random();
+        if (u < 1 - 0.331 * (x * x) * (x * x)) return d * v;
+        if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
+    }
+}
+
+// ── Bayesian Monte Carlo CVaR25 ────────────────────────────────────────────
+// A, B, C, D: pillar scores [0,1]; config from EXP_CONFIG.bayesian
+function computeBayesianCVaR(A, B, C, D) {
+    const cfg = EXP_CONFIG.bayesian;
+    const conc = cfg.concentration;
+    const nSims = cfg.n_sims;
+    const A_eff = Math.min(1, Math.max(0, A * C));
+    const wA_t = Math.max(0.05, cfg.opp_weight - 0.20);
+    const wB_t = Math.max(0.05, cfg.stab_weight);
+    const wD_t = 0.20;
+    const alphas = [
+        Math.max(0.1, wA_t * conc),
+        Math.max(0.1, wB_t * conc),
+        Math.max(0.1, wD_t * conc)
+    ];
+    const sims = new Float32Array(nSims);
+    for (let s = 0; s < nSims; s++) {
+        const g = alphas.map(a => sampleGamma(a));
+        const tot = g[0] + g[1] + g[2];
+        const wA = g[0] / tot, wB = g[1] / tot, wD = g[2] / tot;
+        sims[s] = Math.min(1, Math.max(0, wA * A_eff + wD * D + wB * B));
+    }
+    sims.sort();
+    const q25idx = Math.floor(nSims * 0.25);
+    let cvarSum = 0;
+    for (let i = 0; i < q25idx; i++) cvarSum += sims[i];
+    const cvar25 = q25idx > 0 ? cvarSum / q25idx : sims[0];
+    const volatility = sims[Math.floor(nSims * 0.75)] - sims[q25idx];
+    return { cvar25, volatility };
+}
+
+// ── OLS helpers ───────────────────────────────────────────────────────────
+function _ols(xs, ys) {
+    const n = xs.length;
+    const mx = xs.reduce((a, b) => a + b, 0) / n;
+    const my = ys.reduce((a, b) => a + b, 0) / n;
+    let ssxy = 0, ssxx = 0, ssyy = 0;
+    for (let i = 0; i < n; i++) {
+        ssxy += (xs[i] - mx) * (ys[i] - my);
+        ssxx += (xs[i] - mx) ** 2;
+        ssyy += (ys[i] - my) ** 2;
+    }
+    if (ssxx === 0) return { slope: 0, r2: 0 };
+    const slope = ssxy / ssxx;
+    const r2 = ssyy > 0 ? (ssxy * ssxy) / (ssxx * ssyy) : 0;
+    return { slope, r2 };
+}
+
+// ── Pillar D from multi-year OLS on norm_ trajectory vars ─────────────────
+function computePillarD_OLS(iso) {
+    const trendWindow = 5;
+    const latest = LATEST_YEAR;
+    if (!countryMap || !countryMap.has(iso)) return null;
+    const allRawScores = EXP_TRAJ_VARS.map(v => {
+        const pts = [];
+        for (let y = latest - trendWindow + 1; y <= latest; y++) {
+            const row = countryMap.get(iso)?.get(y);
+            if (row) {
+                const val = parseFloat(row[v]);
+                if (!isNaN(val)) pts.push({ y, val });
+            }
+        }
+        if (pts.length < 3) return null;
+        const xs = pts.map(p => p.y - pts[pts.length - 1].y);
+        const ys = pts.map(p => p.val);
+        const { slope, r2 } = _ols(xs, ys);
+        return slope * r2;
+    }).filter(v => v !== null);
+
+    if (allRawScores.length === 0) return null;
+
+    // Cross-section winsorise P10/P90 among available countries for each var
+    // (Approximation: single-country OLS scores are z+sigmoid-normalised across the slice)
+    // Since we can't cross-section at call time, return raw mean clamped to [0.38, 0.75]
+    const raw = allRawScores.reduce((a, b) => a + b, 0) / allRawScores.length;
+    // Map raw OLS score to [0,1] via sigmoid (scale factor 8 empirically chosen for norm_ range)
+    const normed = 1 / (1 + Math.exp(-8 * raw));
+    return Math.min(0.75, Math.max(0.38, normed));
+}
+
+// ── TOS re-blend with adjustable sub-signal weights ──────────────────────
+function computeExperimentalTOS(row) {
+    const tw = EXP_CONFIG.tosWeights || {};
+    const wSIS = tw.w_SIS ?? 0.35;
+    const wDGI = tw.w_DGI ?? 0.35;
+    const wRVS = tw.w_RVS ?? 0.30;
+    const clip = v => Math.max(1e-6, Math.min(1 - 1e-6, parseFloat(v) || 0.5));
+    const sis = clip(row.sis_score), dgi = clip(row.dgi_score), rvs = clip(row.rvs_score);
+    const totalW = wSIS + wDGI + wRVS || 1;
+    return Math.exp((wSIS / totalW) * Math.log(sis) + (wDGI / totalW) * Math.log(dgi) + (wRVS / totalW) * Math.log(rvs));
+}
+
+// ── ML Layer 1: Trajectory classification ────────────────────────────────
+function classifyTrajectory(row, pillar_d) {
+    const archetype = (row.archetype || '').toLowerCase();
+    const B = parseFloat(row.pillar_stability) || 0;
+    const C = parseFloat(row.pillar_absorptive_capacity) || 0;
+    const tos = parseFloat(row.tos_score) || 0;
+    const conf = (row.data_confidence || '').toUpperCase();
+    if (conf === 'LOW') return { type: 'noise', factor: 0.75 };
+    if (archetype.includes('advanced') && B >= 0.55 && pillar_d < 0.45) return { type: 'stable', factor: 1.0 };
+    if (pillar_d < 0.35) return { type: 'noise', factor: 0.75 };
+    if ((archetype.includes('commodity') || archetype.includes('tourism')) && pillar_d > 0.60) return { type: 'cyclical', factor: 0.60 };
+    if (pillar_d > 0.65 && C < 0.40 && tos < 0.50) return { type: 'recovery_bounce', factor: 0.50 };
+    return { type: 'structural', factor: 1.0 };
+}
+
+const EXP_PRESETS = {
+    actual_rao: { opportunity: 2.0, stability: 2.0, absorptive_capacity: 1.0, trajectory: 1.0 },
+    commercial: { opportunity: 1.0, stability: 1.0, absorptive_capacity: 1.0, trajectory: 1.0 },
+    frontier:   { opportunity: 1.4, stability: 0.7, absorptive_capacity: 1.1, trajectory: 1.5 },
+    defensive:  { opportunity: 0.6, stability: 1.8, absorptive_capacity: 0.9, trajectory: 0.7 },
+    conviction: { opportunity: 1.2, stability: 0.9, absorptive_capacity: 1.4, trajectory: 1.2 }
+};
+
+// Default matches actual RAO methodology: 2:2:1:1 pillar ratio, geometric for AbsCap
+let EXP_CONFIG = {
+    pillarWeights: { opportunity: 2, stability: 2, absorptive_capacity: 1, trajectory: 1 },
+    varWeights: Object.fromEntries(Object.values(EXP_PILLAR_MAP).flatMap(p => p.vars).map(v => [v, 1])),
+    bayesian: { enabled: false, opp_weight: 0.60, stab_weight: 0.40, concentration: 3.0, n_sims: 1000 },
+    tosWeights: { w_SIS: 0.35, w_DGI: 0.35, w_RVS: 0.30 },
+    anomalyHaircut: false,
+    useDynamicTraj: false
+};
+
+// ── Aggregation methods ──────────────────────────────────────────────────────
+const EXP_AGG_METHODS = {
+    mean: {
+        label: 'Weighted Mean',
+        formula: 'Σ(wᵢ·xᵢ) / Σwᵢ  — arithmetic average, equal treatment',
+        fn: pairs => {
+            let s = 0, w = 0;
+            for (const [v, wt] of pairs) if (!isNaN(v) && wt > 0) { s += v * wt; w += wt; }
+            return w > 0 ? s / w : 0;
+        }
+    },
+    geometric: {
+        label: 'Geometric Mean',
+        formula: 'exp(Σ(wᵢ·ln xᵢ) / Σwᵢ)  — penalises imbalance across variables',
+        fn: pairs => {
+            let ls = 0, w = 0;
+            for (const [v, wt] of pairs) if (!isNaN(v) && v > 0 && wt > 0) { ls += Math.log(v) * wt; w += wt; }
+            return w > 0 ? Math.exp(ls / w) : 0;
+        }
+    },
+    cvar25: {
+        label: 'CVaR25 Approx',
+        formula: 'μ − 0.672·σ  — risk-adjusted; penalises high-variance pillar profiles',
+        fn: pairs => {
+            let s = 0, w = 0;
+            for (const [v, wt] of pairs) if (!isNaN(v) && wt > 0) { s += v * wt; w += wt; }
+            if (w === 0) return 0;
+            const mu = s / w;
+            let vsum = 0;
+            for (const [v, wt] of pairs) if (!isNaN(v) && wt > 0) vsum += wt * (v - mu) ** 2;
+            return Math.max(0, mu - 0.672 * Math.sqrt(vsum / w));
+        }
+    },
+    harmonic: {
+        label: 'Harmonic Mean',
+        formula: 'Σwᵢ / Σ(wᵢ/xᵢ)  — heavily penalises any near-zero variable',
+        fn: pairs => {
+            let rs = 0, w = 0;
+            for (const [v, wt] of pairs) if (!isNaN(v) && v > 0 && wt > 0) { rs += wt / v; w += wt; }
+            return w > 0 && rs > 0 ? w / rs : 0;
+        }
+    },
+    zsig: {
+        label: 'Z-score + Sigmoid',
+        formula: '1/(1+e^(-z))  where z=(x−μ)/σ  — re-normalise within current slice',
+        fn: (pairs, allSliceVals) => {
+            // allSliceVals is passed in for cross-country normalisation
+            if (!allSliceVals || allSliceVals.length === 0) return EXP_AGG_METHODS.mean.fn(pairs);
+            let s = 0, w = 0;
+            for (let i = 0; i < pairs.length; i++) {
+                const [v, wt] = pairs[i];
+                if (isNaN(v) || wt <= 0) continue;
+                const vals = (allSliceVals[i] || []).filter(x => !isNaN(x));
+                if (vals.length < 2) { s += v * wt; w += wt; continue; }
+                const mu = vals.reduce((a, b) => a + b, 0) / vals.length;
+                const sigma = Math.sqrt(vals.reduce((a, b) => a + (b - mu) ** 2, 0) / vals.length) || 1;
+                const z = (v - mu) / sigma;
+                s += (1 / (1 + Math.exp(-z))) * wt;
+                w += wt;
+            }
+            return w > 0 ? s / w : 0;
+        }
+    }
+};
+
+// Per-pillar aggregation selection (default: mean for all)
+// AbsCap uses geometric mean in the actual methodology; others use arithmetic mean
+let EXP_PILLAR_AGG = { opportunity: 'mean', stability: 'mean', absorptive_capacity: 'geometric', trajectory: 'mean' };
+let EXP_UNASSIGNED_VARS = []; // variables removed from pillars, available to reassign
+let EXP_OVERLAYS = { cvarBlend: 0, tosWeight: 0, marketSizeBonus: false };
+
+// Pre-compute per-variable cross-section values for z-score method
+let _expVarSliceVals = {};  // { var_name: [val, val, ...] for each latestSlice row }
+
+function buildExpVarSliceVals() {
+    _expVarSliceVals = {};
+    if (!latestSlice) return;
+    const allVars = Object.values(EXP_PILLAR_MAP).flatMap(p => p.vars);
+    for (const v of allVars) {
+        _expVarSliceVals[v] = latestSlice.map(r => parseFloat(r[v])).filter(x => !isNaN(x));
+    }
+}
+
+let expData = [];
+let expSortCol = 'exp_rank';
+let expSortDir = 'asc';
+let expActivePillarTab = 'opportunity';
+let expActiveSubTab = 'rankings';
+let expScoringOpen = false;
+let expReadonlyVisible = true;
+let expConsoleInited = false;
+
+function initExperimentationConsole() {
+    if (!latestSlice || latestSlice.length === 0) return;
+    buildExpVarSliceVals();
+    if (!expConsoleInited) {
+        loadSavedVarLayout();
+        renderExpPillarSliders();
+        renderExpVarPillarTabs();
+        renderExpAggSelectors();
+        initExpResizer();
+        updateBayesianModeUI();
+        updateExpFilterBadge();
+        expConsoleInited = true;
+        if (expReadonlyVisible && typeof initializeAnalyticsV8 === 'function') {
+            setTimeout(() => initializeAnalyticsV8(), 50);
+        }
+    }
+    renderExpVarSliders(expActivePillarTab);
+    recomputeExp();
+}
+
+function initExpResizer() {
+    const divider = document.getElementById('exp-divider');
+    const configPanel = document.querySelector('.exp-config-panel');
+    if (!divider || !configPanel) return;
+    let dragging = false, startX = 0, startW = 0;
+    divider.addEventListener('mousedown', e => {
+        dragging = true;
+        startX = e.clientX;
+        startW = configPanel.offsetWidth;
+        divider.classList.add('active');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+    document.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        const delta = e.clientX - startX;
+        const newW = Math.max(200, Math.min(startW + delta, window.innerWidth * 0.55));
+        configPanel.style.flexBasis = newW + 'px';
+    });
+    document.addEventListener('mouseup', () => {
+        if (!dragging) return;
+        dragging = false;
+        divider.classList.remove('active');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    });
+}
+
+function renderExpPillarSliders() {
+    const container = document.getElementById('exp-pillar-sliders');
+    if (!container) return;
+    container.innerHTML = Object.entries(EXP_PILLAR_MAP).map(([pk, pd]) => `
+        <div class="exp-slider-row">
+            <span class="exp-slider-label" style="color:${pd.color};">${pd.label}</span>
+            <input type="range" class="exp-slider" min="0" max="3" step="0.05"
+                value="${EXP_CONFIG.pillarWeights[pk]}"
+                oninput="updateExpPillarWeight('${pk}', this.value)">
+            <span class="exp-slider-val" id="exp-pw-${pk}">${EXP_CONFIG.pillarWeights[pk].toFixed(2)}</span>
+        </div>
+    `).join('');
+    updateExpPillarSumDisplay();
+}
+
+function renderExpVarPillarTabs() {
+    const container = document.getElementById('exp-var-pillar-tabs');
+    if (!container) return;
+    container.innerHTML = Object.entries(EXP_PILLAR_MAP).map(([pk, pd]) => {
+        const shortLabel = pk === 'absorptive_capacity' ? 'AbsCap' : pd.label.split(' ')[0];
+        return `<button class="exp-pillar-tab${pk === expActivePillarTab ? ' active' : ''}"
+            onclick="selectExpVarPillar('${pk}')">${shortLabel}</button>`;
+    }).join('');
+}
+
+function selectExpVarPillar(pk) {
+    expActivePillarTab = pk;
+    document.querySelectorAll('.exp-pillar-tab').forEach((t, i) => {
+        t.classList.toggle('active', Object.keys(EXP_PILLAR_MAP)[i] === pk);
+    });
+    renderExpVarSliders(pk);
+}
+
+function renderExpVarSliders(pk) {
+    const pd = EXP_PILLAR_MAP[pk];
+    const container = document.getElementById('exp-var-sliders');
+    if (!container || !pd) return;
+    container.innerHTML = pd.vars.map(v => `
+        <div class="exp-slider-row">
+            <span class="exp-slider-label">${EXP_VAR_LABELS[v] || v}</span>
+            <input type="range" class="exp-slider" min="0" max="2" step="0.05"
+                value="${EXP_CONFIG.varWeights[v] ?? 1}"
+                oninput="updateExpVarWeight('${v}', this.value)">
+            <span class="exp-slider-val" id="exp-vw-${v}">${(EXP_CONFIG.varWeights[v] ?? 1).toFixed(2)}</span>
+        </div>
+    `).join('');
+}
+
+function updateExpPillarWeight(pk, val) {
+    EXP_CONFIG.pillarWeights[pk] = parseFloat(val);
+    const el = document.getElementById('exp-pw-' + pk);
+    if (el) el.textContent = parseFloat(val).toFixed(2);
+    updateExpPillarSumDisplay();
+    recomputeExp();
+}
+
+function updateExpVarWeight(v, val) {
+    EXP_CONFIG.varWeights[v] = parseFloat(val);
+    const el = document.getElementById('exp-vw-' + v);
+    if (el) el.textContent = parseFloat(val).toFixed(2);
+    recomputeExp();
+}
+
+function updateExpPillarSumDisplay() {
+    const sum = Object.values(EXP_CONFIG.pillarWeights).reduce((a, b) => a + b, 0);
+    const el = document.getElementById('exp-pillar-sum-display');
+    if (el) el.textContent = 'Sum = ' + sum.toFixed(2);
+}
+
+// Returns filtered expData for display (visual filter) or full data (cohort / all)
+function getDisplayData() {
+    if (EXP_COUNTRY_FILTER.mode === 'visual' && EXP_COUNTRY_FILTER.selected.size > 0) {
+        return expData.filter(r => EXP_COUNTRY_FILTER.selected.has(r.country_iso));
+    }
+    return expData;
+}
+
+function computeExperimentalScores() {
+    if (!latestSlice || !latestSlice.length) return [];
+    // Cohort mode: only score the selected subset
+    const cfMode = EXP_COUNTRY_FILTER.mode;
+    const cfSet = EXP_COUNTRY_FILTER.selected;
+    const workingSlice = (cfMode === 'cohort' && cfSet.size > 0)
+        ? latestSlice.filter(r => cfSet.has(r.country_iso || r.country))
+        : latestSlice;
+    const pw = EXP_CONFIG.pillarWeights;
+    const vw = EXP_CONFIG.varWeights;
+    const autonorm = document.getElementById('exp-autonorm')?.checked !== false;
+    const totalPW = autonorm ? (Object.values(pw).reduce((a, b) => a + b, 0) || 1) : 4;
+    const { cvarBlend, tosWeight, marketSizeBonus } = EXP_OVERLAYS;
+    const useBayesian = EXP_CONFIG.bayesian.enabled;
+    const useExpTOS = (EXP_CONFIG.tosWeights.w_SIS !== 0.35 || EXP_CONFIG.tosWeights.w_DGI !== 0.35 || EXP_CONFIG.tosWeights.w_RVS !== 0.30);
+    const useDynTraj = EXP_CONFIG.useDynamicTraj;
+
+    // --- Phase 1: compute pillar scores for all rows ---
+    const rawRows = workingSlice.map(row => {
+        // Step 1: Per-pillar scores from variable sliders
+        const pillarScores = {};
+        for (const [pk, pd] of Object.entries(EXP_PILLAR_MAP)) {
+            const method = EXP_AGG_METHODS[EXP_PILLAR_AGG[pk] || 'mean'];
+            const pairs = pd.vars.map(v => [parseFloat(row[v]), vw[v] ?? 1]);
+            const allSliceVals = EXP_PILLAR_AGG[pk] === 'zsig'
+                ? pd.vars.map(v => _expVarSliceVals[v] || [])
+                : undefined;
+            const score = method.fn(pairs, allSliceVals);
+            const fallback = parseFloat(row['pillar_' + pk]) || 0;
+            pillarScores[pk] = isNaN(score) || score === 0 ? fallback : score;
+        }
+        // Step 2: Optionally override Pillar D with OLS from panel history
+        if (useDynTraj) {
+            const iso = row.country_iso || row.country;
+            const dynD = computePillarD_OLS(iso);
+            if (dynD !== null) pillarScores.trajectory = dynD;
+        }
+        return { row, pillarScores };
+    });
+
+    // --- Phase 2: Bayesian cross-section normalisation (needs all rows first) ---
+    let cvar25Vals = null;
+    if (useBayesian) {
+        const rawCVaR = rawRows.map(({ row, pillarScores }) => {
+            const A = pillarScores.opportunity, B = pillarScores.stability;
+            const C = pillarScores.absorptive_capacity, D = pillarScores.trajectory;
+            const { cvar25, volatility } = computeBayesianCVaR(A, B, C, D);
+            return { cvar25, volatility };
+        });
+        // Cross-section z + sigmoid re-normalisation (scale=1.2, matches Python pipeline)
+        const cvars = rawCVaR.map(r => r.cvar25);
+        const mu = cvars.reduce((a, b) => a + b, 0) / cvars.length;
+        const sigma = Math.sqrt(cvars.reduce((a, b) => a + (b - mu) ** 2, 0) / cvars.length) || 1;
+        cvar25Vals = rawCVaR.map(({ cvar25, volatility }) => ({
+            cvar25_scaled: 1 / (1 + Math.exp(-(cvar25 - mu) / sigma * 1.2)),
+            volatility
+        }));
+    }
+
+    const rows = rawRows.map(({ row, pillarScores }, idx) => {
+        const A = pillarScores.opportunity, B = pillarScores.stability;
+        const C = pillarScores.absorptive_capacity, D = pillarScores.trajectory;
+
+        let base01;
+        if (useBayesian && cvar25Vals) {
+            // Full Bayesian path: use re-normalised CVaR25 as base
+            const { cvar25_scaled } = cvar25Vals[idx];
+            base01 = cvar25_scaled;
+        } else {
+            // Linear blend path
+            let blend = 0;
+            for (const [pk] of Object.entries(EXP_PILLAR_MAP)) {
+                blend += (pw[pk] / totalPW) * pillarScores[pk];
+            }
+            const pubCVar = Math.min(1, Math.max(0, parseFloat(row.cvar25) || blend));
+            base01 = (1 - cvarBlend) * blend + cvarBlend * pubCVar;
+        }
+
+        // TOS: use re-blended sub-signals or published value
+        const tos = Math.min(1, Math.max(0,
+            useExpTOS ? computeExperimentalTOS(row) : (parseFloat(row.tos_score) || 0)));
+
+        // TOS overlay blend
+        const withTos = tosWeight > 0 ? (1 - tosWeight) * base01 + tosWeight * tos : base01;
+
+        // ML Layer 1: trajectory classification (applies Pillar D discount)
+        const { type: trajType, factor: trajFactor } = classifyTrajectory(row, D);
+        const D_adj = D * trajFactor;
+        // Trajectory adjustment (mirrors Layer 1 logic: Δ = (D_adj - D) × w_D × 9)
+        const trajAdj = (D_adj - D) * 0.20 * 9.0;
+
+        // Scale to 1-10 and apply optional adjustments
+        let expRao = 1 + 9 * withTos;
+        if (EXP_CONFIG.anomalyHaircut && (row.anomaly_flag === 'true' || row.anomaly_flag === true || row.anomaly_flag === '1')) {
+            expRao -= 0.50;
+        }
+        // Trajectory ML discount (Layer 1)
+        expRao += trajAdj;
+        // Market size bonus (Layer 3)
+        if (marketSizeBonus) expRao += parseFloat(row.market_size_bonus) || 0;
+
+        return {
+            country_iso: row.country_iso || row.country,
+            country_name: row.country_name,
+            regime: row.regime,
+            orig_rao: parseFloat(row.rao_score) || 0,
+            exp_rao: Math.min(10, Math.max(1, expRao)),
+            cvar25_raw: useBayesian && cvar25Vals ? cvar25Vals[idx].cvar25_scaled : base01,
+            tos_raw: tos,
+            tos_label: row.tos_signal_label || '',
+            traj_type: trajType
+        };
+    });
+
+    const origSorted = [...rows].sort((a, b) => b.orig_rao - a.orig_rao);
+    origSorted.forEach((r, i) => { r.orig_rank = i + 1; });
+    const origRankMap = Object.fromEntries(origSorted.map(r => [r.country_iso, r.orig_rank]));
+
+    const expSorted = [...rows].sort((a, b) => b.exp_rao - a.exp_rao);
+    expSorted.forEach((r, i) => {
+        r.exp_rank = i + 1;
+        r.orig_rank = origRankMap[r.country_iso] || 0;
+        r.delta_rank = r.orig_rank - r.exp_rank;
+        r.delta_score = r.exp_rao - r.orig_rao;
+    });
+    return expSorted;
+}
+
+function recomputeExp() {
+    expData = computeExperimentalScores();
+    updateExpKPIs();
+    renderActiveExpSubTab();
+}
+
+function updateExpKPIs() {
+    if (!expData.length) return;
+    const n = expData.length;
+    const movedCount = expData.filter(r => Math.abs(r.delta_rank) >= 3).length;
+    const riser = expData.reduce((best, r) => r.delta_rank > (best ? best.delta_rank : -Infinity) ? r : best, null);
+    const faller = expData.reduce((worst, r) => r.delta_rank < (worst ? worst.delta_rank : Infinity) ? r : worst, null);
+    let dSqSum = 0;
+    expData.forEach(r => { const d = r.exp_rank - r.orig_rank; dSqSum += d * d; });
+    const rho = 1 - (6 * dSqSum) / (n * (n * n - 1));
+    const rmse = Math.sqrt(expData.reduce((s, r) => s + r.delta_score * r.delta_score, 0) / n);
+
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('exp-kpi-moved', movedCount);
+    set('exp-kpi-riser', riser && riser.delta_rank > 0 ? riser.country_name + ' +' + riser.delta_rank : '—');
+    set('exp-kpi-faller', faller && faller.delta_rank < 0 ? faller.country_name + ' ' + faller.delta_rank : '—');
+    set('exp-kpi-rho', rho.toFixed(3));
+    set('exp-kpi-rmse', rmse.toFixed(3));
+}
+
+function switchExpSubTab(name) {
+    expActiveSubTab = name;
+    document.querySelectorAll('.exp-sub-tab').forEach(t => {
+        t.classList.toggle('active', t.textContent.trim().toLowerCase() === name);
+    });
+    document.querySelectorAll('.exp-sub-content').forEach(c => c.classList.remove('active'));
+    const el = document.getElementById('exp-sub-' + name);
+    if (el) el.classList.add('active');
+    renderActiveExpSubTab();
+}
+
+function renderActiveExpSubTab() {
+    if (!expData.length) return;
+    if (expActiveSubTab === 'rankings') renderExpRankings();
+    else if (expActiveSubTab === 'scatter') renderExpScatter();
+    else if (expActiveSubTab === 'distribution') renderExpDist();
+    else if (expActiveSubTab === 'sensitivity') renderExpSensitivity();
+}
+
+function renderExpRankings() {
+    const tbody = document.getElementById('exp-rankings-body');
+    if (!tbody) return;
+    let sorted = [...getDisplayData()];
+    if (expSortCol === 'country') {
+        sorted.sort((a, b) => expSortDir === 'asc' ? a.country_name.localeCompare(b.country_name) : b.country_name.localeCompare(a.country_name));
+    } else {
+        sorted.sort((a, b) => {
+            const av = a[expSortCol] ?? 0, bv = b[expSortCol] ?? 0;
+            return expSortDir === 'asc' ? av - bv : bv - av;
+        });
+    }
+    tbody.innerHTML = sorted.map(r => {
+        const dc = r.delta_rank > 0 ? 'exp-delta-pos' : r.delta_rank < 0 ? 'exp-delta-neg' : 'exp-delta-neu';
+        const ds = r.delta_rank > 0 ? '↑' + r.delta_rank : r.delta_rank < 0 ? '↓' + Math.abs(r.delta_rank) : '—';
+        const dsc = r.delta_score > 0.05 ? 'exp-delta-pos' : r.delta_score < -0.05 ? 'exp-delta-neg' : 'exp-delta-neu';
+        const iso = r.country_iso;
+        return `<tr onclick="openCountryAnalysis('${iso}')">
+            <td style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${r.exp_rank}</td>
+            <td style="font-size:0.76rem;">${r.country_name}</td>
+            <td>
+                <div class="exp-score-bar-wrap">
+                    <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent-gold);min-width:28px;">${r.exp_rao.toFixed(2)}</span>
+                    <div class="exp-score-bar-track"><div class="exp-score-bar-fill" style="width:${(r.exp_rao/10*100).toFixed(1)}%;"></div></div>
+                </div>
+            </td>
+            <td class="${dc}">${ds}</td>
+            <td class="${dsc}" style="font-family:var(--font-mono);font-size:0.68rem;">${r.delta_score >= 0 ? '+' : ''}${r.delta_score.toFixed(2)}</td>
+        </tr>`;
+    }).join('');
+}
+
+function sortExpTable(col) {
+    if (expSortCol === col) expSortDir = expSortDir === 'asc' ? 'desc' : 'asc';
+    else { expSortCol = col; expSortDir = (col === 'exp_rank' || col === 'orig_rank') ? 'asc' : 'desc'; }
+    renderExpRankings();
+}
+
+function renderExpScatter() {
+    const ctx = document.getElementById('exp-scatter-chart');
+    if (!ctx || !expData.length) return;
+    const key = 'exp-scatter';
+    if (_chartInstances[key]) { _chartInstances[key].destroy(); delete _chartInstances[key]; }
+    const displayData = getDisplayData();
+    const REGIME_COLORS = { RO: 'rgba(74,222,128,0.75)', FO: 'rgba(194,165,109,0.75)', SL: 'rgba(96,165,250,0.75)', SR: 'rgba(248,113,113,0.75)' };
+    const datasets = ['RO','FO','SL','SR'].map(regime => ({
+        label: regime,
+        data: displayData.filter(r => r.regime === regime).map(r => ({ x: r.orig_rao, y: r.exp_rao, iso: r.country_iso, name: r.country_name })),
+        backgroundColor: REGIME_COLORS[regime] || 'rgba(255,255,255,0.4)',
+        pointRadius: 5, pointHoverRadius: 8
+    }));
+    const allVals = displayData.flatMap(r => [r.orig_rao, r.exp_rao]);
+    const lo = Math.max(0, Math.min(...allVals) - 0.5), hi = Math.min(10, Math.max(...allVals) + 0.5);
+    datasets.push({ label: 'No change', type: 'line', data: [{x:lo,y:lo},{x:hi,y:hi}], borderColor: 'rgba(255,255,255,0.12)', borderDash: [5,4], pointRadius: 0, borderWidth: 1, fill: false });
+    _chartInstances[key] = new Chart(ctx, {
+        type: 'scatter', data: { datasets },
+        options: {
+            animation: false,
+            responsive: true, maintainAspectRatio: false,
+            onClick: (e, els) => {
+                if (!els.length) return;
+                const pt = _chartInstances[key].data.datasets[els[0].datasetIndex].data[els[0].index];
+                if (pt && pt.iso) openCountryAnalysis(pt.iso);
+            },
+            plugins: {
+                legend: { labels: { color: 'rgba(255,255,255,0.55)', font: { size: 10 } } },
+                tooltip: { callbacks: { label: ctx => { const p = ctx.raw; return p.name ? p.name + ' · Orig: ' + p.x.toFixed(2) + ' → Exp: ' + p.y.toFixed(2) : ctx.dataset.label; } } }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Original RAO', color: 'rgba(255,255,255,0.35)', font: { size: 10 } }, ticks: { color: 'rgba(255,255,255,0.35)', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                y: { title: { display: true, text: 'Experimental RAO', color: 'rgba(255,255,255,0.35)', font: { size: 10 } }, ticks: { color: 'rgba(255,255,255,0.35)', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' } }
+            }
+        }
+    });
+}
+
+function renderExpDist() {
+    const ctx = document.getElementById('exp-dist-chart');
+    if (!ctx || !expData.length) return;
+    const key = 'exp-dist';
+    if (_chartInstances[key]) { _chartInstances[key].destroy(); delete _chartInstances[key]; }
+    const displayData = getDisplayData();
+    const numBins = 20, binSize = 10 / numBins;
+    const origBins = new Array(numBins).fill(0);
+    const expBins = new Array(numBins).fill(0);
+    displayData.forEach(r => {
+        origBins[Math.min(Math.floor(r.orig_rao / binSize), numBins - 1)]++;
+        expBins[Math.min(Math.floor(r.exp_rao / binSize), numBins - 1)]++;
+    });
+    const labels = Array.from({length: numBins}, (_, i) => (i * binSize).toFixed(1));
+    _chartInstances[key] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                { label: 'Original', data: origBins, backgroundColor: 'rgba(194,165,109,0.45)', borderColor: 'rgba(194,165,109,0.85)', borderWidth: 1 },
+                { label: 'Experimental', data: expBins, backgroundColor: 'rgba(96,165,250,0.4)', borderColor: 'rgba(96,165,250,0.8)', borderWidth: 1 }
+            ]
+        },
+        options: {
+            animation: false,
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: 'rgba(255,255,255,0.55)', font: { size: 10 } } }, tooltip: { mode: 'index' } },
+            scales: {
+                x: { ticks: { color: 'rgba(255,255,255,0.35)', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' }, title: { display: true, text: 'Score', color: 'rgba(255,255,255,0.35)', font: { size: 10 } } },
+                y: { ticks: { color: 'rgba(255,255,255,0.35)', font: { size: 9 } }, grid: { color: 'rgba(255,255,255,0.04)' }, title: { display: true, text: 'Countries', color: 'rgba(255,255,255,0.35)', font: { size: 10 } } }
+            }
+        }
+    });
+}
+
+function renderExpSensitivity() {
+    const container = document.getElementById('exp-sense-grid');
+    if (!container || !expData.length) return;
+    const pillarKeys = Object.keys(EXP_PILLAR_MAP);
+    const top30 = [...getDisplayData()].sort((a, b) => a.exp_rank - b.exp_rank).slice(0, 30);
+    const delta = 0.1;
+    const cells = top30.map(row => {
+        const vals = pillarKeys.map(pk => {
+            const orig = EXP_CONFIG.pillarWeights[pk];
+            EXP_CONFIG.pillarWeights[pk] = orig + delta;
+            const newData = computeExperimentalScores();
+            const newRow = newData.find(r => r.country_iso === row.country_iso);
+            const change = newRow ? row.exp_rank - newRow.exp_rank : 0;
+            EXP_CONFIG.pillarWeights[pk] = orig;
+            return change;
+        });
+        return { name: row.country_name, exp_rank: row.exp_rank, vals };
+    });
+    const maxAbs = Math.max(1, ...cells.flatMap(c => c.vals.map(v => Math.abs(v))));
+    const pillarShortLabels = { opportunity: 'Opp', stability: 'Stab', absorptive_capacity: 'AbsCap', trajectory: 'Traj' };
+    const headerRow = `<div style="display:flex;gap:2px;margin-bottom:3px;">
+        <div style="width:132px;flex-shrink:0;"></div>
+        ${pillarKeys.map(pk => `<div style="width:68px;font-family:var(--font-minor);font-size:0.44rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);text-align:center;padding:0.15rem;">${pillarShortLabels[pk]}</div>`).join('')}
+    </div>`;
+    const dataRows = cells.map(c => {
+        const cellsHtml = c.vals.map(v => {
+            const pct = Math.abs(v) / maxAbs;
+            const bg = v > 0 ? `rgba(74,222,128,${0.12 + pct * 0.6})` : v < 0 ? `rgba(248,113,113,${0.12 + pct * 0.6})` : 'rgba(255,255,255,0.03)';
+            const color = v > 0 ? '#4ade80' : v < 0 ? '#f87171' : 'rgba(255,255,255,0.25)';
+            return `<div class="exp-sense-cell" style="background:${bg};color:${color};width:68px;">${v === 0 ? '—' : (v > 0 ? '+' : '') + v}</div>`;
+        }).join('');
+        return `<div style="display:flex;gap:2px;margin-bottom:2px;align-items:center;">
+            <div style="width:132px;flex-shrink:0;font-size:0.62rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:0.4rem;" title="${c.name}">${c.exp_rank}. ${c.name}</div>
+            ${cellsHtml}
+        </div>`;
+    }).join('');
+    container.innerHTML = headerRow + dataRows;
+}
+
+function toggleExpScoringMethods() {
+    expScoringOpen = !expScoringOpen;
+    const body = document.getElementById('exp-scoring-body');
+    const toggle = document.getElementById('exp-scoring-toggle');
+    if (body) body.style.display = expScoringOpen ? 'block' : 'none';
+    if (toggle) toggle.classList.toggle('exp-card-open', expScoringOpen);
+}
+
+let expOverlaysOpen = false;
+function toggleExpOverlays() {
+    expOverlaysOpen = !expOverlaysOpen;
+    const body = document.getElementById('exp-overlays-body');
+    const toggle = document.getElementById('exp-overlays-toggle');
+    if (body) body.style.display = expOverlaysOpen ? 'block' : 'none';
+    if (toggle) toggle.classList.toggle('exp-card-open', expOverlaysOpen);
+}
+
+function updateExpOverlay(key, val, el) {
+    EXP_OVERLAYS[key] = val;
+    // Update displayed value for sliders
+    if (key === 'cvarBlend') { const d = document.getElementById('exp-ov-cvar-val'); if (d) d.textContent = val.toFixed(2); }
+    if (key === 'tosWeight')  { const d = document.getElementById('exp-ov-tos-val');  if (d) d.textContent = val.toFixed(2); }
+    updateOverlayFormula();
+    recomputeExp();
+}
+
+function updateOverlayFormula() {
+    const el = document.getElementById('exp-overlay-formula');
+    if (!el) return;
+    const { cvarBlend: ca, tosWeight: tw, marketSizeBonus: msb } = EXP_OVERLAYS;
+    const bay = EXP_CONFIG.bayesian;
+    let line;
+    if (bay.enabled) {
+        line = `base = Bayesian CVaR₂₅ (Monte Carlo)\n  Dirichlet α × ${bay.concentration.toFixed(1)} · opp=${bay.opp_weight.toFixed(2)} stab=${bay.stab_weight.toFixed(2)}`;
+    } else {
+        let parts = [];
+        if (ca < 1)  parts.push(`${(1-ca).toFixed(2)}·pillar_blend`);
+        if (ca > 0)  parts.push(`${ca.toFixed(2)}·CVaR25`);
+        const base = parts.join(' + ') || 'pillar_blend';
+        line = `base = ${base}`;
+    }
+    if (tw > 0) line += `\nscore = (${(1-tw).toFixed(2)}·base + ${tw.toFixed(2)}·TOS) × 9 + 1`;
+    else        line += `\nscore = base × 9 + 1`;
+    if (msb)    line += ` + market_size_bonus`;
+    if (EXP_CONFIG.anomalyHaircut) line += `\n− 0.50 if anomaly_flag`;
+    if (EXP_CONFIG.useDynamicTraj) line += `\nPillar D: OLS from panel`;
+    // Hint if close to COMMERCIAL_DEFAULT
+    if (!bay.enabled && ca >= 0.95 && tw >= 0.38 && tw <= 0.42) line += `\n≈ COMMERCIAL_DEFAULT`;
+    else if (!bay.enabled && ca >= 0.95 && tw >= 0.13 && tw <= 0.17) line += `\n≈ DEFENSIVE`;
+    el.textContent = line;
+}
+
+// ── Bayesian card controls ────────────────────────────────────────────────
+function updateBayesianModeUI() {
+    const enabled = EXP_CONFIG.bayesian.enabled;
+    const badge = document.getElementById('exp-mode-badge');
+    if (badge) {
+        badge.textContent = enabled ? 'BAYESIAN MONTE CARLO' : 'LINEAR BLEND';
+        badge.style.color = enabled ? 'var(--accent-gold)' : 'var(--text-muted)';
+    }
+    const disc = document.getElementById('exp-mode-disclaimer');
+    if (disc) {
+        if (enabled) {
+            const n = EXP_CONFIG.bayesian.n_sims;
+            disc.textContent = `Bayesian Monte Carlo CVaR₂₅ active — ${n} Dirichlet sims per country. Cross-section z+sigmoid normalised. Trajectory ML Layer 1 applied.`;
+            disc.style.color = 'rgba(194,165,109,0.6)';
+        } else {
+            disc.textContent = 'Simplified linear blend — excludes full CVaR/TOS pipeline. Enable Bayesian Simulation for Monte Carlo CVaR₂₅.';
+            disc.style.color = 'var(--text-muted)';
+        }
+    }
+}
+
+function toggleExpBayesian(checked) {
+    EXP_CONFIG.bayesian.enabled = checked;
+    updateBayesianModeUI();
+    updateOverlayFormula();
+    recomputeExp();
+}
+
+function updateBayesianParam(key, val, displayId) {
+    EXP_CONFIG.bayesian[key] = parseFloat(val);
+    const d = document.getElementById(displayId); if (d) d.textContent = parseFloat(val).toFixed(2);
+    updateOverlayFormula();
+    if (EXP_CONFIG.bayesian.enabled) recomputeExp();
+}
+
+function toggleDynamicTraj(checked) {
+    EXP_CONFIG.useDynamicTraj = checked;
+    updateOverlayFormula();
+    recomputeExp();
+}
+
+function toggleAnomalyHaircut(checked) {
+    EXP_CONFIG.anomalyHaircut = checked;
+    updateOverlayFormula();
+    recomputeExp();
+}
+
+// ── TOS sub-signal weight controls ────────────────────────────────────────
+function updateExpTOSWeight(key, val, displayId) {
+    EXP_CONFIG.tosWeights[key] = parseFloat(val);
+    const d = document.getElementById(displayId); if (d) d.textContent = parseFloat(val).toFixed(2);
+    // auto-normalise display hint
+    const tw = EXP_CONFIG.tosWeights;
+    const tot = (tw.w_SIS + tw.w_DGI + tw.w_RVS) || 1;
+    const normEl = document.getElementById('exp-tos-norm-hint');
+    if (normEl) normEl.textContent = `Sum=${tot.toFixed(2)} (auto-normalised)`;
+    updateOverlayFormula();
+    recomputeExp();
+}
+
+let expBayesianOpen = false;
+function toggleExpBayesianCard() {
+    expBayesianOpen = !expBayesianOpen;
+    const body = document.getElementById('exp-bay-body');
+    const toggle = document.getElementById('exp-bay-toggle');
+    if (body) body.style.display = expBayesianOpen ? 'block' : 'none';
+    if (toggle) toggle.classList.toggle('exp-card-open', expBayesianOpen);
+}
+
+let expTOSCardOpen = false;
+function toggleExpTOSCard() {
+    expTOSCardOpen = !expTOSCardOpen;
+    const body = document.getElementById('exp-tos-body');
+    const toggle = document.getElementById('exp-tos-toggle');
+    if (body) body.style.display = expTOSCardOpen ? 'block' : 'none';
+    if (toggle) toggle.classList.toggle('exp-card-open', expTOSCardOpen);
+}
+
+function toggleCsvFormatPanel() {
+    const panel = document.getElementById('exp-csv-format-panel');
+    if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function downloadCsvTemplate() {
+    if (!latestSlice || !latestSlice.length) return;
+    const isos = latestSlice.slice(0, 10).map(r => r.country_iso || r.country);
+    const header = 'country_iso,norm_custom_variable_1,norm_custom_variable_2';
+    const rows = isos.map(iso => `${iso},0.50,0.50`).join('\n');
+    const blob = new Blob([header + '\n' + rows], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'exp_variable_template.csv' });
+    a.click(); URL.revokeObjectURL(url);
+}
+
+function renderExpAggSelectors() {
+    const container = document.getElementById('exp-agg-selectors');
+    if (!container) return;
+    const methodKeys = Object.keys(EXP_AGG_METHODS);
+    const opts = methodKeys.map(k => `<option value="${k}">${EXP_AGG_METHODS[k].label}</option>`).join('');
+    container.innerHTML = Object.entries(EXP_PILLAR_MAP).map(([pk, pd]) => `
+        <div class="exp-agg-row">
+            <span class="exp-agg-label" style="color:${pd.color};">${pd.label.split(' ')[0]}</span>
+            <select class="exp-agg-select" onchange="updateExpAgg('${pk}', this.value)">
+                ${methodKeys.map(k => `<option value="${k}"${EXP_PILLAR_AGG[pk] === k ? ' selected' : ''}>${EXP_AGG_METHODS[k].label}</option>`).join('')}
+            </select>
+        </div>
+    `).join('');
+    updateExpFormulaDesc();
+}
+
+function updateExpAgg(pk, method) {
+    EXP_PILLAR_AGG[pk] = method;
+    updateExpFormulaDesc();
+    recomputeExp();
+}
+
+function updateExpFormulaDesc() {
+    const desc = document.getElementById('exp-formula-desc');
+    if (!desc) return;
+    const lines = Object.entries(EXP_PILLAR_AGG).map(([pk, mk]) => {
+        const pd = EXP_PILLAR_MAP[pk];
+        const md = EXP_AGG_METHODS[mk];
+        return `<div style="margin-bottom:0.2rem;"><span style="color:${pd.color};">${pd.label.split(' ')[0]}:</span> ${md.formula}</div>`;
+    });
+    desc.innerHTML = lines.join('');
+}
+
+function loadExpPreset(name) {
+    if (!EXP_PRESETS[name]) return;
+    EXP_CONFIG.pillarWeights = { ...EXP_PRESETS[name] };
+    renderExpPillarSliders();
+    recomputeExp();
+    const sel = document.getElementById('exp-preset-select');
+    if (sel) sel.value = '';
+}
+
+function resetExpConfig() {
+    // Restore actual methodology approximation: Opp=2, Stab=2, AbsCap=1, Traj=1 (Bayesian 40:40:×:20 ratio)
+    EXP_CONFIG.pillarWeights = { opportunity: 2, stability: 2, absorptive_capacity: 1, trajectory: 1 };
+    Object.keys(EXP_CONFIG.varWeights).forEach(k => { EXP_CONFIG.varWeights[k] = 1; });
+    EXP_PILLAR_AGG = { opportunity: 'mean', stability: 'mean', absorptive_capacity: 'geometric', trajectory: 'mean' };
+    EXP_OVERLAYS = { cvarBlend: 0, tosWeight: 0, marketSizeBonus: false };
+    EXP_CONFIG.bayesian = { enabled: false, opp_weight: 0.60, stab_weight: 0.40, concentration: 3.0, n_sims: 1000 };
+    EXP_CONFIG.tosWeights = { w_SIS: 0.35, w_DGI: 0.35, w_RVS: 0.30 };
+    EXP_CONFIG.anomalyHaircut = false;
+    EXP_CONFIG.useDynamicTraj = false;
+    // Reset overlay sliders
+    const cvarEl = document.getElementById('exp-ov-cvar'); if (cvarEl) cvarEl.value = 0;
+    const tosEl  = document.getElementById('exp-ov-tos');  if (tosEl)  tosEl.value  = 0;
+    const msbEl  = document.getElementById('exp-ov-msb');  if (msbEl)  msbEl.checked = false;
+    const cvarV  = document.getElementById('exp-ov-cvar-val'); if (cvarV) cvarV.textContent = '0.00';
+    const tosV   = document.getElementById('exp-ov-tos-val');  if (tosV)  tosV.textContent  = '0.00';
+    // Reset Bayesian card UI
+    const bayEl = document.getElementById('exp-bay-enabled'); if (bayEl) { bayEl.checked = false; }
+    const bayOppEl = document.getElementById('exp-bay-opp'); if (bayOppEl) { bayOppEl.value = 0.60; }
+    const bayStabEl = document.getElementById('exp-bay-stab'); if (bayStabEl) { bayStabEl.value = 0.40; }
+    const bayConEl = document.getElementById('exp-bay-conc'); if (bayConEl) { bayConEl.value = 3.0; }
+    const bayDynEl = document.getElementById('exp-bay-dynD'); if (bayDynEl) { bayDynEl.checked = false; }
+    const bayAnoEl = document.getElementById('exp-ov-anomaly'); if (bayAnoEl) { bayAnoEl.checked = false; }
+    ['exp-bay-opp-val','exp-bay-stab-val','exp-bay-conc-val'].forEach((id, i) => {
+        const el = document.getElementById(id); if (el) el.textContent = ['0.60','0.40','3.0'][i];
+    });
+    // Reset TOS weights UI
+    [['exp-tos-sis', 'exp-tos-sis-val', 0.35], ['exp-tos-dgi', 'exp-tos-dgi-val', 0.35], ['exp-tos-rvs', 'exp-tos-rvs-val', 0.30]].forEach(([slid, disp, def]) => {
+        const s = document.getElementById(slid); if (s) s.value = def;
+        const d = document.getElementById(disp); if (d) d.textContent = def.toFixed(2);
+    });
+    resetCountryFilter();
+    updateBayesianModeUI();
+    updateOverlayFormula();
+    renderExpPillarSliders();
+    renderExpVarSliders(expActivePillarTab);
+    renderExpAggSelectors();
+    recomputeExp();
+}
+
+function exportExpCSV() {
+    if (!expData.length) return;
+    const header = 'Exp Rank,Country ISO,Country Name,Exp RAO,Orig RAO,Orig Rank,Delta Rank,Delta Score\n';
+    const rows = getDisplayData().map(r => `${r.exp_rank},${r.country_iso},"${r.country_name}",${r.exp_rao.toFixed(3)},${r.orig_rao.toFixed(3)},${r.orig_rank},${r.delta_rank},${r.delta_score.toFixed(3)}`).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'rao_experimental.csv' });
+    a.click(); URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COUNTRY FILTER FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function updateExpFilterBadge() {
+    const badge = document.getElementById('exp-cf-badge');
+    if (!badge) return;
+    const { mode, selected } = EXP_COUNTRY_FILTER;
+    if (mode === 'all' || selected.size === 0) {
+        badge.textContent = '';
+        badge.style.display = 'none';
+    } else {
+        const modeLabel = mode === 'cohort' ? 'Cohort' : 'Visual';
+        badge.textContent = `${selected.size} · ${modeLabel}`;
+        badge.style.display = 'inline-block';
+    }
+}
+
+function openCountryFilter() {
+    // Build working copy
+    _cfWorkingSelected = new Set(EXP_COUNTRY_FILTER.selected);
+    _cfWorkingMode = EXP_COUNTRY_FILTER.mode;
+    _cfActiveContinent = null;
+    _cfSearchQuery = '';
+    const overlay = document.getElementById('exp-cf-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        renderCFModeButtons();
+        renderCFContinentPills();
+        renderCFCountryList();
+        renderCFSelectedPanel();
+        const searchEl = document.getElementById('exp-cf-search');
+        if (searchEl) { searchEl.value = ''; searchEl.focus(); }
+    }
+}
+
+function closeCountryFilter() {
+    const overlay = document.getElementById('exp-cf-overlay');
+    if (overlay) overlay.style.display = 'none';
+}
+
+function applyCountryFilter() {
+    EXP_COUNTRY_FILTER.selected = new Set(_cfWorkingSelected);
+    EXP_COUNTRY_FILTER.mode = _cfWorkingMode;
+    closeCountryFilter();
+    updateExpFilterBadge();
+    recomputeExp();
+}
+
+function setFilterMode(mode) {
+    _cfWorkingMode = mode;
+    renderCFModeButtons();
+}
+
+function renderCFModeButtons() {
+    ['all','cohort','visual'].forEach(m => {
+        const btn = document.getElementById('cfm-' + m);
+        if (!btn) return;
+        const active = _cfWorkingMode === m;
+        btn.style.background = active ? 'rgba(194,165,109,0.15)' : 'transparent';
+        btn.style.color = active ? 'var(--accent-gold)' : 'var(--text-muted)';
+        btn.style.borderColor = active ? 'rgba(194,165,109,0.4)' : 'var(--border-subtle)';
+    });
+    const desc = document.getElementById('exp-cfm-desc');
+    if (desc) desc.textContent = EXP_CFM_DESCS[_cfWorkingMode];
+}
+
+function renderCFContinentPills() {
+    const container = document.getElementById('exp-cf-continent-pills');
+    if (!container) return;
+    const pills = [
+        { key: null, label: 'All' },
+        ...Object.entries(EXP_CONTINENTS).filter(([k]) => k !== 'ot').map(([k, v]) => ({ key: k, label: v })),
+        { key: 'ot', label: 'Other' }
+    ];
+    container.innerHTML = pills.map(p => {
+        const active = _cfActiveContinent === p.key;
+        return `<button onclick="setCFContinent(${p.key === null ? 'null' : "'"+p.key+"'"})"
+            style="font-family:var(--font-minor);font-size:0.48rem;text-transform:uppercase;letter-spacing:0.07em;padding:0.2rem 0.55rem;border-radius:3px;cursor:pointer;border:1px solid ${active ? 'rgba(194,165,109,0.5)' : 'var(--border-subtle)'};background:${active ? 'rgba(194,165,109,0.12)' : 'transparent'};color:${active ? 'var(--accent-gold)' : 'var(--text-muted)'};">${p.label}</button>`;
+    }).join('');
+}
+
+function setCFContinent(key) {
+    _cfActiveContinent = key;
+    renderCFContinentPills();
+    renderCFCountryList();
+}
+
+function filterCountryList() {
+    _cfSearchQuery = (document.getElementById('exp-cf-search')?.value || '').toLowerCase();
+    renderCFCountryList();
+}
+
+function _getCFAllCountries() {
+    // Get all countries from latestSlice + any extras from uploads, deduplicated
+    if (!latestSlice) return [];
+    const seen = new Set();
+    return latestSlice
+        .filter(r => { const iso = r.country_iso || r.country; return iso && !seen.has(iso) && seen.add(iso); })
+        .map(r => {
+            const iso = r.country_iso || r.country;
+            const name = EXP_COUNTRY_NAMES[iso] || r.country_name || iso;
+            const geo = EXP_ISO_GEO[iso] || 'ot|oth';
+            const [cont, reg] = geo.split('|');
+            return { iso, name, cont, reg };
+        });
+}
+
+function renderCFCountryList() {
+    const container = document.getElementById('exp-cf-country-list');
+    if (!container) return;
+    let countries = _getCFAllCountries();
+    // Apply continent filter
+    if (_cfActiveContinent !== null) {
+        countries = countries.filter(c => c.cont === _cfActiveContinent);
+    }
+    // Apply search
+    if (_cfSearchQuery) {
+        countries = countries.filter(c => c.iso.toLowerCase().includes(_cfSearchQuery) || c.name.toLowerCase().includes(_cfSearchQuery));
+    }
+    // Group by continent > region
+    const groups = {};
+    for (const c of countries) {
+        const contLabel = EXP_CONTINENTS[c.cont] || 'Other';
+        const regLabel = EXP_REGIONS[c.reg] || 'Uncategorised';
+        const key = contLabel + '||' + regLabel;
+        if (!groups[key]) groups[key] = { contLabel, regLabel, items: [] };
+        groups[key].items.push(c);
+    }
+    const sortedKeys = Object.keys(groups).sort();
+    let lastCont = null;
+    let html = '';
+    for (const key of sortedKeys) {
+        const { contLabel, regLabel, items } = groups[key];
+        if (contLabel !== lastCont) {
+            // Continent header with select-all
+            const contKey = Object.entries(EXP_CONTINENTS).find(([,v]) => v === contLabel)?.[0];
+            const contISOs = _getCFAllCountries().filter(c => c.cont === contKey).map(c => c.iso);
+            const allSel = contISOs.every(iso => _cfWorkingSelected.has(iso));
+            html += `<div style="padding:0.28rem 0.75rem 0.15rem;display:flex;align-items:center;gap:0.5rem;position:sticky;top:0;background:var(--secondary-bg);z-index:1;border-bottom:1px solid rgba(255,255,255,0.04);">
+                <span style="font-family:var(--font-minor);font-size:0.52rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-white);">${contLabel}</span>
+                <span style="font-family:var(--font-minor);font-size:0.43rem;color:var(--text-muted);">(${contISOs.length})</span>
+                <button onclick="toggleCFContinent('${contKey}')" style="margin-left:auto;font-family:var(--font-minor);font-size:0.44rem;text-transform:uppercase;letter-spacing:0.07em;color:${allSel ? 'var(--accent-gold)' : 'var(--text-muted)'};background:transparent;border:none;cursor:pointer;padding:0.1rem 0.3rem;">${allSel ? 'Deselect All' : 'Select All'}</button>
+            </div>`;
+            lastCont = contLabel;
+        }
+        // Region subheader
+        const regISOs = items.map(c => c.iso);
+        const allRegSel = regISOs.every(iso => _cfWorkingSelected.has(iso));
+        html += `<div style="padding:0.18rem 0.75rem 0.08rem 1.1rem;display:flex;align-items:center;gap:0.4rem;">
+            <span style="font-family:var(--font-minor);font-size:0.46rem;color:var(--text-muted);letter-spacing:0.06em;">${regLabel}</span>
+            <span style="font-family:var(--font-minor);font-size:0.42rem;color:rgba(255,255,255,0.2);">${items.length}</span>
+            <button onclick="toggleCFRegion([${regISOs.map(s=>"'"+s+"'").join(',')}])" style="margin-left:auto;font-family:var(--font-minor);font-size:0.42rem;color:${allRegSel ? 'rgba(194,165,109,0.7)' : 'rgba(255,255,255,0.2)'};background:transparent;border:none;cursor:pointer;padding:0.1rem 0.3rem;">${allRegSel ? '−' : '+'}</button>
+        </div>`;
+        // Countries
+        for (const c of items.sort((a, b) => a.name.localeCompare(b.name))) {
+            const sel = _cfWorkingSelected.has(c.iso);
+            html += `<div class="exp-cf-country-row${sel ? ' selected' : ''}" onclick="toggleCFCountry('${c.iso}')" style="padding:0.22rem 0.75rem 0.22rem 1.4rem;display:flex;align-items:center;gap:0.5rem;cursor:pointer;transition:background 0.1s;${sel ? 'background:rgba(194,165,109,0.07);' : ''}">
+                <div style="width:14px;height:14px;border:1.5px solid ${sel ? 'var(--accent-gold)' : 'var(--border-subtle)'};border-radius:2px;background:${sel ? 'rgba(194,165,109,0.25)' : 'transparent'};flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                    ${sel ? '<svg width="8" height="8" viewBox="0 0 8 8"><path d="M1 4l2 2 4-4" stroke="#C2A56D" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>' : ''}
+                </div>
+                <span style="font-family:var(--font-mono);font-size:0.5rem;color:rgba(255,255,255,0.3);min-width:30px;">${c.iso}</span>
+                <span style="font-family:var(--font-minor);font-size:0.54rem;color:${sel ? 'var(--text-white)' : 'rgba(255,255,255,0.65)'};">${c.name}</span>
+            </div>`;
+        }
+    }
+    if (!html) html = `<div style="padding:1.5rem;text-align:center;font-family:var(--font-minor);font-size:0.52rem;color:var(--text-muted);">No countries match your search</div>`;
+    container.innerHTML = html;
+    // Count display
+    const countEl = document.getElementById('exp-cf-list-count');
+    if (countEl) countEl.textContent = countries.length + ' shown';
+}
+
+function renderCFSelectedPanel() {
+    const container = document.getElementById('exp-cf-selected-list');
+    if (!container) return;
+    const countEl = document.getElementById('exp-cf-sel-count');
+    if (countEl) countEl.textContent = _cfWorkingSelected.size;
+    if (_cfWorkingSelected.size === 0) {
+        container.innerHTML = `<div style="padding:0.75rem 0.5rem;font-family:var(--font-minor);font-size:0.48rem;color:rgba(255,255,255,0.2);line-height:1.5;">No countries selected.<br>Select countries from the list or use the continent shortcuts.</div>`;
+        return;
+    }
+    const allCountries = _getCFAllCountries();
+    const isoToName = Object.fromEntries(allCountries.map(c => [c.iso, c.name]));
+    const sorted = [..._cfWorkingSelected].sort((a, b) => (isoToName[a] || a).localeCompare(isoToName[b] || b));
+    container.innerHTML = sorted.map(iso => `
+        <div style="display:flex;align-items:center;gap:0.35rem;padding:0.2rem 0.3rem;border-radius:3px;background:rgba(194,165,109,0.07);margin-bottom:3px;">
+            <span style="font-family:var(--font-minor);font-size:0.52rem;color:rgba(255,255,255,0.75);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${iso}">${isoToName[iso] || iso}</span>
+            <button onclick="removeCFSelected('${iso}');event.stopPropagation();" style="font-size:0.6rem;color:rgba(255,255,255,0.3);background:transparent;border:none;cursor:pointer;padding:0 0.15rem;line-height:1;flex-shrink:0;" title="Remove">✕</button>
+        </div>
+    `).join('');
+}
+
+function toggleCFCountry(iso) {
+    if (_cfWorkingSelected.has(iso)) _cfWorkingSelected.delete(iso);
+    else _cfWorkingSelected.add(iso);
+    renderCFCountryList();
+    renderCFSelectedPanel();
+}
+
+function removeCFSelected(iso) {
+    _cfWorkingSelected.delete(iso);
+    renderCFCountryList();
+    renderCFSelectedPanel();
+}
+
+function toggleCFContinent(contKey) {
+    const isos = _getCFAllCountries().filter(c => c.cont === contKey).map(c => c.iso);
+    const allSel = isos.every(iso => _cfWorkingSelected.has(iso));
+    if (allSel) isos.forEach(iso => _cfWorkingSelected.delete(iso));
+    else isos.forEach(iso => _cfWorkingSelected.add(iso));
+    renderCFCountryList();
+    renderCFSelectedPanel();
+}
+
+function toggleCFRegion(isos) {
+    const allSel = isos.every(iso => _cfWorkingSelected.has(iso));
+    if (allSel) isos.forEach(iso => _cfWorkingSelected.delete(iso));
+    else isos.forEach(iso => _cfWorkingSelected.add(iso));
+    renderCFCountryList();
+    renderCFSelectedPanel();
+}
+
+function selectAllCountries() {
+    _getCFAllCountries().forEach(c => _cfWorkingSelected.add(c.iso));
+    renderCFCountryList();
+    renderCFSelectedPanel();
+}
+
+function clearCountryFilter() {
+    _cfWorkingSelected.clear();
+    renderCFCountryList();
+    renderCFSelectedPanel();
+}
+
+function resetCountryFilter() {
+    EXP_COUNTRY_FILTER = { mode: 'all', selected: new Set() };
+    updateExpFilterBadge();
+    recomputeExp();
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// VARIABLE MANAGER — drag-and-drop pillar reassignment + CSV injection
+// ════════════════════════════════════════════════════════════════════════════
+
+let _vmPillarMap = {};   // working copy of EXP_PILLAR_MAP during edit session
+let _vmUnassigned = [];  // working copy of EXP_UNASSIGNED_VARS
+let _vmDragVar = null;
+let _vmDragFromCol = null;
+
+function openVarManager() {
+    // Deep-copy current state into working copies
+    _vmPillarMap = {};
+    for (const [pk, pd] of Object.entries(EXP_PILLAR_MAP)) {
+        _vmPillarMap[pk] = { ...pd, vars: [...pd.vars] };
+    }
+    _vmUnassigned = [...EXP_UNASSIGNED_VARS];
+    renderVarManagerCols();
+    document.getElementById('exp-var-manager-modal').style.display = 'flex';
+}
+
+function closeVarManager() {
+    document.getElementById('exp-var-manager-modal').style.display = 'none';
+}
+
+function renderVarManagerCols() {
+    const container = document.getElementById('exp-var-cols-container');
+    const cols = [...Object.keys(_vmPillarMap), 'unassigned'];
+    container.innerHTML = cols.map(pk => {
+        const pd = pk === 'unassigned' ? null : EXP_PILLAR_MAP[pk];
+        const vars = pk === 'unassigned' ? _vmUnassigned : _vmPillarMap[pk].vars;
+        const color = pd ? pd.color : 'var(--text-muted)';
+        const label = pd ? pd.label : 'Unassigned';
+        const chips = vars.map(v => `
+            <div class="exp-var-chip" draggable="true" data-var="${v}" data-col="${pk}"
+                ondragstart="vmDragStart(event)" ondragend="vmDragEnd(event)">
+                ${EXP_VAR_LABELS[v] || v.replace(/^norm_/,'').replace(/_/g,' ')}
+            </div>`).join('');
+        return `
+            <div class="exp-var-col" id="vmcol-${pk}" data-col="${pk}"
+                ondragover="vmDragOver(event,this)" ondragleave="vmDragLeave(event,this)" ondrop="vmDrop(event,this)">
+                <div class="exp-var-col-header" style="color:${color};">${label}</div>
+                <div class="exp-var-list" id="vmlist-${pk}">
+                    ${chips || '<div class="exp-var-col-empty">Drop here</div>'}
+                </div>
+            </div>`;
+    }).join('');
+}
+
+function vmDragStart(e) {
+    _vmDragVar = e.currentTarget.dataset.var;
+    _vmDragFromCol = e.currentTarget.dataset.col;
+    e.currentTarget.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', _vmDragVar);
+}
+
+function vmDragEnd(e) {
+    e.currentTarget.classList.remove('dragging');
+    document.querySelectorAll('.exp-var-col.drag-over').forEach(el => el.classList.remove('drag-over'));
+}
+
+function vmDragOver(e, col) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    col.classList.add('drag-over');
+}
+
+function vmDragLeave(e, col) {
+    if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+}
+
+function vmDrop(e, col) {
+    e.preventDefault();
+    col.classList.remove('drag-over');
+    const targetCol = col.dataset.col;
+    if (!_vmDragVar || targetCol === _vmDragFromCol) return;
+    // Remove from source
+    if (_vmDragFromCol === 'unassigned') {
+        _vmUnassigned = _vmUnassigned.filter(v => v !== _vmDragVar);
+    } else {
+        _vmPillarMap[_vmDragFromCol].vars = _vmPillarMap[_vmDragFromCol].vars.filter(v => v !== _vmDragVar);
+    }
+    // Add to target
+    if (targetCol === 'unassigned') {
+        _vmUnassigned.push(_vmDragVar);
+    } else {
+        if (!_vmPillarMap[targetCol].vars.includes(_vmDragVar)) {
+            _vmPillarMap[targetCol].vars.push(_vmDragVar);
+        }
+    }
+    _vmDragVar = null;
+    _vmDragFromCol = null;
+    renderVarManagerCols();
+}
+
+function applyVarManager() {
+    // Apply working copies to live state
+    for (const [pk] of Object.entries(EXP_PILLAR_MAP)) {
+        EXP_PILLAR_MAP[pk].vars = [..._vmPillarMap[pk].vars];
+    }
+    EXP_UNASSIGNED_VARS = [..._vmUnassigned];
+    // Rebuild varWeights to include any new variables
+    const allVars = Object.values(EXP_PILLAR_MAP).flatMap(p => p.vars);
+    const newWeights = {};
+    allVars.forEach(v => { newWeights[v] = EXP_CONFIG.varWeights[v] ?? 1; });
+    EXP_CONFIG.varWeights = newWeights;
+    // Re-render and recompute
+    buildExpVarSliceVals();
+    renderExpVarPillarTabs();
+    renderExpVarSliders(expActivePillarTab);
+    recomputeExp();
+    closeVarManager();
+    // Persist layout to localStorage
+    try {
+        const layout = Object.fromEntries(Object.entries(EXP_PILLAR_MAP).map(([k,v]) => [k, v.vars]));
+        localStorage.setItem('gsu_exp_pillar_map', JSON.stringify(layout));
+        localStorage.setItem('gsu_exp_unassigned', JSON.stringify(EXP_UNASSIGNED_VARS));
+    } catch(e) {}
+}
+
+function resetVarManager() {
+    // Restore original variable assignments from EXP_PILLAR_MAP defaults
+    const defaults = {
+        opportunity: ['norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp','norm_gross_capital_formation','norm_secondary_school_enrolment'],
+        stability:   ['norm_cpi_inflation','norm_government_debt_pct_gdp','norm_current_account_pct_gdp','norm_external_debt_pct_gni','norm_political_stability','norm_rule_of_law','norm_control_of_corruption'],
+        absorptive_capacity: ['norm_natural_resource_rents_pct_gdp','norm_gdp_per_capita_growth','norm_youth_unemployment','norm_vulnerable_employment','norm_regulatory_quality'],
+        trajectory:  ['norm_gdp_growth_trend','norm_fdi_trend','norm_governance_trend','norm_debt_trend','norm_inflation_trend']
+    };
+    for (const [pk, vars] of Object.entries(defaults)) {
+        _vmPillarMap[pk] = { ..._vmPillarMap[pk], vars: [...vars] };
+    }
+    _vmUnassigned = [];
+    renderVarManagerCols();
+}
+
+function loadSavedVarLayout() {
+    try {
+        const saved = localStorage.getItem('gsu_exp_pillar_map');
+        const savedUnassigned = localStorage.getItem('gsu_exp_unassigned');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            for (const [pk, vars] of Object.entries(parsed)) {
+                if (EXP_PILLAR_MAP[pk]) EXP_PILLAR_MAP[pk].vars = vars;
+            }
+        }
+        if (savedUnassigned) EXP_UNASSIGNED_VARS = JSON.parse(savedUnassigned);
+    } catch(e) {}
+}
+
+function handleVarCSVUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        const lines = e.target.result.trim().split('\n');
+        if (lines.length < 2) { alert('CSV appears empty.'); return; }
+        const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
+        const isoIdx = headers.findIndex(h => h === 'country_iso' || h === 'country');
+        if (isoIdx === -1) { alert('CSV must contain a country_iso or country column for matching.'); event.target.value=''; return; }
+        const existingCols = latestSlice.length ? Object.keys(latestSlice[0]) : [];
+        const newCols = headers.filter((h,i) => i !== isoIdx && !existingCols.includes(h));
+        if (!newCols.length) { alert('No new columns found — all CSV columns already exist in the dataset.'); event.target.value=''; return; }
+        // Build ISO lookup
+        const isoToRow = {};
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
+            // Simple CSV split (handles basic quoting)
+            const vals = lines[i].match(/("([^"]*)")|([^,]+)|(?<=,)(?=,)/g) || lines[i].split(',');
+            const clean = vals.map(v => (v||'').trim().replace(/^"|"$/g,''));
+            const iso = clean[isoIdx];
+            if (iso) { const row = {}; headers.forEach((h,j) => row[h] = clean[j]||''); isoToRow[iso] = row; }
+        }
+        // Merge into latestSlice
+        let matched = 0;
+        for (const s of latestSlice) {
+            const iso = s.country_iso || s.country;
+            if (isoToRow[iso]) { newCols.forEach(col => s[col] = isoToRow[iso][col]); matched++; }
+        }
+        // Add to working unassigned pool and add labels
+        newCols.forEach(col => {
+            if (!_vmUnassigned.includes(col) && !Object.values(_vmPillarMap).some(p => p.vars.includes(col))) {
+                _vmUnassigned.push(col);
+            }
+            if (!EXP_VAR_LABELS[col]) {
+                EXP_VAR_LABELS[col] = col.replace(/^norm_/,'').replace(/_/g,' ').replace(/\b\w/g, l=>l.toUpperCase());
+            }
+        });
+        renderVarManagerCols();
+        event.target.value = '';
+        alert(`✓ ${newCols.length} new variable(s) added to the Unassigned pool (${matched} countries matched).\n\nVariables: ${newCols.join(', ')}\n\nDrag them into a pillar column, then click Apply Changes.`);
+    };
+    reader.readAsText(file);
+}
+
+function toggleAnalyticsReadonly() {
+    expReadonlyVisible = !expReadonlyVisible;
+    const el = document.getElementById('analytics-readonly');
+    const lbl = document.getElementById('analytics-readonly-label');
+    if (el) el.style.display = expReadonlyVisible ? 'block' : 'none';
+    if (lbl) lbl.textContent = expReadonlyVisible ? 'Hide Analytics Charts' : 'Show Analytics Charts';
+    if (expReadonlyVisible) {
+        setTimeout(() => {
+            if (typeof initializeAnalyticsV8 === 'function') initializeAnalyticsV8();
+        }, 50);
+    }
 }
 
 </script>
@@ -12332,5 +14816,107 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
 <!-- Search results portal — direct child of body so no overflow:hidden ancestor can clip it -->
 <div class="search-results" id="search-results"></div>
 
+<div id="exp-cf-overlay" class="exp-modal-overlay" onclick="if(event.target===this)closeCountryFilter()">
+    <div class="exp-cf-modal">
+        <!-- Header -->
+        <div style="padding:0.85rem 1.1rem 0.6rem;border-bottom:1px solid var(--border-subtle);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;">
+            <div>
+                <div style="font-family:var(--font-head);font-size:0.95rem;color:var(--text-white);line-height:1.2;">Country Filter</div>
+                <div style="font-family:var(--font-minor);font-size:0.47rem;color:var(--text-muted);margin-top:0.2rem;">Choose which countries to include. Uploaded countries appear automatically.</div>
+            </div>
+            <button onclick="closeCountryFilter()" style="background:transparent;border:none;color:var(--text-muted);font-size:1rem;cursor:pointer;padding:0.1rem 0.3rem;line-height:1;" title="Close">✕</button>
+        </div>
+        <!-- Mode selector -->
+        <div style="padding:0.6rem 1.1rem;border-bottom:1px solid var(--border-subtle);flex-shrink:0;">
+            <div style="display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap;">
+                <button id="cfm-all" onclick="setFilterMode('all')" style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;padding:0.28rem 0.7rem;border-radius:3px;cursor:pointer;border:1px solid var(--border-subtle);background:transparent;color:var(--text-muted);transition:all 0.15s;">All Countries</button>
+                <button id="cfm-cohort" onclick="setFilterMode('cohort')" style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;padding:0.28rem 0.7rem;border-radius:3px;cursor:pointer;border:1px solid var(--border-subtle);background:transparent;color:var(--text-muted);transition:all 0.15s;">Cohort Analysis</button>
+                <button id="cfm-visual" onclick="setFilterMode('visual')" style="font-family:var(--font-minor);font-size:0.5rem;text-transform:uppercase;letter-spacing:0.08em;padding:0.28rem 0.7rem;border-radius:3px;cursor:pointer;border:1px solid var(--border-subtle);background:transparent;color:var(--text-muted);transition:all 0.15s;">Visual Filter</button>
+                <div id="exp-cfm-desc" style="font-family:var(--font-minor);font-size:0.46rem;color:var(--text-muted);margin-left:0.5rem;flex:1;"></div>
+            </div>
+        </div>
+        <!-- Search + Continent pills -->
+        <div style="padding:0.5rem 1.1rem;border-bottom:1px solid var(--border-subtle);flex-shrink:0;">
+            <div style="display:flex;gap:0.35rem;flex-wrap:wrap;margin-bottom:0.4rem;" id="exp-cf-continent-pills"></div>
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+                <input type="text" id="exp-cf-search" placeholder="🔍  Search by country name or ISO code…" oninput="filterCountryList()"
+                    style="flex:1;background:var(--tertiary-bg);border:1px solid var(--border-subtle);color:var(--text-white);padding:0.35rem 0.65rem;border-radius:3px;font-family:var(--font-minor);font-size:0.52rem;outline:none;">
+                <span id="exp-cf-list-count" style="font-family:var(--font-minor);font-size:0.44rem;color:rgba(255,255,255,0.2);white-space:nowrap;"></span>
+            </div>
+        </div>
+        <!-- Main body -->
+        <div class="exp-cf-body">
+            <!-- Country list -->
+            <div class="exp-cf-list-panel" id="exp-cf-country-list"></div>
+            <!-- Selected panel -->
+            <div class="exp-cf-selected-panel">
+                <div style="padding:0.45rem 0.65rem;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+                    <span style="font-family:var(--font-minor);font-size:0.48rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);">Selected <span id="exp-cf-sel-count" style="color:var(--accent-gold);">0</span></span>
+                    <button onclick="clearCountryFilter()" style="font-family:var(--font-minor);font-size:0.44rem;color:rgba(255,255,255,0.25);background:transparent;border:none;cursor:pointer;padding:0.1rem 0.3rem;text-transform:uppercase;letter-spacing:0.06em;">Clear</button>
+                </div>
+                <div id="exp-cf-selected-list" style="flex:1;overflow-y:auto;padding:0.4rem 0.45rem;"></div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <div style="padding:0.6rem 1.1rem;border-top:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+            <div style="display:flex;gap:0.4rem;">
+                <button onclick="selectAllCountries()" style="font-family:var(--font-minor);font-size:0.48rem;text-transform:uppercase;letter-spacing:0.07em;padding:0.28rem 0.65rem;border-radius:3px;cursor:pointer;border:1px solid var(--border-subtle);background:transparent;color:var(--text-muted);">Select All</button>
+                <button onclick="clearCountryFilter()" style="font-family:var(--font-minor);font-size:0.48rem;text-transform:uppercase;letter-spacing:0.07em;padding:0.28rem 0.65rem;border-radius:3px;cursor:pointer;border:1px solid var(--border-subtle);background:transparent;color:var(--text-muted);">Deselect All</button>
+            </div>
+            <div style="display:flex;gap:0.4rem;">
+                <button onclick="closeCountryFilter()" style="font-family:var(--font-minor);font-size:0.48rem;text-transform:uppercase;letter-spacing:0.07em;padding:0.28rem 0.8rem;border-radius:3px;cursor:pointer;border:1px solid var(--border-subtle);background:transparent;color:var(--text-muted);">Cancel</button>
+                <button onclick="applyCountryFilter()" style="font-family:var(--font-minor);font-size:0.48rem;text-transform:uppercase;letter-spacing:0.07em;padding:0.28rem 1.1rem;border-radius:3px;cursor:pointer;border:1px solid rgba(194,165,109,0.5);background:rgba(194,165,109,0.12);color:var(--accent-gold);">Apply Filter</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══ VARIABLE MANAGER MODAL ═══════════════════════════════════════════════ -->
+<div id="exp-var-manager-modal" class="exp-modal-overlay" onclick="if(event.target===this)closeVarManager()">
+    <div class="exp-modal">
+        <div class="exp-modal-header">
+            <span class="exp-modal-title">Variable Manager</span>
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+                <span style="font-family:var(--font-minor);font-size:0.48rem;color:var(--text-muted);">Drag chips between pillars · Changes apply on click Apply</span>
+                <button class="exp-modal-close" onclick="closeVarManager()">✕</button>
+            </div>
+        </div>
+        <div class="exp-modal-body">
+            <div class="exp-var-cols" id="exp-var-cols-container"></div>
+        </div>
+        <!-- CSV format example (collapsible) -->
+        <div id="exp-csv-format-panel" style="display:none;padding:0.6rem 1.25rem 0;border-top:1px solid var(--border-subtle);">
+            <div style="font-family:var(--font-minor);font-size:0.48rem;color:var(--text-muted);margin-bottom:0.4rem;">Required CSV format — one row per country, values normalised [0,1]:</div>
+            <pre style="font-family:var(--font-mono);font-size:0.44rem;color:rgba(194,165,109,0.75);background:rgba(0,0,0,0.3);border:1px solid var(--border-subtle);border-radius:4px;padding:0.55rem 0.75rem;line-height:1.7;margin:0;overflow-x:auto;">country_iso,norm_my_variable_1,norm_my_variable_2
+USA,0.82,0.55
+GBR,0.71,0.67
+IND,0.58,0.49
+BRA,0.44,0.38
+CHN,0.76,0.61</pre>
+            <div style="font-family:var(--font-minor);font-size:0.44rem;color:rgba(255,255,255,0.3);margin-top:0.35rem;line-height:1.6;">
+                · <code style="color:rgba(194,165,109,0.6);">country_iso</code> must use ISO 3166-1 alpha-3 codes (USA, GBR, IND…)<br>
+                · Column names should be prefixed <code style="color:rgba(194,165,109,0.6);">norm_</code> and be unique — existing columns are skipped<br>
+                · Values outside [0,1] are accepted but may produce unexpected scores<br>
+                · Countries in your CSV that don't match the dataset are silently ignored
+            </div>
+            <div style="margin-top:0.5rem;">
+                <button class="exp-modal-btn secondary" style="font-size:0.46rem;" onclick="downloadCsvTemplate()"><i class="ri-download-line"></i> Download Template</button>
+            </div>
+        </div>
+        <div class="exp-modal-footer">
+            <label class="exp-modal-upload" title="Upload a CSV with new norm_ columns to inject into the variable pool">
+                <i class="ri-upload-line"></i> Upload CSV
+                <input type="file" accept=".csv" style="display:none" onchange="handleVarCSVUpload(event)">
+            </label>
+            <button class="exp-modal-btn secondary" style="font-size:0.46rem;" onclick="toggleCsvFormatPanel()" title="Show expected CSV format">
+                <i class="ri-question-line"></i> Format
+            </button>
+            <div style="flex:1;"></div>
+            <button class="exp-modal-btn secondary" onclick="resetVarManager()">Reset Layout</button>
+            <button class="exp-modal-btn secondary" onclick="closeVarManager()">Cancel</button>
+            <button class="exp-modal-btn primary" onclick="applyVarManager()"><i class="ri-check-line"></i> Apply Changes</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
