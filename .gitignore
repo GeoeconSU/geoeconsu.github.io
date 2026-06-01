@@ -44,3 +44,7 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+Sentiment_analysis.pdf
+dashboard_final0.html
+dashboard_mobile.html
