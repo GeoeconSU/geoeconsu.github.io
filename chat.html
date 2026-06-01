@@ -4380,7 +4380,7 @@ const ALL_TOOLS = [
             metric: { type: 'string', enum: ['rao_score','pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory','tos_score','sis_score','dgi_score','rvs_score'] },
             top_n: { type: 'number', description: 'Number to return (default 20).' },
             year: { type: 'number' },
-            region: { type: 'string', description: 'Optional region filter. Values: "Sub-Saharan Africa", "South Asia", "East Asia & Pacific", "Middle East & North Africa", "Latin America & Caribbean", "Europe & Central Asia", "North America".' }
+            region: { type: 'string', description: 'Optional region filter. Sub-regions: "West Africa", "East Africa", "Central Africa", "Southern Africa", "North Africa", "Southeast Asia", "East Asia", "South Asia", "Central Asia", "Middle East", "Western Europe", "Eastern Europe", "Southern Europe", "South America", "Central America", "Caribbean", "North America", "Australasia". Broad aliases also work: "Sub-Saharan Africa", "East Asia & Pacific", "Middle East & North Africa", "Europe & Central Asia", "Latin America & Caribbean".' }
         }}
     }},
     { type: 'function', function: { name: 'find_anomalies',
@@ -10601,7 +10601,7 @@ For screening or recommendation queries (e.g. "which market should I enter", "be
 For comparison queries (e.g. "compare X and Y"):
 - Lead with a side-by-side comparison table across all pillars and TOS components
 - Then explain what the score differential means for a specific type of capital and horizon
-- Include year-by-year time-series for each country
+- Include a full year-by-year time-series table for EACH country (2015–present) — call get_country_profile with include_history=true for each individually, then render separate tables
 
 REGIME FILTER ENFORCEMENT:
 When the user specifies a regime constraint (e.g. "FO or SR only", "pre-breakout markets only"), always call find_anomalies first to identify qualifying countries before making any recommendation. Only recommend countries that actually meet the stated filter. If no countries in the specified region meet the constraint, state this explicitly — give the count of near-misses and their TOS scores — then explain the gap before recommending the closest alternative and why the thesis still holds or doesn't.
@@ -10609,7 +10609,7 @@ When the user specifies a regime constraint (e.g. "FO or SR only", "pre-breakout
 TOOL USE PROTOCOL — follow exactly:
 1. For any named country: call get_country_profile with include_history=true. Never skip history.
 2. For comparisons of 2+ countries: call get_country_profile(include_history=true) for EACH country individually — do not rely on compare_countries alone, as it lacks history and trajectory context.
-3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen.
+3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen. Valid region values: sub-regions like "West Africa", "Southeast Asia", "South Asia", "Middle East", "Eastern Europe", "South America"; or broad aliases like "Sub-Saharan Africa", "East Asia & Pacific", "Latin America & Caribbean", "Middle East & North Africa", "Europe & Central Asia".
 4. When include_history data is retrieved: ALWAYS produce a full year-by-year table. Do not summarise history into 1–2 rows.
 5. Use web_search for current events, post-2024 data, sanctions, elections, or news.
 6. Use chart tools when visual output adds value.
@@ -10743,16 +10743,41 @@ function toolCompareCountries({ countries = [] } = {}) {
     }), null, 2);
 }
 
+// Maps broad region aliases → sub-region labels stored in CSV
+const REGION_ALIASES = {
+    'sub-saharan africa': ['West Africa','East Africa','Central Africa','Southern Africa'],
+    'africa': ['West Africa','East Africa','Central Africa','Southern Africa','North Africa'],
+    'east asia & pacific': ['East Asia','Southeast Asia','Australasia','Pacific Islands'],
+    'asia pacific': ['East Asia','Southeast Asia','South Asia','Central Asia','Australasia','Pacific Islands'],
+    'middle east & north africa': ['Middle East','North Africa'],
+    'mena': ['Middle East','North Africa'],
+    'europe & central asia': ['Western Europe','Eastern Europe','Southern Europe','Central Asia'],
+    'europe': ['Western Europe','Eastern Europe','Southern Europe'],
+    'latin america & caribbean': ['South America','Central America','Caribbean'],
+    'latin america': ['South America','Central America','Caribbean'],
+};
+
+function matchRegion(rowRegion, query) {
+    if (!query || !rowRegion) return !query;
+    const r = (rowRegion || '').toLowerCase();
+    const q = query.toLowerCase().trim();
+    if (r === q) return true;
+    const subs = REGION_ALIASES[q];
+    if (subs) return subs.some(s => r === s.toLowerCase());
+    // fallback: exact sub-region prefix match (avoids "East Asia" matching "Southeast Asia")
+    return r === q || r.startsWith(q + ' ');
+}
+
 function toolRankByPillar({ metric = 'rao_score', top_n = 20, year, region } = {}) {
     let slice = year ? getSlice(year) : latestSlice;
-    if (region) slice = slice.filter(r => (r.region || '').toLowerCase().includes(region.toLowerCase()));
+    if (region) slice = slice.filter(r => matchRegion(r.region, region));
     const ranked = [...slice].filter(r => r[metric] != null).sort((a, b) => b[metric] - a[metric]).slice(0, Math.min(top_n || 20, 50)).map((r, i) => ({ rank: i + 1, country: r.country_name, iso: r.country, value: +r[metric]?.toFixed(3), regime: r.regime, tos: +r.tos_score?.toFixed(2), region: r.region || '' }));
     return JSON.stringify({ metric, year: year || window.LATEST_YEAR, region: region || 'global', rankings: ranked }, null, 2);
 }
 
 function toolFindAnomalies({ focus = 'all', year, region } = {}) {
     let slice = year ? getSlice(year) : latestSlice;
-    if (region) slice = slice.filter(r => (r.region || '').toLowerCase().includes(region.toLowerCase()));
+    if (region) slice = slice.filter(r => matchRegion(r.region, region));
     const regionScores = {};
     slice.forEach(r => { const rg = r.region || 'Unknown'; if (!regionScores[rg]) regionScores[rg] = []; regionScores[rg].push(r.rao_score || 0); });
     const regionMeans = {};
