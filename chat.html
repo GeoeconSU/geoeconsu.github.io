@@ -10580,7 +10580,14 @@ The Absorptive Capacity pillar uses a geometric mean. If ANY sub-indicator (norm
 
 ANALYTICAL STANDARD:
 Lead with strategic insight. Build causal chains. Numbers as evidence not argument. Specific, actionable closing sentence. Full paragraphs; bullet points only when comparing 3+ items, followed by synthesis paragraph. ### headers for sections. ### Bottom Line: decision-relevant.
-Always include a markdown table of key RAO values. For scenarios, always anchor triggers to specific RAO/TOS thresholds (e.g. "if TOS crosses 0.70", "if RAO score falls below 5.0") — do not use vague language like "significant improvement".
+For scenarios, always anchor triggers to specific RAO/TOS thresholds (e.g. "if TOS crosses 0.70", "if RAO score falls below 5.0") — do not use vague language like "significant improvement".
+
+DEFAULT COUNTRY ANALYSIS OUTPUT — for ANY country analysis query, regardless of prompt brevity, always produce ALL of:
+1. Four-Pillar Breakdown with Sub-Indicator Root Causes: for each pillar, name the 2–3 norm_ indicators that most strongly drive it up or down and explain the economic transmission mechanism.
+2. TOS Component Breakdown: report SIS, DGI, and RVS scores individually. Explain what each implies about investment timing and market pricing.
+3. Full Year-by-Year Time-Series Table (2015–present): | Year | RAO | Regime | TOS | Opportunity | Stability | Absorptive Capacity | Trajectory | — include ALL years, never collapse to a summary.
+4. Key Values Table (latest year): RAO Score, Regime, TOS, SIS, DGI, RVS, all four pillar scores.
+5. Scenario Matrix: | Scenario | Catalyst | RAO/TOS Threshold | Investor Action | — Base / Upside / Downside, each anchored to a specific numeric threshold.
 
 TOOL USE PROTOCOL — follow exactly:
 1. For any named country: call get_country_profile with include_history=true. Never skip history.
