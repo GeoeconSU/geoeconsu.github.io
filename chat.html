@@ -3643,6 +3643,22 @@
         .chat-message.assistant:hover .chat-copy-btn { opacity: 1; }
         .chat-copy-btn:hover { color: var(--accent-gold); border-color: var(--accent-gold-dim); }
         .chat-copy-btn.copied { color: #50c878; border-color: rgba(80,200,120,0.4); opacity: 1; }
+        .chat-regen-btn {
+            position: absolute; top: 40px; right: 40px;
+            background: var(--tertiary-bg); border: 1px solid var(--glass-border);
+            color: var(--text-muted); border-radius: 50%;
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 0.85rem;
+            opacity: 0; transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .chat-message.assistant:hover .chat-regen-btn { opacity: 1; }
+        .chat-regen-btn:hover { color: var(--accent-gold); border-color: var(--accent-gold-dim); }
+        .followup-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0 max(1.5rem, calc(50% - 620px)) 0.75rem; }
+        .followup-pill { background: rgba(194,165,109,0.06); border: 1px solid rgba(194,165,109,0.2); color: rgba(194,165,109,0.75); font-family: var(--font-minor); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 0.3rem 0.8rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+        .followup-pill:hover { background: rgba(194,165,109,0.12); color: var(--accent-gold); border-color: var(--accent-gold); }
+        .msg-time { display: block; font-family: var(--font-minor); font-size: 0.55rem; color: var(--text-muted); opacity: 0.5; margin-top: 0.4rem; text-align: right; letter-spacing: 0.04em; }
+        .ctx-indicator { font-family: var(--font-minor); font-size: 0.55rem; color: var(--text-muted); opacity: 0.55; letter-spacing: 0.04em; flex-shrink: 0; white-space: nowrap; }
+        .session-rename-input { background: transparent; border: none; border-bottom: 1px solid var(--accent-gold-dim); color: var(--text-white); font-family: var(--font-body); font-size: 0.79rem; width: 100%; outline: none; padding: 0; }
 
         /* ===== AGENT RESEARCH LAYOUT ===== */
         .sessions-sidebar {
@@ -3665,6 +3681,10 @@
             font-size: 0.85rem; transition: all 0.15s;
         }
         .sessions-hdr-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .sessions-search-wrap { padding: 0.35rem 0.7rem; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0; }
+        .sessions-search { width: 100%; background: var(--w04); border: 1px solid var(--border-subtle); color: var(--text-white); font-family: var(--font-body); font-size: 0.72rem; padding: 0.3rem 0.55rem; border-radius: 3px; outline: none; }
+        .sessions-search::placeholder { color: var(--text-muted); }
+        .sessions-search:focus { border-color: var(--accent-gold-dim); }
         .sessions-list { flex: 1; overflow-y: auto; padding: 0.35rem 0; }
         .session-item {
             display: flex; align-items: center; padding: 0.45rem 0.9rem;
@@ -3790,7 +3810,26 @@
         .tm-md table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin: 0.6rem 0; }
         .tm-md th { background: rgba(255,255,255,0.05); padding: 0.3rem 0.5rem; text-align: left; border: 1px solid rgba(255,255,255,0.08); }
         .tm-md td { padding: 0.28rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); }
-        @media (max-width: 900px) { .sessions-sidebar, .trace-panel { display: none; } }
+        @media (max-width: 900px) {
+            .sessions-sidebar {
+                position: fixed; top: 56px; left: 0; bottom: 0; z-index: 900;
+                transform: translateX(-100%); transition: transform 0.25s ease;
+                width: 210px;
+            }
+            .sessions-sidebar.mobile-open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
+            .trace-panel {
+                position: fixed; top: 56px; right: 0; bottom: 0; z-index: 900;
+                transform: translateX(100%); transition: transform 0.25s ease;
+                width: 260px;
+            }
+            .trace-panel.mobile-open { transform: translateX(0); box-shadow: -4px 0 24px rgba(0,0,0,0.5); }
+            .mobile-drawer-overlay { display: none; position: fixed; inset: 0; z-index: 899; background: rgba(0,0,0,0.45); }
+            .mobile-drawer-overlay.open { display: block; }
+            .mobile-fab-row { display: flex !important; }
+        }
+        .mobile-fab-row { display: none; position: fixed; bottom: 90px; right: 1rem; flex-direction: column; gap: 0.5rem; z-index: 800; }
+        .mobile-fab { width: 40px; height: 40px; border-radius: 50%; background: var(--secondary-bg); border: 1px solid var(--border-subtle); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4); transition: all 0.2s; }
+        .mobile-fab:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
 
         /* ===== MOBILE RESPONSIVENESS ===== */
 
@@ -4154,13 +4193,17 @@
     <!-- Sessions sidebar -->
     <div class="sessions-sidebar">
         <div class="sessions-hdr">
-            <span>Sessions</span>
-            <button class="sessions-hdr-btn" onclick="newSession()" title="New session"><i class="ri-add-line"></i></button>
+            <span title="Ctrl+N for new session">Sessions</span>
+            <button class="sessions-hdr-btn" onclick="newSession()" title="New session (Ctrl+N)"><i class="ri-add-line"></i></button>
+        </div>
+        <div class="sessions-search-wrap">
+            <input id="sessions-search" class="sessions-search" placeholder="Search…" oninput="filterSessions(this.value)" />
         </div>
         <div class="sessions-list" id="sessions-list"></div>
         <div class="sessions-footer">
-            <button class="sessions-export-btn" onclick="exportToMarkdown()" title="Export as Markdown"><i class="ri-markdown-line"></i> MD</button>
+            <button class="sessions-export-btn" onclick="exportToMarkdown()" title="Export as Markdown (Ctrl+E)"><i class="ri-markdown-line"></i> MD</button>
             <button class="sessions-export-btn" onclick="exportToPDF()" title="Print / Save as PDF"><i class="ri-printer-line"></i> PDF</button>
+            <button class="sessions-export-btn copy-session-btn" onclick="copySessionToClipboard()" title="Copy conversation to clipboard"><i class="ri-clipboard-line"></i> Copy</button>
         </div>
     </div>
     <!-- Main chat -->
@@ -4173,14 +4216,15 @@
             <button class="tpl-btn" onclick="clearChatHistory()" style="margin-left:auto;" title="Clear chat"><i class="ri-delete-bin-line"></i></button>
         </div>
         <div class="model-selector">
-            <button class="model-pill active" data-model="gemini-3.1-flash-lite" onclick="selectModel('gemini-3.1-flash-lite')">Gemini 3.1 Lite</button>
-            <button class="model-pill" data-model="gemini-3.5-flash" onclick="selectModel('gemini-3.5-flash')">Gemini 3.5</button>
-            <button class="model-pill" data-model="openai/gpt-oss-120b" onclick="selectModel('openai/gpt-oss-120b')">GPT OSS 120B</button>
-            <button class="model-pill" data-model="qwen/qwen3-32b" onclick="selectModel('qwen/qwen3-32b')">Qwen3 32B</button>
+            <button class="model-pill active" data-model="gemini-3.1-flash-lite" onclick="selectModel('gemini-3.1-flash-lite')" title="Fastest · Best for quick lookups">Gemini 3.1 Lite</button>
+            <button class="model-pill" data-model="gemini-3.5-flash" onclick="selectModel('gemini-3.5-flash')" title="Balanced · Better reasoning, slightly slower">Gemini 3.5</button>
+            <button class="model-pill" data-model="openai/gpt-oss-120b" onclick="selectModel('openai/gpt-oss-120b')" title="Most capable · Slower, best for deep analysis">GPT OSS 120B</button>
+            <button class="model-pill" data-model="qwen/qwen3-32b" onclick="selectModel('qwen/qwen3-32b')" title="Strong multilingual · Good for emerging markets">Qwen3 32B</button>
         </div>
         <div class="coverage-bar" id="coverage-bar" style="display:none;"></div>
         <div class="chat-messages" id="chat-messages-container"></div>
         <div class="chat-input-area">
+            <div class="ctx-indicator" id="ctx-indicator"></div>
             <div class="chat-input-wrapper">
                 <textarea id="chat-input" class="chat-input" placeholder="Ask about any country, region, or investment theme…" rows="1" onkeydown="handleChatKeydown(event)" oninput="autoResizeChatInput(this)"></textarea>
             </div>
@@ -4323,6 +4367,7 @@ let isChatLoading = false;
 let datasetContextCache = null;
 let currentSessionId = null;
 let _agentSources = [];
+let _abortController = null;
 const SESSION_STORAGE_KEY = 'gsu_chat_sessions';
 
 // Comparison Presets
@@ -10291,30 +10336,47 @@ async function sendChatMessage() {
     input.value = '';
     input.style.height = '52px';
     chatHistory.push({ role: 'user', content: userText });
+    updateCtxIndicator();
 
     isChatLoading = true;
-    sendBtn.disabled = true;
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = '<i class="ri-stop-fill"></i>';
+    sendBtn.onclick = stopGeneration;
     updateChatStatus('thinking', 'Reasoning…');
     const typingId = showTypingIndicator();
+
+    _abortController = new AbortController();
 
     try {
         const reply = await runAgentLoop(userText);
         removeTypingIndicator(typingId);
         renderChatMessage('assistant', reply);
         chatHistory.push({ role: 'assistant', content: reply });
+        updateCtxIndicator();
+        renderFollowupPills(userText, reply);
         renderCoverage(_agentSources);
         autoSaveSession();
         updateChatStatus('ready', 'Ready');
     } catch (err) {
         removeTypingIndicator(typingId);
-        renderChatMessage('assistant', `**Error:** ${err.message || 'Network error — check connection.'}`, true);
-        chatHistory.pop();
-        updateChatStatus('ready', 'Ready');
+        if (err.name === 'AbortError') {
+            updateChatStatus('ready', 'Ready');
+        } else {
+            renderChatMessage('assistant', `**Error:** ${err.message || 'Network error — check connection.'}`, true);
+            chatHistory.pop();
+            updateChatStatus('ready', 'Ready');
+        }
     } finally {
         isChatLoading = false;
-        sendBtn.disabled = false;
+        _abortController = null;
+        sendBtn.innerHTML = '<i class="ri-send-plane-fill"></i>';
+        sendBtn.onclick = sendChatMessage;
         input.focus();
     }
+}
+
+function stopGeneration() {
+    if (_abortController) { _abortController.abort(); _abortController = null; }
 }
 
 async function callGroqAPI(messages, tools = null, onToken = null) {
@@ -10339,7 +10401,8 @@ async function callGroqAPI(messages, tools = null, onToken = null) {
     const response = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
+        signal: _abortController ? _abortController.signal : undefined
     });
 
     if (!response.ok) {
@@ -10465,7 +10528,8 @@ async function callGroqAPIAgent(messages, tools = null, maxTokens = 2500) {
         if (!isGemini) body.tool_choice = 'auto';
     }
     const response = await fetch(url, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        signal: _abortController ? _abortController.signal : undefined
     });
     if (!response.ok) {
         const err = await response.json().catch(() => ({}));
@@ -10748,10 +10812,14 @@ function deleteSession(id, evt) {
     if (currentSessionId === id) { currentSessionId = null; newSession(); } else renderSessionsSidebar();
 }
 
-function renderSessionsSidebar() {
+function renderSessionsSidebar(query) {
     const list = document.getElementById('sessions-list');
     if (!list) return;
-    const sessions = listSessions();
+    let sessions = listSessions();
+    if (query && query.trim()) {
+        const q = query.toLowerCase();
+        sessions = sessions.filter(s => s.name.toLowerCase().includes(q));
+    }
     if (!sessions.length) {
         list.innerHTML = '<div style="padding:1.2rem 0.9rem;font-size:0.77rem;color:var(--text-muted);font-style:italic;text-align:center;">No sessions yet</div>';
         return;
@@ -10759,7 +10827,7 @@ function renderSessionsSidebar() {
     list.innerHTML = sessions.map(s => {
         const dt = new Date(s.updatedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
         return '<div class="session-item' + (s.id === currentSessionId ? ' active' : '') + '" onclick="loadSession(\'' + s.id + '\')">'
-            + '<span class="session-name" title="' + escapeHTMLSafe(s.name) + '">' + escapeHTMLSafe(s.name) + '</span>'
+            + '<span class="session-name" title="' + escapeHTMLSafe(s.name) + '" ondblclick="renameSession(\'' + s.id + '\', event)">' + escapeHTMLSafe(s.name) + '</span>'
             + '<span class="session-time">' + dt + '</span>'
             + '<button class="session-del" onclick="deleteSession(\'' + s.id + '\', event)" title="Delete"><i class="ri-delete-bin-line"></i></button>'
             + '</div>';
@@ -10784,6 +10852,128 @@ function exportToMarkdown() {
 
 function exportToPDF() { window.print(); }
 
+function copySessionToClipboard() {
+    if (!chatHistory.length) { alert('No conversation to copy.'); return; }
+    const lines = ['# GSU Research Session\n', '_' + new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }) + '_\n\n---\n'];
+    chatHistory.forEach(m => {
+        if (m.role === 'user') lines.push('\n**You:** ' + m.content + '\n');
+        else if (m.role === 'assistant') lines.push('\n**RAO Assistant:** ' + m.content + '\n');
+    });
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+        const btn = document.querySelector('.sessions-footer .copy-session-btn');
+        if (btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<i class="ri-check-line"></i> Copied';
+            setTimeout(() => { btn.innerHTML = orig; }, 1500);
+        }
+    }).catch(() => {});
+}
+
+function renderFollowupPills(userQuery, assistantReply) {
+    const container = document.getElementById('chat-messages-container');
+    if (!container) return;
+    // Remove existing pills
+    const existing = container.querySelector('.followup-pills');
+    if (existing) existing.remove();
+
+    let suggestions = [];
+    const q = userQuery.toLowerCase();
+    // Country detection — find a word that matches a known country name
+    const countryMatch = userQuery.match(/\b([A-Z][a-z]{3,}(?:\s[A-Z][a-z]+)?)\b/);
+    const country = countryMatch ? countryMatch[1] : null;
+
+    if (country && !q.includes('compare') && !q.includes('screen') && !q.includes('rank')) {
+        suggestions = [
+            `Compare ${country} with its regional peers`,
+            `Show ${country} RAO trend 2015–2024`,
+            `What sectors benefit most from ${country}'s regime?`
+        ];
+    } else if (q.includes('compare')) {
+        suggestions = [
+            'Show radar chart overlay',
+            'Which has better TOS signal?',
+            'Run screening across both regions'
+        ];
+    } else if (q.includes('screen') || q.includes('rank')) {
+        suggestions = [
+            'Filter to Sub-Saharan Africa',
+            'Show top 5 by TOS signal',
+            'Which have FO regime?'
+        ];
+    } else {
+        suggestions = [
+            'Run a global anomaly scan',
+            'Compare top 3 vs bottom 3',
+            'What countries changed regime in 2023?'
+        ];
+    }
+
+    const pillsDiv = document.createElement('div');
+    pillsDiv.className = 'followup-pills';
+    pillsDiv.innerHTML = suggestions.map(s =>
+        `<button class="followup-pill" onclick="this.closest('.followup-pills').remove(); sendWelcomeQuery('${s.replace(/'/g, "\\'")}')">${s}</button>`
+    ).join('');
+    container.appendChild(pillsDiv);
+    container.scrollTop = container.scrollHeight;
+}
+
+function regenResponse(btn) {
+    if (isChatLoading) return;
+    const lastUserMsg = [...chatHistory].reverse().find(m => m.role === 'user');
+    if (!lastUserMsg) return;
+    // Remove last assistant entry from history
+    const lastAssistantIdx = chatHistory.map(m => m.role).lastIndexOf('assistant');
+    if (lastAssistantIdx !== -1) chatHistory.splice(lastAssistantIdx, 1);
+    // Remove the message bubble from the DOM
+    const msgDiv = btn.closest('.chat-message');
+    if (msgDiv) msgDiv.remove();
+    // Remove followup pills if present
+    const pills = document.getElementById('chat-messages-container')?.querySelector('.followup-pills');
+    if (pills) pills.remove();
+    const input = document.getElementById('chat-input');
+    if (input) { input.value = lastUserMsg.content; sendChatMessage(); }
+}
+
+function updateCtxIndicator() {
+    const n = chatHistory.filter(m => m.role !== 'chart').length;
+    const el = document.getElementById('ctx-indicator');
+    if (el) el.textContent = n > 0 ? n + ' msg' + (n === 1 ? '' : 's') + ' in context' : '';
+}
+
+function filterSessions(query) {
+    renderSessionsSidebar(query);
+}
+
+function renameSession(id, evt) {
+    evt.stopPropagation();
+    const item = evt.target.closest('.session-item');
+    if (!item) return;
+    const span = item.querySelector('.session-name');
+    if (!span) return;
+    const currentName = span.title || span.textContent;
+    const input = document.createElement('input');
+    input.className = 'session-rename-input';
+    input.value = currentName;
+    span.replaceWith(input);
+    input.focus();
+    input.select();
+    const save = () => {
+        const newName = input.value.trim() || currentName;
+        const sessions = listSessions();
+        const sess = sessions.find(s => s.id === id);
+        if (sess) {
+            sess.name = newName;
+            localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessions));
+        }
+        renderSessionsSidebar();
+    };
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+        if (e.key === 'Escape') { e.preventDefault(); const s = document.createElement('span'); s.className = 'session-name'; s.title = currentName; s.textContent = currentName; input.replaceWith(s); }
+    });
+}
+
 function renderChatMessage(role, content, isError = false) {
     const container = document.getElementById('chat-messages-container');
     if (!container) return;
@@ -10795,23 +10985,25 @@ function renderChatMessage(role, content, isError = false) {
     const bubbleClass = 'chat-bubble' + (isError ? ' error-bubble' : '');
     const htmlContent = chatMarkdownToHTML(content);
 
+    const timeStr = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
     if (role === 'user') {
-        div.innerHTML = `<div class="${bubbleClass}">${htmlContent}</div>`;
+        div.innerHTML = `<div class="${bubbleClass}">${htmlContent}<span class="msg-time">${timeStr}</span></div>`;
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
     } else {
         div.innerHTML = `
             <div class="chat-avatar"><i class="ri-sparkling-line"></i></div>
             <div class="${bubbleClass}"></div>
+            <button class="chat-regen-btn" onclick="regenResponse(this)" title="Regenerate response"><i class="ri-loop-left-line"></i></button>
             <button class="chat-copy-btn" onclick="copyChatMessage(this)" title="Copy to clipboard"><i class="ri-file-copy-line"></i></button>
         `;
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
         const bubble = div.querySelector('.chat-bubble');
         if (isError) {
-            bubble.innerHTML = htmlContent;
+            bubble.innerHTML = htmlContent + `<span class="msg-time">${timeStr}</span>`;
         } else {
-            streamChatContent(bubble, htmlContent, container);
+            streamChatContent(bubble, htmlContent, container, timeStr);
         }
     }
 }
@@ -10906,7 +11098,7 @@ function chatMarkdownToHTML(text) {
     return html;
 }
 
-function streamChatContent(bubble, html, container) {
+function streamChatContent(bubble, html, container, timeStr) {
     // Split HTML into tag tokens and text-word tokens, reveal text word-by-word
     const chunks = [];
     let rem = html;
@@ -10938,7 +11130,7 @@ function streamChatContent(bubble, html, container) {
 
     function step() {
         if (i >= chunks.length) {
-            bubble.innerHTML = rendered;
+            bubble.innerHTML = rendered + (timeStr ? `<span class="msg-time">${timeStr}</span>` : '');
             container.removeEventListener('scroll', onScroll);
             scroll();
             return;
@@ -10966,15 +11158,26 @@ function streamChatContent(bubble, html, container) {
 function showWelcomeState() {
     const container = document.getElementById('chat-messages-container');
     if (!container) return;
+    const ALL_PILLS = [
+        ['Analyse Singapore\'s RAO score', 'Singapore RAO'],
+        ['Compare Vietnam and Indonesia', 'Vietnam vs Indonesia'],
+        ['Best countries for digital economy investment', 'Digital economy screening'],
+        ['Which countries changed regime in 2023?', 'Regime shifts 2023'],
+        ['Show the top 10 by TOS signal', 'Top TOS signals'],
+        ['Run a global anomaly scan', 'Global anomalies'],
+        ['Compare India and Brazil across all pillars', 'India vs Brazil'],
+        ['Which Sub-Saharan African markets are FO regime?', 'SSA frontiers'],
+        ['What drove Nigeria\'s RAO score in 2022?', 'Nigeria deep-dive'],
+        ['Rank Southeast Asia by absorptive capacity', 'SEA ranking'],
+    ];
+    const pills = ALL_PILLS.sort(() => Math.random() - 0.5).slice(0, 6);
     container.innerHTML = `
         <div class="chat-welcome" id="chat-welcome">
             <div class="chat-welcome-icon"><i class="ri-sparkling-line"></i></div>
             <div class="chat-welcome-title">RAO Intelligence Assistant</div>
             <div class="chat-welcome-sub">Ask about any country's investment profile, compare markets, screen for themes, or explore regional patterns — powered by the full RAO dataset.</div>
             <div class="chat-welcome-pills">
-                <div class="chat-welcome-pill" onclick="sendWelcomeQuery('Analyse Singapore\\'s RAO score')">Analyse Singapore's RAO</div>
-                <div class="chat-welcome-pill" onclick="sendWelcomeQuery('Compare Vietnam and Indonesia')">Vietnam vs. Indonesia</div>
-                <div class="chat-welcome-pill" onclick="sendWelcomeQuery('Best countries for digital economy investment')">Digital economy screening</div>
+                ${pills.map(p => `<div class="chat-welcome-pill" onclick="sendWelcomeQuery('${p[0].replace(/'/g, "\\'")}')">${p[1]}</div>`).join('')}
             </div>
         </div>
     `;
@@ -11046,6 +11249,7 @@ function clearChatHistory() {
     const bar = document.getElementById('coverage-bar');
     if (bar) bar.style.display = 'none';
     updateChatStatus('ready', 'Ready');
+    updateCtxIndicator();
     renderSessionsSidebar();
 }
 
@@ -11372,11 +11576,58 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
     return wrapper;
 }
 
+// ===== MOBILE DRAWER FUNCTIONS =====
+function toggleMobileSidebar() {
+    const s = document.querySelector('.sessions-sidebar');
+    const o = document.getElementById('mobile-overlay');
+    const isOpen = s.classList.contains('mobile-open');
+    closeMobileDrawers();
+    if (!isOpen) { s.classList.add('mobile-open'); o.classList.add('open'); }
+}
+function toggleMobileTrace() {
+    const t = document.querySelector('.trace-panel');
+    const o = document.getElementById('mobile-overlay');
+    const isOpen = t.classList.contains('mobile-open');
+    closeMobileDrawers();
+    if (!isOpen) { t.classList.add('mobile-open'); o.classList.add('open'); }
+}
+function closeMobileDrawers() {
+    document.querySelector('.sessions-sidebar')?.classList.remove('mobile-open');
+    document.querySelector('.trace-panel')?.classList.remove('mobile-open');
+    document.getElementById('mobile-overlay')?.classList.remove('open');
+}
+
+// ===== KEYBOARD SHORTCUTS =====
+function handleGlobalKeydown(e) {
+    const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+    const isInput = tag === 'input' || tag === 'textarea';
+    const isMeta = e.ctrlKey || e.metaKey;
+
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('trace-modal');
+        if (modal && modal.style.display !== 'none' && modal.style.display !== '') {
+            closeTraceModal();
+        } else {
+            closeMobileDrawers();
+        }
+        return;
+    }
+    if (isInput) return;
+    if (isMeta && e.key === 'n') { e.preventDefault(); newSession(); }
+    if (isMeta && e.key === 'e') { e.preventDefault(); exportToMarkdown(); }
+}
+document.addEventListener('keydown', handleGlobalKeydown);
+
 </script>
 
 <!-- Firebase config & auth helpers -->
 <script src="firebase-config.js"></script>
 
+<div class="mobile-drawer-overlay" id="mobile-overlay" onclick="closeMobileDrawers()"></div>
+<div class="mobile-fab-row">
+    <button class="mobile-fab" onclick="toggleMobileSidebar()" title="Sessions"><i class="ri-history-line"></i></button>
+    <button class="mobile-fab" onclick="toggleMobileTrace()" title="Trace"><i class="ri-flow-chart"></i></button>
+</div>
 <div id="trace-modal" class="trace-modal" onclick="closeTraceModal(event)">
     <div class="trace-modal-card">
         <div class="trace-modal-hdr">
