@@ -3363,7 +3363,7 @@
         .re-subregions { transition: max-height 0.35s var(--easing); overflow: hidden; }
 
         .re-subregion-header {
-            padding: 0.55rem 1.4rem 0.55rem 2.6rem; cursor: pointer;
+            padding: 0.55rem 1.4rem 0.55rem 1.4rem; cursor: pointer;
             border-top: 1px solid var(--border-subtle);
             transition: background 0.15s;
             align-items: center; column-gap: 0.5rem;
@@ -3417,9 +3417,9 @@
         }
         .re-continent:last-child .re-continent-card { border-bottom: none; }
 
-        /* Card header bar (continent + sub-region share the same flex pattern) */
+        /* Card header bar — grid so columns align with collapsed rows */
         .re-continent-card-top {
-            display: flex; align-items: center; gap: 0.45rem;
+            display: grid; align-items: center; column-gap: 0.6rem;
             padding: 0.75rem 1.4rem; cursor: pointer;
             transition: background 0.15s;
             border-bottom: 1px solid var(--border-subtle);
@@ -3430,11 +3430,48 @@
         .re-card-count { font-family: var(--font-minor); font-size: 0.6rem; color: var(--text-muted); flex-shrink: 0; }
         .re-card-sigma { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-muted); flex-shrink: 0; white-space: nowrap; }
 
+        /* Sub-region indent container */
+        .re-subs-container {
+            border-left: 2px solid rgba(255,255,255,0.07);
+            margin-left: 1.5rem;
+        }
+
+        /* "?" hint badge on countries count */
+        .re-count-hint {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 13px; height: 13px; border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.14);
+            font-family: var(--font-minor); font-size: 0.44rem;
+            color: var(--text-muted); cursor: help;
+            vertical-align: middle; margin-left: 3px; flex-shrink: 0;
+            transition: all 0.15s;
+        }
+        .re-count-hint:hover { background: rgba(194,165,109,0.12); color: var(--accent-gold); border-color: var(--accent-gold-dim); }
+
+        /* Country chips strip below sub-region expanded card */
+        .re-country-strip {
+            display: flex; flex-wrap: wrap; gap: 0.32rem;
+            padding: 0.65rem 1.2rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(0,0,0,0.08);
+        }
+        .re-country-chip {
+            font-family: var(--font-minor); font-size: 0.58rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-subtle);
+            padding: 0.15rem 0.5rem; border-radius: 2px;
+            cursor: pointer; transition: color 0.15s, border-color 0.15s;
+            white-space: nowrap;
+        }
+        .re-country-chip:hover { color: var(--accent-gold); border-color: var(--accent-gold-dim); }
+
         /* Sub-region card */
         .re-sub-card { border-top: 1px solid var(--border-subtle); background: rgba(0,0,0,0.08); }
         .re-sub-card-top {
-            display: flex; align-items: center; gap: 0.4rem;
-            padding: 0.55rem 1.4rem 0.55rem 2.6rem; cursor: pointer;
+            display: grid; align-items: center; column-gap: 0.5rem;
+            padding: 0.55rem 1.4rem; cursor: pointer;
             transition: background 0.15s; border-bottom: 1px solid var(--border-subtle);
         }
         .re-sub-card-top:hover { background: rgba(255,255,255,0.02); }
@@ -3538,11 +3575,11 @@
         /* ── Grid table layout ── */
         /* Continent + header: name | countries | pillars(1fr) | regime | rao | leader */
         .re-row-grid {
-            grid-template-columns: 200px 95px 1fr 90px 56px 114px;
+            grid-template-columns: 150px 90px 1fr 90px 30px 100px;
         }
         /* Sub-region rows: name | countries | pillars(1fr) | rao | leader */
         .re-subrow-grid {
-            grid-template-columns: 180px 90px 1fr 56px 114px;
+            grid-template-columns: 130px 80px 1fr 30px 100px;
         }
 
         /* Column header row above continent accordion */
@@ -3562,6 +3599,58 @@
         @media (max-width: 720px) {
             .re-card-split { flex-direction: column; }
             .re-card-left { border-right: none; border-bottom: 1px solid var(--border-subtle); }
+
+            /* Hide column header labels — don't match 3-line layout */
+            .re-explorer-header { display: none !important; }
+
+            /* ── Continent collapsed row: 6 children → 3 lines ── */
+            .re-continent-header.re-row-grid {
+                grid-template-columns: 1fr auto auto auto;
+                grid-template-rows: auto auto auto;
+                row-gap: 0.4rem;
+                padding: 0.65rem 1rem;
+            }
+            /* line 1: name (left) */
+            .re-continent-header.re-row-grid > *:nth-child(1) { grid-row: 1; grid-column: 1; }
+            /* line 1: countries (right) */
+            .re-continent-header.re-row-grid > *:nth-child(2) { grid-row: 1; grid-column: 2 / 5; justify-content: flex-end; }
+            /* line 2: 4 bars → 2×2 grid (display:!important overrides inline style="display:flex") */
+            .re-continent-header.re-row-grid > *:nth-child(3) {
+                grid-row: 2; grid-column: 1 / 5;
+                display: grid !important; grid-template-columns: 1fr 1fr; gap: 5px !important; padding: 0 !important;
+                align-items: stretch;
+            }
+            /* line 3: regime dots (left) */
+            .re-continent-header.re-row-grid > *:nth-child(4) { grid-row: 3; grid-column: 1; justify-content: flex-start !important; }
+            /* line 3: avg RAO (centre) */
+            .re-continent-header.re-row-grid > *:nth-child(5) { grid-row: 3; grid-column: 2 / 4; text-align: center; }
+            /* line 3: leader (right) */
+            .re-continent-header.re-row-grid > *:nth-child(6) { grid-row: 3; grid-column: 4; text-align: right; }
+
+            /* ── Sub-region collapsed row: 5 children → 3 lines ── */
+            .re-subregion-header.re-subrow-grid {
+                grid-template-columns: 1fr auto auto;
+                grid-template-rows: auto auto auto;
+                row-gap: 0.4rem;
+                padding: 0.5rem 1rem 0.5rem 1.5rem;
+            }
+            /* line 1: name (left) */
+            .re-subregion-header.re-subrow-grid > *:nth-child(1) { grid-row: 1; grid-column: 1; }
+            /* line 1: countries (right) */
+            .re-subregion-header.re-subrow-grid > *:nth-child(2) { grid-row: 1; grid-column: 2 / 4; justify-content: flex-end; }
+            /* line 2: 4 bars → 2×2 grid (display:!important overrides inline style="display:flex") */
+            .re-subregion-header.re-subrow-grid > *:nth-child(3) {
+                grid-row: 2; grid-column: 1 / 4;
+                display: grid !important; grid-template-columns: 1fr 1fr; gap: 5px !important; padding: 0 !important;
+                align-items: stretch;
+            }
+            /* line 3: avg RAO (left) */
+            .re-subregion-header.re-subrow-grid > *:nth-child(4) { grid-row: 3; grid-column: 1; text-align: left; }
+            /* line 3: leader (right) */
+            .re-subregion-header.re-subrow-grid > *:nth-child(5) { grid-row: 3; grid-column: 2 / 4; text-align: right; }
+
+            /* Reduce sub-region indent on mobile */
+            .re-subs-container { margin-left: 0.75rem; }
         }
 
         .percentile-indicator {
@@ -6546,15 +6635,16 @@ function renderRegionalExplorer() {
             </div>
         </div>`;
 
-    // Shared card body (continent & sub-region): regime badge BESIDE name
-    function cardBody(meanRAO, oppSt, stabSt, absSt, trajSt, color, leader, leaderRank, deltaStr, deltaColor, aheadStr, leaderLabel, vsLabel) {
+    // Shared card body — avgLabel lets continents say "Continental Average" vs "Regional Average"
+    function cardBody(meanRAO, oppSt, stabSt, absSt, trajSt, color, leader, leaderRank, deltaStr, deltaColor, aheadStr, leaderLabel, vsLabel, avgLabel) {
+        avgLabel = avgLabel || 'Regional Average';
         const regime = leader.regime
             ? `<span style="display:inline-flex;align-items:center;font-family:var(--font-minor);font-size:0.5rem;padding:2px 6px;border-radius:2px;background:${REGIME_COLORS[leader.regime].dim};color:${REGIME_COLORS[leader.regime].solid};border:1px solid ${REGIME_COLORS[leader.regime].solid}50;letter-spacing:0.06em;flex-shrink:0;">${leader.regime}</span>` : '';
         return `
         <div class="re-card-split">
             <div class="re-card-left">
                 <div class="re-avg-row">
-                    <span class="re-avg-label">Regional Average</span>
+                    <span class="re-avg-label">${avgLabel}</span>
                     <span class="re-avg-score" style="color:${color};">${meanRAO.toFixed(2)}</span>
                 </div>
                 ${bigBar('Opportunity',         oppSt,  'linear-gradient(90deg,var(--accent-gold),var(--accent-amber))', 'var(--accent-gold)')}
@@ -6630,6 +6720,7 @@ function renderRegionalExplorer() {
         const stddev    = calcStddev(contCountries);
 
         const sorted      = [...contCountries].sort((a,b) => b.rao_score - a.rao_score);
+        const countryTip  = sorted.map(c => c.country_name).join(', ');
         const leader      = sorted[0];
         const second      = sorted[1];
         const leaderRank  = globalRank[leader.country] || '—';
@@ -6658,7 +6749,8 @@ function renderRegionalExplorer() {
             const rTrajSt = pillarStats(regCountries, 'pillar_trajectory');
             const rStddev = calcStddev(regCountries);
 
-            const rSorted      = [...regCountries].sort((a,b) => b.rao_score - a.rao_score);
+            const rSorted       = [...regCountries].sort((a,b) => b.rao_score - a.rao_score);
+            const rCountryTip   = rSorted.map(c => c.country_name).join(', ');
             const rLeader      = rSorted[0];
             const rSecond      = rSorted[1];
             const rLeaderRank  = globalRank[rLeader.country] || '—';
@@ -6680,8 +6772,8 @@ function renderRegionalExplorer() {
                         <span class="re-sub-chevron" id="re-subchev-${rCode}">▶</span>
                         <span style="font-family:var(--font-minor);font-size:0.72rem;font-weight:600;color:var(--text-white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${region}</span>
                     </div>
-                    <!-- col2: n countries (fixed column) -->
-                    <span style="font-family:var(--font-minor);font-size:0.58rem;color:var(--text-muted);white-space:nowrap;">${rn} countries</span>
+                    <!-- col2: n countries + tooltip -->
+                    <span style="font-family:var(--font-minor);font-size:0.58rem;color:var(--text-muted);white-space:nowrap;display:flex;align-items:center;">${rn} countries<span class="re-count-hint" title="${rCountryTip}">?</span></span>
                     <!-- col3: 4 pillar bars filling 1fr -->
                     <div style="display:flex;gap:7px;align-items:center;padding:0 0.5rem;">
                         ${pillarBarMed('Opportunity',         rOppSt.avg,  'linear-gradient(90deg,var(--accent-gold),var(--accent-amber))', 'var(--accent-gold)')}
@@ -6699,14 +6791,23 @@ function renderRegionalExplorer() {
 
                 <!-- Expanded sub-region card (NO timeseries) -->
                 <div class="re-sub-card" id="re-subcard-${rCode}" style="display:${isSubOpen ? 'block' : 'none'};">
-                    <div class="re-sub-card-top" onclick="reToggleSubRegion('${region}','${continent}')">
-                        <span class="re-sub-chevron open" style="font-size:0.45rem;flex-shrink:0;">▶</span>
-                        <span style="font-family:var(--font-minor);font-size:0.75rem;font-weight:600;color:var(--text-white);flex-shrink:0;width:158px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${region}</span>
-                        <span class="re-card-count" style="flex-shrink:0;min-width:90px;">${rn} countries</span>
-                        <div style="flex:1;min-width:0;display:flex;height:10px;gap:2px;margin:0 0.65rem;">${rRegStretch}</div>
-                        <span class="re-card-sigma">σ ${rStddev.toFixed(2)}</span>
+                    <div class="re-sub-card-top re-subrow-grid" onclick="reToggleSubRegion('${region}','${continent}')">
+                        <!-- col 1: chevron + name -->
+                        <div style="display:flex;align-items:center;gap:0.4rem;min-width:0;overflow:hidden;">
+                            <span class="re-sub-chevron open" style="font-size:0.45rem;flex-shrink:0;">▶</span>
+                            <span style="font-family:var(--font-minor);font-size:0.75rem;font-weight:600;color:var(--text-white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${region}</span>
+                        </div>
+                        <!-- col 2: countries -->
+                        <span class="re-card-count" style="display:flex;align-items:center;">${rn} countries<span class="re-count-hint" title="${rCountryTip}">?</span></span>
+                        <!-- col 3-4: regime stretch bars (spans pillar + rao columns) -->
+                        <div style="display:flex;height:10px;gap:2px;grid-column:3/5;">${rRegStretch}</div>
+                        <!-- col 5: σ (same position as leader column) -->
+                        <span class="re-card-sigma" style="grid-column:5;text-align:right;">σ ${rStddev.toFixed(2)}</span>
                     </div>
-                    ${cardBody(rRAO, rOppSt, rStabSt, rAbsSt, rTrajSt, color, rLeader, rLeaderRank, rDeltaStr, rDeltaColor, rAheadStr, 'Regional Leader', 'vs Region')}
+                    ${cardBody(rRAO, rOppSt, rStabSt, rAbsSt, rTrajSt, color, rLeader, rLeaderRank, rDeltaStr, rDeltaColor, rAheadStr, 'Regional Leader', 'vs Region', 'Regional Average')}
+                    <div class="re-country-strip">
+                        ${rSorted.map(c => `<span class="re-country-chip" onclick="openCountryAnalysis('${c.country}')">${c.country_name} <span style="font-family:var(--font-mono);font-size:0.52rem;color:${color};">${c.rao_score.toFixed(1)}</span></span>`).join('')}
+                    </div>
                 </div>
             </div>`;
         }).join('');
@@ -6726,7 +6827,7 @@ function renderRegionalExplorer() {
                     <span class="re-continent-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${continent}</span>
                 </div>
                 <!-- col2: n countries (fixed column, always same x-position) -->
-                <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);white-space:nowrap;">${n} countries</span>
+                <span style="font-family:var(--font-minor);font-size:0.6rem;color:var(--text-muted);white-space:nowrap;display:flex;align-items:center;">${n} countries<span class="re-count-hint" title="${countryTip}">?</span></span>
                 <!-- col3: 4 pillar bars (flex:1 each, fills 1fr cell) -->
                 <div style="display:flex;gap:10px;align-items:center;">
                     ${pillarBarTiny(oppStats.avg,  'var(--accent-gold)')}
@@ -6746,15 +6847,21 @@ function renderRegionalExplorer() {
 
             <!-- Expanded continent card -->
             <div class="re-continent-card" id="re-card-${cCode}" style="display:${isOpen ? 'block' : 'none'};">
-                <div class="re-continent-card-top" onclick="reToggleContinent('${continent}')">
-                    <span class="re-chevron open" style="font-size:0.5rem;flex-shrink:0;">▶</span>
-                    <span class="re-continent-name" style="flex-shrink:0;width:178px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${continent}</span>
-                    <span class="re-card-count" style="flex-shrink:0;min-width:95px;">${n} countries</span>
-                    <div style="flex:1;min-width:0;display:flex;height:10px;gap:2px;margin:0 0.75rem;">${regStretch}</div>
-                    <span class="re-card-sigma">σ ${stddev.toFixed(2)}</span>
+                <div class="re-continent-card-top re-row-grid" onclick="reToggleContinent('${continent}')">
+                    <!-- col 1: chevron + name -->
+                    <div style="display:flex;align-items:center;gap:0.45rem;min-width:0;overflow:hidden;">
+                        <span class="re-chevron open" style="font-size:0.5rem;flex-shrink:0;">▶</span>
+                        <span class="re-continent-name" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${continent}</span>
+                    </div>
+                    <!-- col 2: countries -->
+                    <span class="re-card-count" style="display:flex;align-items:center;">${n} countries<span class="re-count-hint" title="${countryTip}">?</span></span>
+                    <!-- col 3-5: regime stretch bars (spans pillar + regime + rao columns) -->
+                    <div style="display:flex;height:10px;gap:2px;grid-column:3/6;">${regStretch}</div>
+                    <!-- col 6: σ (same position as leader column) -->
+                    <span class="re-card-sigma" style="grid-column:6;text-align:right;">σ ${stddev.toFixed(2)}</span>
                 </div>
-                ${cardBody(meanRAO, oppStats, stabStats, absStats, trajStats, color, leader, leaderRank, deltaStr, deltaColor, aheadStr, 'Continental Leader', 'vs Continent')}
-                <div id="re-subs-${cCode}">${subHtml}</div>
+                ${cardBody(meanRAO, oppStats, stabStats, absStats, trajStats, color, leader, leaderRank, deltaStr, deltaColor, aheadStr, 'Continental Leader', 'vs Continent', 'Continental Average')}
+                <div id="re-subs-${cCode}" class="re-subs-container">${subHtml}</div>
             </div>
 
         </div>`;
