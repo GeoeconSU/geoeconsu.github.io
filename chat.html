@@ -4101,8 +4101,9 @@
             /* Section title */
             .section-title { font-size: 0.6rem; }
             .card-title { font-size: 0.6rem; }
+            .chat-chart-grid { grid-template-columns: 1fr; margin-left: 0; }
             .chat-chart-wrapper { padding: 0.75rem; }
-            .chat-chart-canvas { height: 220px !important; }
+            .chat-chart-canvas { height: 200px !important; }
         }
 
         /* ── MOBILE FIXES (supplements the blocks above) ─────────────────── */
@@ -4141,13 +4142,21 @@
             /* Stacked scorecard on very small screens */
             .scorecard-country { min-width: 0; }
         }
+        .chat-chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+            width: 100%;
+            max-width: 760px;
+            margin-left: 3rem;
+        }
         .chat-chart-wrapper {
             background: rgba(15, 20, 32, 0.6);
             border: 1px solid rgba(203, 168, 78, 0.2);
             border-radius: 8px;
             padding: 1rem 1.25rem 0.75rem;
-            margin: 0.5rem 0;
-            max-width: 640px;
+            min-width: 0;
         }
         .chat-chart-title {
             font-family: var(--font-mono);
@@ -4160,9 +4169,8 @@
         }
         .chat-chart-canvas {
             width: 100% !important;
-            height: 280px !important;
+            height: 240px !important;
         }
-        .chat-message.assistant .chat-chart-wrapper { margin-left: 0; }
 
         /* ── AUTH OVERLAY ──────────────────────────────────────────────────── */
         .auth-overlay {
@@ -4483,6 +4491,7 @@ let currentSessionId = null;
 let _agentSources = [];
 let _abortController = null;
 let _webSearchResultsData = [];
+let _pendingChartEls = [];
 let _canvas = [];
 let _canvasOpen = false;
 const SESSION_STORAGE_KEY = 'gsu_chat_sessions';
@@ -10499,6 +10508,7 @@ async function sendChatMessage() {
         if (streamBubble) {
             if (streamScrollEl) streamScrollEl.removeEventListener('scroll', onStreamScroll);
             streamBubble.innerHTML = chatMarkdownToHTML(reply) + `<span class="msg-time">${streamTimeStr}</span>`;
+            flushPendingCharts(streamBubble);
             if (!streamUserScrolled && streamScrollEl) streamScrollEl.scrollTop = streamScrollEl.scrollHeight;
         } else {
             renderChatMessage('assistant', reply);
@@ -10677,6 +10687,7 @@ TOOL USE PROTOCOL — follow exactly:
 async function runAgentLoop(userText, onTextChunk = null) {
     _agentSources = [];
     _webSearchResultsData = [];
+    _pendingChartEls = [];
     clearTrace();
     addTraceStep('think', 'Analyzing query and selecting data strategy…');
     updateChatStatus('thinking', 'Reasoning…');
@@ -11617,6 +11628,7 @@ function renderChatMessage(role, content, isError = false) {
         } else {
             streamChatContent(bubble, htmlContent, container, timeStr);
         }
+        flushPendingCharts(bubble);
     }
 }
 
@@ -11908,19 +11920,19 @@ function dispatchChartRender(fnName, fnArgs) {
 }
 
 function renderChatChart(el) {
+    if (!el) return;
+    _pendingChartEls.push(el);
+}
+
+function flushPendingCharts(bubble) {
+    if (!_pendingChartEls.length || !bubble) return;
+    const grid = document.createElement('div');
+    grid.className = 'chat-chart-grid';
+    _pendingChartEls.forEach(el => grid.appendChild(el));
+    bubble.parentElement.appendChild(grid);
+    _pendingChartEls = [];
     const container = document.getElementById('chat-messages-container');
-    if (!container || !el) return;
-    hideWelcomeState();
-    const div = document.createElement('div');
-    div.className = 'chat-message assistant';
-    div.style.cssText = 'display:flex; gap:0.75rem; align-items:flex-start;';
-    const avatar = document.createElement('div');
-    avatar.className = 'chat-avatar';
-    avatar.innerHTML = '<i class="ri-bar-chart-2-line"></i>';
-    div.appendChild(avatar);
-    div.appendChild(el);
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
+    if (container) container.scrollTop = container.scrollHeight;
 }
 
 function resolveCountry(nameOrISO) {
