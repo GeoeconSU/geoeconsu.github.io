@@ -113,12 +113,13 @@
         .panel-rail {
             width: 44px; flex-shrink: 0;
             display: flex; flex-direction: column;
-            align-items: center; padding: 0.6rem 0; gap: 0.2rem;
+            align-items: center; padding: 0.5rem 0; gap: 0.15rem;
         }
+        .rail-logo { width: 22px; height: 22px; object-fit: contain; margin-bottom: 0.35rem; opacity: 0.75; }
         .rail-btn {
             width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-            background: none; border: none; color: var(--text-muted); cursor: pointer;
-            font-size: 1rem; border-radius: 4px; transition: color 0.15s, background 0.15s;
+            background: none; border: none; color: rgba(238,234,224,0.5); cursor: pointer;
+            font-size: 1.05rem; border-radius: 4px; transition: color 0.15s, background 0.15s;
         }
         .rail-btn:hover { color: var(--text-white); background: var(--w04); }
         .panel-body {
@@ -3453,36 +3454,41 @@
             30% { transform: translateY(-6px); opacity: 1; }
         }
         .chat-input-area {
-            padding: 0.875rem max(1.5rem, calc(50% - 620px)) 1.25rem;
+            padding: 0.6rem max(1.5rem, calc(50% - 620px)) 0;
             background: var(--primary-bg);
-            display: flex; gap: 0.65rem; align-items: center;
+            display: flex; gap: 0.55rem; align-items: center;
+            flex-wrap: wrap;
+        }
+        .chat-disclaimer {
+            flex: 0 0 100%; text-align: center;
+            font-family: var(--font-minor); font-size: 0.56rem;
+            color: var(--text-muted); opacity: 0.38;
+            padding: 0.3rem 0 0.5rem; letter-spacing: 0.02em;
         }
         .chat-input-wrapper {
-            flex: 1;
-            position: relative;
-            border-radius: 20px;
-            background: rgba(18, 25, 42, 0.55);
+            flex: 1; display: flex; align-items: center;
+            border-radius: 999px;
+            background: rgba(18, 25, 42, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             transition: border-color 0.2s;
+            padding: 0 0.3rem 0 0; min-height: 38px;
         }
         .chat-input-wrapper:focus-within {
             border-color: rgba(194, 165, 109, 0.35);
         }
         .chat-input {
-            width: 100%; background: transparent;
+            flex: 1; background: transparent;
             border: none; color: var(--text-white);
-            font-family: var(--font-body); font-size: 0.95rem;
-            padding: 0.55rem 1.1rem;
-            resize: none; min-height: 40px; max-height: 140px;
-            line-height: 1.5; outline: none;
-            box-sizing: border-box;
-            position: relative; z-index: 2;
+            font-family: var(--font-body); font-size: 0.92rem;
+            padding: 0.42rem 0.5rem 0.42rem 0.1rem;
+            resize: none; min-height: 36px; max-height: 140px;
+            line-height: 1.5; outline: none; box-sizing: border-box;
         }
         .chat-input::placeholder { color: rgba(255, 255, 255, 0.28); }
         /* === TEMPLATE DROPDOWN === */
         .tpl-dropdown-wrap { position: relative; flex-shrink: 0; }
-        .tpl-icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; border-radius: 4px; transition: color 0.15s; }
+        .tpl-icon-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: rgba(238,234,224,0.4); cursor: pointer; font-size: 0.95rem; border-radius: 999px; transition: color 0.15s; flex-shrink: 0; margin-left: 0.3rem; }
         .tpl-icon-btn:hover { color: var(--text-white); }
         .tpl-dropdown-menu { position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--secondary-bg); border: 1px solid var(--border-subtle); border-radius: 6px; min-width: 180px; padding: 0.3rem 0; box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 500; }
         .tpl-menu-item { display: flex; align-items: center; gap: 0.5rem; width: 100%; background: none; border: none; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.5rem 0.85rem; cursor: pointer; transition: all 0.12s; text-align: left; }
@@ -3991,7 +3997,7 @@
             .chat-chart-panel { margin-left: 0; }
             .chat-chart-grid, .chat-chart-grid[data-count="1"] { grid-template-columns: 1fr; }
             .chat-chart-wrapper.chart-span-2 { grid-column: auto; }
-            .chat-chart-wrapper { padding: 0.75rem; }
+            .chat-chart-wrapper { padding: 0.25rem 0 0; }
             .chat-chart-canvas, .chat-chart-wrapper.chart-span-2 .chat-chart-canvas { height: 200px !important; }
         }
 
@@ -4032,23 +4038,18 @@
             .scorecard-country { min-width: 0; }
         }
         .chat-chart-panel {
-            margin: 0.5rem 0 1rem calc(36px + 1rem);
-            background: rgba(10, 14, 26, 0.5);
-            border: 1px solid rgba(203, 168, 78, 0.15);
-            border-radius: 10px;
-            padding: 1rem;
+            margin: 0.75rem 0 1rem 0;
         }
         .chat-chart-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            gap: 1rem;
         }
         .chat-chart-grid[data-count="1"] { grid-template-columns: 1fr; }
         .chat-chart-wrapper {
-            background: rgba(15, 20, 32, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 8px;
-            padding: 0.875rem 1rem 0.75rem;
+            background: transparent;
+            border: none;
+            padding: 0.5rem 0 0;
             min-width: 0;
         }
         .chat-chart-wrapper.chart-span-2 { grid-column: 1 / -1; }
@@ -4167,7 +4168,8 @@
   <!-- Left panel (collapsible) -->
   <div class="left-panel" id="left-panel">
     <div class="panel-rail">
-      <button class="rail-btn" onclick="toggleLeftPanel()" title="Toggle sidebar" id="rail-toggle"><i class="ri-sidebar-fold-line"></i></button>
+      <img src="assets/GSU_Transparent.png" alt="GSU" class="rail-logo">
+      <button class="rail-btn" onclick="toggleLeftPanel()" title="Toggle sidebar" id="rail-toggle"><i class="ri-arrow-right-s-line"></i></button>
       <button class="rail-btn" onclick="newSession()" title="New chat"><i class="ri-add-line"></i></button>
       <div style="flex:1"></div>
       <a href="dashboard.html" class="rail-btn" title="Dashboard" style="text-decoration:none;"><i class="ri-arrow-left-line"></i></a>
@@ -4211,21 +4213,21 @@
     <div class="coverage-bar" id="coverage-bar" style="display:none;"></div>
     <div class="chat-messages" id="chat-messages-container"></div>
     <div class="chat-input-area">
-      <!-- Template dropdown -->
-      <div class="tpl-dropdown-wrap" id="tpl-dropdown-wrap">
-        <button class="tpl-icon-btn" onclick="toggleTplDropdown()" title="Templates"><i class="ri-layout-grid-line"></i></button>
-        <div class="tpl-dropdown-menu" id="tpl-dropdown-menu" style="display:none;">
-          <button class="tpl-menu-item" onclick="applyTemplate('risk-brief');toggleTplDropdown()"><i class="ri-file-shield-2-line"></i> Risk Brief</button>
-          <button class="tpl-menu-item" onclick="applyTemplate('country-note');toggleTplDropdown()"><i class="ri-map-pin-line"></i> Country Note</button>
-          <button class="tpl-menu-item" onclick="applyTemplate('screening');toggleTplDropdown()"><i class="ri-scan-line"></i> Screening</button>
-          <button class="tpl-menu-item" onclick="applyTemplate('comparison');toggleTplDropdown()"><i class="ri-bar-chart-grouped-line"></i> Compare</button>
-          <button class="tpl-menu-item" onclick="toggleCanvas();toggleTplDropdown()"><i class="ri-pushpin-line"></i> Canvas</button>
-          <button class="tpl-menu-item" onclick="generateBrief();toggleTplDropdown()"><i class="ri-file-text-line"></i> Brief</button>
-          <div class="tpl-menu-sep"></div>
-          <button class="tpl-menu-item danger" onclick="clearChatHistory();toggleTplDropdown()"><i class="ri-delete-bin-line"></i> Clear chat</button>
-        </div>
-      </div>
       <div class="chat-input-wrapper">
+        <!-- Template dropdown inside pill -->
+        <div class="tpl-dropdown-wrap" id="tpl-dropdown-wrap">
+          <button class="tpl-icon-btn" onclick="toggleTplDropdown()" title="Templates"><i class="ri-sparkling-line"></i></button>
+          <div class="tpl-dropdown-menu" id="tpl-dropdown-menu" style="display:none;">
+            <button class="tpl-menu-item" onclick="applyTemplate('risk-brief');toggleTplDropdown()"><i class="ri-file-shield-2-line"></i> Risk Brief</button>
+            <button class="tpl-menu-item" onclick="applyTemplate('country-note');toggleTplDropdown()"><i class="ri-map-pin-line"></i> Country Note</button>
+            <button class="tpl-menu-item" onclick="applyTemplate('screening');toggleTplDropdown()"><i class="ri-scan-line"></i> Screening</button>
+            <button class="tpl-menu-item" onclick="applyTemplate('comparison');toggleTplDropdown()"><i class="ri-bar-chart-grouped-line"></i> Compare</button>
+            <button class="tpl-menu-item" onclick="toggleCanvas();toggleTplDropdown()"><i class="ri-pushpin-line"></i> Canvas</button>
+            <button class="tpl-menu-item" onclick="generateBrief();toggleTplDropdown()"><i class="ri-file-text-line"></i> Brief</button>
+            <div class="tpl-menu-sep"></div>
+            <button class="tpl-menu-item danger" onclick="clearChatHistory();toggleTplDropdown()"><i class="ri-delete-bin-line"></i> Clear chat</button>
+          </div>
+        </div>
         <textarea id="chat-input" class="chat-input" placeholder="Write a message" rows="1" onkeydown="handleChatKeydown(event)" oninput="autoResizeChatInput(this)"></textarea>
       </div>
       <!-- Model dropdown -->
@@ -4242,6 +4244,7 @@
       <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="Send (Enter)">
         <i class="ri-send-plane-fill"></i>
       </button>
+      <div class="chat-disclaimer">RAO Intelligence Assistant can make mistakes. Always verify critical data before making decisions.</div>
     </div>
   </div>
 
@@ -10985,7 +10988,7 @@ function toggleLeftPanel() {
     const panel = document.getElementById('left-panel');
     const btn = document.getElementById('rail-toggle');
     panel.classList.toggle('expanded');
-    if (btn) btn.innerHTML = panel.classList.contains('expanded') ? '<i class="ri-sidebar-unfold-line"></i>' : '<i class="ri-sidebar-fold-line"></i>';
+    if (btn) btn.innerHTML = panel.classList.contains('expanded') ? '<i class="ri-arrow-left-s-line"></i>' : '<i class="ri-arrow-right-s-line"></i>';
 }
 
 function switchPanelTab(tab) {
