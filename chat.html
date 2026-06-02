@@ -98,49 +98,61 @@
             box-shadow: 0 2px 20px rgba(0,0,0,.3), 0 1px 0 rgba(255,255,255,.04) inset;
         }
 
-        /* Header */
-        .header {
-            background: linear-gradient(180deg, rgba(20,27,42,.99) 0%, rgba(22,30,46,.97) 100%);
-            border-bottom: 1px solid rgba(255,255,255,.06);
-            box-shadow: 0 1px 30px rgba(0,0,0,.4);
-            padding: 14px 40px;
-            position: fixed;
-            top: 2px;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            gap: 40px;
+        /* ── APP LAYOUT ── */
+        .app-layout {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            display: flex; overflow: hidden;
         }
-        .header-left { display: flex; align-items: center; gap: 1.5rem; }
-        .logo {
-            font-family: var(--font-head);
-            font-size: 1.35rem;
-            color: var(--accent-gold);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
+        /* ── LEFT PANEL ── */
+        .left-panel {
+            display: flex; flex-shrink: 0;
+            background: var(--secondary-bg);
+            border-right: 1px solid var(--border-subtle);
+            transition: none; overflow: hidden;
         }
-        .logo span {
-            font-family: var(--font-head);
-            font-size: .78rem;
-            font-weight: 600;
-            letter-spacing: .28em;
-            color: var(--w45);
-            text-transform: uppercase;
+        .panel-rail {
+            width: 44px; flex-shrink: 0;
+            display: flex; flex-direction: column;
+            align-items: center; padding: 0.6rem 0; gap: 0.2rem;
         }
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
+        .rail-btn {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            background: none; border: none; color: var(--text-muted); cursor: pointer;
+            font-size: 1rem; border-radius: 4px; transition: color 0.15s, background 0.15s;
         }
-        .header-title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-muted);
+        .rail-btn:hover { color: var(--text-white); background: var(--w04); }
+        .panel-body {
+            width: 0; overflow: hidden;
+            display: flex; flex-direction: column;
+            transition: width 0.2s ease;
+            min-width: 0;
+        }
+        .left-panel.expanded .panel-body { width: 200px; }
+        .panel-brand {
+            display: flex; align-items: center; gap: 0.55rem;
+            padding: 0.75rem 0.85rem 0.6rem; flex-shrink: 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .panel-logo-img { width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; }
+        .panel-brand-text {
+            font-family: var(--font-head); font-size: 0.72rem; font-style: italic;
+            color: var(--text-muted); line-height: 1.25; white-space: nowrap; overflow: hidden;
+        }
+        .panel-tab-bar {
+            display: flex; flex-shrink: 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .panel-tab {
+            flex: 1; background: none; border: none; color: var(--text-muted);
+            font-family: var(--font-minor); font-size: 0.58rem; font-weight: 600;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 0.5rem 0; cursor: pointer; transition: color 0.15s;
+            border-bottom: 2px solid transparent; margin-bottom: -1px;
+        }
+        .panel-tab:hover { color: var(--text-white); }
+        .panel-tab.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+        .panel-tab-content {
+            flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0;
         }
         .header-center { display: flex; align-items: center; gap: 1rem; }
         .search-box {
@@ -3443,7 +3455,6 @@
         .chat-input-area {
             padding: 0.875rem max(1.5rem, calc(50% - 620px)) 1.25rem;
             background: var(--primary-bg);
-            border-top: 1px solid var(--glass-border);
             display: flex; gap: 0.65rem; align-items: center;
         }
         .chat-input-wrapper {
@@ -3469,6 +3480,26 @@
             position: relative; z-index: 2;
         }
         .chat-input::placeholder { color: rgba(255, 255, 255, 0.28); }
+        /* === TEMPLATE DROPDOWN === */
+        .tpl-dropdown-wrap { position: relative; flex-shrink: 0; }
+        .tpl-icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; border-radius: 4px; transition: color 0.15s; }
+        .tpl-icon-btn:hover { color: var(--text-white); }
+        .tpl-dropdown-menu { position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--secondary-bg); border: 1px solid var(--border-subtle); border-radius: 6px; min-width: 180px; padding: 0.3rem 0; box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 500; }
+        .tpl-menu-item { display: flex; align-items: center; gap: 0.5rem; width: 100%; background: none; border: none; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.5rem 0.85rem; cursor: pointer; transition: all 0.12s; text-align: left; }
+        .tpl-menu-item i { font-size: 0.85rem; width: 14px; }
+        .tpl-menu-item:hover { background: var(--w04); color: var(--text-white); }
+        .tpl-menu-item.danger:hover { color: var(--accent-red); }
+        .tpl-menu-sep { border-top: 1px solid var(--border-subtle); margin: 0.25rem 0; }
+        /* === MODEL DROPDOWN === */
+        .model-dropdown-wrap { position: relative; flex-shrink: 0; }
+        .model-dropdown-btn { display: flex; align-items: center; gap: 0.3rem; white-space: nowrap; background: none; border: none; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.6rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.3rem 0.5rem; cursor: pointer; transition: color 0.15s; border-radius: 3px; }
+        .model-dropdown-btn:hover { color: var(--text-white); }
+        .model-dropdown-btn i { font-size: 0.75rem; }
+        .model-dropdown-menu { position: absolute; bottom: calc(100% + 8px); right: 0; background: var(--secondary-bg); border: 1px solid var(--border-subtle); border-radius: 6px; min-width: 200px; padding: 0.3rem 0; box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 500; }
+        .model-menu-item { display: flex; flex-direction: column; align-items: flex-start; gap: 0.1rem; width: 100%; background: none; border: none; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.55rem 0.85rem; cursor: pointer; transition: all 0.12s; text-align: left; }
+        .model-menu-item:hover { background: var(--w04); color: var(--text-white); }
+        .model-menu-item.active { color: var(--accent-gold); }
+        .model-menu-desc { font-size: 0.55rem; opacity: 0.5; font-weight: 400; letter-spacing: 0.02em; text-transform: none; margin-top: 0.05rem; }
         .chat-send-btn {
             width: 38px; height: 38px; flex-shrink: 0;
             border-radius: 50%; cursor: pointer;
@@ -3504,11 +3535,11 @@
         }
         .chat-clear-btn:hover { border-color: var(--accent-gold-dim); color: var(--accent-gold); }
         .chat-table-wrap { overflow-x: auto; margin: 0.75rem 0; }
-        .chat-bubble table { width: 100%; border-collapse: collapse; font-family: var(--font-minor); font-size: 0.8rem; }
-        .chat-bubble th { background: rgba(194,165,109,0.12); color: var(--accent-gold); text-align: left; padding: 0.45rem 0.75rem; border-bottom: 1px solid var(--accent-gold-dim); white-space: nowrap; }
-        .chat-bubble td { padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-white); }
+        .chat-bubble table { width: 100%; border-collapse: collapse; font-family: var(--font-minor); font-size: 0.78rem; }
+        .chat-bubble th { color: var(--text-muted); text-align: left; padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--border-subtle); font-weight: 600; letter-spacing: 0.04em; font-size: 0.72rem; white-space: nowrap; }
+        .chat-bubble td { padding: 0.38rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-white); }
         .chat-bubble tr:last-child td { border-bottom: none; }
-        .chat-bubble tr:hover td { background: rgba(255,255,255,0.03); }
+        .chat-bubble tr:hover td { background: rgba(255,255,255,0.02); }
         .chat-hr { border: none; border-top: 1px solid var(--border-subtle); margin: 1rem 0; }
 
         /* === WELCOME STATE === */
@@ -3571,14 +3602,6 @@
             line-height: 1.5;
         }
         .chat-message.user .chat-bubble .msg-time { display: block; text-align: right; }
-
-        /* === PINSTRIPE BACKGROUND === */
-        .chat-messages {
-            background-image: repeating-linear-gradient(
-                -45deg, transparent, transparent 28px,
-                rgba(255,255,255,0.012) 28px, rgba(255,255,255,0.012) 29px
-            );
-        }
 
         /* === STREAMING CURSOR === */
         @keyframes blinkCursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
@@ -3683,26 +3706,6 @@
         .session-rename-input { background: transparent; border: none; border-bottom: 1px solid var(--accent-gold-dim); color: var(--text-white); font-family: var(--font-body); font-size: 0.79rem; width: 100%; outline: none; padding: 0; }
 
         /* ===== AGENT RESEARCH LAYOUT ===== */
-        .sessions-sidebar {
-            width: 210px; flex-shrink: 0;
-            background: var(--secondary-bg);
-            border-right: 1px solid var(--border-subtle);
-            display: flex; flex-direction: column; overflow: hidden;
-        }
-        .sessions-hdr {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--border-subtle);
-            font-family: var(--font-minor); font-size: 0.59rem; font-weight: 600;
-            letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
-            flex-shrink: 0;
-        }
-        .sessions-hdr-btn {
-            background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
-            cursor: pointer; width: 22px; height: 22px; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.85rem; transition: all 0.15s;
-        }
-        .sessions-hdr-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
         .sessions-search-wrap { padding: 0.35rem 0.7rem; border-bottom: 1px solid var(--border-subtle); flex-shrink: 0; }
         .sessions-search { width: 100%; background: var(--w04); border: 1px solid var(--border-subtle); color: var(--text-white); font-family: var(--font-body); font-size: 0.72rem; padding: 0.3rem 0.55rem; border-radius: 3px; outline: none; }
         .sessions-search::placeholder { color: var(--text-muted); }
@@ -3730,33 +3733,6 @@
         }
         .sessions-export-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
         .chat-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
-        /* === UNIFIED CONTROL STRIP === */
-        .ctrl-strip {
-            display: flex; align-items: center; gap: 0.3rem; padding: 0.38rem 1rem;
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0; background: rgba(0,0,0,0.06);
-            overflow-x: auto;
-        }
-        .ctrl-strip::-webkit-scrollbar { height: 0; }
-        .ctrl-sep { width: 1px; height: 14px; background: var(--border-subtle); flex-shrink: 0; margin: 0 0.2rem; }
-        .tpl-btn {
-            background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
-            font-family: var(--font-minor); font-size: 0.58rem; font-weight: 500;
-            letter-spacing: 0.05em; text-transform: uppercase;
-            padding: 0.25rem 0.6rem; border-radius: 3px; cursor: pointer;
-            display: flex; align-items: center; gap: 0.25rem; transition: all 0.15s; white-space: nowrap;
-        }
-        .tpl-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(203,168,78,0.05); }
-        .tpl-btn i { font-size: 0.78rem; }
-        .model-pill {
-            background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
-            font-family: var(--font-minor); font-size: 0.56rem; font-weight: 500;
-            letter-spacing: 0.05em; text-transform: uppercase;
-            padding: 0.22rem 0.6rem; border-radius: 3px; cursor: pointer;
-            transition: all 0.15s; white-space: nowrap;
-        }
-        .model-pill:hover { border-color: rgba(203,168,78,0.4); color: rgba(203,168,78,0.7); }
-        .model-pill.active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(203,168,78,0.07); }
         .coverage-bar {
             padding: 0.32rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);
             flex-shrink: 0; font-family: var(--font-minor); font-size: 0.59rem; color: var(--text-muted);
@@ -3767,29 +3743,6 @@
         .cov-chip { display: inline-flex; align-items: center; gap: 0.2rem; background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); padding: 0.12rem 0.45rem; border-radius: 3px; }
         .cov-chip.rao { border-color: rgba(203,168,78,0.25); color: rgba(203,168,78,0.7); }
         .cov-chip.web { border-color: rgba(93,140,168,0.25); color: #5d8ca8; }
-        .trace-panel {
-            width: 268px; flex-shrink: 0;
-            background: var(--secondary-bg); border-left: 1px solid var(--border-subtle);
-            display: flex; flex-direction: column; overflow: hidden;
-            transition: width 0.22s ease;
-        }
-        .trace-panel.collapsed { width: 38px; }
-        .trace-hdr {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0.7rem 0.75rem; border-bottom: 1px solid var(--border-subtle);
-            font-family: var(--font-minor); font-size: 0.59rem; font-weight: 600;
-            letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
-            flex-shrink: 0; gap: 0.4rem;
-        }
-        .trace-panel.collapsed .trace-hdr-title,
-        .trace-panel.collapsed .trace-steps { display: none; }
-        .trace-toggle {
-            background: none; border: 1px solid var(--border-subtle); color: var(--text-muted);
-            cursor: pointer; width: 22px; height: 22px; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.9rem; flex-shrink: 0; transition: all 0.15s;
-        }
-        .trace-toggle:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
         .trace-steps { flex: 1; overflow-y: auto; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.4rem; }
         .trace-empty { font-family: var(--font-body); font-size: 0.78rem; color: var(--text-muted); font-style: italic; text-align: center; padding: 1.5rem 0.5rem; }
         .trace-step { padding: 0.42rem 0.55rem; border-radius: 3px; font-size: 0.73rem; animation: fadeIn 0.18s ease; border: 1px solid transparent; }
@@ -3832,22 +3785,10 @@
         .tm-md th { background: rgba(255,255,255,0.05); padding: 0.3rem 0.5rem; text-align: left; border: 1px solid rgba(255,255,255,0.08); }
         .tm-md td { padding: 0.28rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); }
         @media (max-width: 900px) {
-            .sessions-sidebar {
-                position: fixed; top: 56px; left: 0; bottom: 0; z-index: 900;
-                transform: translateX(-100%); transition: transform 0.25s ease;
-                width: 210px;
-            }
-            .sessions-sidebar.mobile-open { transform: translateX(0); box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
-            .trace-panel {
-                position: fixed; top: 56px; right: 0; bottom: 0; z-index: 900;
-                transform: translateX(100%); transition: transform 0.25s ease;
-                width: 260px;
-            }
-            .trace-panel.mobile-open { transform: translateX(0); box-shadow: -4px 0 24px rgba(0,0,0,0.5); }
-            .mobile-drawer-overlay { display: none; position: fixed; inset: 0; z-index: 899; background: rgba(0,0,0,0.45); }
-            .mobile-drawer-overlay.open { display: block; }
             .mobile-fab-row { display: flex !important; }
         }
+        .mobile-drawer-overlay { display: none; position: fixed; inset: 0; z-index: 899; background: rgba(0,0,0,0.45); }
+        .mobile-drawer-overlay.open { display: block; }
         .mobile-fab-row { display: none; position: fixed; bottom: 90px; right: 1rem; flex-direction: column; gap: 0.5rem; z-index: 800; }
         .mobile-fab { width: 40px; height: 40px; border-radius: 50%; background: var(--secondary-bg); border: 1px solid var(--border-subtle); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4); transition: all 0.2s; }
         .mobile-fab:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
@@ -4214,93 +4155,113 @@
 </head>
 <body>
 
-<header class="header glass-panel" style="display:flex;align-items:center;gap:1rem;">
-    <a href="index.html" style="display:flex;align-items:center;gap:0.6rem;text-decoration:none;flex-shrink:0;">
-        <img src="assets/GSU_Transparent.png" alt="GSU" class="logo-icon">
-        <span style="font-family:var(--font-minor);font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-white);">GSU</span>
-    </a>
-    <div style="width:1px;height:20px;background:var(--border-subtle);flex-shrink:0;"></div>
-    <span style="font-family:var(--font-head);font-size:0.95rem;color:var(--text-muted);font-style:italic;">RAO Intelligence Assistant</span>
-    <a href="dashboard.html" style="margin-left:auto;display:flex;align-items:center;gap:0.4rem;font-family:var(--font-minor);font-size:0.68rem;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;border:1px solid var(--border-subtle);padding:0.35rem 0.9rem;border-radius:30px;">
-        <i class="ri-arrow-left-line"></i> Dashboard
-    </a>
-</header>
+<div id="mobile-overlay" class="mobile-drawer-overlay" onclick="closeMobileDrawers()"></div>
+<div class="trace-modal" id="trace-modal" onclick="closeTraceModal(event)">
+  <div class="trace-modal-card">
+    <div class="trace-modal-hdr"><span>Step Detail</span><button class="trace-modal-close" onclick="closeTraceModal()">✕</button></div>
+    <div class="trace-modal-body" id="trace-modal-body"></div>
+  </div>
+</div>
 
-<div style="position:fixed;top:56px;left:0;right:0;bottom:0;overflow:hidden;display:flex;">
-    <!-- Sessions sidebar -->
-    <div class="sessions-sidebar">
-        <div class="sessions-hdr">
-            <span title="Ctrl+N for new session">Sessions</span>
-            <button class="sessions-hdr-btn" onclick="openSessionSearch()" title="Search sessions (Ctrl+F)"><i class="ri-search-line"></i></button>
-            <button class="sessions-hdr-btn" onclick="newSession()" title="New session (Ctrl+N)"><i class="ri-add-line"></i></button>
-        </div>
+<div class="app-layout">
+  <!-- Left panel (collapsible) -->
+  <div class="left-panel" id="left-panel">
+    <div class="panel-rail">
+      <button class="rail-btn" onclick="toggleLeftPanel()" title="Toggle sidebar" id="rail-toggle"><i class="ri-sidebar-fold-line"></i></button>
+      <button class="rail-btn" onclick="newSession()" title="New chat"><i class="ri-add-line"></i></button>
+      <div style="flex:1"></div>
+      <a href="dashboard.html" class="rail-btn" title="Dashboard" style="text-decoration:none;"><i class="ri-arrow-left-line"></i></a>
+    </div>
+    <div class="panel-body" id="panel-body">
+      <div class="panel-brand">
+        <img src="assets/GSU_Transparent.png" alt="GSU" class="panel-logo-img">
+        <span class="panel-brand-text">RAO Intelligence Assistant</span>
+      </div>
+      <div class="panel-tab-bar">
+        <button class="panel-tab active" data-tab="sessions" onclick="switchPanelTab('sessions')">Sessions</button>
+        <button class="panel-tab" data-tab="trace" onclick="switchPanelTab('trace')">Trace</button>
+      </div>
+      <!-- Sessions tab -->
+      <div class="panel-tab-content" id="tab-sessions">
         <div class="sessions-search-wrap">
-            <input id="sessions-search" class="sessions-search" placeholder="Search…" oninput="filterSessions(this.value)" />
+          <input id="sessions-search" class="sessions-search" placeholder="Search…" oninput="filterSessions(this.value)" />
         </div>
         <div class="sessions-list" id="sessions-list"></div>
         <div class="sessions-footer">
-            <button class="sessions-export-btn" onclick="exportToMarkdown()" title="Export as Markdown (Ctrl+E)"><i class="ri-markdown-line"></i> MD</button>
-            <button class="sessions-export-btn" onclick="exportToPDF()" title="Print / Save as PDF"><i class="ri-printer-line"></i> PDF</button>
-            <button class="sessions-export-btn copy-session-btn" onclick="copySessionToClipboard()" title="Copy conversation to clipboard"><i class="ri-clipboard-line"></i> Copy</button>
+          <button class="sessions-export-btn" onclick="exportToMarkdown()" title="Export as Markdown"><i class="ri-markdown-line"></i> MD</button>
+          <button class="sessions-export-btn" onclick="exportToPDF()" title="Print / Save as PDF"><i class="ri-printer-line"></i> PDF</button>
+          <button class="sessions-export-btn copy-session-btn" onclick="copySessionToClipboard()" title="Copy to clipboard"><i class="ri-clipboard-line"></i> Copy</button>
         </div>
-    </div>
-    <!-- Main chat -->
-    <div class="chat-main">
-        <div class="ctrl-strip">
-            <button class="tpl-btn" onclick="applyTemplate('risk-brief')"><i class="ri-file-shield-2-line"></i> Risk Brief</button>
-            <button class="tpl-btn" onclick="applyTemplate('country-note')"><i class="ri-map-pin-line"></i> Country Note</button>
-            <button class="tpl-btn" onclick="applyTemplate('screening')"><i class="ri-scan-line"></i> Screening</button>
-            <button class="tpl-btn" onclick="applyTemplate('comparison')"><i class="ri-bar-chart-grouped-line"></i> Compare</button>
-            <button class="tpl-btn" onclick="toggleCanvas()" title="Research canvas"><i class="ri-pushpin-line"></i> Canvas</button>
-            <button class="tpl-btn" onclick="generateBrief()" title="Generate structured intelligence brief"><i class="ri-file-text-line"></i> Brief</button>
-            <div class="ctrl-sep"></div>
-            <button class="model-pill active" data-model="gemini-3.1-flash-lite" onclick="selectModel('gemini-3.1-flash-lite')" title="Fastest · Best for quick lookups">Gemini 3.1 Lite</button>
-            <button class="model-pill" data-model="gemini-3.5-flash" onclick="selectModel('gemini-3.5-flash')" title="Balanced · Better reasoning, slightly slower">Gemini 3.5</button>
-            <button class="model-pill" data-model="openai/gpt-oss-120b" onclick="selectModel('openai/gpt-oss-120b')" title="Most capable · Slower, best for deep analysis">GPT OSS 120B</button>
-            <button class="model-pill" data-model="qwen/qwen3-32b" onclick="selectModel('qwen/qwen3-32b')" title="Strong multilingual · Good for emerging markets">Qwen3 32B</button>
-            <button class="tpl-btn" onclick="clearChatHistory()" style="margin-left:auto;" title="Clear chat"><i class="ri-delete-bin-line"></i></button>
-        </div>
-        <div class="coverage-bar" id="coverage-bar" style="display:none;"></div>
-        <div class="chat-messages" id="chat-messages-container"></div>
-        <div class="chat-input-area">
-            <div class="ctx-indicator" id="ctx-indicator"></div>
-            <div class="chat-input-wrapper">
-                <textarea id="chat-input" class="chat-input" placeholder="Ask about any country, region, or investment theme…" rows="1" onkeydown="handleChatKeydown(event)" oninput="autoResizeChatInput(this)"></textarea>
-            </div>
-            <div class="chat-status" id="chat-status-indicator">Analyzing…</div>
-            <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="Send (Enter)">
-                <i class="ri-send-plane-fill"></i>
-            </button>
-        </div>
-    </div>
-    <!-- Trace panel -->
-    <div class="trace-panel" id="trace-panel">
-        <div class="trace-hdr">
-            <span class="trace-hdr-title"><i class="ri-flow-chart"></i> Trace</span>
-            <button class="trace-toggle" id="trace-toggle" onclick="toggleTracePanel()" title="Collapse"><i class="ri-arrow-right-s-line"></i></button>
-        </div>
+      </div>
+      <!-- Trace tab -->
+      <div class="panel-tab-content" id="tab-trace" style="display:none;">
         <div class="trace-steps" id="trace-steps">
-            <div class="trace-empty">Agent reasoning steps appear here.</div>
+          <div class="trace-empty">Agent reasoning steps appear here.</div>
         </div>
-        <!-- E2: Entity panel -->
         <div class="entity-panel" id="entity-panel" style="display:none;">
-            <div class="entity-panel-hdr">Entities</div>
-            <div class="entity-list" id="entity-list"></div>
+          <div class="entity-panel-hdr">Entities</div>
+          <div class="entity-list" id="entity-list"></div>
         </div>
+      </div>
     </div>
-    <!-- D1: Research canvas panel -->
-    <div class="canvas-panel" id="canvas-panel" style="display:none;">
-        <div class="canvas-hdr">
-            <span class="canvas-hdr-title"><i class="ri-pushpin-line"></i> Research Canvas</span>
-            <div style="display:flex;gap:0.35rem;">
-                <button class="canvas-hdr-btn" onclick="exportCanvas()" title="Export canvas"><i class="ri-download-line"></i></button>
-                <button class="canvas-hdr-btn" onclick="toggleCanvas()" title="Close"><i class="ri-close-line"></i></button>
-            </div>
+  </div>
+
+  <!-- Main chat -->
+  <div class="chat-main">
+    <div class="coverage-bar" id="coverage-bar" style="display:none;"></div>
+    <div class="chat-messages" id="chat-messages-container"></div>
+    <div class="chat-input-area">
+      <!-- Template dropdown -->
+      <div class="tpl-dropdown-wrap" id="tpl-dropdown-wrap">
+        <button class="tpl-icon-btn" onclick="toggleTplDropdown()" title="Templates"><i class="ri-layout-grid-line"></i></button>
+        <div class="tpl-dropdown-menu" id="tpl-dropdown-menu" style="display:none;">
+          <button class="tpl-menu-item" onclick="applyTemplate('risk-brief');toggleTplDropdown()"><i class="ri-file-shield-2-line"></i> Risk Brief</button>
+          <button class="tpl-menu-item" onclick="applyTemplate('country-note');toggleTplDropdown()"><i class="ri-map-pin-line"></i> Country Note</button>
+          <button class="tpl-menu-item" onclick="applyTemplate('screening');toggleTplDropdown()"><i class="ri-scan-line"></i> Screening</button>
+          <button class="tpl-menu-item" onclick="applyTemplate('comparison');toggleTplDropdown()"><i class="ri-bar-chart-grouped-line"></i> Compare</button>
+          <button class="tpl-menu-item" onclick="toggleCanvas();toggleTplDropdown()"><i class="ri-pushpin-line"></i> Canvas</button>
+          <button class="tpl-menu-item" onclick="generateBrief();toggleTplDropdown()"><i class="ri-file-text-line"></i> Brief</button>
+          <div class="tpl-menu-sep"></div>
+          <button class="tpl-menu-item danger" onclick="clearChatHistory();toggleTplDropdown()"><i class="ri-delete-bin-line"></i> Clear chat</button>
         </div>
-        <div class="canvas-items" id="canvas-items">
-            <div class="canvas-empty">Pin responses to build your research document.</div>
+      </div>
+      <div class="chat-input-wrapper">
+        <textarea id="chat-input" class="chat-input" placeholder="Write a message" rows="1" onkeydown="handleChatKeydown(event)" oninput="autoResizeChatInput(this)"></textarea>
+      </div>
+      <!-- Model dropdown -->
+      <div class="model-dropdown-wrap" id="model-dropdown-wrap">
+        <button class="model-dropdown-btn" id="model-dropdown-btn" onclick="toggleModelDropdown()" title="Select model">Gemini 3.1 Lite <i class="ri-arrow-down-s-line"></i></button>
+        <div class="model-dropdown-menu" id="model-dropdown-menu" style="display:none;">
+          <button class="model-menu-item active" data-model="gemini-3.1-flash-lite" onclick="selectModelDropdown('gemini-3.1-flash-lite')">Gemini 3.1 Lite<span class="model-menu-desc">Fastest · Quick lookups</span></button>
+          <button class="model-menu-item" data-model="gemini-3.5-flash" onclick="selectModelDropdown('gemini-3.5-flash')">Gemini 3.5<span class="model-menu-desc">Balanced · Better reasoning</span></button>
+          <button class="model-menu-item" data-model="openai/gpt-oss-120b" onclick="selectModelDropdown('openai/gpt-oss-120b')">GPT OSS 120B<span class="model-menu-desc">Most capable · Deep analysis</span></button>
+          <button class="model-menu-item" data-model="qwen/qwen3-32b" onclick="selectModelDropdown('qwen/qwen3-32b')">Qwen3 32B<span class="model-menu-desc">Multilingual · Emerging markets</span></button>
         </div>
+      </div>
+      <div class="chat-status" id="chat-status-indicator">Analyzing…</div>
+      <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="Send (Enter)">
+        <i class="ri-send-plane-fill"></i>
+      </button>
     </div>
+  </div>
+
+  <!-- Research canvas panel -->
+  <div class="canvas-panel" id="canvas-panel" style="display:none;">
+    <div class="canvas-hdr">
+      <span class="canvas-hdr-title"><i class="ri-pushpin-line"></i> Research Canvas</span>
+      <div style="display:flex;gap:0.35rem;">
+        <button class="canvas-hdr-btn" onclick="exportCanvas()" title="Export canvas"><i class="ri-download-line"></i></button>
+        <button class="canvas-hdr-btn" onclick="toggleCanvas()" title="Close"><i class="ri-close-line"></i></button>
+      </div>
+    </div>
+    <div class="canvas-items" id="canvas-items">
+      <div class="canvas-empty">Pin responses to build your research document.</div>
+    </div>
+  </div>
+</div>
+
+<div class="mobile-fab-row">
+  <button class="mobile-fab" onclick="toggleLeftPanel()" title="Sessions"><i class="ri-sidebar-fold-line"></i></button>
 </div>
 
 
@@ -4657,6 +4618,17 @@ document.addEventListener('click', (e) => {
 
     // Close tooltip when clicking anywhere
     hideGlobalTooltip();
+
+    // Close template dropdown when clicking outside
+    if (!e.target.closest('#tpl-dropdown-wrap')) {
+        const m = document.getElementById('tpl-dropdown-menu');
+        if (m) m.style.display = 'none';
+    }
+    // Close model dropdown when clicking outside
+    if (!e.target.closest('#model-dropdown-wrap')) {
+        const m = document.getElementById('model-dropdown-menu');
+        if (m) m.style.display = 'none';
+    }
 });
 
 // ===== FILE HANDLING =====
@@ -11003,11 +10975,47 @@ function buildWebSearchModal(resultStr) {
 }
 
 function toggleTracePanel() {
-    const panel = document.getElementById('trace-panel');
-    const btn = document.getElementById('trace-toggle');
-    if (!panel) return;
-    panel.classList.toggle('collapsed');
-    if (btn) btn.innerHTML = panel.classList.contains('collapsed') ? '<i class="ri-arrow-left-s-line"></i>' : '<i class="ri-arrow-right-s-line"></i>';
+    switchPanelTab('trace');
+    if (!document.getElementById('left-panel').classList.contains('expanded')) {
+        toggleLeftPanel();
+    }
+}
+
+function toggleLeftPanel() {
+    const panel = document.getElementById('left-panel');
+    const btn = document.getElementById('rail-toggle');
+    panel.classList.toggle('expanded');
+    if (btn) btn.innerHTML = panel.classList.contains('expanded') ? '<i class="ri-sidebar-unfold-line"></i>' : '<i class="ri-sidebar-fold-line"></i>';
+}
+
+function switchPanelTab(tab) {
+    document.querySelectorAll('.panel-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.getElementById('tab-sessions').style.display = tab === 'sessions' ? 'flex' : 'none';
+    document.getElementById('tab-trace').style.display = tab === 'trace' ? 'flex' : 'none';
+}
+
+function toggleTplDropdown() {
+    const menu = document.getElementById('tpl-dropdown-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleModelDropdown() {
+    const menu = document.getElementById('model-dropdown-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function selectModelDropdown(model) {
+    selectModel(model);
+    const labels = {
+        'gemini-3.1-flash-lite': 'Gemini 3.1 Lite',
+        'gemini-3.5-flash': 'Gemini 3.5',
+        'openai/gpt-oss-120b': 'GPT OSS 120B',
+        'qwen/qwen3-32b': 'Qwen3 32B'
+    };
+    const btn = document.getElementById('model-dropdown-btn');
+    if (btn) btn.innerHTML = (labels[model] || model) + ' <i class="ri-arrow-down-s-line"></i>';
+    document.querySelectorAll('.model-menu-item').forEach(b => b.classList.toggle('active', b.dataset.model === model));
+    document.getElementById('model-dropdown-menu').style.display = 'none';
 }
 
 function escapeHTMLSafe(str) {
@@ -12356,23 +12364,9 @@ function buildDualLine({ country, title } = {}) {
 }
 
 // ===== MOBILE DRAWER FUNCTIONS =====
-function toggleMobileSidebar() {
-    const s = document.querySelector('.sessions-sidebar');
-    const o = document.getElementById('mobile-overlay');
-    const isOpen = s.classList.contains('mobile-open');
-    closeMobileDrawers();
-    if (!isOpen) { s.classList.add('mobile-open'); o.classList.add('open'); }
-}
-function toggleMobileTrace() {
-    const t = document.querySelector('.trace-panel');
-    const o = document.getElementById('mobile-overlay');
-    const isOpen = t.classList.contains('mobile-open');
-    closeMobileDrawers();
-    if (!isOpen) { t.classList.add('mobile-open'); o.classList.add('open'); }
-}
+function toggleMobileSidebar() { toggleLeftPanel(); }
+function toggleMobileTrace() { switchPanelTab('trace'); if (!document.getElementById('left-panel').classList.contains('expanded')) toggleLeftPanel(); }
 function closeMobileDrawers() {
-    document.querySelector('.sessions-sidebar')?.classList.remove('mobile-open');
-    document.querySelector('.trace-panel')?.classList.remove('mobile-open');
     document.getElementById('mobile-overlay')?.classList.remove('open');
 }
 
@@ -12405,11 +12399,6 @@ document.addEventListener('keydown', handleGlobalKeydown);
 <!-- Firebase config & auth helpers -->
 <script src="firebase-config.js"></script>
 
-<div class="mobile-drawer-overlay" id="mobile-overlay" onclick="closeMobileDrawers()"></div>
-<div class="mobile-fab-row">
-    <button class="mobile-fab" onclick="toggleMobileSidebar()" title="Sessions"><i class="ri-history-line"></i></button>
-    <button class="mobile-fab" onclick="toggleMobileTrace()" title="Trace"><i class="ri-flow-chart"></i></button>
-</div>
 <!-- E1: Session search modal -->
 <div class="session-search-modal" id="session-search-modal" style="display:none;" onclick="closeSessionSearchModal(event)">
     <div class="session-search-card">
@@ -12422,14 +12411,5 @@ document.addEventListener('keydown', handleGlobalKeydown);
     </div>
 </div>
 
-<div id="trace-modal" class="trace-modal" onclick="closeTraceModal(event)">
-    <div class="trace-modal-card">
-        <div class="trace-modal-hdr">
-            <span id="trace-modal-title">Detail</span>
-            <button class="trace-modal-close" onclick="closeTraceModal()"><i class="ri-close-line"></i></button>
-        </div>
-        <div class="trace-modal-body" id="trace-modal-body"></div>
-    </div>
-</div>
 </body>
 </html>
