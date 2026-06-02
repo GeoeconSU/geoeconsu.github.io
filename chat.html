@@ -4500,6 +4500,9 @@ let _agentSources = [];
 let _abortController = null;
 let _webSearchResultsData = [];
 let _pendingChartEls = [];
+let _pendingChartCalls = [];
+let _lastRenderedChartCalls = [];
+let _currentTraceData = [];
 let _canvas = [];
 let _canvasOpen = false;
 const SESSION_STORAGE_KEY = 'gsu_chat_sessions';
@@ -10522,6 +10525,13 @@ async function sendChatMessage() {
             renderChatMessage('assistant', reply);
         }
         chatHistory.push({ role: 'assistant', content: reply });
+        if (_lastRenderedChartCalls.length) {
+            chatHistory.push({ role: 'charts', calls: _lastRenderedChartCalls });
+            _lastRenderedChartCalls = [];
+        }
+        if (_currentTraceData.length) {
+            chatHistory.push({ role: 'trace', steps: [..._currentTraceData] });
+        }
         updateCtxIndicator();
         appendWebFootnotes();
         detectAndRenderDrillDown(reply);
@@ -10696,6 +10706,8 @@ async function runAgentLoop(userText, onTextChunk = null) {
     _agentSources = [];
     _webSearchResultsData = [];
     _pendingChartEls = [];
+    _pendingChartCalls = [];
+    _currentTraceData = [];
     clearTrace();
     addTraceStep('think', 'Analyzing query and selecting data strategy…');
     updateChatStatus('thinking', 'Reasoning…');
@@ -10826,13 +10838,13 @@ async function executeToolCall(name, args) {
         case 'rank_by_pillar':       return toolRankByPillar(args);
         case 'find_anomalies':       return toolFindAnomalies(args);
         case 'web_search':           return await toolWebSearch(args);
-        case 'render_scatter_plot':  { const el = buildScatterPlot(args);      if (el) renderChatChart(el); return 'Scatter plot rendered.'; }
-        case 'render_radar_chart':   { const el = buildRadarChart(args);       if (el) renderChatChart(el); return 'Radar chart rendered.'; }
-        case 'render_bar_chart':     { const el = buildBarChart(args);         if (el) renderChatChart(el); return 'Bar chart rendered.'; }
-        case 'render_line_chart':    { const el = buildLineChart(args);        if (el) renderChatChart(el); return 'Line chart rendered.'; }
-        case 'render_regime_matrix': { const el = buildChatRegimeMatrix(args); if (el) renderChatChart(el); return 'Regime matrix rendered.'; }
-        case 'render_pillar_bar':    { const el = buildPillarBar(args);       if (el) renderChatChart(el); return 'Pillar bar chart rendered.'; }
-        case 'render_dual_line':     { const el = buildDualLine(args);        if (el) renderChatChart(el); return 'Dual-axis chart rendered.'; }
+        case 'render_scatter_plot':  { const el = buildScatterPlot(args);      if (el) renderChatChart(el, 'render_scatter_plot', args); return 'Scatter plot rendered.'; }
+        case 'render_radar_chart':   { const el = buildRadarChart(args);       if (el) renderChatChart(el, 'render_radar_chart', args); return 'Radar chart rendered.'; }
+        case 'render_bar_chart':     { const el = buildBarChart(args);         if (el) renderChatChart(el, 'render_bar_chart', args); return 'Bar chart rendered.'; }
+        case 'render_line_chart':    { const el = buildLineChart(args);        if (el) renderChatChart(el, 'render_line_chart', args); return 'Line chart rendered.'; }
+        case 'render_regime_matrix': { const el = buildChatRegimeMatrix(args); if (el) renderChatChart(el, 'render_regime_matrix', args); return 'Regime matrix rendered.'; }
+        case 'render_pillar_bar':    { const el = buildPillarBar(args);        if (el) renderChatChart(el, 'render_pillar_bar', args); return 'Pillar bar chart rendered.'; }
+        case 'render_dual_line':     { const el = buildDualLine(args);         if (el) renderChatChart(el, 'render_dual_line', args); return 'Dual-axis chart rendered.'; }
         default: return 'Unknown tool: ' + name;
     }
 }
@@ -10980,6 +10992,7 @@ function clearTrace() {
 }
 
 function addTraceStep(type, content, fullData) {
+    _currentTraceData.push({ type, content });
     const el = document.getElementById('trace-steps');
     if (!el) return;
     const emp = el.querySelector('.trace-empty');
@@ -11118,7 +11131,7 @@ function autoSaveSession() {
     const firstUser = chatHistory.find(m => m.role === 'user');
     const name = firstUser ? firstUser.content.slice(0, 48) + (firstUser.content.length > 48 ? '…' : '') : 'Untitled';
     const idx = sessions.findIndex(s => s.id === currentSessionId);
-    const entry = { id: currentSessionId, name, updatedAt: new Date().toISOString(), messages: chatHistory.filter(m => m.role !== 'chart').slice(-16) };
+    const entry = { id: currentSessionId, name, updatedAt: new Date().toISOString(), messages: chatHistory.slice(-28) };
     if (idx >= 0) sessions[idx] = entry; else sessions.unshift(entry);
     saveSessions(sessions.slice(0, 15));
     renderSessionsSidebar();
@@ -11135,7 +11148,29 @@ function loadSession(id) {
     if (!container) return;
     container.innerHTML = '';
     if (!chatHistory.length) { showWelcomeState(); }
-    else { hideWelcomeState(); chatHistory.forEach(m => { if (m.role === 'user') renderChatMessage('user', m.content); else if (m.role === 'assistant') renderChatMessage('assistant', m.content); }); }
+    else {
+        hideWelcomeState();
+        let lastBubble = null;
+        chatHistory.forEach(m => {
+            if (m.role === 'user') {
+                renderChatMessage('user', m.content);
+                lastBubble = null;
+            } else if (m.role === 'assistant') {
+                renderChatMessage('assistant', m.content);
+                lastBubble = container.querySelector('.chat-message.assistant:last-of-type .chat-bubble');
+            } else if (m.role === 'charts' && m.calls && lastBubble) {
+                m.calls.forEach(call => {
+                    const el = buildChartEl(call.name, call.args);
+                    if (el) { _pendingChartEls.push(el); _pendingChartCalls.push(call); }
+                });
+                flushPendingCharts(lastBubble);
+                lastBubble = null;
+            } else if (m.role === 'trace' && m.steps) {
+                clearTrace();
+                m.steps.forEach(s => addTraceStep(s.type, s.content));
+            }
+        });
+    }
     clearTrace();
     const bar = document.getElementById('coverage-bar');
     if (bar) bar.style.display = 'none';
@@ -11927,9 +11962,23 @@ function dispatchChartRender(fnName, fnArgs) {
     }
 }
 
-function renderChatChart(el) {
+function buildChartEl(name, args) {
+    switch (name) {
+        case 'render_line_chart':    return buildLineChart(args);
+        case 'render_dual_line':     return buildDualLine(args);
+        case 'render_radar_chart':   return buildRadarChart(args);
+        case 'render_pillar_bar':    return buildPillarBar(args);
+        case 'render_bar_chart':     return buildBarChart(args);
+        case 'render_scatter_plot':  return buildScatterPlot(args);
+        case 'render_regime_matrix': return buildChatRegimeMatrix(args);
+        default: return null;
+    }
+}
+
+function renderChatChart(el, name = '', args = {}) {
     if (!el) return;
     _pendingChartEls.push(el);
+    _pendingChartCalls.push({ name, args });
 }
 
 function flushPendingCharts(bubble) {
@@ -11937,19 +11986,31 @@ function flushPendingCharts(bubble) {
     const msgDiv = bubble.closest('.chat-message');
     if (!msgDiv) return;
     const count = _pendingChartEls.length;
+
+    // Prefer line charts in the solo bottom-row (span-2) slot
+    if (count > 1 && count % 2 !== 0) {
+        const pairs = _pendingChartEls.map((el, i) => ({ el, call: _pendingChartCalls[i] || {} }));
+        pairs.sort((a, b) => (a.call.name === 'render_line_chart' ? 1 : 0) - (b.call.name === 'render_line_chart' ? 1 : 0));
+        _pendingChartEls = pairs.map(p => p.el);
+        _pendingChartCalls = pairs.map(p => p.call);
+    }
+
     const panel = document.createElement('div');
     panel.className = 'chat-chart-panel';
     const grid = document.createElement('div');
     grid.className = 'chat-chart-grid';
     grid.dataset.count = count;
     _pendingChartEls.forEach((el, i) => {
-        // odd count: last chart spans both columns (bento bottom row)
         if (count % 2 !== 0 && count > 1 && i === count - 1) el.classList.add('chart-span-2');
         grid.appendChild(el);
     });
     panel.appendChild(grid);
     msgDiv.insertAdjacentElement('afterend', panel);
+
+    _lastRenderedChartCalls = [..._pendingChartCalls];
     _pendingChartEls = [];
+    _pendingChartCalls = [];
+
     const container = document.getElementById('chat-messages-container');
     if (container) container.scrollTop = container.scrollHeight;
 }
