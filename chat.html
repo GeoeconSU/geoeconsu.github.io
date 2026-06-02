@@ -3365,6 +3365,9 @@
             flex-direction: column;
             gap: 1.25rem;
             scroll-behavior: smooth;
+            background: radial-gradient(ellipse at 60% 0%, rgba(203,168,78,0.04) 0%, transparent 60%),
+                        radial-gradient(ellipse at 10% 90%, rgba(93,138,168,0.04) 0%, transparent 55%),
+                        var(--primary-bg);
         }
         .chat-message {
             display: flex;
@@ -3389,7 +3392,7 @@
         }
         .chat-bubble {
             max-width: 94%;
-            padding: 1rem 1.35rem;
+            padding: 0.75rem 1.1rem;
             border-radius: 4px;
             font-family: var(--font-body);
             font-size: 1rem;
@@ -3447,7 +3450,7 @@
         .chat-input-wrapper {
             flex: 1;
             position: relative;
-            border-radius: 4px;
+            border-radius: 20px;
             background: rgba(18, 25, 42, 0.55);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -3459,19 +3462,19 @@
         .chat-input {
             width: 100%; background: transparent;
             border: none; color: var(--text-white);
-            font-family: var(--font-body); font-size: 1rem;
-            padding: 0.75rem 1.25rem;
-            resize: none; min-height: 48px; max-height: 140px;
+            font-family: var(--font-body); font-size: 0.95rem;
+            padding: 0.55rem 1.1rem;
+            resize: none; min-height: 40px; max-height: 140px;
             line-height: 1.5; outline: none;
             box-sizing: border-box;
             position: relative; z-index: 2;
         }
         .chat-input::placeholder { color: rgba(255, 255, 255, 0.28); }
         .chat-send-btn {
-            width: 48px; height: 48px; flex-shrink: 0;
-            border-radius: 4px; cursor: pointer;
+            width: 38px; height: 38px; flex-shrink: 0;
+            border-radius: 50%; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.15rem;
+            font-size: 1rem;
             color: var(--accent-gold);
             background: rgba(18, 25, 42, 0.55);
             border: 1px solid rgba(194, 165, 109, 0.25);
@@ -3554,7 +3557,7 @@
 
         /* === USER BUBBLE PILL OVERRIDE === */
         .chat-message.user .chat-avatar { display: none; }
-        .chat-message.user .chat-bubble { border-radius: 4px; }
+        .chat-message.user .chat-bubble { border-radius: 4px; padding: 0.45rem 0.9rem; max-width: 75%; font-size: 0.95rem; }
 
         /* === PINSTRIPE BACKGROUND === */
         .chat-messages {
@@ -11091,10 +11094,10 @@ function loadSession(id) {
         let lastBubble = null;
         chatHistory.forEach(m => {
             if (m.role === 'user') {
-                renderChatMessage('user', m.content);
+                renderChatMessage('user', m.content, false, true);
                 lastBubble = null;
             } else if (m.role === 'assistant') {
-                renderChatMessage('assistant', m.content);
+                renderChatMessage('assistant', m.content, false, true);
                 lastBubble = container.querySelector('.chat-message.assistant:last-of-type .chat-bubble');
             } else if (m.role === 'charts' && m.calls && lastBubble) {
                 m.calls.forEach(call => {
@@ -11576,7 +11579,7 @@ function renameSession(id, evt) {
     });
 }
 
-function renderChatMessage(role, content, isError = false) {
+function renderChatMessage(role, content, isError = false, instant = false) {
     const container = document.getElementById('chat-messages-container');
     if (!container) return;
 
@@ -11603,7 +11606,7 @@ function renderChatMessage(role, content, isError = false) {
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
         const bubble = div.querySelector('.chat-bubble');
-        if (isError) {
+        if (isError || instant) {
             bubble.innerHTML = htmlContent + `<span class="msg-time">${timeStr}</span>`;
         } else {
             streamChatContent(bubble, htmlContent, container, timeStr);
