@@ -1,243 +1,91 @@
-# RAO Intelligence Assistant — Test Results
+# Streaming Test Results
 
-**Date:** 1 June 2026  
-**Model:** gemini-3.1-flash-lite  
+**Date:** 2 June 2026
 
 ---
 
-## Test 1: Vietnam deep-dive
+## single-country [lite]
 
-**Prompt:** Give me a detailed RAO analysis of Vietnam. I want all four pillar scores with sub-indicator root causes, the full TOS breakdown (SIS, DGI, RVS), a time-series of RAO scores from 2018 to 2024, a markdown table of all key values, and a base/upside/downside scenario outlook.
+**Prompt:** "Analyze Vietnam."
+**Time:** 8.1s | **Length:** 2612 chars
 
-**Time:** 5.7s
+### Chart Checklist
+- ✅ `render_dual_line`
+- ✅ `render_line_chart`
+- ✅ `render_radar_chart`
 
-### Agent Trace
+### Content Checklist
+- ✅ Pillar table
+- ✅ TOS components
+- ❌ Year-by-year table
+- ❌ Scenario matrix
 
-- `→ get_country_profile({"countries": ["VNM"], "include_history": true})`
+### Trace
+- `→ get_country_profile({"countries": ["Vietnam"], "include_history": true})`
 - `← [
   {
-    "country": "Vietnam",
-    "iso": "VNM",
+    "country": "VNM",
+    "country_name": "Vietnam",
     "year": 2025,
     "rao_score": 8.14,
-    "rao_pre_overlay": 7.28,
-    "volatility_band": 0.099,
-    "pillars": {
-      "opportunity": 0.66,
-      "stability": 0.631,
-      "absorptive_capacity": 0.551,
-      "trajectory": 0.566
-    },
-    "tos_sc…`
-- `✓ Response: 3438 chars`
+`
+- `→ render_line_chart({"countries": ["Vietnam"], "title": "Vietnam RAO Score (2010\u20132025)", "metri)`
+- `← render_line_chart rendered.`
+- `→ render_dual_line({"country": "Vietnam", "title": "Vietnam: RAO Score vs. TOS Signal (2010\u201320)`
+- `← render_dual_line rendered.`
+- `→ render_radar_chart({"title": "Vietnam Pillar Performance (2025)", "countries": ["Vietnam"]})`
+- `← render_radar_chart rendered.`
+- `✓ Response: 2612 chars | 35 SSE chunks`
 
 ### Response
 
-Vietnam currently occupies a premier position in the RAO framework, ranked 7th globally with an RAO score of 8.14. It is classified as a **Robust Opportunity (RO)** regime, characterized by high-growth dynamics and a strong, consistent trajectory.
+As of June 2, 2026, Vietnam maintains a **Robust Opportunity (RO)** regime with an RAO score of **8.14**. The country is currently signaling a **Pre-Breakout** status (TOS: 0.59), reflecting a strong recovery in its structural indicators following a period of volatility in 2022–2024.
 
-### Strategic Analysis: The Vietnam Engine
-Vietnam’s success is driven by its role as a primary beneficiary of global supply chain diversification ("China+1"). The country has successfully leveraged high capital formation and export-oriented growth to move up the value chain.
+### 1. Pillar Performance (2025)
+Vietnam’s growth model is anchored by high capital formation and export-oriented industrialization.
 
-#### Pillar Breakdown & Root Causes
-*   **Opportunity (0.66):** Driven by exceptional **Gross Capital Formation (0.86)** and **GDP Growth (0.84)**. The country is effectively converting FDI into industrial capacity.
-*   **Stability (0.63):** A major strength. Vietnam maintains a robust **Current Account (0.84)** and **Government Debt (0.82)** profile. While political stability is high, the "Rule of Law" and "Control of Corruption" (both ~0.46) remain the primary bottlenecks for further institutional maturation.
-*   **Absorptive Capacity (0.55):** Strong **GDP per capita growth (0.88)** and low youth unemployment are positive, but the score is dragged down by **Vulnerable Employment (0.25)**—a reflection of the large informal sector—and **Regulatory Quality (0.41)**.
-*   **Trajectory (0.57):** The trend is positive, reflecting a recovery from the 2021–2023 dip, signaling that the structural growth story remains intact.
-
-#### TOS Breakdown (Pre-Breakout Signal: 0.59)
-*   **SIS (Structural Integration Score: 0.54):** Reflects deep integration into global trade networks.
-*   **DGI (Digital/Governance Integration: 0.62):** Improving, though still constrained by legacy regulatory frameworks.
-*   **RVS (Resilience/Volatility Score: 0.62):** High, indicating the economy has demonstrated significant shock absorption during global trade fluctuations.
-
-### Key Data Table (2024–2025)
-| Metric | 2024 | 2025 |
+| Pillar | Score | Root Causes / Observations |
 | :--- | :--- | :--- |
-| **RAO Score** | 7.39 | 8.14 |
-| **Regime** | RO | RO |
-| **TOS** | 0.41 | 0.59 |
-| **Opportunity** | 0.66 | 0.66 |
-| **Stability** | 0.63 | 0.63 |
-| **Absorptive Capacity** | 0.55 | 0.55 |
-| **Trajectory** | 0.47 | 0.57 |
+| **Opportunity** | 0.66 | Driven by high GDP per capita growth (0.88) and strong export growth (0.78). |
+| **Stability** | 0.63 | Supported by strong current account (0.84) and manageable debt levels (0.82). |
+| **Absorptive Capacity** | 0.55 | Moderate; constrained by lower regulatory quality (0.41) and rule of law (0.45). |
+| **Trajectory** | 0.57 | Improving; recovery in investment momentum post-2024. |
 
-### Outlook Scenarios
-*   **Base Case:** Continued steady growth (6–7% GDP) as Vietnam captures further high-tech manufacturing shifts. Regulatory reforms continue at a measured pace.
-*   **Upside Case:** Accelerated institutional reform (improving Rule of Law/Regulatory Quality) triggers a surge in high-value FDI, pushing the TOS toward 0.70 and cementing Vietnam as a regional hub for R&D, not just assembly.
-*   **Downside Case:** External demand shock (major trading partner recession) combined with internal bottlenecks in energy infrastructure and a failure to formalize the labor market leads to a stagnation in the "Absorptive Capacity" pillar.
+*Note: No sub-indicators are currently below the 0.15 "collapse risk" threshold.*
 
-### Bottom Line: Decision-Grade Intelligence
-Vietnam is a **"Buy and Hold"** for long-term structural growth. The current **RO regime** status with a **Pre-Breakout TOS (0.59)** suggests that the market is currently priced for growth but has not yet fully realized the potential of its institutional upgrades. 
+### 2. TOS Component Breakdown
+The Takeoff Signal (TOS) is the geometric mean of SIS, DGI, and RVS. The 2025 recovery is primarily driven by a rebound in the Structural Integration Score (SIS).
 
-**Investor Action:** Focus on sectors benefiting from infrastructure and industrial park expansion. Monitor the "Regulatory Quality" and "Rule of Law" indicators closely; any meaningful improvement here will be the leading indicator for a move into the top 5 global rankings.
-
----
-
-## Test 2: Nigeria vs Kenya FDI comparison
-
-**Prompt:** Compare Nigeria and Kenya for a private equity fund considering FDI entry. Use all RAO pillar data and sub-indicators, show TOS signal differences, identify which specific indicators are drag factors in each market, and recommend which market with a clear decision threshold.
-
-**Time:** 4.9s
-
-### Agent Trace
-
-- `→ compare_countries({"countries": ["NGA", "KEN"]})`
-- `← [
-  {
-    "country": "Nigeria",
-    "iso": "NGA",
-    "year": 2025,
-    "rao": 3.53,
-    "opp": 0.412,
-    "stab": 0.418,
-    "ac": 0.347,
-    "traj": 0.464,
-    "tos": 0.19,
-    "regime": "SL",
-    "archetype": "Diversified Emerging Market",
-    "rank": 127,
-    "normalized_indicators": {
-      "no…`
-- `✓ Response: 3358 chars`
-
-### Response
-
-### Strategic Assessment: Nigeria vs. Kenya for Private Equity FDI
-
-For a private equity fund, the RAO framework reveals two markets currently classified as **Stable/Limited (SL)**, both of which fall significantly below the "Pre-Breakout" threshold (TOS ≥ 0.55). Neither market currently meets the primary signal for an aggressive entry trigger. However, the risk profiles and structural drag factors differ substantially.
-
-#### RAO Comparative Metrics
-
-| Metric | Nigeria (NGA) | Kenya (KEN) |
+| Component | Score | Trend |
 | :--- | :--- | :--- |
-| **RAO Score (1-10)** | 3.53 | 4.90 |
-| **TOS Signal** | 0.19 | 0.48 |
-| **Opportunity Pillar** | 0.41 | 0.44 |
-| **Stability Pillar** | 0.42 | 0.40 |
-| **Absorptive Capacity** | 0.35 | 0.41 |
-| **Trajectory** | 0.46 | 0.50 |
+| **SIS (Structural Integration)** | 0.54 | Significant recovery from 0.20 (2024). |
+| **DGI (Dynamic Growth)** | 0.62 | Consistent performance in capital formation. |
+| **RVS (Relative Value)** | 0.62 | Stable; reflecting competitive export positioning. |
+| **TOS (Geometric Mean)** | **0.59** | **Pre-Breakout Signal** |
 
----
+### 3. Historical Context (2015–2025)
+Vietnam has demonstrated resilience, navigating the 2020–2021 pandemic period while maintaining its RO regime. The dip in TOS during 2022–2024 was largely a function of external demand shocks affecting the SIS component, which has now corrected.
 
-### Analysis of Drag Factors
-
-#### Nigeria (NGA): The "Institutional Vacuum"
-Nigeria’s extremely low TOS (0.19) is a red flag, indicating that the structural conditions for sustainable growth are currently absent.
-*   **Primary Drag Factors:**
-    *   **Political Stability (0.03):** This is the single most significant inhibitor. The lack of predictability in the operating environment creates a high-risk premium that private equity returns struggle to justify.
-    *   **Human Capital (Secondary School Enrolment: 0.08):** A critical failure in long-term absorptive capacity.
-    *   **Corruption/Rule of Law (0.15/0.19):** These sub-indicators create high transaction costs and exit risks for PE firms.
-*   **Why it matters:** Even if GDP growth appears attractive, the "Stability" and "Absorptive Capacity" pillars are hollowed out by institutional decay.
-
-#### Kenya (KEN): The "Debt-Constrained Growth"
-Kenya is closer to the pre-breakout threshold (TOS 0.48) but remains hampered by fiscal and structural constraints.
-*   **Primary Drag Factors:**
-    *   **Gross Capital Formation (0.16):** Indicates a lack of domestic investment in productive capacity, suggesting the economy is consumption-led rather than investment-led.
-    *   **Vulnerable Employment (0.12):** A high reliance on informal labor markets limits the scalability of formal private equity-backed enterprises.
-    *   **External Debt (0.73):** While debt levels are high, the *stability* of the macro environment is slightly more predictable than in Nigeria, though still fragile.
-
----
-
-### Strategic Recommendation
-
-**Decision Threshold: Do not enter either market at this time.**
-
-*   **The "Wait-and-See" Trigger:** Our framework requires a **TOS ≥ 0.55** to justify a formal due-diligence entry. Neither country meets this.
-*   **Relative Preference:** If forced to choose, **Kenya** is the superior candidate for a long-term watch-list. It possesses higher absorptive capacity and a more favorable trajectory. Its drag factors (capital formation and informal labor) are economic in nature and potentially addressable through targeted private equity intervention.
-*   **Nigeria's Barrier:** Nigeria’s drag factors are **institutional and political**. These are systemic risks that private equity funds cannot mitigate through operational improvements alone.
-
-**Bottom Line:** Maintain a "Neutral" stance on both. Monitor Kenya for improvements in *Gross Capital Formation* and *Regulatory Quality*. Nigeria remains "Avoid" until the *Political Stability* and *Rule of Law* indicators show a sustained, multi-year upward trend.
-
----
-
-## Test 3: Sub-Saharan Africa pre-breakout screen
-
-**Prompt:** Screen Sub-Saharan Africa for pre-breakout opportunities. Rank all SSA countries by TOS signal, identify the top 3 candidates with full RAO profiles and indicator-level detail, and flag specific structural risks. Produce a summary table and scenario matrix.
-
-**Time:** 7.2s
-
-### Agent Trace
-
-- `→ rank_by_pillar({"metric": "tos_score"})`
-- `← {
-  "metric": "tos_score",
-  "year": 2024,
-  "rankings": [
-    {
-      "rank": 1,
-      "country": "VEN",
-      "iso": "VEN",
-      "value": 0.806,
-      "regime": "SL",
-      "tos": 0.81
-    },
-    {
-      "rank": 2,
-      "country": "TJK",
-      "iso": "TJK",
-      "value": 0.76,
-      "regime": "…`
-- `→ get_country_profile({"countries": ["RWA", "CIV", "TZA"]})`
-- `← [
-  {
-    "country": "Rwanda",
-    "iso": "RWA",
-    "year": 2025,
-    "rao_score": 7.16,
-    "rao_pre_overlay": 6.83,
-    "volatility_band": 0.069,
-    "pillars": {
-      "opportunity": 0.533,
-      "stability": 0.472,
-      "absorptive_capacity": 0.598,
-      "trajectory": 0.529
-    },
-    "tos_sc…`
-- `✓ Response: 3602 chars`
-
-### Response
-
-Sub-Saharan Africa (SSA) presents a bifurcated landscape for investors. While the region faces significant structural headwinds, specific economies are demonstrating "Pre-Breakout" characteristics (TOS ≥ 0.55). 
-
-The following analysis focuses on **Rwanda (RWA)**, **Côte d'Ivoire (CIV)**, and **Tanzania (TZA)**. These countries exhibit strong Trajectory and Opportunity scores, but require careful navigation of their Structural Risk (SR) or Stability profiles.
-
-### Strategic Screening: SSA Pre-Breakout Candidates
-
-| Country | RAO Score | Regime | TOS | Opportunity | Stability | Trajectory |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Rwanda** | 7.16 | RO | 0.66 | 0.53 | 0.47 | 0.53 |
-| **Côte d'Ivoire** | 6.12 | SR | 0.65 | 0.49 | 0.46 | 0.62 |
-| **Tanzania** | 5.36 | SR | 0.58 | 0.56 | 0.49 | 0.50 |
-
----
-
-### Deep Dive: Indicator-Level Analysis
-
-#### 1. Rwanda (RWA): The "Robust Opportunity" Outlier
-Rwanda is the standout performer in the region. Its high RAO score is driven by exceptional **Control of Corruption (0.81)** and **GDP per capita growth (0.88)**. 
-*   **Structural Risk:** The primary bottleneck is **Secondary School Enrolment (0.09)** and **Current Account deficit (0.09)**. 
-*   **Investor Take:** Rwanda is a "buy" for long-term growth, provided the investor can tolerate the liquidity constraints of a smaller market and the long-term human capital development lag.
-
-#### 2. Côte d'Ivoire (CIV): The "Structural Risk" Growth Engine
-CIV shows a strong **Trajectory (0.62)** and **Export Growth (0.92)**, signaling a successful post-conflict economic pivot. 
-*   **Structural Risk:** The "SR" regime classification is driven by high **Youth Unemployment (0.86)** and low **Vulnerable Employment (0.09)**, indicating a mismatch between economic growth and job creation. **Political Stability (0.25)** remains a critical volatility factor.
-*   **Investor Take:** High-upside potential in export-oriented sectors, but requires active political risk hedging.
-
-#### 3. Tanzania (TZA): The Capital Formation Play
-Tanzania boasts the highest **Gross Capital Formation (0.98)** in this cohort, suggesting a massive push in infrastructure and industrial capacity.
-*   **Structural Risk:** The "SR" regime is heavily influenced by extremely low **Secondary School Enrolment (0.02)** and **Regulatory Quality (0.29)**. 
-*   **Investor Take:** A classic "infrastructure-first" play. The risk is that capital investment may not translate into broad-based productivity without significant improvements in human capital and regulatory transparency.
-
----
-
-### Scenario Matrix: SSA Pre-Breakout
-
-| Scenario | Catalyst | Impact on RAO | Investor Action |
+### 4. Scenario Matrix
+| Scenario | Probability | RAO Impact | Key Driver |
 | :--- | :--- | :--- | :--- |
-| **Base** | Continued FDI inflows; moderate commodity price stability. | Stable/Gradual Improvement | Hold/Accumulate |
-| **Upside** | Regional trade integration (AfCFTA) lowers trade costs. | Significant RAO expansion | Overweight |
-| **Downside** | Debt sustainability crisis; political transition volatility. | Sharp RAO contraction | Exit/Hedge |
+| **Breakout** | Moderate | 8.5+ | Sustained FDI inflow + Regulatory reform. |
+| **Stagnation** | Low | 7.0–7.5 | External trade slowdown + Institutional bottlenecks. |
+| **Correction** | Very Low | < 6.5 | Sharp decline in global export demand. |
 
-### Bottom Line: Decision-Relevant Intelligence
-The TOS signal (0.58–0.66) confirms these markets are in a "Pre-Breakout" phase. **Rwanda** is the most stable entry point. **Côte d'Ivoire** and **Tanzania** offer higher growth potential but carry "Structural Risk" (SR) tags that necessitate a higher risk premium. Investors should prioritize **due diligence on debt-to-GNI ratios** and **regulatory quality trends** before committing capital, as these are the primary drivers of the "Absorptive Capacity" pillar in these specific markets.
+**Strategic Assessment:** Vietnam is currently in a "Pre-Breakout" phase. The primary risk to the current trajectory is the "Absorptive Capacity" ceiling—specifically, the need for continued improvements in regulatory quality and the rule of law to sustain long-term capital efficiency. Investors should monitor the SIS component closely; any sustained decline below 0.40 would signal a potential loss of momentum.
 
 ---
+
+## single-country [3.5]
+
+**ERROR:** 502 Server Error: Bad Gateway for url: https://gsu-gate.guduruadip.workers.dev/gemini-stream
+
+---
+
+## comparison [3.5]
+
+**ERROR:** 502 Server Error: Bad Gateway for url: https://gsu-gate.guduruadip.workers.dev/gemini-stream
+
+---
+

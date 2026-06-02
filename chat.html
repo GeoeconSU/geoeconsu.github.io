@@ -4347,7 +4347,8 @@
 <script>
 
 // ===== AGENT CONFIG =====
-const GEMINI_CHAT_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-chat';
+const GEMINI_CHAT_URL   = 'https://gsu-gate.guduruadip.workers.dev/gemini-chat';
+const GEMINI_STREAM_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-stream';
 const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
 const TODAY_DATE = '1 June 2026';
 let selectedModel = 'gemini-3.1-flash-lite';
@@ -4358,7 +4359,7 @@ function selectModel(modelId) {
         p.classList.toggle('active', p.dataset.model === modelId);
     });
 }
-const MAX_AGENT_STEPS = 5;
+const MAX_AGENT_STEPS = 10;
 
 const ALL_TOOLS = [
     { type: 'function', function: { name: 'get_country_profile',
@@ -4431,6 +4432,20 @@ const ALL_TOOLS = [
         description: 'Regime × TOS Investment Priority Matrix. Use for pre-breakout screening, landscape overview.',
         parameters: { type: 'object', properties: {
             year: { type: 'number' }, title: { type: 'string' }
+        }}
+    }},
+    { type: 'function', function: { name: 'render_pillar_bar',
+        description: 'Grouped bar chart comparing all 4 pillars side-by-side for 2–3 countries. Use for comparison queries to show which pillar drives the gap.',
+        parameters: { type: 'object', required: ['countries'], properties: {
+            countries: { type: 'array', items: { type: 'string' } },
+            title: { type: 'string' }
+        }}
+    }},
+    { type: 'function', function: { name: 'render_dual_line',
+        description: 'Dual-axis line chart showing RAO score (left axis) and TOS signal (right axis) for one country over time. Use for single-country deep-dives to reveal RAO/TOS divergence.',
+        parameters: { type: 'object', required: ['country'], properties: {
+            country: { type: 'string' },
+            title: { type: 'string' }
         }}
     }}
 ];
@@ -10449,10 +10464,45 @@ async function sendChatMessage() {
 
     _abortController = new AbortController();
 
+    // Streaming bubble state (closed over by onTextChunk)
+    let streamBubble = null, streamRawText = '', streamTimeStr = null;
+    let streamScrollEl = null, streamUserScrolled = false;
+    const onStreamScroll = () => {
+        streamUserScrolled = (streamScrollEl.scrollHeight - streamScrollEl.scrollTop - streamScrollEl.clientHeight) > 80;
+    };
+    const onTextChunk = (chunk) => {
+        if (!streamBubble) {
+            removeTypingIndicator(typingId);
+            const container = document.getElementById('chat-messages-container');
+            hideWelcomeState();
+            streamTimeStr = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+            const div = document.createElement('div');
+            div.className = 'chat-message assistant';
+            div.innerHTML = `<div class="chat-avatar"><i class="ri-sparkling-line"></i></div><div class="chat-bubble"></div>` +
+                `<button class="chat-regen-btn" onclick="regenResponse(this)" title="Regenerate response"><i class="ri-loop-left-line"></i></button>` +
+                `<button class="chat-copy-btn" onclick="copyChatMessage(this)" title="Copy to clipboard"><i class="ri-file-copy-line"></i></button>` +
+                `<button class="chat-pin-btn" onclick="pinMessage(this)" title="Pin to research canvas"><i class="ri-pushpin-line"></i></button>`;
+            container.appendChild(div);
+            streamBubble = div.querySelector('.chat-bubble');
+            streamScrollEl = container;
+            streamScrollEl.addEventListener('scroll', onStreamScroll);
+        }
+        streamRawText += chunk;
+        streamBubble.innerHTML = streamRawText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/\n/g,'<br>') + '<span class="stream-cursor"></span>';
+        if (!streamUserScrolled) streamScrollEl.scrollTop = streamScrollEl.scrollHeight;
+    };
+
     try {
-        const reply = await runAgentLoop(userText);
+        const reply = await runAgentLoop(userText, onTextChunk);
         removeTypingIndicator(typingId);
-        renderChatMessage('assistant', reply);
+        if (streamBubble) {
+            if (streamScrollEl) streamScrollEl.removeEventListener('scroll', onStreamScroll);
+            streamBubble.innerHTML = chatMarkdownToHTML(reply) + `<span class="msg-time">${streamTimeStr}</span>`;
+            if (!streamUserScrolled && streamScrollEl) streamScrollEl.scrollTop = streamScrollEl.scrollHeight;
+        } else {
+            renderChatMessage('assistant', reply);
+        }
         chatHistory.push({ role: 'assistant', content: reply });
         updateCtxIndicator();
         appendWebFootnotes();
@@ -10612,14 +10662,19 @@ TOOL USE PROTOCOL — follow exactly:
 3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen. Valid region values: sub-regions like "West Africa", "Southeast Asia", "South Asia", "Middle East", "Eastern Europe", "South America"; or broad aliases like "Sub-Saharan Africa", "East Asia & Pacific", "Latin America & Caribbean", "Middle East & North Africa", "Europe & Central Asia".
 4. When include_history data is retrieved: ALWAYS produce a full year-by-year table. Do not summarise history into 1–2 rows.
 5. Use web_search for current events, post-2024 data, sanctions, elections, or news.
-6. Use chart tools when visual output adds value.
+6. CHART TOOLS — you MUST invoke these as actual function calls (tool use), not as text or code blocks. Never write chart function names in your text response.
+   Single-country analysis: call render_line_chart(countries=[X], metric="rao_score"), render_dual_line(country=X), and render_radar_chart(countries=[X]) as tool calls — all three are mandatory.
+   Comparison (2–3 countries): call render_radar_chart(countries=[X,Y,...]), render_pillar_bar(countries=[X,Y,...]), and render_line_chart(countries=[X,Y,...], metric="rao_score") as tool calls — all three are mandatory.
+   Screening / ranking queries: call render_scatter_plot(highlight=[top_isos]) and render_bar_chart(mode="country_ranking", metric="tos_score", top_n=15) as tool calls.
+   Regime landscape: call render_regime_matrix() as a tool call when discussing the global or regional opportunity landscape.
+   Only skip charts if the query is purely conceptual (e.g. "what does TOS mean?") or a one-liner fact check. Never describe charts in text — always invoke them.
 7. Execute all needed tool calls, then synthesize once you have the data.
 
 `;
 }
 
 // ===== AGENTIC LOOP =====
-async function runAgentLoop(userText) {
+async function runAgentLoop(userText, onTextChunk = null) {
     _agentSources = [];
     _webSearchResultsData = [];
     clearTrace();
@@ -10633,8 +10688,8 @@ async function runAgentLoop(userText) {
     ];
 
     for (let step = 0; step < MAX_AGENT_STEPS; step++) {
-        const maxTok = step === 0 ? 500 : 2500;
-        const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok);
+        const maxTok = step === 0 ? 500 : 8000;
+        const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok, onTextChunk);
 
         if (response.tool_calls && response.tool_calls.length > 0) {
             const toolResults = [];
@@ -10666,19 +10721,18 @@ async function runAgentLoop(userText) {
     }
     // Fallback final call if loop exhausted without direct response
     addTraceStep('respond', 'Generating final response…');
-    const final = await callGroqAPIAgent(messages, null, 2500);
+    const final = await callGroqAPIAgent(messages, null, 8000, onTextChunk);
     return final.content || 'Analysis complete.';
 }
 
-async function callGroqAPIAgent(messages, tools = null, maxTokens = 2500) {
+async function callGroqAPIAgent(messages, tools = null, maxTokens = 8000, onTextChunk = null) {
     const isGemini = selectedModel.startsWith('gemini-');
-    const url = isGemini ? GEMINI_CHAT_URL : WORKER_URL;
+    if (isGemini) return callGeminiStreaming(messages, tools, maxTokens, onTextChunk);
+
+    // Groq / non-Gemini path (unchanged)
     const body = { model: selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
-    if (tools && tools.length) {
-        body.tools = tools;
-        if (!isGemini) body.tool_choice = 'auto';
-    }
-    const response = await fetch(url, {
+    if (tools && tools.length) { body.tools = tools; body.tool_choice = 'auto'; }
+    const response = await fetch(WORKER_URL, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
         signal: _abortController ? _abortController.signal : undefined
     });
@@ -10688,7 +10742,60 @@ async function callGroqAPIAgent(messages, tools = null, maxTokens = 2500) {
     }
     const data = await response.json();
     const msg = data.choices?.[0]?.message || { content: 'No response.' };
-    if (!isGemini && msg.content) msg.content = msg.content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    if (msg.content) msg.content = msg.content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    return msg;
+}
+
+async function callGeminiStreaming(messages, tools, maxTokens, onTextChunk) {
+    const body = { model: selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
+    if (tools && tools.length) body.tools = tools;
+    const response = await fetch(GEMINI_STREAM_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        signal: _abortController ? _abortController.signal : undefined
+    });
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `HTTP ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullText = '';
+    const toolCalls = [];
+    const signatures = {};
+
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() ?? '';
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const raw = line.slice(6).trim();
+                if (!raw || raw === '[DONE]') continue;
+                let chunk;
+                try { chunk = JSON.parse(raw); } catch { continue; }
+                const parts = chunk.candidates?.[0]?.content?.parts ?? [];
+                for (const part of parts) {
+                    if (part.text) {
+                        fullText += part.text;
+                        if (onTextChunk && toolCalls.length === 0) onTextChunk(part.text);
+                    }
+                    if (part.functionCall) {
+                        const id = part.functionCall.id || `call_${Date.now()}_${toolCalls.length}`;
+                        toolCalls.push({ id, type: 'function', function: { name: part.functionCall.name, arguments: JSON.stringify(part.functionCall.args ?? {}) } });
+                        if (part.thoughtSignature) signatures[id] = part.thoughtSignature;
+                    }
+                }
+            }
+        }
+    } finally { reader.releaseLock(); }
+
+    const msg = { role: 'assistant', content: fullText || null, tool_calls: toolCalls.length ? toolCalls : null };
+    if (Object.keys(signatures).length) msg._thought_signatures = signatures;
     return msg;
 }
 
@@ -10705,6 +10812,8 @@ async function executeToolCall(name, args) {
         case 'render_bar_chart':     { const el = buildBarChart(args);         if (el) renderChatChart(el); return 'Bar chart rendered.'; }
         case 'render_line_chart':    { const el = buildLineChart(args);        if (el) renderChatChart(el); return 'Line chart rendered.'; }
         case 'render_regime_matrix': { const el = buildChatRegimeMatrix(args); if (el) renderChatChart(el); return 'Regime matrix rendered.'; }
+        case 'render_pillar_bar':    { const el = buildPillarBar(args);       if (el) renderChatChart(el); return 'Pillar bar chart rendered.'; }
+        case 'render_dual_line':     { const el = buildDualLine(args);        if (el) renderChatChart(el); return 'Dual-axis chart rendered.'; }
         default: return 'Unknown tool: ' + name;
     }
 }
@@ -11788,6 +11897,8 @@ function dispatchChartRender(fnName, fnArgs) {
             case 'render_bar_chart':    return buildBarChart(fnArgs);
             case 'render_line_chart':   return buildLineChart(fnArgs);
             case 'render_regime_matrix': return buildChatRegimeMatrix(fnArgs);
+            case 'render_pillar_bar':    return buildPillarBar(fnArgs);
+            case 'render_dual_line':     return buildDualLine(fnArgs);
             default: return null;
         }
     } catch (e) {
@@ -12092,6 +12203,119 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
     html += `</div>`;
     div.innerHTML = html;
     wrapper.appendChild(div);
+    return wrapper;
+}
+
+// ===== PILLAR GROUPED BAR (2–3 countries, 4 pillars side-by-side) =====
+function buildPillarBar({ countries = [], title } = {}) {
+    if (!countries.length) return null;
+    const resolved = countries.map(resolveCountry).filter(Boolean).slice(0, 3);
+    if (!resolved.length) return null;
+
+    const pillarKeys  = ['pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory'];
+    const pillarNames = ['Opportunity','Stability','Absorptive Capacity','Trajectory'];
+    const countryColors = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72'];
+
+    const datasets = resolved.map((c, i) => {
+        const row = getLatestRow(c.country) || c;
+        return {
+            label: c.country_name,
+            data: pillarKeys.map(k => parseFloat((row[k] || 0).toFixed(3))),
+            backgroundColor: countryColors[i] + 'cc',
+            borderColor: countryColors[i],
+            borderWidth: 1,
+            borderRadius: 3,
+            borderSkipped: false
+        };
+    });
+
+    const chartTitle = title || `Pillar Comparison — ${resolved.map(c => c.country_name).join(' · ')}`;
+    const { wrapper, canvas } = makeChartWrapper(chartTitle);
+    const chart = new Chart(canvas, {
+        type: 'bar',
+        data: { labels: pillarNames, datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: {
+                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 10, padding: 12 } },
+                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toFixed(3)}` } }
+            },
+            scales: {
+                x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: 'rgba(255,255,255,0.75)', font: { family: CHART_THEME.font, size: 10 } } },
+                y: { min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 }, stepSize: 0.2 } }
+            }
+        }
+    });
+    registerChart(chart);
+    return wrapper;
+}
+
+// ===== DUAL-AXIS LINE CHART (RAO score + TOS signal, single country) =====
+function buildDualLine({ country, title } = {}) {
+    if (!country) return null;
+    const c = resolveCountry(country);
+    if (!c) return null;
+    const hist = getCountryHistory(c.country).filter(r => r.year >= 2015);
+    if (!hist.length) return null;
+
+    const years   = hist.map(r => r.year);
+    const raoVals = hist.map(r => parseFloat((r.rao_score || 0).toFixed(2)));
+    const tosVals = hist.map(r => parseFloat((r.tos_score || 0).toFixed(3)));
+
+    const chartTitle = title || `RAO Score vs TOS Signal — ${c.country_name}`;
+    const { wrapper, canvas } = makeChartWrapper(chartTitle);
+    const chart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: 'RAO Score',
+                    data: raoVals,
+                    borderColor: CHART_THEME.gold,
+                    backgroundColor: 'rgba(203,168,78,0.08)',
+                    fill: true,
+                    borderWidth: 2.5, tension: 0.3, pointRadius: 3, pointHoverRadius: 5,
+                    yAxisID: 'yRAO'
+                },
+                {
+                    label: 'TOS Signal',
+                    data: tosVals,
+                    borderColor: CHART_THEME.blueSolid,
+                    backgroundColor: 'transparent',
+                    borderWidth: 2, tension: 0.3, pointRadius: 3, pointHoverRadius: 5,
+                    borderDash: [4, 3],
+                    yAxisID: 'yTOS'
+                }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 10, padding: 12 } },
+                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)' }
+            },
+            scales: {
+                x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
+                yRAO: {
+                    type: 'linear', position: 'left',
+                    min: 0, max: 10,
+                    grid: { color: CHART_THEME.gridColor },
+                    ticks: { color: CHART_THEME.gold, font: { size: 10 } },
+                    title: { display: true, text: 'RAO Score', color: CHART_THEME.gold, font: { size: 9 } }
+                },
+                yTOS: {
+                    type: 'linear', position: 'right',
+                    min: 0, max: 1,
+                    grid: { drawOnChartArea: false },
+                    ticks: { color: CHART_THEME.blueSolid, font: { size: 10 } },
+                    title: { display: true, text: 'TOS', color: CHART_THEME.blueSolid, font: { size: 9 } }
+                }
+            }
+        }
+    });
+    registerChart(chart);
     return wrapper;
 }
 
