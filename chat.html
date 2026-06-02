@@ -4102,9 +4102,10 @@
             .section-title { font-size: 0.6rem; }
             .card-title { font-size: 0.6rem; }
             .chat-chart-panel { margin-left: 0; }
-            .chat-chart-grid { grid-template-columns: 1fr; }
+            .chat-chart-grid, .chat-chart-grid[data-count="1"] { grid-template-columns: 1fr; }
+            .chat-chart-wrapper.chart-span-2 { grid-column: auto; }
             .chat-chart-wrapper { padding: 0.75rem; }
-            .chat-chart-canvas { height: 200px !important; }
+            .chat-chart-canvas, .chat-chart-wrapper.chart-span-2 .chat-chart-canvas { height: 200px !important; }
         }
 
         /* ── MOBILE FIXES (supplements the blocks above) ─────────────────── */
@@ -4144,18 +4145,18 @@
             .scorecard-country { min-width: 0; }
         }
         .chat-chart-panel {
-            margin: 0.5rem 0 1rem 3rem;
+            margin: 0.5rem 0 1rem calc(36px + 1rem);
             background: rgba(10, 14, 26, 0.5);
             border: 1px solid rgba(203, 168, 78, 0.15);
             border-radius: 10px;
             padding: 1rem;
-            max-width: 760px;
         }
         .chat-chart-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 0.75rem;
         }
+        .chat-chart-grid[data-count="1"] { grid-template-columns: 1fr; }
         .chat-chart-wrapper {
             background: rgba(15, 20, 32, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -4163,6 +4164,7 @@
             padding: 0.875rem 1rem 0.75rem;
             min-width: 0;
         }
+        .chat-chart-wrapper.chart-span-2 { grid-column: 1 / -1; }
         .chat-chart-title {
             font-family: var(--font-mono);
             font-size: 0.65rem;
@@ -4174,8 +4176,9 @@
         }
         .chat-chart-canvas {
             width: 100% !important;
-            height: 240px !important;
+            height: 280px !important;
         }
+        .chat-chart-wrapper.chart-span-2 .chat-chart-canvas { height: 260px !important; }
 
         /* ── AUTH OVERLAY ──────────────────────────────────────────────────── */
         .auth-overlay {
@@ -11933,11 +11936,17 @@ function flushPendingCharts(bubble) {
     if (!_pendingChartEls.length || !bubble) return;
     const msgDiv = bubble.closest('.chat-message');
     if (!msgDiv) return;
+    const count = _pendingChartEls.length;
     const panel = document.createElement('div');
     panel.className = 'chat-chart-panel';
     const grid = document.createElement('div');
     grid.className = 'chat-chart-grid';
-    _pendingChartEls.forEach(el => grid.appendChild(el));
+    grid.dataset.count = count;
+    _pendingChartEls.forEach((el, i) => {
+        // odd count: last chart spans both columns (bento bottom row)
+        if (count % 2 !== 0 && count > 1 && i === count - 1) el.classList.add('chart-span-2');
+        grid.appendChild(el);
+    });
     panel.appendChild(grid);
     msgDiv.insertAdjacentElement('afterend', panel);
     _pendingChartEls = [];
