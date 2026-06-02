@@ -10785,7 +10785,7 @@ async function callGeminiStreaming(messages, tools, maxTokens, onTextChunk) {
                         if (onTextChunk && toolCalls.length === 0) onTextChunk(part.text);
                     }
                     if (part.functionCall) {
-                        const id = `call_${Date.now()}_${toolCalls.length}`;
+                        const id = part.functionCall.id || `call_${Date.now()}_${toolCalls.length}`;
                         toolCalls.push({ id, type: 'function', function: { name: part.functionCall.name, arguments: JSON.stringify(part.functionCall.args ?? {}) } });
                         if (part.thoughtSignature) signatures[id] = part.thoughtSignature;
                     }

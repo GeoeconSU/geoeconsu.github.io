@@ -183,7 +183,9 @@ async function handleGeminiChat(request, env, cors) {
         for (const tc of msg.tool_calls) {
           let args = {};
           try { args = JSON.parse(tc.function.arguments); } catch {}
-          const part = { functionCall: { name: tc.function.name, args } };
+          const fc = { name: tc.function.name, args };
+          if (tc.id) fc.id = tc.id;
+          const part = { functionCall: fc };
           if (msg._thought_signatures?.[tc.id]) part.thoughtSignature = msg._thought_signatures[tc.id];
           parts.push(part);
         }
@@ -191,9 +193,11 @@ async function handleGeminiChat(request, env, cors) {
       if (parts.length > 0) contents.push({ role: 'model', parts });
     } else if (msg.role === 'tool') {
       const fnName = toolCallMap[msg.tool_call_id] || 'unknown';
+      const fr = { name: fnName, response: { output: msg.content || '' } };
+      if (msg.tool_call_id) fr.id = msg.tool_call_id;
       contents.push({
         role: 'user',
-        parts: [{ functionResponse: { name: fnName, response: { output: msg.content || '' } } }]
+        parts: [{ functionResponse: fr }]
       });
     }
   }
@@ -288,7 +292,9 @@ async function handleGeminiStream(request, env, cors) {
         for (const tc of msg.tool_calls) {
           let args = {};
           try { args = JSON.parse(tc.function.arguments); } catch {}
-          const part = { functionCall: { name: tc.function.name, args } };
+          const fc = { name: tc.function.name, args };
+          if (tc.id) fc.id = tc.id;
+          const part = { functionCall: fc };
           if (msg._thought_signatures?.[tc.id]) part.thoughtSignature = msg._thought_signatures[tc.id];
           parts.push(part);
         }
@@ -296,7 +302,9 @@ async function handleGeminiStream(request, env, cors) {
       if (parts.length > 0) contents.push({ role: 'model', parts });
     } else if (msg.role === 'tool') {
       const fnName = toolCallMap[msg.tool_call_id] || 'unknown';
-      contents.push({ role: 'user', parts: [{ functionResponse: { name: fnName, response: { output: msg.content || '' } } }] });
+      const fr = { name: fnName, response: { output: msg.content || '' } };
+      if (msg.tool_call_id) fr.id = msg.tool_call_id;
+      contents.push({ role: 'user', parts: [{ functionResponse: fr }] });
     }
   }
 
