@@ -10712,7 +10712,7 @@ async function runAgentLoop(userText, onTextChunk = null) {
     addTraceStep('think', 'Analyzing query and selecting data strategy…');
     updateChatStatus('thinking', 'Reasoning…');
 
-    const recentHistory = chatHistory.slice(-3);
+    const recentHistory = chatHistory.filter(m => m.role === 'user' || m.role === 'assistant').slice(-3);
     let messages = [
         { role: 'system', content: buildAgentSystemPrompt() },
         ...recentHistory
@@ -11171,7 +11171,6 @@ function loadSession(id) {
             }
         });
     }
-    clearTrace();
     const bar = document.getElementById('coverage-bar');
     if (bar) bar.style.display = 'none';
     renderSessionsSidebar();
