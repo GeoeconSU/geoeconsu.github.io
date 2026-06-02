@@ -4101,7 +4101,8 @@
             /* Section title */
             .section-title { font-size: 0.6rem; }
             .card-title { font-size: 0.6rem; }
-            .chat-chart-grid { grid-template-columns: 1fr; margin-left: 0; }
+            .chat-chart-panel { margin-left: 0; }
+            .chat-chart-grid { grid-template-columns: 1fr; }
             .chat-chart-wrapper { padding: 0.75rem; }
             .chat-chart-canvas { height: 200px !important; }
         }
@@ -4142,20 +4143,24 @@
             /* Stacked scorecard on very small screens */
             .scorecard-country { min-width: 0; }
         }
+        .chat-chart-panel {
+            margin: 0.5rem 0 1rem 3rem;
+            background: rgba(10, 14, 26, 0.5);
+            border: 1px solid rgba(203, 168, 78, 0.15);
+            border-radius: 10px;
+            padding: 1rem;
+            max-width: 760px;
+        }
         .chat-chart-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 0.75rem;
-            margin-top: 0.75rem;
-            width: 100%;
-            max-width: 760px;
-            margin-left: 3rem;
         }
         .chat-chart-wrapper {
             background: rgba(15, 20, 32, 0.6);
-            border: 1px solid rgba(203, 168, 78, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 8px;
-            padding: 1rem 1.25rem 0.75rem;
+            padding: 0.875rem 1rem 0.75rem;
             min-width: 0;
         }
         .chat-chart-title {
@@ -11926,10 +11931,15 @@ function renderChatChart(el) {
 
 function flushPendingCharts(bubble) {
     if (!_pendingChartEls.length || !bubble) return;
+    const msgDiv = bubble.closest('.chat-message');
+    if (!msgDiv) return;
+    const panel = document.createElement('div');
+    panel.className = 'chat-chart-panel';
     const grid = document.createElement('div');
     grid.className = 'chat-chart-grid';
     _pendingChartEls.forEach(el => grid.appendChild(el));
-    bubble.parentElement.appendChild(grid);
+    panel.appendChild(grid);
+    msgDiv.insertAdjacentElement('afterend', panel);
     _pendingChartEls = [];
     const container = document.getElementById('chat-messages-container');
     if (container) container.scrollTop = container.scrollHeight;
