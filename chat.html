@@ -4358,7 +4358,7 @@ function selectModel(modelId) {
         p.classList.toggle('active', p.dataset.model === modelId);
     });
 }
-const MAX_AGENT_STEPS = 5;
+const MAX_AGENT_STEPS = 10;
 
 const ALL_TOOLS = [
     { type: 'function', function: { name: 'get_country_profile',
@@ -10652,7 +10652,7 @@ async function runAgentLoop(userText) {
     ];
 
     for (let step = 0; step < MAX_AGENT_STEPS; step++) {
-        const maxTok = step === 0 ? 500 : 2500;
+        const maxTok = step === 0 ? 500 : 4000;
         const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok);
 
         if (response.tool_calls && response.tool_calls.length > 0) {
@@ -10685,7 +10685,7 @@ async function runAgentLoop(userText) {
     }
     // Fallback final call if loop exhausted without direct response
     addTraceStep('respond', 'Generating final response…');
-    const final = await callGroqAPIAgent(messages, null, 2500);
+    const final = await callGroqAPIAgent(messages, null, 4000);
     return final.content || 'Analysis complete.';
 }
 
