@@ -107,13 +107,14 @@
         .left-panel {
             display: flex; flex-shrink: 0;
             background: var(--secondary-bg);
-            border-right: 1px solid var(--border-subtle);
-            transition: none; overflow: hidden;
+            transition: none;
         }
         .panel-rail {
-            width: 44px; flex-shrink: 0;
+            width: 54px; flex-shrink: 0;
             display: flex; flex-direction: column;
             align-items: center; padding: 0.5rem 0; gap: 0.15rem;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.25);
+            position: relative; z-index: 1;
         }
         .rail-logo { width: 22px; height: 22px; object-fit: contain; margin-bottom: 0.35rem; opacity: 0.75; }
         .rail-btn {
@@ -3469,20 +3470,20 @@
             flex: 1; display: flex; align-items: center;
             border-radius: 999px;
             background: rgba(18, 25, 42, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            transition: border-color 0.2s;
-            padding: 0 0.3rem 0 0; min-height: 38px;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.2s;
+            padding: 0 0.3rem 0 0;
         }
         .chat-input-wrapper:focus-within {
-            border-color: rgba(194, 165, 109, 0.35);
+            box-shadow: 0 0 0 1.5px rgba(194, 165, 109, 0.28), 0 4px 16px rgba(0, 0, 0, 0.35);
         }
         .chat-input {
             flex: 1; background: transparent;
             border: none; color: var(--text-white);
             font-family: var(--font-body); font-size: 0.92rem;
-            padding: 0.42rem 0.5rem 0.42rem 0.1rem;
-            resize: none; min-height: 36px; max-height: 140px;
+            padding: 0.55rem 0.5rem 0.55rem 0.1rem;
+            resize: none; max-height: 140px;
             line-height: 1.5; outline: none; box-sizing: border-box;
         }
         .chat-input::placeholder { color: rgba(255, 255, 255, 0.28); }
@@ -3513,12 +3514,12 @@
             font-size: 1rem;
             color: var(--accent-gold);
             background: rgba(18, 25, 42, 0.55);
-            border: 1px solid rgba(194, 165, 109, 0.25);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
             transition: all 0.2s;
         }
         .chat-send-btn:hover {
-            border-color: rgba(194, 165, 109, 0.5);
+            box-shadow: 0 0 0 1.5px rgba(194, 165, 109, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
             background: rgba(194, 165, 109, 0.06);
         }
         .chat-send-btn:active { transform: scale(0.94); }
@@ -4176,7 +4177,6 @@
     </div>
     <div class="panel-body" id="panel-body">
       <div class="panel-brand">
-        <img src="assets/GSU_Transparent.png" alt="GSU" class="panel-logo-img">
         <span class="panel-brand-text">RAO Intelligence Assistant</span>
       </div>
       <div class="panel-tab-bar">
@@ -4216,7 +4216,7 @@
       <div class="chat-input-wrapper">
         <!-- Template dropdown inside pill -->
         <div class="tpl-dropdown-wrap" id="tpl-dropdown-wrap">
-          <button class="tpl-icon-btn" onclick="toggleTplDropdown()" title="Templates"><i class="ri-sparkling-line"></i></button>
+          <button class="tpl-icon-btn" onclick="toggleTplDropdown()" title="Templates"><i class="ri-quill-pen-line"></i></button>
           <div class="tpl-dropdown-menu" id="tpl-dropdown-menu" style="display:none;">
             <button class="tpl-menu-item" onclick="applyTemplate('risk-brief');toggleTplDropdown()"><i class="ri-file-shield-2-line"></i> Risk Brief</button>
             <button class="tpl-menu-item" onclick="applyTemplate('country-note');toggleTplDropdown()"><i class="ri-map-pin-line"></i> Country Note</button>
@@ -4602,7 +4602,8 @@ const INVERSE_VARIABLES = ['norm_cpi_inflation','norm_government_debt_pct_gdp','
 
 document.addEventListener('DOMContentLoaded', () => {
     loadDefaultCSV();
-
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) autoResizeChatInput(chatInput);
 
     // Enhancement #50: Keyboard Shortcuts
 
@@ -11869,7 +11870,7 @@ function handleChatKeydown(event) {
 }
 
 function autoResizeChatInput(textarea) {
-    textarea.style.height = '52px';
+    textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, 140) + 'px';
 }
 
