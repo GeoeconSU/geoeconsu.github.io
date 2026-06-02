@@ -10662,12 +10662,12 @@ TOOL USE PROTOCOL — follow exactly:
 3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen. Valid region values: sub-regions like "West Africa", "Southeast Asia", "South Asia", "Middle East", "Eastern Europe", "South America"; or broad aliases like "Sub-Saharan Africa", "East Asia & Pacific", "Latin America & Caribbean", "Middle East & North Africa", "Europe & Central Asia".
 4. When include_history data is retrieved: ALWAYS produce a full year-by-year table. Do not summarise history into 1–2 rows.
 5. Use web_search for current events, post-2024 data, sanctions, elections, or news.
-6. CHART TOOLS — call these as part of your response, not optionally. Charts render inline without costing extra tokens.
-   Single-country analysis: ALWAYS call render_line_chart(countries=[X], metric="rao_score") for the RAO trend, AND render_dual_line(country=X) to show RAO vs TOS divergence, AND render_radar_chart(countries=[X]) for the pillar profile.
-   Comparison (2–3 countries): ALWAYS call render_radar_chart(countries=[X,Y,...]) for pillar overlay AND render_pillar_bar(countries=[X,Y,...]) for side-by-side pillar bars AND render_line_chart(countries=[X,Y,...], metric="rao_score") for trajectory.
-   Screening / ranking queries: call render_scatter_plot(highlight=[top_isos]) after screening AND render_bar_chart(mode="country_ranking", metric="tos_score", top_n=15) for the ranked list.
-   Regime landscape: call render_regime_matrix() when discussing the global or regional opportunity landscape.
-   Only skip a chart if the query is purely conceptual (e.g. "what does TOS mean?") or a one-liner fact check.
+6. CHART TOOLS — you MUST invoke these as actual function calls (tool use), not as text or code blocks. Never write chart function names in your text response.
+   Single-country analysis: call render_line_chart(countries=[X], metric="rao_score"), render_dual_line(country=X), and render_radar_chart(countries=[X]) as tool calls — all three are mandatory.
+   Comparison (2–3 countries): call render_radar_chart(countries=[X,Y,...]), render_pillar_bar(countries=[X,Y,...]), and render_line_chart(countries=[X,Y,...], metric="rao_score") as tool calls — all three are mandatory.
+   Screening / ranking queries: call render_scatter_plot(highlight=[top_isos]) and render_bar_chart(mode="country_ranking", metric="tos_score", top_n=15) as tool calls.
+   Regime landscape: call render_regime_matrix() as a tool call when discussing the global or regional opportunity landscape.
+   Only skip charts if the query is purely conceptual (e.g. "what does TOS mean?") or a one-liner fact check. Never describe charts in text — always invoke them.
 7. Execute all needed tool calls, then synthesize once you have the data.
 
 `;
