@@ -4432,6 +4432,20 @@ const ALL_TOOLS = [
         parameters: { type: 'object', properties: {
             year: { type: 'number' }, title: { type: 'string' }
         }}
+    }},
+    { type: 'function', function: { name: 'render_pillar_bar',
+        description: 'Grouped bar chart comparing all 4 pillars side-by-side for 2–3 countries. Use for comparison queries to show which pillar drives the gap.',
+        parameters: { type: 'object', required: ['countries'], properties: {
+            countries: { type: 'array', items: { type: 'string' } },
+            title: { type: 'string' }
+        }}
+    }},
+    { type: 'function', function: { name: 'render_dual_line',
+        description: 'Dual-axis line chart showing RAO score (left axis) and TOS signal (right axis) for one country over time. Use for single-country deep-dives to reveal RAO/TOS divergence.',
+        parameters: { type: 'object', required: ['country'], properties: {
+            country: { type: 'string' },
+            title: { type: 'string' }
+        }}
     }}
 ];
 
@@ -10612,7 +10626,12 @@ TOOL USE PROTOCOL — follow exactly:
 3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen. Valid region values: sub-regions like "West Africa", "Southeast Asia", "South Asia", "Middle East", "Eastern Europe", "South America"; or broad aliases like "Sub-Saharan Africa", "East Asia & Pacific", "Latin America & Caribbean", "Middle East & North Africa", "Europe & Central Asia".
 4. When include_history data is retrieved: ALWAYS produce a full year-by-year table. Do not summarise history into 1–2 rows.
 5. Use web_search for current events, post-2024 data, sanctions, elections, or news.
-6. Use chart tools when visual output adds value.
+6. CHART TOOLS — call these as part of your response, not optionally. Charts render inline without costing extra tokens.
+   Single-country analysis: ALWAYS call render_line_chart(countries=[X], metric="rao_score") for the RAO trend, AND render_dual_line(country=X) to show RAO vs TOS divergence, AND render_radar_chart(countries=[X]) for the pillar profile.
+   Comparison (2–3 countries): ALWAYS call render_radar_chart(countries=[X,Y,...]) for pillar overlay AND render_pillar_bar(countries=[X,Y,...]) for side-by-side pillar bars AND render_line_chart(countries=[X,Y,...], metric="rao_score") for trajectory.
+   Screening / ranking queries: call render_scatter_plot(highlight=[top_isos]) after screening AND render_bar_chart(mode="country_ranking", metric="tos_score", top_n=15) for the ranked list.
+   Regime landscape: call render_regime_matrix() when discussing the global or regional opportunity landscape.
+   Only skip a chart if the query is purely conceptual (e.g. "what does TOS mean?") or a one-liner fact check.
 7. Execute all needed tool calls, then synthesize once you have the data.
 
 `;
@@ -10705,6 +10724,8 @@ async function executeToolCall(name, args) {
         case 'render_bar_chart':     { const el = buildBarChart(args);         if (el) renderChatChart(el); return 'Bar chart rendered.'; }
         case 'render_line_chart':    { const el = buildLineChart(args);        if (el) renderChatChart(el); return 'Line chart rendered.'; }
         case 'render_regime_matrix': { const el = buildChatRegimeMatrix(args); if (el) renderChatChart(el); return 'Regime matrix rendered.'; }
+        case 'render_pillar_bar':    { const el = buildPillarBar(args);       if (el) renderChatChart(el); return 'Pillar bar chart rendered.'; }
+        case 'render_dual_line':     { const el = buildDualLine(args);        if (el) renderChatChart(el); return 'Dual-axis chart rendered.'; }
         default: return 'Unknown tool: ' + name;
     }
 }
@@ -11788,6 +11809,8 @@ function dispatchChartRender(fnName, fnArgs) {
             case 'render_bar_chart':    return buildBarChart(fnArgs);
             case 'render_line_chart':   return buildLineChart(fnArgs);
             case 'render_regime_matrix': return buildChatRegimeMatrix(fnArgs);
+            case 'render_pillar_bar':    return buildPillarBar(fnArgs);
+            case 'render_dual_line':     return buildDualLine(fnArgs);
             default: return null;
         }
     } catch (e) {
@@ -12092,6 +12115,119 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
     html += `</div>`;
     div.innerHTML = html;
     wrapper.appendChild(div);
+    return wrapper;
+}
+
+// ===== PILLAR GROUPED BAR (2–3 countries, 4 pillars side-by-side) =====
+function buildPillarBar({ countries = [], title } = {}) {
+    if (!countries.length) return null;
+    const resolved = countries.map(resolveCountry).filter(Boolean).slice(0, 3);
+    if (!resolved.length) return null;
+
+    const pillarKeys  = ['pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory'];
+    const pillarNames = ['Opportunity','Stability','Absorptive Capacity','Trajectory'];
+    const countryColors = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72'];
+
+    const datasets = resolved.map((c, i) => {
+        const row = getLatestRow(c.country) || c;
+        return {
+            label: c.country_name,
+            data: pillarKeys.map(k => parseFloat((row[k] || 0).toFixed(3))),
+            backgroundColor: countryColors[i] + 'cc',
+            borderColor: countryColors[i],
+            borderWidth: 1,
+            borderRadius: 3,
+            borderSkipped: false
+        };
+    });
+
+    const chartTitle = title || `Pillar Comparison — ${resolved.map(c => c.country_name).join(' · ')}`;
+    const { wrapper, canvas } = makeChartWrapper(chartTitle);
+    const chart = new Chart(canvas, {
+        type: 'bar',
+        data: { labels: pillarNames, datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: {
+                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 10, padding: 12 } },
+                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toFixed(3)}` } }
+            },
+            scales: {
+                x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: 'rgba(255,255,255,0.75)', font: { family: CHART_THEME.font, size: 10 } } },
+                y: { min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 }, stepSize: 0.2 } }
+            }
+        }
+    });
+    registerChart(chart);
+    return wrapper;
+}
+
+// ===== DUAL-AXIS LINE CHART (RAO score + TOS signal, single country) =====
+function buildDualLine({ country, title } = {}) {
+    if (!country) return null;
+    const c = resolveCountry(country);
+    if (!c) return null;
+    const hist = getCountryHistory(c.country).filter(r => r.year >= 2015);
+    if (!hist.length) return null;
+
+    const years   = hist.map(r => r.year);
+    const raoVals = hist.map(r => parseFloat((r.rao_score || 0).toFixed(2)));
+    const tosVals = hist.map(r => parseFloat((r.tos_score || 0).toFixed(3)));
+
+    const chartTitle = title || `RAO Score vs TOS Signal — ${c.country_name}`;
+    const { wrapper, canvas } = makeChartWrapper(chartTitle);
+    const chart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: 'RAO Score',
+                    data: raoVals,
+                    borderColor: CHART_THEME.gold,
+                    backgroundColor: 'rgba(203,168,78,0.08)',
+                    fill: true,
+                    borderWidth: 2.5, tension: 0.3, pointRadius: 3, pointHoverRadius: 5,
+                    yAxisID: 'yRAO'
+                },
+                {
+                    label: 'TOS Signal',
+                    data: tosVals,
+                    borderColor: CHART_THEME.blueSolid,
+                    backgroundColor: 'transparent',
+                    borderWidth: 2, tension: 0.3, pointRadius: 3, pointHoverRadius: 5,
+                    borderDash: [4, 3],
+                    yAxisID: 'yTOS'
+                }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 10, padding: 12 } },
+                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)' }
+            },
+            scales: {
+                x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
+                yRAO: {
+                    type: 'linear', position: 'left',
+                    min: 0, max: 10,
+                    grid: { color: CHART_THEME.gridColor },
+                    ticks: { color: CHART_THEME.gold, font: { size: 10 } },
+                    title: { display: true, text: 'RAO Score', color: CHART_THEME.gold, font: { size: 9 } }
+                },
+                yTOS: {
+                    type: 'linear', position: 'right',
+                    min: 0, max: 1,
+                    grid: { drawOnChartArea: false },
+                    ticks: { color: CHART_THEME.blueSolid, font: { size: 10 } },
+                    title: { display: true, text: 'TOS', color: CHART_THEME.blueSolid, font: { size: 9 } }
+                }
+            }
+        }
+    });
+    registerChart(chart);
     return wrapper;
 }
 
