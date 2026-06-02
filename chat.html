@@ -4347,7 +4347,8 @@
 <script>
 
 // ===== AGENT CONFIG =====
-const GEMINI_CHAT_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-chat';
+const GEMINI_CHAT_URL   = 'https://gsu-gate.guduruadip.workers.dev/gemini-chat';
+const GEMINI_STREAM_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-stream';
 const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
 const TODAY_DATE = '1 June 2026';
 let selectedModel = 'gemini-3.1-flash-lite';
@@ -10463,10 +10464,45 @@ async function sendChatMessage() {
 
     _abortController = new AbortController();
 
+    // Streaming bubble state (closed over by onTextChunk)
+    let streamBubble = null, streamRawText = '', streamTimeStr = null;
+    let streamScrollEl = null, streamUserScrolled = false;
+    const onStreamScroll = () => {
+        streamUserScrolled = (streamScrollEl.scrollHeight - streamScrollEl.scrollTop - streamScrollEl.clientHeight) > 80;
+    };
+    const onTextChunk = (chunk) => {
+        if (!streamBubble) {
+            removeTypingIndicator(typingId);
+            const container = document.getElementById('chat-messages-container');
+            hideWelcomeState();
+            streamTimeStr = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+            const div = document.createElement('div');
+            div.className = 'chat-message assistant';
+            div.innerHTML = `<div class="chat-avatar"><i class="ri-sparkling-line"></i></div><div class="chat-bubble"></div>` +
+                `<button class="chat-regen-btn" onclick="regenResponse(this)" title="Regenerate response"><i class="ri-loop-left-line"></i></button>` +
+                `<button class="chat-copy-btn" onclick="copyChatMessage(this)" title="Copy to clipboard"><i class="ri-file-copy-line"></i></button>` +
+                `<button class="chat-pin-btn" onclick="pinMessage(this)" title="Pin to research canvas"><i class="ri-pushpin-line"></i></button>`;
+            container.appendChild(div);
+            streamBubble = div.querySelector('.chat-bubble');
+            streamScrollEl = container;
+            streamScrollEl.addEventListener('scroll', onStreamScroll);
+        }
+        streamRawText += chunk;
+        streamBubble.innerHTML = streamRawText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/\n/g,'<br>') + '<span class="stream-cursor"></span>';
+        if (!streamUserScrolled) streamScrollEl.scrollTop = streamScrollEl.scrollHeight;
+    };
+
     try {
-        const reply = await runAgentLoop(userText);
+        const reply = await runAgentLoop(userText, onTextChunk);
         removeTypingIndicator(typingId);
-        renderChatMessage('assistant', reply);
+        if (streamBubble) {
+            if (streamScrollEl) streamScrollEl.removeEventListener('scroll', onStreamScroll);
+            streamBubble.innerHTML = chatMarkdownToHTML(reply) + `<span class="msg-time">${streamTimeStr}</span>`;
+            if (!streamUserScrolled && streamScrollEl) streamScrollEl.scrollTop = streamScrollEl.scrollHeight;
+        } else {
+            renderChatMessage('assistant', reply);
+        }
         chatHistory.push({ role: 'assistant', content: reply });
         updateCtxIndicator();
         appendWebFootnotes();
@@ -10638,7 +10674,7 @@ TOOL USE PROTOCOL — follow exactly:
 }
 
 // ===== AGENTIC LOOP =====
-async function runAgentLoop(userText) {
+async function runAgentLoop(userText, onTextChunk = null) {
     _agentSources = [];
     _webSearchResultsData = [];
     clearTrace();
@@ -10652,8 +10688,8 @@ async function runAgentLoop(userText) {
     ];
 
     for (let step = 0; step < MAX_AGENT_STEPS; step++) {
-        const maxTok = step === 0 ? 500 : 4000;
-        const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok);
+        const maxTok = step === 0 ? 500 : 8000;
+        const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok, onTextChunk);
 
         if (response.tool_calls && response.tool_calls.length > 0) {
             const toolResults = [];
@@ -10685,19 +10721,18 @@ async function runAgentLoop(userText) {
     }
     // Fallback final call if loop exhausted without direct response
     addTraceStep('respond', 'Generating final response…');
-    const final = await callGroqAPIAgent(messages, null, 4000);
+    const final = await callGroqAPIAgent(messages, null, 8000, onTextChunk);
     return final.content || 'Analysis complete.';
 }
 
-async function callGroqAPIAgent(messages, tools = null, maxTokens = 2500) {
+async function callGroqAPIAgent(messages, tools = null, maxTokens = 8000, onTextChunk = null) {
     const isGemini = selectedModel.startsWith('gemini-');
-    const url = isGemini ? GEMINI_CHAT_URL : WORKER_URL;
+    if (isGemini) return callGeminiStreaming(messages, tools, maxTokens, onTextChunk);
+
+    // Groq / non-Gemini path (unchanged)
     const body = { model: selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
-    if (tools && tools.length) {
-        body.tools = tools;
-        if (!isGemini) body.tool_choice = 'auto';
-    }
-    const response = await fetch(url, {
+    if (tools && tools.length) { body.tools = tools; body.tool_choice = 'auto'; }
+    const response = await fetch(WORKER_URL, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
         signal: _abortController ? _abortController.signal : undefined
     });
@@ -10707,7 +10742,60 @@ async function callGroqAPIAgent(messages, tools = null, maxTokens = 2500) {
     }
     const data = await response.json();
     const msg = data.choices?.[0]?.message || { content: 'No response.' };
-    if (!isGemini && msg.content) msg.content = msg.content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    if (msg.content) msg.content = msg.content.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    return msg;
+}
+
+async function callGeminiStreaming(messages, tools, maxTokens, onTextChunk) {
+    const body = { model: selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
+    if (tools && tools.length) body.tools = tools;
+    const response = await fetch(GEMINI_STREAM_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        signal: _abortController ? _abortController.signal : undefined
+    });
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `HTTP ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullText = '';
+    const toolCalls = [];
+    const signatures = {};
+
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() ?? '';
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const raw = line.slice(6).trim();
+                if (!raw || raw === '[DONE]') continue;
+                let chunk;
+                try { chunk = JSON.parse(raw); } catch { continue; }
+                const parts = chunk.candidates?.[0]?.content?.parts ?? [];
+                for (const part of parts) {
+                    if (part.text) {
+                        fullText += part.text;
+                        if (onTextChunk && toolCalls.length === 0) onTextChunk(part.text);
+                    }
+                    if (part.functionCall) {
+                        const id = `call_${Date.now()}_${toolCalls.length}`;
+                        toolCalls.push({ id, type: 'function', function: { name: part.functionCall.name, arguments: JSON.stringify(part.functionCall.args ?? {}) } });
+                        if (part.thoughtSignature) signatures[id] = part.thoughtSignature;
+                    }
+                }
+            }
+        }
+    } finally { reader.releaseLock(); }
+
+    const msg = { role: 'assistant', content: fullText || null, tool_calls: toolCalls.length ? toolCalls : null };
+    if (Object.keys(signatures).length) msg._thought_signatures = signatures;
     return msg;
 }
 

@@ -39,6 +39,9 @@ export default {
       if (url.pathname === '/gemini-chat' && request.method === 'POST') {
         return await handleGeminiChat(request, env, cors);
       }
+      if (url.pathname === '/gemini-stream' && request.method === 'POST') {
+        return await handleGeminiStream(request, env, cors);
+      }
       return respond({ error: 'Not found' }, 404, cors);
     } catch (err) {
       console.error(err);
@@ -256,6 +259,75 @@ async function handleGeminiChat(request, env, cors) {
   return respond({ choices: [{ message }] }, 200, cors);
 }
 
+// ── Gemini Streaming (SSE passthrough) ───────────────────────────────────────
+
+async function handleGeminiStream(request, env, cors) {
+  const { messages, tools, max_tokens, temperature, model } = await request.json();
+  const safeModel = ALLOWED_GEMINI_MODELS.has(model) ? model : 'gemini-3.1-flash-lite';
+  if (!messages || !Array.isArray(messages)) return respond({ error: 'messages required.' }, 400, cors);
+  if (!env.GEMINI_API_KEY) return respond({ error: 'Gemini not configured.' }, 503, cors);
+
+  const systemMsg = messages.find(m => m.role === 'system');
+  const otherMessages = messages.filter(m => m.role !== 'system');
+
+  const toolCallMap = {};
+  for (const msg of otherMessages) {
+    if (msg.role === 'assistant' && msg.tool_calls) {
+      for (const tc of msg.tool_calls) toolCallMap[tc.id] = tc.function.name;
+    }
+  }
+
+  const contents = [];
+  for (const msg of otherMessages) {
+    if (msg.role === 'user') {
+      contents.push({ role: 'user', parts: [{ text: msg.content || '' }] });
+    } else if (msg.role === 'assistant') {
+      const parts = [];
+      if (msg.content) parts.push({ text: msg.content });
+      if (msg.tool_calls) {
+        for (const tc of msg.tool_calls) {
+          let args = {};
+          try { args = JSON.parse(tc.function.arguments); } catch {}
+          const part = { functionCall: { name: tc.function.name, args } };
+          if (msg._thought_signatures?.[tc.id]) part.thoughtSignature = msg._thought_signatures[tc.id];
+          parts.push(part);
+        }
+      }
+      if (parts.length > 0) contents.push({ role: 'model', parts });
+    } else if (msg.role === 'tool') {
+      const fnName = toolCallMap[msg.tool_call_id] || 'unknown';
+      contents.push({ role: 'user', parts: [{ functionResponse: { name: fnName, response: { output: msg.content || '' } } }] });
+    }
+  }
+
+  const geminiTools = tools && tools.length
+    ? [{ functionDeclarations: tools.map(t => ({ name: t.function.name, description: t.function.description, parameters: t.function.parameters })) }]
+    : undefined;
+
+  const body = { contents, generationConfig: { temperature: temperature ?? 0.2, maxOutputTokens: max_tokens ?? 8000 } };
+  if (systemMsg) body.systemInstruction = { parts: [{ text: systemMsg.content }] };
+  if (geminiTools) body.tools = geminiTools;
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${safeModel}:streamGenerateContent?alt=sse&key=${env.GEMINI_API_KEY}`;
+  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+
+  if (!res.ok) {
+    console.error('Gemini stream error:', await res.text());
+    return respond({ error: 'Gemini upstream failed.' }, 502, cors);
+  }
+
+  return new Response(res.body, {
+    headers: {
+      'Access-Control-Allow-Origin': cors['Access-Control-Allow-Origin'],
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'X-Accel-Buffering': 'no',
+    },
+  });
+}
+
 // ── Tavily Web Search ─────────────────────────────────────────────────────────
 
 async function handleSearch(request, env, cors) {
@@ -272,7 +344,7 @@ async function handleSearch(request, env, cors) {
     body: JSON.stringify({
       api_key: env.TAVILY_API_KEY,
       query: query.trim().slice(0, 400),
-      search_depth: 'basic',
+      search_depth: 'advanced',
       max_results: 5,
       include_answer: true
     })
@@ -287,7 +359,7 @@ async function handleSearch(request, env, cors) {
     results: (data.results || []).map(r => ({
       title: r.title,
       url: r.url,
-      content: (r.content || '').slice(0, 500),
+      content: (r.content || '').slice(0, 2000),
       score: r.score
     }))
   }, 200, cors);
