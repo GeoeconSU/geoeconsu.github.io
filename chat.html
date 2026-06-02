@@ -108,15 +108,15 @@
             display: flex; flex-shrink: 0;
             background: var(--secondary-bg);
             transition: none;
+            box-shadow: 3px 0 14px rgba(0, 0, 0, 0.3);
+            position: relative; z-index: 10;
         }
         .panel-rail {
             width: 54px; flex-shrink: 0;
             display: flex; flex-direction: column;
             align-items: center; padding: 0.5rem 0; gap: 0.15rem;
-            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.25);
-            position: relative; z-index: 1;
         }
-        .rail-logo { width: 22px; height: 22px; object-fit: contain; margin-bottom: 0.35rem; opacity: 0.75; }
+        .rail-logo { width: 27px; height: 27px; object-fit: contain; margin-bottom: 0.35rem; opacity: 0.92; }
         .rail-btn {
             width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
             background: none; border: none; color: rgba(238,234,224,0.5); cursor: pointer;
@@ -3379,9 +3379,7 @@
             flex-direction: column;
             gap: 1.75rem;
             scroll-behavior: smooth;
-            background: radial-gradient(ellipse at 60% 0%, rgba(203,168,78,0.04) 0%, transparent 60%),
-                        radial-gradient(ellipse at 10% 90%, rgba(93,138,168,0.04) 0%, transparent 55%),
-                        var(--primary-bg);
+            background: var(--primary-bg);
         }
         .chat-message {
             display: flex;
@@ -3489,7 +3487,7 @@
         .chat-input::placeholder { color: rgba(255, 255, 255, 0.28); }
         /* === TEMPLATE DROPDOWN === */
         .tpl-dropdown-wrap { position: relative; flex-shrink: 0; }
-        .tpl-icon-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: rgba(238,234,224,0.4); cursor: pointer; font-size: 0.95rem; border-radius: 999px; transition: color 0.15s; flex-shrink: 0; margin-left: 0.3rem; }
+        .tpl-icon-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: none; border: none; color: rgba(238,234,224,0.4); cursor: pointer; font-size: 0.95rem; border-radius: 999px; transition: color 0.15s; flex-shrink: 0; margin-left: 0.3rem; margin-right: 0.25rem; }
         .tpl-icon-btn:hover { color: var(--text-white); }
         .tpl-dropdown-menu { position: absolute; bottom: calc(100% + 8px); left: 0; background: var(--secondary-bg); border: 1px solid var(--border-subtle); border-radius: 6px; min-width: 180px; padding: 0.3rem 0; box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 500; }
         .tpl-menu-item { display: flex; align-items: center; gap: 0.5rem; width: 100%; background: none; border: none; color: var(--text-muted); font-family: var(--font-minor); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.5rem 0.85rem; cursor: pointer; transition: all 0.12s; text-align: left; }
