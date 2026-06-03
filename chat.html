@@ -10628,7 +10628,7 @@ TOOL USE PROTOCOL — follow exactly:
 3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen. Valid region values: sub-regions like "West Africa", "Southeast Asia", "South Asia", "Middle East", "Eastern Europe", "South America"; or broad aliases like "Sub-Saharan Africa", "East Asia & Pacific", "Latin America & Caribbean", "Middle East & North Africa", "Europe & Central Asia".
 4. When include_history data is retrieved: ALWAYS produce a full year-by-year table. Do not summarise history into 1–2 rows.
 5. Use web_search for current events, post-2024 data, sanctions, elections, or news. If get_country_profile returns an error (country not in RAO dataset), you MUST call web_search for ALL quantitative figures — GDP, GDP per capita, key sectors, trade balance, FDI, inflation, debt. Do not use training knowledge for any economic number; it is frequently wrong or outdated. Search for at least 2 specific queries to triangulate, always including the current year (${new Date().getFullYear()}) in the query string to surface the most recent data. When reporting a figure, always state the year it refers to (e.g. "GDP of $X (2024)"). If the search only returns data for a prior year, explicitly flag this as a lag and note that the current figure may be higher or lower.
-5b. CITATIONS — When you use data sourced from web_search, cite it inline using [n] notation (e.g. a claim followed by [1]). At the very end of your response, include a "### Sources" section listing each reference as "1. [Title](url)". Do not cite RAO dataset values — only web-sourced claims need citations.
+5b. CITATIONS — When you use data sourced from web_search, cite it inline using [n] notation (e.g. a claim followed by [1], or multiple sources as [1, 3]). The source list is rendered automatically — do NOT write a "Sources" or "References" section yourself. Do not cite RAO dataset values — only web-sourced claims need citations.
 6. CHART TOOLS — you MUST invoke these as actual function calls (tool use), not as text or code blocks. Never write chart function names in your text response.
    Single-country analysis: call render_line_chart(countries=[X], metric="rao_score"), render_dual_line(country=X), and render_radar_chart(countries=[X]) as tool calls — all three are mandatory.
    Comparison (2–3 countries): call render_radar_chart(countries=[X,Y,...]), render_pillar_bar(countries=[X,Y,...]), and render_line_chart(countries=[X,Y,...], metric="rao_score") as tool calls — all three are mandatory.
@@ -11698,8 +11698,10 @@ function chatMarkdownToHTML(text) {
     // Markdown links [text](url)
     html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" class="chat-link">$1</a>');
 
-    // Inline citation superscripts [n]
-    html = html.replace(/\[(\d{1,2})\]/g, '<sup class="chat-cite">$1</sup>');
+    // Inline citation superscripts [n] and [n, m, ...]
+    html = html.replace(/\[(\d{1,2}(?:,\s*\d{1,2})*)\]/g, (_, nums) =>
+        nums.split(',').map(n => `<sup class="chat-cite">${n.trim()}</sup>`).join('')
+    );
 
     // Inline code -> stat tag, with norm_ variable names replaced by human-readable labels
     html = html.replace(/`([^`]+)`/g, (_, inner) => {
