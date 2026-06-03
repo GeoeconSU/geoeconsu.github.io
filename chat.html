@@ -3444,6 +3444,9 @@
             font-family: var(--font-minor); font-size: 0.85rem; color: var(--accent-gold);
             background: rgba(194,165,109,0.08); padding: 0.1rem 0.4rem; border-radius: 3px;
         }
+        .chat-link { color: var(--accent-gold); text-decoration: none; border-bottom: 1px solid rgba(194,165,109,0.3); transition: border-color 0.15s; }
+        .chat-link:hover { border-color: var(--accent-gold); }
+        .chat-cite { color: var(--accent-gold); font-size: 0.72em; font-family: var(--font-minor); font-weight: 600; cursor: default; opacity: 0.85; margin-left: 0.05em; }
         .chat-bubble.error-bubble { color: var(--accent-orange); border-color: rgba(198,125,82,0.3); font-style: italic; }
         .chat-typing { display: flex; align-items: center; gap: 5px; padding: 0.4rem 0; }
         .chat-typing span {
@@ -4174,7 +4177,7 @@
 <div id="mobile-overlay" class="mobile-drawer-overlay" onclick="closeMobileDrawers()"></div>
 <div class="trace-modal" id="trace-modal" onclick="closeTraceModal(event)">
   <div class="trace-modal-card">
-    <div class="trace-modal-hdr"><span>Step Detail</span><button class="trace-modal-close" onclick="closeTraceModal()">✕</button></div>
+    <div class="trace-modal-hdr"><span id="trace-modal-title">Step Detail</span><button class="trace-modal-close" onclick="closeTraceModal()">✕</button></div>
     <div class="trace-modal-body" id="trace-modal-body"></div>
   </div>
 </div>
@@ -10624,7 +10627,8 @@ TOOL USE PROTOCOL — follow exactly:
 2. For comparisons of 2+ countries: call get_country_profile(include_history=true) for EACH country individually — do not rely on compare_countries alone, as it lacks history and trajectory context.
 3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen. Valid region values: sub-regions like "West Africa", "Southeast Asia", "South Asia", "Middle East", "Eastern Europe", "South America"; or broad aliases like "Sub-Saharan Africa", "East Asia & Pacific", "Latin America & Caribbean", "Middle East & North Africa", "Europe & Central Asia".
 4. When include_history data is retrieved: ALWAYS produce a full year-by-year table. Do not summarise history into 1–2 rows.
-5. Use web_search for current events, post-2024 data, sanctions, elections, or news.
+5. Use web_search for current events, post-2024 data, sanctions, elections, or news. If get_country_profile returns an error (country not in RAO dataset), you MUST call web_search for ALL quantitative figures — GDP, GDP per capita, key sectors, trade balance, FDI, inflation, debt. Do not use training knowledge for any economic number; it is frequently wrong. Search for at least 2 specific queries to triangulate. Clearly state the data source and year in your response.
+5b. CITATIONS — When you use data sourced from web_search, cite it inline using [n] notation (e.g. a claim followed by [1]). At the very end of your response, include a "### Sources" section listing each reference as "1. [Title](url)". Do not cite RAO dataset values — only web-sourced claims need citations.
 6. CHART TOOLS — you MUST invoke these as actual function calls (tool use), not as text or code blocks. Never write chart function names in your text response.
    Single-country analysis: call render_line_chart(countries=[X], metric="rao_score"), render_dual_line(country=X), and render_radar_chart(countries=[X]) as tool calls — all three are mandatory.
    Comparison (2–3 countries): call render_radar_chart(countries=[X,Y,...]), render_pillar_bar(countries=[X,Y,...]), and render_line_chart(countries=[X,Y,...], metric="rao_score") as tool calls — all three are mandatory.
@@ -10664,7 +10668,10 @@ async function runAgentLoop(userText, onTextChunk = null) {
                 let fnArgs = {};
                 try { fnArgs = JSON.parse(tc.function.arguments); } catch {}
 
-                addTraceStep('tool-call', fnName.replace(/_/g, ' ') + '(' + formatToolArgs(fnArgs) + ')', { fnName, fnArgs });
+                const callLabel = fnName === 'web_search' && fnArgs.query
+                    ? 'search: "' + fnArgs.query.slice(0, 80) + (fnArgs.query.length > 80 ? '…' : '') + '"'
+                    : fnName.replace(/_/g, ' ') + '(' + formatToolArgs(fnArgs) + ')';
+                addTraceStep('tool-call', callLabel, { fnName, fnArgs });
                 updateChatStatus('thinking', 'Retrieving: ' + fnName.replace(/_/g, ' ') + '…');
 
                 let result;
@@ -10788,7 +10795,7 @@ function toolGetCountryProfile({ countries = [], include_history = false } = {})
     const results = [];
     for (const name of countries.slice(0, 5)) {
         const c = resolveCountry(name);
-        if (!c) { results.push({ error: 'Not found: ' + name }); continue; }
+        if (!c) { results.push({ error: 'Not found: ' + name, instruction: 'This country is NOT in the RAO dataset. You MUST call web_search to retrieve all quantitative data (GDP, GDP per capita, sectors, trade, FDI, investment climate) for this country. Do NOT use training knowledge for any economic figures — it is frequently wrong or outdated. Search for specific, sourced, current-year data.' }); continue; }
         const row = getLatestRow(c.country) || c;
         const profile = {
             country: row.country, country_name: row.country_name, year: row.year,
@@ -10910,7 +10917,12 @@ function formatToolArgs(args) {
 
 function summarizeToolResult(name, result) {
     try {
-        if (name === 'web_search') { const d = JSON.parse(result); return 'Web: ' + (d.results?.length || 0) + ' results' + (d.answer ? ' + answer' : ''); }
+        if (name === 'web_search') {
+            const d = JSON.parse(result);
+            const domains = (d.results || []).slice(0, 4).map(r => { try { return new URL(r.url).hostname.replace('www.',''); } catch { return ''; } }).filter(Boolean);
+            const domainStr = domains.length ? ' — ' + domains.join(', ') : '';
+            return (d.results?.length || 0) + ' results' + domainStr + (d.answer ? ' + answer' : '');
+        }
         if (name === 'get_country_profile') { const d = JSON.parse(result); return 'Profile: ' + d.map(c => c.country_name || c.error).join(', '); }
         if (name === 'compare_countries') { const d = JSON.parse(result); return 'Compare: ' + d.length + ' countries'; }
         if (name === 'rank_by_pillar') { const d = JSON.parse(result); return 'Rankings: top ' + d.rankings?.length + ' by ' + d.metric; }
@@ -11678,6 +11690,12 @@ function chatMarkdownToHTML(text) {
     // Italic — opening * must not be followed by space; closing * must not
     // be preceded by space; neither side touches another *
     html = html.replace(/(?<!\*)\*(?!\s)([^*\n]+?)(?<!\s)\*(?!\*)/g, '<em>$1</em>');
+
+    // Markdown links [text](url)
+    html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" class="chat-link">$1</a>');
+
+    // Inline citation superscripts [n]
+    html = html.replace(/\[(\d{1,2})\]/g, '<sup class="chat-cite">$1</sup>');
 
     // Inline code -> stat tag, with norm_ variable names replaced by human-readable labels
     html = html.replace(/`([^`]+)`/g, (_, inner) => {
