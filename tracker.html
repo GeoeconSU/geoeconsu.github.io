@@ -693,13 +693,34 @@
       flex-shrink: 0;
     }
     .project-card.collapsed .project-collapse-btn { transform: rotate(-90deg); }
+    .project-name-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      flex: 1;
+      min-width: 0;
+    }
     .project-name {
       font-family: var(--font-minor);
       font-size: .88rem;
       font-weight: 600;
       color: var(--text);
-      flex: 1;
     }
+    .project-desc-inline {
+      font-size: .72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      transition: color .15s;
+    }
+    .project-desc-inline.expanded {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: unset;
+    }
+    .project-desc-inline:hover { color: var(--text-secondary, var(--text)); }
     .project-progress { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .progress-bar {
       width: 80px; height: 4px;
@@ -1748,7 +1769,10 @@ function renderProject(pid, project, v) {
   return `<div class="project-card ${collapsed}" id="pc-${pid}">
     <div class="project-header" onclick="toggleProject('${pid}')">
       <i class="ri-arrow-down-s-line project-collapse-btn"></i>
-      <span class="project-name">${escHtml(project.name || 'Untitled Project')}</span>
+      <div class="project-name-wrap">
+        <span class="project-name">${escHtml(project.name || 'Untitled Project')}</span>
+        ${project.description ? `<span class="project-desc-inline" onclick="event.stopPropagation();this.classList.toggle('expanded')">${escHtml(project.description)}</span>` : ''}
+      </div>
       <div class="project-progress">
         <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
         <span class="progress-label">${pct}%</span>
