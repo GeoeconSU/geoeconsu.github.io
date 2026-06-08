@@ -662,10 +662,10 @@
 
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
             margin-top: 2rem;
-            max-width: 1000px;
+            max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -789,7 +789,7 @@
                 height: 50vh; 
             }
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-            .video-grid { grid-template-columns: 1fr; }
+            .video-grid { grid-template-columns: repeat(2, 1fr); }
             .rao-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
             .btn-group { justify-content: center; }
@@ -802,6 +802,9 @@
             .whitepaper-card-link {
                 width: 100%;
             }
+        }
+        @media (max-width: 600px) {
+            .video-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -857,14 +860,14 @@
             <div class="fade-up whitepaper-layout">
                 <div style="flex: 1;">
                     <h4>Whitepaper</h4>
-                    <h2 style="margin-bottom: 1rem;">Thinking Geopolitically</h2>
-                    <h3 style="color:var(--accent-gold); margin-bottom: 1.5rem;">Navigating Volatility in the Modern World Order</h3>
+                    <h2 style="margin-bottom: 1rem;">Decision-Grade Intelligence for a Fragmenting World Economy</h2>
+                    <h3 style="color:var(--accent-gold); margin-bottom: 1.5rem;">The Geoeconomic Strategy Unit</h3>
                 </div>
-                <a href="docs/Thinking Geopolitically.pdf" target="_blank" class="whitepaper-card-link">
+                <a href="docs/Decision-Grade Intelligence for a Fragmenting World Economy.pdf" target="_blank" class="whitepaper-card-link">
                     <div class="card" style="height: 100%; transition: all 0.3s ease; cursor: pointer;">
                         <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">STRATEGIC RESEARCH</h4>
-                        <p style="font-style: italic; opacity: 0.8; margin-bottom: 1rem;">A Framework for Decision-Makers</p>
-                        <p style="font-size: 0.95rem;">Geopolitics is no longer a specialist subject — it shapes market access, compliance, and the cost of capital. This paper gives decision-makers a practical framework for translating political developments into economic exposure and acting early to capture upside.</p>
+                        <p style="font-style: italic; opacity: 0.8; margin-bottom: 1rem;">Intelligence for Decision-Makers</p>
+                        <p style="font-size: 0.95rem;">Global business risk has changed in character. Cross-border supply chains, capital flows, and trade corridors now propagate shocks faster and with fewer warning signs than most corporate planning cycles were designed for. This paper sets out how the GSU delivers decision-grade intelligence at the intersection of geopolitics, economics, and market execution.</p>
                         <span style="color: var(--accent-gold); font-size: 0.9rem; margin-top: 1rem; display: inline-block;">Read White Paper &rarr;</span>
                     </div>
                 </a>
@@ -1037,28 +1040,26 @@
                  <h3 style="border-bottom: 1px solid var(--accent-gold); display: inline-block; padding-bottom: 5px; margin-bottom: 1.5rem;">Video Intelligence</h3>
             </div>
 
-            <div class="video-grid fade-up delay-1">
-                <div class="video-wrapper">
-                    <iframe
-                        src="https://www.youtube.com/embed/HGa1Xbx7IjQ?rel=0&modestbranding=1"
-                        title="GSU Insight Video"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                <div class="video-wrapper">
-                    <iframe
-                        src="https://www.youtube.com/embed/X2YzPP2MAt8?rel=0&modestbranding=1"
-                        title="GSU Insight Video"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-            </div>
+            <div class="video-grid fade-up delay-1" id="video-grid"></div>
+
+            <script>
+                fetch('videos.json')
+                    .then(r => r.json())
+                    .then(videos => {
+                        document.getElementById('video-grid').innerHTML = videos.map(v => `
+                            <div class="video-wrapper">
+                                <iframe
+                                    src="https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1"
+                                    title="${v.title.replace(/"/g, '&quot;')}"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen>
+                                </iframe>
+                            </div>`).join('');
+                    })
+                    .catch(() => {});
+            </script>
 
             <div style="text-align: center; margin-top: 2rem;" class="fade-up">
                 <a href="https://www.youtube.com/@GeoeconomicStrategyUnit" target="_blank" class="btn">Visit Our Channel</a>
@@ -1101,7 +1102,7 @@
                                 </a>
                             </div>
                         </div>
-                        <p class="team-bio">Ishan holds a Master's in International Political Economy from King's College London, with experience spanning financial services, strategic advisory, and diplomacy.</p>
+                        <p class="team-bio">Holds a Master’s in International Political Economy from King’s College London. His experience spans financial services, strategic advisory, and diplomacy, informing the GSU’s institutional strategy and client engagements.</p>
                     </div>
 
                     <div class="team-card">
@@ -1115,7 +1116,7 @@
                                 </a>
                             </div>
                         </div>
-                        <p class="team-bio">Spearheads the unit's technological infrastructure and digital strategy. He ensures the secure and scalable delivery of GSU's intelligence platforms and data-driven assets.</p>
+                        <p class="team-bio">Holds a BTech in Computer Science Engineering with a specialisation in AI and Machine Learning from Woxsen University. At the GSU, he leads the unit’s technological infrastructure, digital strategy, and data-driven intelligence platforms.</p>
                     </div>
 
                     <div class="team-card">
@@ -1129,35 +1130,157 @@
                                 </a>
                             </div>
                         </div>
-                        <p class="team-bio">Leads the development of sophisticated quantitative frameworks and analytical models, focusing on monetary policy, financial governance, and emerging technologies at King's College London.</p>
+                        <p class="team-bio">Pursuing an MA in International Political Economy at King’s College London, with interests in monetary systems, capital flows, and financial stability. As Chief Data Officer, he builds the quantitative frameworks and analytical systems that underpin the GSU’s country risk and opportunity assessments.</p>
                     </div>
 
                     <div class="team-card">
-                        <img src="team/lauren.png" alt="Lauren Mason" class="team-photo">
+                        <img src="team/bhuvanya.jpeg" alt="Bhuvanya Ranjan" class="team-photo">
                         <div class="team-header">
-                            <span class="team-role">Regional Policy Fellow</span>
+                            <span class="team-role">Operations Lead</span>
                             <div class="team-name-row">
-                                <span class="team-name">Lauren Mason</span>
-                                <a href="https://www.linkedin.com/in/lauren-mason-583b4722a/" target="_blank" class="linkedin-icon">
+                                <span class="team-name">Bhuvanya Ranjan</span>
+                                <a href="https://www.linkedin.com/in/bhuvanyaranjan" target="_blank" class="linkedin-icon">
                                     <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                                 </a>
                             </div>
                         </div>
-                        <p class="team-bio">Holds a Master’s degree in War Studies from King’s College London. Her research focuses on EU security, UK domestic politics, and geoeconomic risk, informing European policy and business strategy.</p>
+                        <p class="team-bio">Holds an MSc in Politics and International Relations from SOAS University of London. As Operations Lead, she oversees the GSU’s day-to-day operations and organisational strategy, with research interests spanning South Asian politics, geoeconomics, and regional security.</p>
+                    </div>
+
+                    <!-- Vrinda Rastogi — awaiting photo -->
+                    <!--
+                    <div class="team-card">
+                        <img src="team/vrinda.jpeg" alt="Vrinda Rastogi" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Marketing and Outreach Head</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Vrinda Rastogi</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">Pursuing an MSc in International Relations at the London School of Economics, with a focus on international development, geoeconomics, and conflict studies. As Marketing and Outreach Head, she leads the GSU’s brand identity and communications strategy across all outputs.</p>
+                    </div>
+                    -->
+
+                    <!-- Lucas Ward — awaiting photo -->
+                    <!--
+                    <div class="team-card">
+                        <img src="team/lucas.jpeg" alt="Lucas Ward" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Research Lead</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Lucas Ward</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">Leads the GSU’s Research vertical, overseeing the production of commercially focused analysis on geopolitical risk and geoeconomics. His work translates policy, macroeconomic, and market developments into clear, decision-relevant implications for investors, companies, and strategic stakeholders.</p>
+                    </div>
+                    -->
+
+                    <div class="team-card">
+                        <img src="team/nir.jpeg" alt="Nir Bhattacharjee" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Chief Strategy Officer</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Nir Bhattacharjee</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">As Chief Strategy Officer, he leads the GSU’s Strategic vertical with a focus on business development and market entry across high-growth markets. His work spans regulatory navigation and investment sequencing, with a geographic focus on India, the GCC, Sub-Saharan Africa, and Latin America.</p>
+                    </div>
+
+                    <!-- Amritesh Hiras — awaiting photo -->
+                    <!--
+                    <div class="team-card">
+                        <img src="team/amritesh.jpeg" alt="Amritesh Hiras" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Technology</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Amritesh Hiras</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">Holds a BTech in Computer Science Engineering with a specialisation in AI and Machine Learning from Woxsen University. At the GSU, he contributes to the development of technological infrastructure and data-driven assets, with research interests in computer vision, NLP, and predictive analytics.</p>
+                    </div>
+                    -->
+
+                    <div class="team-card">
+                        <img src="team/khushi.jpeg" alt="Khushi Joshi" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Strategic Communications</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Khushi Joshi</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">Pursuing Political Science Honours at Lady Shri Ram College, University of Delhi. At the GSU, she contributes to outreach and strategic communications, with research interests in Indo-Pacific engagements, securitisation studies, and political communications.</p>
                     </div>
 
                     <div class="team-card">
-                        <img src="team/niamh.png" alt="Niamh Allen" class="team-photo">
+                        <img src="team/shubhangi.jpeg" alt="Shubhangi Sharma" class="team-photo">
                         <div class="team-header">
-                            <span class="team-role">Research Fellow (GPIU)</span>
+                            <span class="team-role">Analyst</span>
                             <div class="team-name-row">
-                                <span class="team-name">Niamh Allen</span>
-                                <a href="https://www.linkedin.com/in/niamh-allen-7a0bbb212/" target="_blank" class="linkedin-icon">
+                                <span class="team-name">Shubhangi Sharma</span>
+                                <a href="https://www.linkedin.com/in/shubhangi-sharma-72b22a28a" target="_blank" class="linkedin-icon">
                                     <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                                 </a>
                             </div>
                         </div>
-                        <p class="team-bio">An MA Social Policy graduate who tracks geopolitical developments to inform high-level policy. She contributes key insights to the Global Policy Intelligence Unit's strategic outputs.</p>
+                        <p class="team-bio">Studying International Relations and Economics at Ashoka University. She contributes to policy research and strategic market analysis at the GSU, with a focus on crafting clear, insight-driven narratives.</p>
+                    </div>
+
+                    <!-- Shiva Dang — awaiting photo -->
+                    <!--
+                    <div class="team-card">
+                        <img src="team/shiva.jpeg" alt="Shiva Dang" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Shiva Dang</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">Holds an MA in International Relations from King’s College London. His work focuses on public–private sector collaboration, policy engagement, and sustainability, examining how regulatory frameworks and political risk shape strategic decision-making.</p>
+                    </div>
+                    -->
+
+                    <div class="team-card">
+                        <img src="team/indulekha.jpeg" alt="Indulekha A" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Research Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Indulekha A</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">Holds an MSc in Financial Economics and brings two years of experience as an analyst at Goldman Sachs. At the GSU, she works as a Research Analyst with interests in geoeconomics and macroeconomic developments, with a particular focus on emerging markets.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/tansi.jpeg" alt="Tansi Rawat" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Research Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Tansi Rawat</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">Holds an MSc in International Public Policy from University College London and a BA in Economics. At the GSU, she works as a Research Analyst, contributing to geopolitical research and strategic policy analysis, with interests in global governance and emerging markets.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/nicla.jpeg" alt="Nicla Bussoli" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">Nicla Bussoli</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">Holds a Master’s in International Relations and Global Security from Sapienza University of Rome. She specialises in geopolitical analysis, OSINT research, and international security, bringing a multidisciplinary perspective to the study of global risk and strategic dynamics.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/william.png" alt="William Finn" class="team-photo">
+                        <div class="team-header">
+                            <span class="team-role">Research Analyst</span>
+                            <div class="team-name-row">
+                                <span class="team-name">William Finn</span>
+                            </div>
+                        </div>
+                        <p class="team-bio">Holds a Master’s in Global Political Economy from Leiden University and a degree in Politics and Sociology from UCL. At the GSU, he is a Research Analyst and podcast co-host, with expertise in Pakistan’s political economy and prior experience at a UK think tank and in retail investment.</p>
                     </div>
 
                     <div class="team-card">
@@ -1171,74 +1294,18 @@
                                 </a>
                             </div>
                         </div>
-                        <p class="team-bio">Focuses on the Europe Program, contributing to policy briefs and geoeconomic trend analysis. He brings extensive experience in international development and sustainability strategies.</p>
+                        <p class="team-bio">Contributes to policy briefs and geoeconomic trend analysis through the GSU’s Europe Programme. He brings extensive experience in international development and sustainability strategy.</p>
                     </div>
 
                     <div class="team-card">
-                        <img src="team/liliya.png" alt="Liliya Anisimova" class="team-photo">
+                        <img src="team/ojaswin.jpeg" alt="Ojaswin" class="team-photo">
                         <div class="team-header">
-                            <span class="team-role">Strategic Analyst</span>
+                            <span class="team-role">AI Engineer</span>
                             <div class="team-name-row">
-                                <span class="team-name">Liliya Anisimova</span>
-                                <a href="https://www.linkedin.com/in/liliya-anisimova-lse/" target="_blank" class="linkedin-icon">
-                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                                </a>
+                                <span class="team-name">Ojaswin</span>
                             </div>
                         </div>
-                        <p class="team-bio">An LSE and King's College London alumna. She brings a nuanced understanding of how legal frameworks, economics, and global power dynamics intersect to shape market realities.</p>
-                    </div>
-
-                    <div class="team-card">
-                        <img src="team/sreemayukha.png" alt="Sreemayukha Nyayapathi" class="team-photo">
-                        <div class="team-header">
-                            <span class="team-role">Analyst</span>
-                            <div class="team-name-row">
-                                <span class="team-name">Sreemayukha Nyayapathi</span>
-                                <a href="https://www.linkedin.com/in/sreemayukha-nyayapathi-8b488b227/" target="_blank" class="linkedin-icon">
-                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        <p class="team-bio">Holds a Master's in International Relations from the University of Glasgow. She specializes in assessing South Asian geopolitics and India's evolving role in the changing global landscape.</p>
-                    </div>
-
-                    <div class="team-card">
-                        <img src="team/hillary.png" alt="Hillary Eyram" class="team-photo">
-                        <div class="team-header">
-                            <span class="team-role">Analyst</span>
-                            <div class="team-name-row">
-                                <span class="team-name">Hillary Eyram</span>
-                                </div>
-                        </div>
-                        <p class="team-bio">Holds a BSc in Business Administration. She contributes to research and strategic analysis, with a strong interest in tracking development trends across emerging markets.</p>
-                    </div>
-
-                    <div class="team-card">
-                        <img src="team/bhuvanya.jpeg" alt="Bhuvanya" class="team-photo">
-                        <div class="team-header">
-                            <span class="team-role">Analyst</span>
-                            <div class="team-name-row">
-                                <span class="team-name">Bhuvanya</span>
-                                <a href="https://www.linkedin.com/in/bhuvanyaranjan" target="_blank" class="linkedin-icon">
-                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        <p class="team-bio">MSc in Politics and International Relations from SOAS. Focuses on the evolving political dynamics of South Asia, conflict analysis, human rights, and regional security.</p>
-                    </div>
-
-                    <div class="team-card">
-                        <img src="team/shubhangi.jpeg" alt="Shubhangi" class="team-photo">
-                        <div class="team-header">
-                            <span class="team-role">Analyst</span>
-                            <div class="team-name-row">
-                                <span class="team-name">Shubhangi</span>
-                                <a href="https://www.linkedin.com/in/shubhangi-sharma-72b22a28a" target="_blank" class="linkedin-icon">
-                                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                                </a>
-                            </div>
-                        </div>
-                        <p class="team-bio">International Relations and Economics student at Ashoka University. Specializes in comprehensive policy research, strategic market analysis, and crafting compelling insight-driven narratives.</p>
+                        <p class="team-bio">An AI engineer with expertise in building intelligent applications that address complex, real-world challenges. At the GSU, he contributes to the development of AI-driven tools and analytical systems.</p>
                     </div>
 
                 </div>
