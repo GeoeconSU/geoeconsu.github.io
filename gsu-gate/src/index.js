@@ -6,6 +6,7 @@ const ALLOWED_ORIGINS = [
 
 // Only these filenames can be requested — prevents arbitrary URL fetch
 const ALLOWED_PDFS = {
+  'GRB 2026 Q2.pdf': 'docs/GRB 2026 Q2.pdf',
   'GRB Q1 2026.pdf': 'docs/GRB Q1 2026.pdf',
   'GRB Q4 2025.pdf': 'docs/GRB Q4 2025.pdf',
 };
@@ -106,8 +107,9 @@ async function handleTrack(request, env, cors) {
 // ── Resend ────────────────────────────────────────────────────────────────────
 
 async function sendReportEmail(env, to, name, filename, pdfUrl) {
-  const qMatch = filename.match(/Q\d \d{4}/);
-  const quarter = qMatch ? qMatch[0] : filename.replace(/^GRB /, '').replace(/\.pdf$/, '');
+  const qNum = filename.match(/Q\d/)?.[0];
+  const year = filename.match(/\d{4}/)?.[0];
+  const quarter = (qNum && year) ? `${qNum} ${year}` : filename.replace(/^GRB /, '').replace(/\.pdf$/, '');
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
