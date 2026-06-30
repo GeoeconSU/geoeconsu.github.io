@@ -138,7 +138,23 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
 
             <a href="${pdfUrl}" style="display:inline-block;background:#192030;color:#cba84e;font-family:Georgia,serif;font-size:14px;letter-spacing:0.3px;text-decoration:none;padding:13px 28px;border-radius:2px;margin-bottom:40px;">Download Report &rarr;</a>
 
-            <hr style="border:none;border-top:1px solid #eee;margin:0 0 24px;">
+            <hr style="border:none;border-top:1px solid #eee;margin:0 0 28px;">
+
+            <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#cba84e;margin:0 0 16px;">Also from GSU</p>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr>
+                <td style="padding:12px 0;border-top:1px solid #f0f0f0;">
+                  <a href="https://www.youtube.com/watch?v=HGa1Xbx7IjQ" style="font-family:Georgia,serif;font-size:14px;color:#192030;text-decoration:none;font-style:italic;">Watch on YouTube &rarr;</a>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:12px 0;border-top:1px solid #f0f0f0;">
+                  <a href="https://www.youtube.com/watch?v=QHCTxijJNWw" style="font-family:Georgia,serif;font-size:14px;color:#192030;text-decoration:none;font-style:italic;">Watch on YouTube &rarr;</a>
+                </td>
+              </tr>
+            </table>
+
+            <hr style="border:none;border-top:1px solid #eee;margin:28px 0 24px;">
 
             <p style="font-size:13px;color:#888;line-height:1.6;margin:0 0 16px;">
               For any questions on the report, contact us at <a href="mailto:geoecon@16thcouncil.uk" style="color:#888;">geoecon@16thcouncil.uk</a>
