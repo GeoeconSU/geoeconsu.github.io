@@ -142,33 +142,31 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
 
             <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#cba84e;margin:0 0 20px;">Also from GSU</p>
 
-            <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:28px;">
               <tr>
-                <td>
-                  <a href="https://www.youtube.com/watch?v=HGa1Xbx7IjQ" style="display:block;text-decoration:none;">
-                    <div style="position:relative;line-height:0;">
-                      <img src="https://img.youtube.com/vi/HGa1Xbx7IjQ/maxresdefault.jpg" alt="Introducing the GSU" width="480" style="width:100%;max-width:480px;display:block;border:0;">
-                      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;background:rgba(203,168,78,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                        <div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 18px;border-color:transparent transparent transparent #192030;margin-left:4px;"></div>
-                      </div>
-                    </div>
-                    <p style="font-family:Georgia,serif;font-size:14px;color:#192030;margin:10px 0 0;font-style:italic;">Introducing the GSU</p>
+                <td width="49%" valign="top">
+                  <a href="https://www.youtube.com/watch?v=HGa1Xbx7IjQ" style="text-decoration:none;display:block;">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                      <tr>
+                        <td height="130" style="background-image:url('https://img.youtube.com/vi/HGa1Xbx7IjQ/mqdefault.jpg');background-size:cover;background-position:center;text-align:center;vertical-align:middle;">
+                          <span style="display:inline-block;width:34px;height:34px;line-height:34px;background:rgba(203,168,78,0.92);border-radius:50%;font-size:13px;color:#192030;text-align:center;">&#9654;</span>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="font-family:Georgia,serif;font-size:12px;color:#192030;margin:7px 0 0;font-style:italic;">Introducing the GSU</p>
                   </a>
                 </td>
-              </tr>
-            </table>
-
-            <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
-              <tr>
-                <td>
-                  <a href="https://www.youtube.com/watch?v=QHCTxijJNWw" style="display:block;text-decoration:none;">
-                    <div style="position:relative;line-height:0;">
-                      <img src="https://img.youtube.com/vi/QHCTxijJNWw/maxresdefault.jpg" alt="GSU: Researching Risk, Mapping Markets" width="480" style="width:100%;max-width:480px;display:block;border:0;">
-                      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;background:rgba(203,168,78,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                        <div style="width:0;height:0;border-style:solid;border-width:10px 0 10px 18px;border-color:transparent transparent transparent #192030;margin-left:4px;"></div>
-                      </div>
-                    </div>
-                    <p style="font-family:Georgia,serif;font-size:14px;color:#192030;margin:10px 0 0;font-style:italic;">GSU: Researching Risk, Mapping Markets</p>
+                <td width="2%"></td>
+                <td width="49%" valign="top">
+                  <a href="https://www.youtube.com/watch?v=QHCTxijJNWw" style="text-decoration:none;display:block;">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                      <tr>
+                        <td height="130" style="background-image:url('https://img.youtube.com/vi/QHCTxijJNWw/mqdefault.jpg');background-size:cover;background-position:center;text-align:center;vertical-align:middle;">
+                          <span style="display:inline-block;width:34px;height:34px;line-height:34px;background:rgba(203,168,78,0.92);border-radius:50%;font-size:13px;color:#192030;text-align:center;">&#9654;</span>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="font-family:Georgia,serif;font-size:12px;color:#192030;margin:7px 0 0;font-style:italic;">GSU: Researching Risk, Mapping Markets</p>
                   </a>
                 </td>
               </tr>
