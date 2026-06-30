@@ -1823,6 +1823,7 @@
             margin: 0 0 0.6rem;
             border: none;
         }
+        .gate-title::after { content: none; }
         .gate-sub {
             font-size: 0.9rem;
             color: rgba(255,255,255,0.55);
@@ -1875,8 +1876,9 @@
 
         .gate-success {
             text-align: center;
-            padding: 1rem 0;
+            padding: 1rem 0 0;
         }
+        .gate-success .gate-sub { margin-bottom: 0; }
         .gate-success-icon {
             width: 64px;
             height: 64px;
@@ -1913,7 +1915,7 @@
             <div id="gateSuccess" hidden>
                 <div class="gate-success">
                     <p class="gate-eyebrow">Report Sent</p>
-                    <h2 class="gate-title" style="border:none;">Check Your Inbox</h2>
+                    <h2 class="gate-title">Check Your Inbox</h2>
                     <div class="gate-title-underline"></div>
                     <p class="gate-sub">The Geoeconomic Risk Barometer is on its way to <strong id="gateEmailDisplay" style="color:#fff;"></strong></p>
                 </div>
