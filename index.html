@@ -1823,7 +1823,7 @@
             margin: 0 0 0.6rem;
             border: none;
         }
-        .gate-title::after { content: none; }
+        .gate-title::after { content: none; display: none; }
         .gate-sub {
             font-size: 0.9rem;
             color: rgba(255,255,255,0.55);
@@ -1875,10 +1875,13 @@
         .gate-error[hidden] { display: none; }
 
         .gate-success {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             padding: 1rem 0 0;
         }
-        .gate-success .gate-sub { margin-bottom: 0; }
+        .gate-success .gate-sub { margin-bottom: 0; text-align: center; }
+        .gate-success .gate-eyebrow { text-align: center; }
         .gate-success-icon {
             width: 64px;
             height: 64px;
