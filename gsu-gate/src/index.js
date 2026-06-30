@@ -33,6 +33,9 @@ export default {
       if (url.pathname === '/send-report' && request.method === 'POST') {
         return await handleSendReport(request, env, cors);
       }
+      if (url.pathname === '/track' && request.method === 'POST') {
+        return await handleTrack(request, env, cors);
+      }
       if (url.pathname === '/search' && request.method === 'POST') {
         return await handleSearch(request, env, cors);
       }
@@ -82,6 +85,21 @@ async function handleSendReport(request, env, cors) {
     sentAt: new Date().toISOString(),
   });
 
+  return respond({ ok: true }, 200, cors);
+}
+
+// ── Tracking ──────────────────────────────────────────────────────────────────
+
+async function handleTrack(request, env, cors) {
+  const body = await request.json().catch(() => ({}));
+  const { event, pdf, referrer } = body;
+  if (!event || typeof event !== 'string') return respond({ ok: false }, 400, cors);
+  await dbWrite(env, `barometer_events/${Date.now()}`, {
+    event,
+    pdf: pdf || null,
+    referrer: referrer || null,
+    ts: new Date().toISOString(),
+  });
   return respond({ ok: true }, 200, cors);
 }
 
