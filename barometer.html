@@ -37,7 +37,12 @@
             line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
+
+        #publications { flex: 1; }
 
         h1, h2, h3 { font-family: var(--font-head); font-weight: 400; }
 
@@ -130,24 +135,6 @@
 
         .intro-desc strong { color: rgba(255,255,255,0.9); font-weight: 600; }
 
-        .intro-pillars {
-            display: inline-flex;
-            align-items: center;
-            gap: 0;
-            font-family: var(--font-body);
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.3);
-        }
-
-        .intro-pillars span {
-            padding: 0 1.4rem;
-            border-right: 1px solid rgba(255,255,255,0.12);
-        }
-
-        .intro-pillars span:last-child { border-right: none; }
-
         /* ── Publications ─────────────────────────────────────────────── */
         #publications {
             padding: 72px 0 96px;
@@ -162,58 +149,50 @@
             margin-bottom: 2.5rem;
         }
 
-        .report-list {
-            border-top: 1px solid rgba(255,255,255,0.07);
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
         }
 
-        .report-row {
+        .report-card {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-            padding: 2rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-            transition: background 0.25s;
+            flex-direction: column;
+            padding: 2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-top: 3px solid var(--accent-gold);
+            transition: transform 0.4s var(--easing), box-shadow 0.4s var(--easing), background 0.3s;
         }
 
-        .report-row:hover { background: rgba(255,255,255,0.015); }
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.04);
+        }
 
-        .report-left {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            flex: 1;
-            min-width: 0;
+        .report-card-label {
+            font-family: var(--font-body);
+            font-size: 0.68rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            opacity: 0.8;
+            margin-bottom: 1rem;
         }
 
         .report-quarter {
             font-family: var(--font-head);
-            font-size: 1.7rem;
+            font-size: 2.2rem;
             font-weight: 400;
             color: #fff;
-            white-space: nowrap;
-            min-width: 100px;
-        }
-
-        .report-info { flex: 1; min-width: 0; }
-
-        .report-name {
-            font-family: var(--font-head);
-            font-size: 0.95rem;
-            font-weight: 400;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 0.25rem;
-        }
-
-        .report-meta {
-            font-family: var(--font-body);
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.25);
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+            flex: 1;
         }
 
         .report-badge {
+            display: inline-block;
             font-family: var(--font-body);
             font-size: 0.6rem;
             letter-spacing: 2px;
@@ -221,12 +200,11 @@
             color: var(--primary-bg);
             background: var(--accent-gold);
             padding: 3px 9px;
-            white-space: nowrap;
-            flex-shrink: 0;
+            margin-bottom: 1.5rem;
+            align-self: flex-start;
         }
 
         .report-download {
-            flex-shrink: 0;
             display: inline-block;
             border: 1px solid rgba(203,168,78,0.35);
             padding: 0.65rem 1.6rem;
@@ -238,12 +216,16 @@
             background: transparent;
             cursor: pointer;
             transition: all 0.3s var(--easing);
+            align-self: flex-start;
         }
 
         .report-download:hover {
             background: rgba(203,168,78,0.1);
             border-color: var(--accent-gold);
-            transform: translateY(-1px);
+        }
+
+        @media (max-width: 600px) {
+            .report-grid { grid-template-columns: 1fr; }
         }
 
         /* ── Footer ───────────────────────────────────────────────────── */
@@ -309,6 +291,21 @@
             letter-spacing: 0.3px;
         }
 
+        /* ── Mouse-reveal map background ─────────────────────────────── */
+        #map-reveal {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image: url('GSUMapGold.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.07;
+            -webkit-mask-image: radial-gradient(circle 280px at var(--mx, -9999px) var(--my, -9999px), black 0%, transparent 70%);
+            mask-image: radial-gradient(circle 280px at var(--mx, -9999px) var(--my, -9999px), black 0%, transparent 70%);
+            transition: opacity 0.3s ease;
+        }
+
         /* ── Animations ───────────────────────────────────────────────── */
         .fade-up {
             opacity: 0;
@@ -324,11 +321,6 @@
         /* ── Responsive ───────────────────────────────────────────────── */
         @media (max-width: 700px) {
             #intro { padding: 120px 0 72px; }
-            .intro-pillars { flex-direction: column; gap: 0.5rem; }
-            .intro-pillars span { border-right: none; padding: 0; }
-            .report-row { flex-wrap: wrap; }
-            .report-left { flex-wrap: wrap; gap: 1rem; }
-            .report-download { width: 100%; text-align: center; }
             .footer-contact { text-align: left; }
             .nav-right a:not(:last-child) { display: none; }
         }
@@ -470,6 +462,8 @@
 </head>
 <body>
 
+    <div id="map-reveal"></div>
+
     <!-- Nav -->
     <nav>
         <div class="nav-inner">
@@ -493,13 +487,8 @@
                 <h1 class="intro-title">Geoeconomic Risk Barometer</h1>
                 <div class="intro-rule"></div>
                 <p class="intro-desc">
-                    A quarterly assessment of global execution feasibility — blending hard indicators with regional intelligence and corridor-level analysis. Central to the framework is our <strong>Risk-Adjusted Opportunity (RAO)</strong> score, updated quarterly with interim releases when conditions materially shift.
+                    GSU's Geoeconomic Risk Barometer provides quarterly, decision-grade intelligence on the intersection of geopolitics, trade, finance, and global markets. It maps emerging risks, regional opportunities, and execution constraints across key geographies, helping businesses, investors, policymakers, and strategic leaders navigate an increasingly fragmented global economy.
                 </p>
-                <div class="intro-pillars">
-                    <span>Quarterly Publication</span>
-                    <span>Interim Updates</span>
-                    <span>Decision-Grade Data</span>
-                </div>
             </div>
         </div>
     </section>
@@ -508,30 +497,20 @@
     <section id="publications">
         <div class="container">
             <p class="section-label fade-up">Quarterly Publications</p>
-            <div class="report-list">
+            <div class="report-grid">
 
-                <div class="report-row fade-up delay-1">
-                    <div class="report-left">
-                        <div class="report-quarter">Q1 2026</div>
-                        <div class="report-info">
-                            <div class="report-name">Geoeconomic Risk Barometer</div>
-                            <div class="report-meta">Quarterly Edition</div>
-                        </div>
-                        <span class="report-badge">Current</span>
-                    </div>
+                <div class="report-card fade-up delay-1">
+                    <div class="report-card-label">Quarterly Publication</div>
+                    <div class="report-quarter">Q1 2026</div>
+                    <span class="report-badge">Current</span>
                     <button class="report-download" onclick="openGate('GRB Q1 2026.pdf', 'Q1 2026')">
                         Download &rarr;
                     </button>
                 </div>
 
-                <div class="report-row fade-up delay-2">
-                    <div class="report-left">
-                        <div class="report-quarter">Q4 2025</div>
-                        <div class="report-info">
-                            <div class="report-name">Geoeconomic Risk Barometer</div>
-                            <div class="report-meta">Quarterly Edition</div>
-                        </div>
-                    </div>
+                <div class="report-card fade-up delay-2">
+                    <div class="report-card-label">Quarterly Publication</div>
+                    <div class="report-quarter">Q4 2025</div>
                     <button class="report-download" onclick="openGate('GRB Q4 2025.pdf', 'Q4 2025')">
                         Download &rarr;
                     </button>
@@ -666,6 +645,16 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => track('barometer_page_view'));
+
+        const mapReveal = document.getElementById('map-reveal');
+        document.addEventListener('mousemove', e => {
+            mapReveal.style.setProperty('--mx', e.clientX + 'px');
+            mapReveal.style.setProperty('--my', e.clientY + 'px');
+        });
+        document.addEventListener('mouseleave', () => {
+            mapReveal.style.setProperty('--mx', '-9999px');
+            mapReveal.style.setProperty('--my', '-9999px');
+        });
     </script>
 </body>
 </html>
