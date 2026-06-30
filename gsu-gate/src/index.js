@@ -6,7 +6,7 @@ const ALLOWED_ORIGINS = [
 
 // Only these filenames can be requested — prevents arbitrary URL fetch
 const ALLOWED_PDFS = {
-  'GRB 2026 Q2.pdf': 'docs/GRB 2026 Q2.pdf',
+  'GRB Q2 2026.pdf': 'docs/GRB Q2 2026.pdf',
   'GRB Q1 2026.pdf': 'docs/GRB Q1 2026.pdf',
   'GRB Q4 2025.pdf': 'docs/GRB Q4 2025.pdf',
 };
