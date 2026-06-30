@@ -88,7 +88,8 @@ async function handleSendReport(request, env, cors) {
 // ── Resend ────────────────────────────────────────────────────────────────────
 
 async function sendReportEmail(env, to, name, filename, pdfUrl) {
-  const quarter = filename.includes('Q1 2026') ? 'Q1 2026' : 'Q4 2025';
+  const qMatch = filename.match(/Q\d \d{4}/);
+  const quarter = qMatch ? qMatch[0] : filename.replace(/^GRB /, '').replace(/\.pdf$/, '');
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -99,24 +100,32 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
     body: JSON.stringify({
       from: 'research@geoecon.solutions',
       to: [to],
-      subject: `GSU Geoeconomic Risk Barometer — ${quarter}`,
+      subject: `Geoeconomic Risk Barometer — ${quarter}`,
       html: `
-        <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;padding:48px 24px;background:#ffffff;color:#192030;">
-          <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#888;margin:0 0 32px;">Geoeconomic Strategy Unit</p>
-          <h2 style="font-size:22px;font-weight:400;margin:0 0 20px;color:#192030;">Geoeconomic Risk Barometer — ${quarter}</h2>
-          <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 20px;">Hello ${name},</p>
-          <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 28px;">
-            Thank you for your interest in GSU's flagship research. Your copy of the <strong>${quarter} Geoeconomic Risk Barometer</strong> is ready to download:
-          </p>
-          <a href="${pdfUrl}" style="display:inline-block;background:#192030;color:#cba84e;font-family:Georgia,serif;font-size:15px;text-decoration:none;padding:14px 28px;border-radius:3px;margin-bottom:32px;">Download the Barometer →</a>
-          <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 28px;">
-            The Barometer maps the next moves of capital and power — blending hard indicators with regional intelligence and corridor-level analysis to support decision-making at the highest levels.
-          </p>
-          <hr style="border:none;border-top:1px solid #eee;margin:32px 0;">
-          <p style="font-size:13px;color:#888;line-height:1.6;margin:0 0 8px;">
-            If you have questions or would like to discuss the findings, reply directly to this email.
-          </p>
-          <p style="font-size:11px;color:#bbb;margin:24px 0 0;">geoecon.solutions &nbsp;·&nbsp; The Sixteenth Council &nbsp;·&nbsp; London</p>
+        <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;background:#ffffff;color:#192030;">
+
+          <div style="padding:28px 40px 22px;border-bottom:2px solid #cba84e;">
+            <img src="https://geoecon.solutions/assets/GSU_Navy_Transparent.png" alt="Geoeconomic Strategy Unit" style="height:34px;width:auto;display:block;">
+          </div>
+
+          <div style="padding:36px 40px 36px;">
+            <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#cba84e;margin:0 0 24px;">Geoeconomic Risk Barometer &mdash; ${quarter}</p>
+
+            <p style="font-size:15px;color:#333;line-height:1.7;margin:0 0 6px;">Dear ${name},</p>
+            <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 28px;">
+              Your copy of the <strong style="color:#192030;">${quarter} Geoeconomic Risk Barometer</strong> is available below.
+            </p>
+
+            <a href="${pdfUrl}" style="display:inline-block;background:#192030;color:#cba84e;font-family:Georgia,serif;font-size:14px;letter-spacing:0.3px;text-decoration:none;padding:13px 28px;border-radius:2px;margin-bottom:40px;">Download Report &rarr;</a>
+
+            <hr style="border:none;border-top:1px solid #eee;margin:0 0 24px;">
+
+            <p style="font-size:13px;color:#888;line-height:1.6;margin:0 0 16px;">
+              For any questions on the report, contact us at <a href="mailto:geoecon@16thcouncil.uk" style="color:#888;">geoecon@16thcouncil.uk</a>
+            </p>
+            <p style="font-size:11px;color:#bbb;margin:0;">geoecon.solutions &nbsp;&middot;&nbsp; The Sixteenth Council &nbsp;&middot;&nbsp; London</p>
+          </div>
+
         </div>
       `,
     }),
