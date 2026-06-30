@@ -7,7 +7,7 @@
 
     <meta name="description" content="The Geoeconomic Risk Barometer maps the next moves of capital and power — blending hard indicators with regional intelligence and corridor-level analysis. Published quarterly by the Geoeconomic Strategy Unit.">
     <meta property="og:title" content="Geoeconomic Risk Barometer — GSU">
-    <meta property="og:description" content="Decision-grade intelligence on where execution is most feasible. Download the latest quarterly edition.">
+    <meta property="og:description" content="A quarterly assessment of global execution feasibility. Download the latest edition from the Geoeconomic Strategy Unit.">
     <meta property="og:image" content="https://geoecon.solutions/assets/GSU_Transparent.png">
     <meta property="og:url" content="https://geoecon.solutions/barometer.html">
     <meta property="og:type" content="website">
@@ -22,297 +22,318 @@
         :root {
             --primary-bg: #192030;
             --secondary-bg: #1f283b;
-            --text-white: #ffffff;
             --accent-gold: #cba84e;
             --font-head: 'Playfair Display', serif;
             --font-body: 'EB Garamond', serif;
             --easing: cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        html { scroll-behavior: smooth; }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background-color: var(--primary-bg);
-            color: var(--text-white);
+            color: #fff;
             font-family: var(--font-body);
             line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3, h4, h5 { font-family: var(--font-head); font-weight: 400; }
-
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        h2::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -5px;
-            width: 40px;
-            height: 1px;
-            background-color: var(--accent-gold);
-            transition: width 0.6s var(--easing);
-        }
-
-        section:hover h2::after { width: 100%; }
-
-        h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-white); }
-
-        h4 {
-            font-size: 1.1rem;
-            color: var(--accent-gold);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        p {
-            font-size: 1.15rem;
-            margin-bottom: 1.5rem;
-            font-weight: 400;
-            opacity: 0.9;
-            max-width: 65ch;
-        }
+        h1, h2, h3 { font-family: var(--font-head); font-weight: 400; }
 
         a { text-decoration: none; color: inherit; transition: 0.3s ease; }
 
         .container {
-            max-width: 1280px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 0 2rem;
-            position: relative;
-            z-index: 2;
+            padding: 0 2.5rem;
         }
 
-        .btn {
-            display: inline-block;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 1rem 2.5rem;
-            font-family: var(--font-head);
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.15em;
-            margin-top: 1rem;
-            transition: all 0.4s var(--easing);
-            background: transparent;
-            color: white;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            border-color: var(--accent-gold);
-            background: rgba(203,168,78,0.1);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        /* Navigation */
+        /* ── Nav ──────────────────────────────────────────────────────── */
         nav {
-            padding: 2rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             position: fixed;
             top: 0; left: 0; right: 0;
             z-index: 100;
-            background: rgba(25,32,48,0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(25,32,48,0.97);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .logo img { height: 50px; width: auto; display: block; }
-
-        .nav-links a {
-            font-family: var(--font-head);
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            margin-left: 2rem;
-            opacity: 0.7;
-        }
-
-        .nav-links a:hover { opacity: 1; color: var(--accent-gold); }
-
-        /* Sections */
-        section {
-            padding: 7rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-        }
-
-        section:nth-child(even) { background-color: var(--secondary-bg); }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5rem;
-            align-items: start;
-        }
-
-        /* Cards */
-        .card {
-            padding: 2.5rem;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.4s var(--easing), box-shadow 0.4s var(--easing);
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-            border-color: rgba(203,168,78,0.3);
-        }
-
-        /* Edition Cards */
-        .edition-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .edition-card {
-            padding: 2.5rem;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-top: 3px solid transparent;
-            transition: all 0.4s var(--easing);
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2.5rem;
+            height: 72px;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .edition-card.latest {
-            border-top-color: var(--accent-gold);
+        .logo img { height: 44px; width: auto; display: block; }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
         }
 
-        .edition-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-            border-color: rgba(203,168,78,0.3);
-            border-top-color: var(--accent-gold);
+        .nav-right a {
+            font-family: var(--font-body);
+            font-size: 0.88rem;
+            letter-spacing: 0.5px;
+            opacity: 0.55;
+            transition: opacity 0.2s;
         }
 
-        .edition-badge {
-            display: inline-block;
+        .nav-right a:hover { opacity: 1; color: var(--accent-gold); }
+
+        /* ── Hero / Intro ─────────────────────────────────────────────── */
+        #intro {
+            padding: 148px 0 96px;
+            text-align: center;
+            background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(203,168,78,0.05) 0%, transparent 70%);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .intro-label {
+            font-family: var(--font-body);
+            font-size: 0.68rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            opacity: 0.75;
+            margin-bottom: 1.5rem;
+        }
+
+        .intro-title {
+            font-size: clamp(2.6rem, 5vw, 3.8rem);
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            color: #fff;
+            margin-bottom: 0;
+        }
+
+        .intro-rule {
+            width: 44px;
+            height: 1px;
+            background: var(--accent-gold);
+            margin: 1.75rem auto;
+        }
+
+        .intro-desc {
+            max-width: 600px;
+            margin: 0 auto 2.75rem;
+            font-size: 1.1rem;
+            line-height: 1.75;
+            color: rgba(255,255,255,0.65);
+        }
+
+        .intro-desc strong { color: rgba(255,255,255,0.9); font-weight: 600; }
+
+        .intro-pillars {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .intro-pillars span {
+            padding: 0 1.4rem;
+            border-right: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .intro-pillars span:last-child { border-right: none; }
+
+        /* ── Publications ─────────────────────────────────────────────── */
+        #publications {
+            padding: 72px 0 96px;
+        }
+
+        .section-label {
+            font-family: var(--font-body);
             font-size: 0.65rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 2.5rem;
+        }
+
+        .report-list {
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .report-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            transition: background 0.25s;
+        }
+
+        .report-row:hover { background: rgba(255,255,255,0.015); }
+
+        .report-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .report-quarter {
+            font-family: var(--font-head);
+            font-size: 1.7rem;
+            font-weight: 400;
+            color: #fff;
+            white-space: nowrap;
+            min-width: 100px;
+        }
+
+        .report-info { flex: 1; min-width: 0; }
+
+        .report-name {
+            font-family: var(--font-head);
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 0.25rem;
+        }
+
+        .report-meta {
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.25);
+        }
+
+        .report-badge {
+            font-family: var(--font-body);
+            font-size: 0.6rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             color: var(--primary-bg);
             background: var(--accent-gold);
-            padding: 3px 10px;
-            margin-bottom: 1.25rem;
-            align-self: flex-start;
+            padding: 3px 9px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
-        .edition-meta {
-            font-size: 0.8rem;
+        .report-download {
+            flex-shrink: 0;
+            display: inline-block;
+            border: 1px solid rgba(203,168,78,0.35);
+            padding: 0.65rem 1.6rem;
+            font-family: var(--font-head);
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s var(--easing);
+        }
+
+        .report-download:hover {
+            background: rgba(203,168,78,0.1);
+            border-color: var(--accent-gold);
+            transform: translateY(-1px);
+        }
+
+        /* ── Footer ───────────────────────────────────────────────────── */
+        footer {
+            padding: 4rem 0;
+            background: #151a28;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+        }
+
+        .footer-brand {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+        }
+
+        .footer-brand strong {
+            font-family: var(--font-head);
+            font-size: 0.85rem;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             color: var(--accent-gold);
-            opacity: 0.7;
+            display: block;
             margin-bottom: 0.75rem;
+        }
+
+        .footer-brand span {
+            opacity: 0.45;
+            line-height: 1.8;
+            display: block;
+        }
+
+        .footer-contact {
             font-family: var(--font-body);
+            font-size: 0.9rem;
+            text-align: right;
+            line-height: 1.9;
         }
 
-        .edition-title {
-            font-family: var(--font-head);
-            font-size: 1.5rem;
-            font-weight: 400;
-            color: var(--text-white);
-            margin-bottom: 0.75rem;
-            line-height: 1.25;
+        .footer-contact a {
+            opacity: 0.7;
+            border-bottom: 1px solid rgba(203,168,78,0.4);
+            transition: opacity 0.2s;
         }
 
-        .edition-desc {
-            font-size: 1rem;
-            opacity: 0.65;
-            line-height: 1.6;
-            margin-bottom: 1.75rem;
-            flex: 1;
-            max-width: none;
-        }
+        .footer-contact a:hover { opacity: 1; }
 
-        .edition-btn {
-            display: inline-block;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 0.75rem 1.75rem;
-            font-family: var(--font-head);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.15em;
-            transition: all 0.4s var(--easing);
-            background: transparent;
-            color: white;
-            cursor: pointer;
-            align-self: flex-start;
-        }
+        .footer-contact span { opacity: 0.35; display: block; }
 
-        .edition-btn:hover {
-            border-color: var(--accent-gold);
-            background: rgba(203,168,78,0.1);
-            color: var(--accent-gold);
-        }
-
-        .edition-card.latest .edition-btn {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-        }
-
-        .edition-card.latest .edition-btn:hover {
-            background: rgba(203,168,78,0.15);
-        }
-
-        /* Footer */
-        footer {
-            padding: 5rem 0;
-            background: #151a28;
-            font-size: 0.95rem;
-        }
-
-        .cta-banner {
+        .footer-copy {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
             text-align: center;
-            padding: 5rem 0;
-            margin-bottom: 5rem;
-            border: 1px solid rgba(203,168,78,0.3);
-            background: radial-gradient(circle at center, rgba(203,168,78,0.05) 0%, rgba(25,32,48,0) 70%);
+            font-size: 0.75rem;
+            opacity: 0.25;
+            letter-spacing: 0.3px;
         }
 
-        .footer-grid {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            gap: 3rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 3rem;
-        }
-
-        /* Animations */
+        /* ── Animations ───────────────────────────────────────────────── */
         .fade-up {
             opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 1s var(--easing), transform 1s var(--easing);
+            transform: translateY(24px);
+            transition: opacity 0.9s var(--easing), transform 0.9s var(--easing);
         }
 
         .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-        .delay-1 { transition-delay: 0.1s; }
-        .delay-2 { transition-delay: 0.2s; }
-        .delay-3 { transition-delay: 0.3s; }
+        .delay-1 { transition-delay: 0.08s; }
+        .delay-2 { transition-delay: 0.16s; }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .grid-2, .edition-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
+        /* ── Responsive ───────────────────────────────────────────────── */
+        @media (max-width: 700px) {
+            #intro { padding: 120px 0 72px; }
+            .intro-pillars { flex-direction: column; gap: 0.5rem; }
+            .intro-pillars span { border-right: none; padding: 0; }
+            .report-row { flex-wrap: wrap; }
+            .report-left { flex-wrap: wrap; gap: 1rem; }
+            .report-download { width: 100%; text-align: center; }
+            .footer-contact { text-align: left; }
+            .nav-right a:not(:last-child) { display: none; }
         }
 
-        /* ── Barometer Gate ───────────────────────────────────────────── */
+        /* ── Gate Modal ───────────────────────────────────────────────── */
         .gate-overlay {
             position: fixed;
             inset: 0;
@@ -325,6 +346,7 @@
             justify-content: center;
             padding: 1rem;
         }
+
         .gate-overlay[hidden] { display: none; }
 
         .gate-modal {
@@ -337,6 +359,7 @@
             position: relative;
             animation: gateFadeIn 0.25s ease;
         }
+
         @keyframes gateFadeIn {
             from { opacity: 0; transform: translateY(12px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -352,6 +375,7 @@
             line-height: 1; padding: 0;
             transition: color 0.2s;
         }
+
         .gate-close:hover { color: #fff; }
 
         .gate-eyebrow {
@@ -360,16 +384,18 @@
             text-transform: uppercase;
             color: #cba84e;
             margin: 0 0 1rem;
-            font-family: 'EB Garamond', serif;
+            font-family: var(--font-body);
         }
+
         .gate-title {
-            font-family: 'Playfair Display', serif;
+            font-family: var(--font-head);
             font-size: 1.6rem;
             font-weight: 400;
             color: #fff;
             margin: 0 0 0.6rem;
             border: none;
         }
+
         .gate-title::after { content: none; display: none; }
 
         .gate-sub {
@@ -378,21 +404,22 @@
             margin: 0 0 1.75rem;
             line-height: 1.5;
         }
+
         .gate-input {
             display: block;
             width: 100%;
-            box-sizing: border-box;
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.12);
             border-radius: 3px;
             color: #fff;
-            font-family: 'EB Garamond', serif;
+            font-family: var(--font-body);
             font-size: 1rem;
             padding: 0.75rem 1rem;
             margin-bottom: 0.85rem;
             outline: none;
             transition: border-color 0.2s;
         }
+
         .gate-input::placeholder { color: rgba(255,255,255,0.3); }
         .gate-input:focus { border-color: rgba(203,168,78,0.6); }
 
@@ -403,7 +430,7 @@
             color: #192030;
             border: none;
             border-radius: 3px;
-            font-family: 'EB Garamond', serif;
+            font-family: var(--font-body);
             font-size: 1rem;
             font-weight: 600;
             padding: 0.85rem 1rem;
@@ -411,6 +438,7 @@
             transition: opacity 0.2s;
             margin-top: 0.25rem;
         }
+
         .gate-btn:hover { opacity: 0.88; }
         .gate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -419,6 +447,7 @@
             font-size: 0.85rem;
             margin: 0.6rem 0 0;
         }
+
         .gate-error[hidden] { display: none; }
 
         .gate-success {
@@ -427,6 +456,7 @@
             align-items: center;
             padding: 1rem 0 0;
         }
+
         .gate-success .gate-sub { margin-bottom: 0; text-align: center; }
         .gate-success .gate-eyebrow { text-align: center; }
 
@@ -440,83 +470,71 @@
 </head>
 <body>
 
-    <!-- Navigation -->
-    <nav class="container">
-        <div class="logo">
-            <a href="https://geoecon.solutions">
-                <img src="assets/gsu.png" alt="GSU Logo">
-            </a>
-        </div>
-        <div class="nav-links">
-            <a href="https://geoecon.solutions">Visit geoecon.solutions</a>
-            <a href="mailto:geoecon@16thcouncil.uk?subject=Inquiry regarding the Geoeconomic Risk Barometer">Contact</a>
+    <!-- Nav -->
+    <nav>
+        <div class="nav-inner">
+            <div class="logo">
+                <a href="https://geoecon.solutions">
+                    <img src="assets/gsu.png" alt="Geoeconomic Strategy Unit">
+                </a>
+            </div>
+            <div class="nav-right">
+                <a href="https://geoecon.solutions">geoecon.solutions</a>
+                <a href="mailto:geoecon@16thcouncil.uk?subject=Inquiry — Geoeconomic Risk Barometer">Contact</a>
+            </div>
         </div>
     </nav>
 
-    <!-- Hero -->
-    <section id="hero" style="padding-top: 7rem; min-height: auto;">
+    <!-- Intro -->
+    <section id="intro">
         <div class="container">
-            <div class="fade-up" style="max-width: 800px; margin-bottom: 4rem;">
-                <h4>Flagship Research</h4>
-                <h2 style="font-size: 3rem; border: none;">Geoeconomic Risk Barometer</h2>
-                <p><em>Mapping the next moves of capital and power.</em></p>
-            </div>
-
-            <div class="grid-2">
-                <div class="fade-up">
-                    <p>The Barometer provides a decision-grade overview of where execution is most feasible in the near and medium term. It blends hard indicators with regional insights and corridor-level analysis.</p>
-                    <p>Central to the framework is our <strong>Risk-Adjusted Opportunity (RAO)</strong> score — a concise tool underpinning our country briefs, triggers-to-watch, and strategic outlook. Published quarterly, with interim updates when conditions materially shift.</p>
-                </div>
-                <div class="fade-up delay-1">
-                    <div class="card">
-                        <h3>Why Leaders Read It</h3>
-                        <p>Analysis grounded in regional realities with a clear line of sight to boardrooms in high-growth regions and beyond.</p>
-                        <ul style="list-style: none; margin-top: 1rem; opacity: 0.8;">
-                            <li style="margin-bottom: 0.8rem; display:flex; align-items:center;">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#cba84e" style="margin-right:10px; flex-shrink:0;"><rect width="24" height="24" transform="rotate(45 12 12)"/></svg>
-                                Quarterly Publication
-                            </li>
-                            <li style="margin-bottom: 0.8rem; display:flex; align-items:center;">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#cba84e" style="margin-right:10px; flex-shrink:0;"><rect width="24" height="24" transform="rotate(45 12 12)"/></svg>
-                                Interim Updates on Market Shifts
-                            </li>
-                            <li style="margin-bottom: 0.8rem; display:flex; align-items:center;">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#cba84e" style="margin-right:10px; flex-shrink:0;"><rect width="24" height="24" transform="rotate(45 12 12)"/></svg>
-                                Decision-Grade Data
-                            </li>
-                        </ul>
-                    </div>
+            <div class="fade-up">
+                <p class="intro-label">Geoeconomic Strategy Unit</p>
+                <h1 class="intro-title">Geoeconomic Risk Barometer</h1>
+                <div class="intro-rule"></div>
+                <p class="intro-desc">
+                    A quarterly assessment of global execution feasibility — blending hard indicators with regional intelligence and corridor-level analysis. Central to the framework is our <strong>Risk-Adjusted Opportunity (RAO)</strong> score, updated quarterly with interim releases when conditions materially shift.
+                </p>
+                <div class="intro-pillars">
+                    <span>Quarterly Publication</span>
+                    <span>Interim Updates</span>
+                    <span>Decision-Grade Data</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Editions -->
-    <section id="editions">
+    <!-- Publications -->
+    <section id="publications">
         <div class="container">
-            <div class="fade-up">
-                <h4>Available Editions</h4>
-                <h2>Download a Report</h2>
-                <p>Select an edition below. Enter your details and we will send the report directly to your inbox.</p>
-            </div>
+            <p class="section-label fade-up">Quarterly Publications</p>
+            <div class="report-list">
 
-            <div class="edition-grid">
-
-                <!-- Q1 2026 — Latest -->
-                <div class="edition-card latest fade-up delay-1">
-                    <span class="edition-badge">Latest</span>
-                    <p class="edition-meta">Quarterly Edition &middot; Q1 2026</p>
-                    <div class="edition-title">Geoeconomic Risk Barometer</div>
-                    <p class="edition-desc">Our most recent quarterly assessment of global execution risk. Covers RAO scores across 80+ markets with updated regime classifications, corridor analysis, and near-term strategic outlook.</p>
-                    <button class="edition-btn" onclick="openGate('GRB Q1 2026.pdf', 'Q1 2026')">Download Q1 2026 &rarr;</button>
+                <div class="report-row fade-up delay-1">
+                    <div class="report-left">
+                        <div class="report-quarter">Q1 2026</div>
+                        <div class="report-info">
+                            <div class="report-name">Geoeconomic Risk Barometer</div>
+                            <div class="report-meta">Quarterly Edition</div>
+                        </div>
+                        <span class="report-badge">Current</span>
+                    </div>
+                    <button class="report-download" onclick="openGate('GRB Q1 2026.pdf', 'Q1 2026')">
+                        Download &rarr;
+                    </button>
                 </div>
 
-                <!-- Q4 2025 -->
-                <div class="edition-card fade-up delay-2">
-                    <p class="edition-meta">Quarterly Edition &middot; Q4 2025</p>
-                    <div class="edition-title">Geoeconomic Risk Barometer</div>
-                    <p class="edition-desc">The Q4 2025 edition mapping end-of-year shifts in capital flow dynamics, regional risk trajectories, and emerging corridor opportunities across key geopolitical theatres.</p>
-                    <button class="edition-btn" onclick="openGate('GRB Q4 2025.pdf', 'Q4 2025')">Download Q4 2025 &rarr;</button>
+                <div class="report-row fade-up delay-2">
+                    <div class="report-left">
+                        <div class="report-quarter">Q4 2025</div>
+                        <div class="report-info">
+                            <div class="report-name">Geoeconomic Risk Barometer</div>
+                            <div class="report-meta">Quarterly Edition</div>
+                        </div>
+                    </div>
+                    <button class="report-download" onclick="openGate('GRB Q4 2025.pdf', 'Q4 2025')">
+                        Download &rarr;
+                    </button>
                 </div>
 
             </div>
@@ -524,30 +542,24 @@
     </section>
 
     <!-- Footer -->
-    <footer id="contact">
+    <footer>
         <div class="container">
-            <div class="cta-banner fade-up">
-                <h3>Interested in bespoke strategic advice?</h3>
-                <a href="mailto:geoecon@16thcouncil.uk?subject=Inquiry regarding Strategic Advice" class="btn">Contact Us</a>
-            </div>
-            <div class="footer-grid">
-                <div>
-                    <strong style="color:var(--accent-gold); text-transform:uppercase; letter-spacing:1px;">The Sixteenth Council</strong><br>
-                    <span style="opacity:0.7;">Office 5336<br>182-184 High Street North<br>East Ham London, E6 2JA<br>United Kingdom</span>
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <strong>The Sixteenth Council</strong>
+                    <span>Office 5336<br>182–184 High Street North<br>East Ham, London E6 2JA<br>United Kingdom</span>
                 </div>
-                <div style="text-align: right;">
-                    <a href="mailto:geoecon@16thcouncil.uk" style="border-bottom: 1px solid var(--accent-gold);">geoecon@16thcouncil.uk</a><br>
-                    <span style="opacity:0.7;">+44 7881 1644457</span><br>
-                    <a href="http://www.16thcouncil.uk" target="_blank" style="opacity:0.7;">www.16thcouncil.uk</a>
+                <div class="footer-contact">
+                    <a href="mailto:geoecon@16thcouncil.uk">geoecon@16thcouncil.uk</a>
+                    <span>+44 7881 1644457</span>
+                    <a href="http://www.16thcouncil.uk" target="_blank" style="border-bottom-color: rgba(255,255,255,0.15);">www.16thcouncil.uk</a>
                 </div>
             </div>
-            <div style="margin-top: 2rem; opacity: 0.4; font-size: 0.8rem; text-align: center;">
-                &copy; 2026 Sixteenth Council Geoeconomic Strategy Unit. All Rights Reserved.
-            </div>
+            <p class="footer-copy">&copy; 2026 Sixteenth Council Geoeconomic Strategy Unit. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <!-- ── Barometer Gate ──────────────────────────────────────────────── -->
+    <!-- Gate Modal -->
     <div id="gateOverlay" class="gate-overlay" role="dialog" aria-modal="true" aria-labelledby="gateTitle" hidden>
         <div class="gate-modal">
             <button class="gate-close" onclick="closeGate()" aria-label="Close">&times;</button>
@@ -576,13 +588,11 @@
     </div>
 
     <script>
-        // ── Fade-up on scroll ──────────────────────────────────────────
         const observer = new IntersectionObserver(entries => {
             entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        // ── Gate ──────────────────────────────────────────────────────
         const GATE_WORKER = 'https://gsu-gate.guduruadip.workers.dev';
         let _gatePdf = '';
 
@@ -627,7 +637,6 @@
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || 'Something went wrong.');
-
                 document.getElementById('gateEmailDisplay').textContent = email;
                 document.getElementById('gateForm').hidden = true;
                 document.getElementById('gateSuccess').hidden = false;
@@ -648,7 +657,6 @@
             if (e.key === 'Escape' && !document.getElementById('gateOverlay').hidden) closeGate();
         });
 
-        // ── Tracking ──────────────────────────────────────────────────
         function track(event, data) {
             fetch(`${GATE_WORKER}/track`, {
                 method: 'POST',
