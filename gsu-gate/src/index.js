@@ -113,7 +113,7 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
 
             <p style="font-size:15px;color:#333;line-height:1.7;margin:0 0 6px;">Dear ${name},</p>
             <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 28px;">
-              Your copy of the <strong style="color:#192030;">${quarter} Geoeconomic Risk Barometer</strong> is available below.
+              Thank you for your interest in the Geoeconomic Risk Barometer. Here is your copy of the <strong style="color:#192030;">${quarter} edition</strong>:
             </p>
 
             <a href="${pdfUrl}" style="display:inline-block;background:#192030;color:#cba84e;font-family:Georgia,serif;font-size:14px;letter-spacing:0.3px;text-decoration:none;padding:13px 28px;border-radius:2px;margin-bottom:40px;">Download Report &rarr;</a>
