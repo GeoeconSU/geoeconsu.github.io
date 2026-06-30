@@ -110,8 +110,8 @@
         }
 
         .intro-title {
-            font-size: clamp(2.6rem, 5vw, 3.8rem);
-            line-height: 1.1;
+            font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+            line-height: 1.05;
             letter-spacing: -0.01em;
             color: #fff;
             margin-bottom: 0;
@@ -126,7 +126,7 @@
 
         .intro-desc {
             max-width: 600px;
-            margin: 0 auto 2.75rem;
+            margin: 0 auto 4rem;
             font-size: 1.1rem;
             line-height: 1.75;
             color: rgba(255,255,255,0.65);
@@ -136,16 +136,7 @@
 
         /* ── Publications ─────────────────────────────────────────────── */
         #publications {
-            padding: 72px 0 96px;
-        }
-
-        .section-label {
-            font-family: var(--font-body);
-            font-size: 0.65rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.3);
-            margin-bottom: 2.5rem;
+            padding: 40px 0 80px;
         }
 
         .report-grid {
@@ -153,6 +144,8 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 0;
             border: 1px solid rgba(255,255,255,0.06);
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .report-card {
@@ -171,15 +164,6 @@
             background: rgba(255,255,255,0.025);
         }
 
-        .report-quarter {
-            font-family: var(--font-head);
-            font-size: 3rem;
-            font-weight: 400;
-            color: #fff;
-            line-height: 1;
-            margin-bottom: 1.25rem;
-        }
-
         .report-badge {
             display: inline-block;
             font-family: var(--font-body);
@@ -187,7 +171,25 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .report-card-rule {
+            width: 32px;
+            height: 1px;
+            background: var(--accent-gold);
+            opacity: 0.5;
+            margin-bottom: 1.25rem;
+        }
+
+        .report-quarter {
+            font-family: var(--font-head);
+            font-size: 3rem;
+            font-weight: 400;
+            color: #fff;
+            line-height: 1;
             margin-bottom: 2rem;
+            flex: 1;
         }
 
         .report-download {
@@ -195,27 +197,33 @@
             font-family: var(--font-body);
             font-size: 0.85rem;
             letter-spacing: 0.5px;
-            color: rgba(255,255,255,0.4);
+            color: rgba(255,255,255,0.35);
             background: transparent;
             border: none;
             cursor: pointer;
             padding: 0;
             transition: color 0.25s;
-            margin-top: auto;
         }
 
         .report-download:hover {
             color: var(--accent-gold);
         }
 
-        @media (max-width: 600px) {
-            .report-grid { grid-template-columns: 1fr; }
-            .report-card + .report-card { border-left: none; border-top: 1px solid rgba(255,255,255,0.06); }
+        @media (max-width: 700px) {
+            .report-grid {
+                grid-template-columns: 1fr;
+                max-width: 100%;
+            }
+            .report-card + .report-card {
+                border-left: none;
+                border-top: 1px solid rgba(255,255,255,0.06);
+            }
+            .report-quarter { font-size: 2.4rem; }
         }
 
         /* ── Footer ───────────────────────────────────────────────────── */
         footer {
-            padding: 4rem 0;
+            padding: 2.5rem 0;
             background: #151a28;
             border-top: 1px solid rgba(255,255,255,0.05);
         }
@@ -223,56 +231,56 @@
         .footer-inner {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             flex-wrap: wrap;
-            gap: 2.5rem;
+            gap: 1.5rem;
         }
 
         .footer-brand {
             font-family: var(--font-body);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .footer-brand strong {
             font-family: var(--font-head);
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             color: var(--accent-gold);
             display: block;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.4rem;
         }
 
         .footer-brand span {
-            opacity: 0.45;
-            line-height: 1.8;
+            opacity: 0.35;
+            line-height: 1.7;
             display: block;
         }
 
         .footer-contact {
             font-family: var(--font-body);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             text-align: right;
-            line-height: 1.9;
+            line-height: 1.8;
         }
 
         .footer-contact a {
-            opacity: 0.7;
-            border-bottom: 1px solid rgba(203,168,78,0.4);
+            opacity: 0.55;
+            border-bottom: 1px solid rgba(203,168,78,0.3);
             transition: opacity 0.2s;
         }
 
         .footer-contact a:hover { opacity: 1; }
 
-        .footer-contact span { opacity: 0.35; display: block; }
+        .footer-contact span { opacity: 0.3; display: block; }
 
         .footer-copy {
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.06);
+            margin-top: 2rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
             text-align: center;
-            font-size: 0.75rem;
-            opacity: 0.25;
+            font-size: 0.7rem;
+            opacity: 0.2;
             letter-spacing: 0.3px;
         }
 
@@ -286,8 +294,8 @@
             background-size: cover;
             background-position: center;
             opacity: 0.9;
-            -webkit-mask-image: radial-gradient(circle 280px at var(--mx, -9999px) var(--my, -9999px), black 0%, rgba(0,0,0,0.111) 70%);
-            mask-image: radial-gradient(circle 280px at var(--mx, -9999px) var(--my, -9999px), black 0%, rgba(0,0,0,0.111) 70%);
+            -webkit-mask-image: radial-gradient(circle 280px at var(--mx, -9999px) var(--my, -9999px), black 0%, rgba(0,0,0,0.556) 70%);
+            mask-image: radial-gradient(circle 280px at var(--mx, -9999px) var(--my, -9999px), black 0%, rgba(0,0,0,0.556) 70%);
         }
 
         /* ── Animations ───────────────────────────────────────────────── */
@@ -304,9 +312,13 @@
 
         /* ── Responsive ───────────────────────────────────────────────── */
         @media (max-width: 700px) {
-            #intro { padding: 120px 0 72px; }
+            #intro { padding: 110px 0 56px; }
+            .intro-desc { margin-bottom: 2.5rem; font-size: 1rem; }
+            #publications { padding: 32px 0 60px; }
+            .footer-inner { flex-direction: column; gap: 1.25rem; }
             .footer-contact { text-align: left; }
-            .nav-right a:not(:last-child) { display: none; }
+            .footer-copy { margin-top: 1.5rem; }
+            .container { padding: 0 1.5rem; }
         }
 
         /* ── Gate Modal ───────────────────────────────────────────────── */
@@ -482,16 +494,17 @@
             <div class="report-grid">
 
                 <div class="report-card fade-up delay-1">
-
-                    <div class="report-quarter">Q1 2026</div>
                     <span class="report-badge">Current</span>
+                    <div class="report-card-rule"></div>
+                    <div class="report-quarter">Q1 2026</div>
                     <button class="report-download" onclick="openGate('GRB Q1 2026.pdf', 'Q1 2026')">
                         Download &rarr;
                     </button>
                 </div>
 
                 <div class="report-card fade-up delay-2">
-
+                    <span class="report-badge">Archive</span>
+                    <div class="report-card-rule"></div>
                     <div class="report-quarter">Q4 2025</div>
                     <button class="report-download" onclick="openGate('GRB Q4 2025.pdf', 'Q4 2025')">
                         Download &rarr;
