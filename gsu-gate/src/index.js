@@ -244,11 +244,12 @@ function emailKey(email) {
 }
 
 async function dbWrite(env, path, data) {
-  await fetch(`${env.FIREBASE_DB_URL}/${path}.json`, {
+  const res = await fetch(`${env.FIREBASE_DB_URL}/${path}.json`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
+  if (!res.ok) console.error(`dbWrite failed [${res.status}] at ${path}:`, await res.text());
 }
 
 function respond(body, status, headers) {
