@@ -19,8 +19,8 @@ export default {
     const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
     const cors = {
       'Access-Control-Allow-Origin': corsOrigin,
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'Content-Type': 'application/json',
     };
 
@@ -45,6 +45,9 @@ export default {
       }
       if (url.pathname === '/gemini-stream' && request.method === 'POST') {
         return await handleGeminiStream(request, env, cors);
+      }
+      if (url.pathname === '/get-leads' && request.method === 'GET') {
+        return await handleGetLeads(request, env, cors);
       }
       return respond({ error: 'Not found' }, 404, cors);
     } catch (err) {
@@ -205,6 +208,33 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
     console.error('Resend error:', await res.text());
   }
   return res.ok;
+}
+
+// ── Leads Console ─────────────────────────────────────────────────────────────
+
+async function handleGetLeads(request, env, cors) {
+  const idToken = (request.headers.get('Authorization') || '').replace('Bearer ', '').trim();
+  if (!idToken) return respond({ error: 'Unauthorized' }, 401, cors);
+
+  // Verify Firebase ID token
+  const verify = await fetch(
+    `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${env.FIREBASE_API_KEY}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) }
+  );
+  if (!verify.ok) return respond({ error: 'Unauthorized' }, 401, cors);
+  const { users } = await verify.json();
+  if (!users || users.length === 0) return respond({ error: 'Unauthorized' }, 401, cors);
+
+  // Read both collections from Firebase Realtime DB using legacy secret
+  const [leadsRes, eventsRes] = await Promise.all([
+    fetch(`${env.FIREBASE_DB_URL}/gate_leads.json?auth=${env.FIREBASE_DB_SECRET}`),
+    fetch(`${env.FIREBASE_DB_URL}/barometer_events.json?auth=${env.FIREBASE_DB_SECRET}`),
+  ]);
+
+  const leads  = await leadsRes.json();
+  const events = await eventsRes.json();
+
+  return respond({ leads, events }, 200, cors);
 }
 
 // ── Firebase Realtime Database (REST) ─────────────────────────────────────────

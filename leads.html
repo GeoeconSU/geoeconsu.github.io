@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads Console | GSU</title>
+    <link rel="icon" type="image/x-icon" href="assets/gsu.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <style>
+        @font-face { font-family: 'Copernicus'; src: local('Copernicus'), url('fonts/Copernicus-Book.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'Copernicus'; src: local('Copernicus Semibold'), url('fonts/Copernicus-Semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'StyreneB'; src: local('StyreneB'), url('fonts/StyreneB-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'StyreneB'; src: local('StyreneB Medium'), url('fonts/StyreneB-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+
+        :root {
+            --bg:            #f5f1ea;
+            --bg-secondary:  #ede9e0;
+            --bg-tertiary:   #e5e0d5;
+            --bg-card:       #ffffff;
+            --text:          #1a1f2e;
+            --text-muted:    rgba(26,31,46,.55);
+            --text-faint:    rgba(26,31,46,.35);
+            --accent-gold:   #C2A56D;
+            --accent-gold-dim: rgba(194,165,109,0.25);
+            --gold-faint:    rgba(194,165,109,0.08);
+            --accent-green:  #4a7a5e;
+            --accent-red:    #8a4a4a;
+            --border:        rgba(26,31,46,.09);
+            --border-gold:   rgba(194,165,109,0.3);
+            --shadow-sm:     0 1px 4px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
+            --shadow-md:     0 4px 16px rgba(0,0,0,.09), 0 1px 0 rgba(255,255,255,.9) inset;
+            --shadow-lg:     0 12px 40px rgba(0,0,0,.14);
+            --font-head:     'Copernicus', 'EB Garamond', Georgia, serif;
+            --font-body:     'StyreneB', 'EB Garamond', Georgia, serif;
+            --font-minor:    'Montserrat', sans-serif;
+            --font-mono:     'JetBrains Mono', monospace;
+            --easing:        cubic-bezier(.25,1,.35,1);
+            --radius:        3px;
+            --header-h:      62px;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 0.95rem; line-height: 1.65; min-height: 100vh; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-gold-dim); border-radius: 3px; }
+
+        /* ── HEADER ─────────────────────────────────────────── */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            height: var(--header-h);
+            background: rgba(245,241,234,0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 20px rgba(0,0,0,.06);
+            display: flex; align-items: center; padding: 0 2.5rem; gap: 1.5rem;
+        }
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; flex-shrink: 0; }
+        .logo img { width: 28px; height: 28px; object-fit: contain; opacity: 0.9; }
+        .logo-wordmark { font-family: var(--font-head); font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.28em; color: var(--text-muted); }
+        .logo-sep { width: 1px; height: 18px; background: var(--border); margin: 0 0.25rem; }
+        .header-title { font-family: var(--font-head); font-size: 1.05rem; font-weight: 400; color: var(--text); }
+        .header-title em { color: var(--accent-gold); font-style: italic; }
+        .header-spacer { flex: 1; }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-family: var(--font-minor); font-size: 0.62rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-muted); text-decoration: none; transition: color 0.15s;
+        }
+        .back-link:hover { color: var(--accent-gold); }
+        .user-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, #c2a56d, #7a6030);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-minor); font-size: 0.6rem; font-weight: 700;
+            text-transform: uppercase; color: #fff; cursor: pointer;
+            border: 1.5px solid rgba(194,165,109,0.5);
+        }
+
+        /* ── AUTH GATE ───────────────────────────────────────── */
+        .gate {
+            position: fixed; inset: 0; z-index: 2000;
+            background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .gate-panel {
+            width: 400px; max-width: calc(100vw - 2rem);
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); box-shadow: var(--shadow-lg);
+            padding: 2.5rem 2.25rem 2rem;
+        }
+        .gate-logo { text-align: center; margin-bottom: 2rem; }
+        .gate-logo img { width: 38px; margin-bottom: 0.7rem; opacity: 0.85; display: block; margin-left: auto; margin-right: auto; }
+        .gate-logo h2 { font-family: var(--font-head); font-size: 1.25rem; font-weight: 400; color: var(--text); margin-bottom: 0.25rem; }
+        .gate-logo h2 em { color: var(--accent-gold); font-style: italic; }
+        .gate-logo p { font-family: var(--font-minor); font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-muted); }
+        .gate-form { display: flex; flex-direction: column; gap: 0.75rem; }
+        .gate-input {
+            background: var(--bg-secondary); border: 1px solid var(--border);
+            border-radius: 2px; padding: 0.7rem 1rem; color: var(--text);
+            font-family: var(--font-body); font-size: 0.92rem; outline: none;
+            transition: border-color 0.2s; width: 100%;
+        }
+        .gate-input:focus { border-color: var(--border-gold); background: #fff; }
+        .gate-input::placeholder { color: var(--text-faint); }
+        .gate-btn {
+            padding: 0.72rem 1rem; border-radius: 2px; border: none; cursor: pointer;
+            font-family: var(--font-minor); font-size: 0.72rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.12em; transition: all 0.2s; width: 100%;
+        }
+        .gate-btn-primary { background: var(--accent-gold); color: #111926; }
+        .gate-btn-primary:hover { background: #d4b565; }
+        .gate-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .gate-btn-google {
+            background: var(--bg-secondary); color: var(--text-muted);
+            border: 1px solid var(--border); border-radius: 2px;
+            display: flex; align-items: center; justify-content: center; gap: 0.55rem;
+            font-family: var(--font-body); font-size: 0.88rem;
+            text-transform: none; letter-spacing: 0; cursor: pointer;
+            padding: 0.72rem 1rem; width: 100%; transition: all 0.2s;
+        }
+        .gate-btn-google:hover { background: var(--bg-tertiary); color: var(--text); }
+        .gate-divider {
+            text-align: center; color: var(--text-faint); font-family: var(--font-minor);
+            font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.14em; position: relative;
+        }
+        .gate-divider::before, .gate-divider::after {
+            content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--border);
+        }
+        .gate-divider::before { left: 0; }
+        .gate-divider::after { right: 0; }
+        .gate-error { color: #a04040; font-family: var(--font-minor); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; min-height: 1.1rem; }
+        .gate-denied { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+        .gate-denied i { font-size: 2.5rem; color: var(--accent-gold); opacity: 0.6; }
+        .gate-denied h3 { font-family: var(--font-head); font-size: 1.2rem; font-weight: 400; }
+        .gate-denied p { font-family: var(--font-minor); font-size: 0.7rem; color: var(--text-muted); line-height: 1.7; max-width: 280px; }
+
+        /* ── MAIN ────────────────────────────────────────────── */
+        .main { padding: calc(var(--header-h) + 2.5rem) 2.5rem 4rem; max-width: 1280px; margin: 0 auto; }
+
+        .page-header { margin-bottom: 2rem; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+        .page-eyebrow { font-family: var(--font-minor); font-size: 0.58rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.22em; color: var(--accent-gold); margin-bottom: 0.4rem; }
+        .page-title { font-family: var(--font-head); font-size: clamp(1.6rem, 2.5vw, 2.1rem); font-weight: 400; color: var(--text); line-height: 1.15; letter-spacing: -0.01em; }
+        .page-title em { color: var(--accent-gold); font-style: italic; }
+        .page-subtitle { font-family: var(--font-minor); font-size: 0.68rem; color: var(--text-muted); margin-top: 0.45rem; }
+        .refresh-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.5rem 1rem; border-radius: 2px;
+            border: 1px solid var(--border-gold); background: var(--gold-faint);
+            font-family: var(--font-minor); font-size: 0.62rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-gold);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .refresh-btn:hover { background: var(--accent-gold-dim); }
+        .refresh-btn i { font-size: 0.85rem; }
+
+        /* ── STAT CARDS ──────────────────────────────────────── */
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.4rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 0.3rem; }
+        .stat-label { font-family: var(--font-minor); font-size: 0.58rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-muted); }
+        .stat-value { font-family: var(--font-head); font-size: 2.2rem; font-weight: 400; color: var(--text); line-height: 1; letter-spacing: -0.02em; }
+        .stat-value.gold { color: var(--accent-gold); }
+        .stat-sub { font-family: var(--font-minor); font-size: 0.62rem; color: var(--text-faint); }
+
+        /* ── SECTION ─────────────────────────────────────────── */
+        .section { margin-bottom: 3rem; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap; }
+        .section-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 400; color: var(--text); }
+        .section-count { font-family: var(--font-minor); font-size: 0.62rem; color: var(--text-faint); letter-spacing: 0.05em; }
+
+        /* ── TOOLBAR ─────────────────────────────────────────── */
+        .toolbar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .search-wrap {
+            flex: 0 0 260px; display: flex; align-items: center; gap: 0.5rem;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 0 0.9rem; height: 36px;
+            box-shadow: var(--shadow-sm); transition: border-color 0.2s;
+        }
+        .search-wrap:focus-within { border-color: var(--border-gold); }
+        .search-wrap i { color: var(--text-faint); font-size: 0.9rem; flex-shrink: 0; }
+        .search-wrap input { background: transparent; border: none; outline: none; font-family: var(--font-body); font-size: 0.85rem; color: var(--text); width: 100%; }
+        .search-wrap input::placeholder { color: var(--text-faint); }
+        .filter-select {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 0 0.9rem; height: 36px;
+            font-family: var(--font-minor); font-size: 0.62rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
+            cursor: pointer; outline: none; box-shadow: var(--shadow-sm); transition: border-color 0.2s;
+        }
+        .filter-select:focus { border-color: var(--border-gold); }
+
+        /* ── TABLE ───────────────────────────────────────────── */
+        .table-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table thead { background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+        .data-table th {
+            padding: 0.65rem 1rem; text-align: left;
+            font-family: var(--font-minor); font-size: 0.58rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-muted);
+            white-space: nowrap; cursor: pointer; user-select: none; transition: color 0.15s;
+        }
+        .data-table th:hover { color: var(--text); }
+        .data-table th.sort-asc::after { content: ' ↑'; color: var(--accent-gold); }
+        .data-table th.sort-desc::after { content: ' ↓'; color: var(--accent-gold); }
+        .data-table td { padding: 0.85rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.88rem; vertical-align: middle; }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tbody tr { transition: background 0.15s; }
+        .data-table tbody tr:hover { background: var(--bg-secondary); }
+
+        .user-cell { display: flex; align-items: center; gap: 0.7rem; }
+        .user-initials {
+            width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+            background: linear-gradient(135deg, #c2a56d, #7a6030);
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-minor); font-size: 0.58rem; font-weight: 700;
+            text-transform: uppercase; color: #fff; letter-spacing: 0.04em;
+        }
+        .user-name { font-family: var(--font-head); font-size: 0.9rem; color: var(--text); }
+        .user-email { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); }
+
+        .mono-cell { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); }
+        .date-cell { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted); white-space: nowrap; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            padding: 0.18rem 0.6rem; border-radius: 2px;
+            font-family: var(--font-minor); font-size: 0.57rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap;
+            border: 1px solid transparent;
+        }
+        .badge-gold   { color: #7a5a28; background: rgba(194,165,109,0.12); border-color: rgba(194,165,109,0.25); }
+        .badge-green  { color: #4a7a5e; background: rgba(74,122,94,0.1);    border-color: rgba(74,122,94,0.2); }
+        .badge-blue   { color: #4a6a88; background: rgba(74,106,136,0.1);   border-color: rgba(74,106,136,0.2); }
+        .badge-muted  { color: var(--text-faint); background: var(--bg-secondary); border-color: var(--border); }
+
+        .empty-state { padding: 4rem 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+        .empty-state i { font-size: 2rem; color: var(--text-faint); }
+        .empty-state p { font-family: var(--font-minor); font-size: 0.7rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.12em; }
+
+        .loading-state { padding: 3rem 2rem; text-align: center; font-family: var(--font-minor); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-faint); }
+
+        /* ── TOAST ───────────────────────────────────────────── */
+        .toast-wrap { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+        .toast {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 0.75rem 1.25rem; box-shadow: var(--shadow-lg);
+            font-family: var(--font-minor); font-size: 0.65rem; font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.1em; color: var(--text);
+            display: flex; align-items: center; gap: 0.5rem;
+            animation: slideIn 0.25s var(--easing);
+        }
+        .toast.ok i { color: var(--accent-green); }
+        .toast.err i { color: var(--accent-red); }
+        @keyframes slideIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+        @media (max-width: 900px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .main { padding-left: 1.25rem; padding-right: 1.25rem; }
+            .header { padding: 0 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Auth Gate -->
+<div class="gate" id="gate">
+    <div class="gate-panel" id="gatePanel">
+        <div class="gate-logo">
+            <img src="assets/GSU_Navy_Transparent.png" alt="GSU">
+            <h2>Leads <em>Console</em></h2>
+            <p>Geoeconomic Strategy Unit</p>
+        </div>
+        <div class="gate-form" id="gateForm">
+            <input type="email" class="gate-input" id="gateEmail" placeholder="Email address" autocomplete="email">
+            <input type="password" class="gate-input" id="gatePass" placeholder="Password" autocomplete="current-password">
+            <div class="gate-error" id="gateError"></div>
+            <button class="gate-btn gate-btn-primary" id="gateSubmit" onclick="signInEmail()">Sign In</button>
+            <div class="gate-divider">or</div>
+            <button class="gate-btn gate-btn-google" onclick="signInGoogle()">
+                <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Continue with Google
+            </button>
+        </div>
+        <div id="gateDenied" style="display:none;" class="gate-denied">
+            <i class="ri-lock-line"></i>
+            <h3>Access Restricted</h3>
+            <p>This console is restricted to GSU directors. Contact your administrator if you need access.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Header -->
+<header class="header" id="mainHeader" style="display:none;">
+    <a href="https://geoecon.solutions" class="logo">
+        <img src="assets/GSU_Navy_Transparent.png" alt="GSU">
+        <span class="logo-wordmark">GSU</span>
+    </a>
+    <div class="logo-sep"></div>
+    <span class="header-title">Leads <em>Console</em></span>
+    <div class="header-spacer"></div>
+    <a href="admin.html" class="back-link"><i class="ri-arrow-left-line"></i> Admin</a>
+    <div class="user-avatar" id="userAvatar" title="Signed in"></div>
+</header>
+
+<!-- Main -->
+<main class="main" id="mainContent" style="display:none;">
+
+    <div class="page-header">
+        <div>
+            <div class="page-eyebrow">Intelligence</div>
+            <h1 class="page-title">Lead <em>Intelligence</em></h1>
+            <p class="page-subtitle">Barometer gate submissions and page activity — live from Firebase</p>
+        </div>
+        <button class="refresh-btn" onclick="loadData()"><i class="ri-refresh-line"></i> Refresh</button>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-label">Total Leads</div>
+            <div class="stat-value gold" id="statLeads">—</div>
+            <div class="stat-sub">Gate submissions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Reports Sent</div>
+            <div class="stat-value" id="statSent">—</div>
+            <div class="stat-sub">Successful deliveries</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Gate Opens</div>
+            <div class="stat-value" id="statOpens">—</div>
+            <div class="stat-sub">Form triggered</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Page Views</div>
+            <div class="stat-value" id="statViews">—</div>
+            <div class="stat-sub">Barometer visits</div>
+        </div>
+    </div>
+
+    <!-- Leads Table -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">Leads</div>
+            <span class="section-count" id="leadsCount"></span>
+        </div>
+        <div class="toolbar">
+            <div class="search-wrap">
+                <i class="ri-search-line"></i>
+                <input type="text" id="leadsSearch" placeholder="Search name or email…" oninput="filterLeads()">
+            </div>
+            <select class="filter-select" id="leadsReportFilter" onchange="filterLeads()">
+                <option value="">All Reports</option>
+                <option value="Q2 2026">Q2 2026</option>
+                <option value="Q1 2026">Q1 2026</option>
+                <option value="Q4 2025">Q4 2025</option>
+            </select>
+        </div>
+        <div class="table-card">
+            <div class="loading-state" id="leadsLoading">Loading leads…</div>
+            <table class="data-table" id="leadsTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('leads','name')">Name</th>
+                        <th onclick="sortTable('leads','email')">Email</th>
+                        <th onclick="sortTable('leads','report')">Report</th>
+                        <th onclick="sortTable('leads','sentAt')">Date</th>
+                    </tr>
+                </thead>
+                <tbody id="leadsTbody"></tbody>
+            </table>
+            <div class="empty-state" id="leadsEmpty" style="display:none;">
+                <i class="ri-inbox-line"></i>
+                <p>No leads found</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Table -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">Activity Events</div>
+            <span class="section-count" id="eventsCount"></span>
+        </div>
+        <div class="toolbar">
+            <div class="search-wrap">
+                <i class="ri-search-line"></i>
+                <input type="text" id="eventsSearch" placeholder="Search event or referrer…" oninput="filterEvents()">
+            </div>
+            <select class="filter-select" id="eventsTypeFilter" onchange="filterEvents()">
+                <option value="">All Events</option>
+                <option value="barometer_page_view">Page View</option>
+                <option value="gate_open">Gate Open</option>
+                <option value="gate_success">Gate Success</option>
+            </select>
+        </div>
+        <div class="table-card">
+            <div class="loading-state" id="eventsLoading">Loading events…</div>
+            <table class="data-table" id="eventsTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable('events','event')">Event</th>
+                        <th onclick="sortTable('events','pdf')">Report</th>
+                        <th onclick="sortTable('events','referrer')">Referrer</th>
+                        <th onclick="sortTable('events','ts')">Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody id="eventsTbody"></tbody>
+            </table>
+            <div class="empty-state" id="eventsEmpty" style="display:none;">
+                <i class="ri-line-chart-line"></i>
+                <p>No events found</p>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+    const GATE_WORKER = 'https://gsu-gate.guduruadip.workers.dev';
+    let allLeads  = [];
+    let allEvents = [];
+    let sortState = { leads: { col: 'sentAt', dir: 'desc' }, events: { col: 'ts', dir: 'desc' } };
+
+    // ── Auth ──────────────────────────────────────────────────
+    function onAuthReady(user) {
+        if (!user) return; // gate stays up
+        if (!levelAtMost(1)) {
+            document.getElementById('gateForm').style.display    = 'none';
+            document.getElementById('gateDenied').style.display  = 'flex';
+            return;
+        }
+        // Authorized
+        document.getElementById('gate').style.display        = 'none';
+        document.getElementById('mainHeader').style.display  = 'flex';
+        document.getElementById('mainContent').style.display = 'block';
+        const initials = (user.displayName || user.email || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        document.getElementById('userAvatar').textContent = initials;
+        loadData();
+    }
+
+    async function signInEmail() {
+        const email = document.getElementById('gateEmail').value.trim();
+        const pass  = document.getElementById('gatePass').value;
+        const btn   = document.getElementById('gateSubmit');
+        const err   = document.getElementById('gateError');
+        err.textContent = ''; btn.disabled = true; btn.textContent = 'Signing in…';
+        try {
+            await firebase.auth().signInWithEmailAndPassword(email, pass);
+        } catch (e) {
+            err.textContent = e.message; btn.disabled = false; btn.textContent = 'Sign In';
+        }
+    }
+
+    async function signInGoogle() {
+        const err = document.getElementById('gateError');
+        err.textContent = '';
+        try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            await firebase.auth().signInWithPopup(provider);
+        } catch (e) { err.textContent = e.message; }
+    }
+
+    document.getElementById('gatePass').addEventListener('keydown', e => {
+        if (e.key === 'Enter') signInEmail();
+    });
+
+    // ── Data ──────────────────────────────────────────────────
+    async function loadData() {
+        try {
+            const user    = firebase.auth().currentUser;
+            const idToken = await user.getIdToken();
+            const res     = await fetch(`${GATE_WORKER}/get-leads`, {
+                headers: { 'Authorization': `Bearer ${idToken}` }
+            });
+            if (!res.ok) throw new Error(`Worker returned ${res.status}`);
+            const { leads, events } = await res.json();
+
+            // Flatten leads object
+            allLeads = leads
+                ? Object.entries(leads).map(([key, v]) => ({ _key: key, ...v }))
+                : [];
+
+            // Flatten events object, newest first
+            allEvents = events
+                ? Object.entries(events).map(([ts, v]) => ({ _ts: ts, ...v }))
+                : [];
+
+            updateStats();
+            renderLeads();
+            renderEvents();
+            toast('Data refreshed', 'ok');
+        } catch (e) {
+            toast(e.message, 'err');
+            document.getElementById('leadsLoading').textContent  = 'Failed to load — ' + e.message;
+            document.getElementById('eventsLoading').textContent = 'Failed to load — ' + e.message;
+        }
+    }
+
+    function updateStats() {
+        const events = allEvents;
+        document.getElementById('statLeads').textContent = allLeads.length;
+        document.getElementById('statSent').textContent  = events.filter(e => e.event === 'gate_success').length;
+        document.getElementById('statOpens').textContent = events.filter(e => e.event === 'gate_open').length;
+        document.getElementById('statViews').textContent = events.filter(e => e.event === 'barometer_page_view').length;
+    }
+
+    // ── Leads ─────────────────────────────────────────────────
+    function filterLeads() { renderLeads(); }
+
+    function renderLeads() {
+        const q      = document.getElementById('leadsSearch').value.toLowerCase();
+        const report = document.getElementById('leadsReportFilter').value;
+        let rows = allLeads.filter(l => {
+            const matchQ = !q || (l.name || '').toLowerCase().includes(q) || (l.email || '').toLowerCase().includes(q);
+            const matchR = !report || (l.report || '').includes(report);
+            return matchQ && matchR;
+        });
+        rows = sortRows(rows, sortState.leads.col, sortState.leads.dir);
+        document.getElementById('leadsCount').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
+
+        const tbody = document.getElementById('leadsTbody');
+        tbody.innerHTML = '';
+        if (rows.length === 0) {
+            document.getElementById('leadsTable').style.display = 'none';
+            document.getElementById('leadsLoading').style.display = 'none';
+            document.getElementById('leadsEmpty').style.display = 'flex';
+            return;
+        }
+        document.getElementById('leadsLoading').style.display = 'none';
+        document.getElementById('leadsEmpty').style.display   = 'none';
+        document.getElementById('leadsTable').style.display   = 'table';
+
+        rows.forEach(l => {
+            const initials = (l.name || l.email || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+            const quarter  = (l.report || '').replace('GRB ', '').replace('.pdf', '');
+            const date     = l.sentAt ? formatDate(l.sentAt) : '—';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <div class="user-cell">
+                        <div class="user-initials">${initials}</div>
+                        <div>
+                            <div class="user-name">${esc(l.name || '—')}</div>
+                        </div>
+                    </div>
+                </td>
+                <td class="user-email mono-cell">${esc(l.email || '—')}</td>
+                <td><span class="badge badge-gold">${esc(quarter)}</span></td>
+                <td class="date-cell">${date}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ── Events ────────────────────────────────────────────────
+    function filterEvents() { renderEvents(); }
+
+    function renderEvents() {
+        const q    = document.getElementById('eventsSearch').value.toLowerCase();
+        const type = document.getElementById('eventsTypeFilter').value;
+        let rows = allEvents.filter(e => {
+            const matchQ = !q || (e.event || '').toLowerCase().includes(q) || (e.referrer || '').toLowerCase().includes(q);
+            const matchT = !type || e.event === type;
+            return matchQ && matchT;
+        });
+        rows = sortRows(rows, sortState.events.col, sortState.events.dir);
+        document.getElementById('eventsCount').textContent = rows.length + ' event' + (rows.length !== 1 ? 's' : '');
+
+        const tbody = document.getElementById('eventsTbody');
+        tbody.innerHTML = '';
+        if (rows.length === 0) {
+            document.getElementById('eventsTable').style.display = 'none';
+            document.getElementById('eventsLoading').style.display = 'none';
+            document.getElementById('eventsEmpty').style.display = 'flex';
+            return;
+        }
+        document.getElementById('eventsLoading').style.display = 'none';
+        document.getElementById('eventsEmpty').style.display   = 'none';
+        document.getElementById('eventsTable').style.display   = 'table';
+
+        rows.forEach(e => {
+            const badgeClass = e.event === 'gate_success' ? 'badge-green' : e.event === 'gate_open' ? 'badge-blue' : 'badge-muted';
+            const label      = (e.event || '').replace(/_/g, ' ');
+            const pdf        = e.pdf ? e.pdf.replace('GRB ', '').replace('.pdf', '') : '—';
+            const ref        = e.referrer ? truncate(e.referrer, 40) : '—';
+            const ts         = e.ts ? formatDate(e.ts) : (e._ts ? formatDate(new Date(parseInt(e._ts)).toISOString()) : '—');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><span class="badge ${badgeClass}">${esc(label)}</span></td>
+                <td class="mono-cell">${esc(pdf)}</td>
+                <td class="mono-cell" style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(e.referrer||'')}">${esc(ref)}</td>
+                <td class="date-cell">${ts}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // ── Sort ──────────────────────────────────────────────────
+    function sortTable(table, col) {
+        const s = sortState[table];
+        if (s.col === col) { s.dir = s.dir === 'asc' ? 'desc' : 'asc'; }
+        else { s.col = col; s.dir = 'desc'; }
+        document.querySelectorAll(`#${table}Table th`).forEach(th => { th.classList.remove('sort-asc','sort-desc'); });
+        const ths = [...document.querySelectorAll(`#${table}Table th`)];
+        const cols = table === 'leads' ? ['name','email','report','sentAt'] : ['event','pdf','referrer','ts'];
+        const idx  = cols.indexOf(col);
+        if (idx >= 0) ths[idx].classList.add(s.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+        table === 'leads' ? renderLeads() : renderEvents();
+    }
+
+    function sortRows(rows, col, dir) {
+        return [...rows].sort((a, b) => {
+            const va = (a[col] || '').toString().toLowerCase();
+            const vb = (b[col] || '').toString().toLowerCase();
+            return dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+        });
+    }
+
+    // ── Utilities ─────────────────────────────────────────────
+    function formatDate(iso) {
+        try {
+            return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        } catch { return iso; }
+    }
+    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function truncate(s, n) { return s.length > n ? s.slice(0, n) + '…' : s; }
+
+    function toast(msg, type = 'ok') {
+        const wrap = document.getElementById('toastWrap');
+        const el   = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = `<i class="ri-${type === 'ok' ? 'check' : 'error-warning'}-line"></i> ${esc(msg)}`;
+        wrap.appendChild(el);
+        setTimeout(() => el.remove(), 3500);
+    }
+</script>
+</body>
+</html>
