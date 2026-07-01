@@ -12,6 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
     <style>
         @font-face { font-family: 'Copernicus'; src: local('Copernicus'), url('fonts/Copernicus-Book.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
@@ -429,10 +430,11 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-    const GATE_WORKER = 'https://gsu-gate.guduruadip.workers.dev';
+    const RTDB_URL = 'https://gsu-tracker-default-rtdb.europe-west1.firebasedatabase.app';
     let allLeads  = [];
     let allEvents = [];
     let sortState = { leads: { col: 'sentAt', dir: 'desc' }, events: { col: 'ts', dir: 'desc' } };
+    let rtdb;
 
     // ── Auth ──────────────────────────────────────────────────
     function onAuthReady(user) {
@@ -448,6 +450,7 @@
         document.getElementById('mainContent').style.display = 'block';
         const initials = (user.displayName || user.email || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
         document.getElementById('userAvatar').textContent = initials;
+        rtdb = firebase.app().database('https://gsu-tracker-default-rtdb.europe-west1.firebasedatabase.app');
         loadData();
     }
 
@@ -480,23 +483,16 @@
     // ── Data ──────────────────────────────────────────────────
     async function loadData() {
         try {
-            const user    = firebase.auth().currentUser;
-            const idToken = await user.getIdToken();
-            const res     = await fetch(`${GATE_WORKER}/get-leads`, {
-                headers: { 'Authorization': `Bearer ${idToken}` }
-            });
-            if (!res.ok) throw new Error(`Worker returned ${res.status}`);
-            const { leads, events } = await res.json();
+            const [leadsSnap, eventsSnap] = await Promise.all([
+                rtdb.ref('gate_leads').once('value'),
+                rtdb.ref('barometer_events').once('value'),
+            ]);
 
-            // Flatten leads object
-            allLeads = leads
-                ? Object.entries(leads).map(([key, v]) => ({ _key: key, ...v }))
-                : [];
+            const leadsObj  = leadsSnap.val()  || {};
+            const eventsObj = eventsSnap.val() || {};
 
-            // Flatten events object, newest first
-            allEvents = events
-                ? Object.entries(events).map(([ts, v]) => ({ _ts: ts, ...v }))
-                : [];
+            allLeads  = Object.entries(leadsObj).map(([k, v]) => ({ _key: k, ...v }));
+            allEvents = Object.entries(eventsObj).map(([k, v]) => ({ _key: k, ...v }));
 
             updateStats();
             renderLeads();
