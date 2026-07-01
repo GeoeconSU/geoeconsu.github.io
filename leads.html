@@ -430,7 +430,19 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-    const GATE_WORKER = 'https://gsu-gate.guduruadip.workers.dev';
+    const TRACKER_CONFIG = {
+        apiKey:            "AIzaSyCMacVixbatCn2JVvh4RMixUcOZToQKRKs",
+        authDomain:        "gsu-tracker.firebaseapp.com",
+        databaseURL:       "https://gsu-tracker-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId:         "gsu-tracker",
+        storageBucket:     "gsu-tracker.firebasestorage.app",
+        messagingSenderId: "359938689049",
+        appId:             "1:359938689049:web:3a9deef5f6b354cee20288"
+    };
+    const trackerApp = firebase.apps.find(a => a.name === 'gsu-tracker')
+        || firebase.initializeApp(TRACKER_CONFIG, 'gsu-tracker');
+    const rtdb = trackerApp.database();
+
     let allLeads  = [];
     let allEvents = [];
     let sortState = { leads: { col: 'sentAt', dir: 'desc' }, events: { col: 'ts', dir: 'desc' } };
@@ -486,16 +498,12 @@
     // ── Data ──────────────────────────────────────────────────
     async function loadData() {
         try {
-            const idToken = await firebase.auth().currentUser.getIdToken();
-            const res = await fetch(`${GATE_WORKER}/get-leads`, {
-                headers: { 'Authorization': `Bearer ${idToken}` }
-            });
-            const payload = await res.json();
-            if (!res.ok) throw new Error(payload.error || `Worker error ${res.status}`);
-
-            const { leads, events } = payload;
-            allLeads  = Object.entries(leads  || {}).map(([k, v]) => ({ _key: k, ...v }));
-            allEvents = Object.entries(events || {}).map(([k, v]) => ({ _key: k, ...v }));
+            const [leadsSnap, eventsSnap] = await Promise.all([
+                rtdb.ref('gate_leads').once('value'),
+                rtdb.ref('barometer_events').once('value'),
+            ]);
+            allLeads  = Object.entries(leadsSnap.val()  || {}).map(([k, v]) => ({ _key: k, ...v }));
+            allEvents = Object.entries(eventsSnap.val() || {}).map(([k, v]) => ({ _key: k, ...v }));
 
             updateStats();
             renderLeads();
