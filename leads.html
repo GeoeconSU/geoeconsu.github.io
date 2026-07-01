@@ -490,9 +490,10 @@
             const res = await fetch(`${GATE_WORKER}/get-leads`, {
                 headers: { 'Authorization': `Bearer ${idToken}` }
             });
-            if (!res.ok) throw new Error(`Worker error ${res.status}`);
-            const { leads, events } = await res.json();
+            const payload = await res.json();
+            if (!res.ok) throw new Error(payload.error || `Worker error ${res.status}`);
 
+            const { leads, events } = payload;
             allLeads  = Object.entries(leads  || {}).map(([k, v]) => ({ _key: k, ...v }));
             allEvents = Object.entries(events || {}).map(([k, v]) => ({ _key: k, ...v }));
 

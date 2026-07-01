@@ -225,14 +225,30 @@ async function handleGetLeads(request, env, cors) {
   const { users } = await verify.json();
   if (!users || users.length === 0) return respond({ error: 'Unauthorized' }, 401, cors);
 
+  if (!env.FIREBASE_DB_SECRET) {
+    return respond({ error: 'FIREBASE_DB_SECRET not configured on worker.' }, 503, cors);
+  }
+
   // Read both collections from Firebase Realtime DB using legacy secret
   const [leadsRes, eventsRes] = await Promise.all([
     fetch(`${env.FIREBASE_DB_URL}/gate_leads.json?auth=${env.FIREBASE_DB_SECRET}`),
     fetch(`${env.FIREBASE_DB_URL}/barometer_events.json?auth=${env.FIREBASE_DB_SECRET}`),
   ]);
 
+  if (!leadsRes.ok || !eventsRes.ok) {
+    const body = await (!leadsRes.ok ? leadsRes : eventsRes).text();
+    console.error('RTDB read failed:', body);
+    return respond({ error: 'Failed to read from database.' }, 502, cors);
+  }
+
   const leads  = await leadsRes.json();
   const events = await eventsRes.json();
+
+  // Catch Firebase permission-denied errors returned as 200 with an error body
+  if (leads?.error || events?.error) {
+    console.error('RTDB permission error:', leads?.error || events?.error);
+    return respond({ error: 'Database permission denied. Check FIREBASE_DB_SECRET.' }, 403, cors);
+  }
 
   return respond({ leads, events }, 200, cors);
 }
