@@ -174,9 +174,25 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
 
             <hr style="border:none;border-top:1px solid #eee;margin:0 0 24px;">
 
-            <p style="font-size:13px;color:#888;line-height:1.6;margin:0 0 16px;">
+            <p style="font-size:13px;color:#888;line-height:1.6;margin:0 0 20px;">
               For any questions on the report, contact us at <a href="mailto:geoecon@16thcouncil.uk" style="color:#888;">geoecon@16thcouncil.uk</a>
             </p>
+
+            <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:20px;">
+              <tr>
+                <td style="padding-right:12px;">
+                  <a href="https://www.linkedin.com/company/geoeconomic-strategy-unit/" style="text-decoration:none;display:inline-block;">
+                    <img src="https://img.icons8.com/color/32/linkedin.png" width="26" height="26" alt="LinkedIn" style="border:0;display:block;">
+                  </a>
+                </td>
+                <td>
+                  <a href="https://www.instagram.com/geoeconomicstrategyunit" style="text-decoration:none;display:inline-block;">
+                    <img src="https://img.icons8.com/color/32/instagram-new.png" width="26" height="26" alt="Instagram" style="border:0;display:block;">
+                  </a>
+                </td>
+              </tr>
+            </table>
+
             <p style="font-size:11px;color:#bbb;margin:0;">geoecon.solutions &nbsp;&middot;&nbsp; The Sixteenth Council &nbsp;&middot;&nbsp; London</p>
           </div>
 
