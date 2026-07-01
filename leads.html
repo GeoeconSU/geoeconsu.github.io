@@ -199,6 +199,16 @@
             cursor: pointer; outline: none; box-shadow: var(--shadow-sm); transition: border-color 0.2s;
         }
         .filter-select:focus { border-color: var(--border-gold); }
+        .date-range { display: flex; align-items: center; gap: 0.4rem; }
+        .date-input {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 0 0.7rem; height: 36px;
+            font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);
+            outline: none; box-shadow: var(--shadow-sm); transition: border-color 0.2s;
+            color-scheme: light;
+        }
+        .date-input:focus { border-color: var(--border-gold); }
+        .date-sep { font-family: var(--font-minor); font-size: 0.65rem; color: var(--text-faint); }
 
         /* ── TABLE ───────────────────────────────────────────── */
         .table-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; }
@@ -268,6 +278,38 @@
             .stats-row { grid-template-columns: repeat(2, 1fr); }
             .main { padding-left: 1.25rem; padding-right: 1.25rem; }
             .header { padding: 0 1.25rem; }
+            .header-title { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            .header { padding: 0 1rem; gap: 0.75rem; }
+            .logo-sep { display: none; }
+            .back-link { font-size: 0; gap: 0.2rem; }
+            .back-link i { font-size: 1rem; }
+
+            .main { padding-left: 1rem; padding-right: 1rem; }
+
+            .page-header { margin-bottom: 1.5rem; }
+            .stats-row { gap: 0.75rem; margin-bottom: 1.5rem; }
+            .stat-card { padding: 1rem 1.15rem; }
+            .stat-value { font-size: 1.8rem; }
+
+            .toolbar { gap: 0.5rem; }
+            .search-wrap { flex: 1 1 100%; }
+            .filter-select { flex: 1 1 100%; }
+            .date-range { flex: 1 1 100%; }
+            .date-input { flex: 1 1 calc(50% - 0.7rem); }
+
+            .table-card { overflow-x: auto; }
+            .data-table { min-width: 480px; }
+
+            .gate-panel { padding: 2rem 1.5rem 1.75rem; }
+
+            .toast-wrap { left: 1rem; right: 1rem; bottom: 1rem; }
+        }
+
+        @media (max-width: 420px) {
+            .stats-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -366,6 +408,11 @@
                 <option value="Q1 2026">Q1 2026</option>
                 <option value="Q4 2025">Q4 2025</option>
             </select>
+            <div class="date-range">
+                <input type="date" class="date-input" id="leadsDateFrom" onchange="filterLeads()" aria-label="From date">
+                <span class="date-sep">to</span>
+                <input type="date" class="date-input" id="leadsDateTo" onchange="filterLeads()" aria-label="To date">
+            </div>
         </div>
         <div class="table-card">
             <div class="loading-state" id="leadsLoading">Loading leads…</div>
@@ -404,6 +451,17 @@
                 <option value="gate_open">Gate Open</option>
                 <option value="gate_success">Gate Success</option>
             </select>
+            <select class="filter-select" id="eventsReportFilter" onchange="filterEvents()">
+                <option value="">All Reports</option>
+                <option value="Q2 2026">Q2 2026</option>
+                <option value="Q1 2026">Q1 2026</option>
+                <option value="Q4 2025">Q4 2025</option>
+            </select>
+            <div class="date-range">
+                <input type="date" class="date-input" id="eventsDateFrom" onchange="filterEvents()" aria-label="From date">
+                <span class="date-sep">to</span>
+                <input type="date" class="date-input" id="eventsDateTo" onchange="filterEvents()" aria-label="To date">
+            </div>
         </div>
         <div class="table-card">
             <div class="loading-state" id="eventsLoading">Loading events…</div>
@@ -528,12 +586,15 @@
     function filterLeads() { renderLeads(); }
 
     function renderLeads() {
-        const q      = document.getElementById('leadsSearch').value.toLowerCase();
-        const report = document.getElementById('leadsReportFilter').value;
+        const q        = document.getElementById('leadsSearch').value.toLowerCase();
+        const report   = document.getElementById('leadsReportFilter').value;
+        const dateFrom = document.getElementById('leadsDateFrom').value;
+        const dateTo   = document.getElementById('leadsDateTo').value;
         let rows = allLeads.filter(l => {
             const matchQ = !q || (l.name || '').toLowerCase().includes(q) || (l.email || '').toLowerCase().includes(q);
             const matchR = !report || (l.report || '').includes(report);
-            return matchQ && matchR;
+            const matchD = inDateRange(l.sentAt, dateFrom, dateTo);
+            return matchQ && matchR && matchD;
         });
         rows = sortRows(rows, sortState.leads.col, sortState.leads.dir);
         document.getElementById('leadsCount').textContent = rows.length + ' record' + (rows.length !== 1 ? 's' : '');
@@ -576,12 +637,17 @@
     function filterEvents() { renderEvents(); }
 
     function renderEvents() {
-        const q    = document.getElementById('eventsSearch').value.toLowerCase();
-        const type = document.getElementById('eventsTypeFilter').value;
+        const q        = document.getElementById('eventsSearch').value.toLowerCase();
+        const type     = document.getElementById('eventsTypeFilter').value;
+        const report   = document.getElementById('eventsReportFilter').value;
+        const dateFrom = document.getElementById('eventsDateFrom').value;
+        const dateTo   = document.getElementById('eventsDateTo').value;
         let rows = allEvents.filter(e => {
             const matchQ = !q || (e.event || '').toLowerCase().includes(q) || (e.referrer || '').toLowerCase().includes(q);
             const matchT = !type || e.event === type;
-            return matchQ && matchT;
+            const matchR = !report || (e.pdf || '').includes(report);
+            const matchD = inDateRange(eventDate(e), dateFrom, dateTo);
+            return matchQ && matchT && matchR && matchD;
         });
         rows = sortRows(rows, sortState.events.col, sortState.events.dir);
         document.getElementById('eventsCount').textContent = rows.length + ' event' + (rows.length !== 1 ? 's' : '');
@@ -603,7 +669,7 @@
             const label      = (e.event || '').replace(/_/g, ' ');
             const pdf        = e.pdf ? e.pdf.replace('GRB ', '').replace('.pdf', '') : '—';
             const ref        = e.referrer ? truncate(e.referrer, 40) : '—';
-            const ts         = e.ts ? formatDate(e.ts) : (e._ts ? formatDate(new Date(parseInt(e._ts)).toISOString()) : '—');
+            const ts         = eventDate(e) ? formatDate(eventDate(e)) : '—';
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><span class="badge ${badgeClass}">${esc(label)}</span></td>
@@ -637,6 +703,22 @@
     }
 
     // ── Utilities ─────────────────────────────────────────────
+    function eventDate(e) { return e.ts || (e._ts ? new Date(parseInt(e._ts)).toISOString() : null); }
+
+    function inDateRange(value, from, to) {
+        if (!from && !to) return true;
+        if (!value) return false;
+        const t = new Date(value).getTime();
+        if (isNaN(t)) return false;
+        if (from && t < new Date(from).getTime()) return false;
+        if (to) {
+            const end = new Date(to);
+            end.setHours(23, 59, 59, 999);
+            if (t > end.getTime()) return false;
+        }
+        return true;
+    }
+
     function formatDate(iso) {
         try {
             return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
