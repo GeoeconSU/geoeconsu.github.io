@@ -430,11 +430,10 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-    const RTDB_URL = 'https://gsu-tracker-default-rtdb.europe-west1.firebasedatabase.app';
+    const GATE_WORKER = 'https://gsu-gate.guduruadip.workers.dev';
     let allLeads  = [];
     let allEvents = [];
     let sortState = { leads: { col: 'sentAt', dir: 'desc' }, events: { col: 'ts', dir: 'desc' } };
-    let rtdb;
 
     // ── Auth ──────────────────────────────────────────────────
     function onAuthReady(user) {
@@ -455,9 +454,6 @@
         document.getElementById('mainContent').style.display = 'block';
         const initials = (user.displayName || user.email || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
         document.getElementById('userAvatar').textContent = initials;
-        const leadsApp = firebase.apps.find(a => a.name === 'gsu-leads')
-            || firebase.initializeApp({ ...firebaseConfig, databaseURL: 'https://gsu-tracker-default-rtdb.europe-west1.firebasedatabase.app' }, 'gsu-leads');
-        rtdb = leadsApp.database();
         loadData();
     }
 
@@ -490,16 +486,15 @@
     // ── Data ──────────────────────────────────────────────────
     async function loadData() {
         try {
-            const [leadsSnap, eventsSnap] = await Promise.all([
-                rtdb.ref('gate_leads').once('value'),
-                rtdb.ref('barometer_events').once('value'),
-            ]);
+            const idToken = await firebase.auth().currentUser.getIdToken();
+            const res = await fetch(`${GATE_WORKER}/get-leads`, {
+                headers: { 'Authorization': `Bearer ${idToken}` }
+            });
+            if (!res.ok) throw new Error(`Worker error ${res.status}`);
+            const { leads, events } = await res.json();
 
-            const leadsObj  = leadsSnap.val()  || {};
-            const eventsObj = eventsSnap.val() || {};
-
-            allLeads  = Object.entries(leadsObj).map(([k, v]) => ({ _key: k, ...v }));
-            allEvents = Object.entries(eventsObj).map(([k, v]) => ({ _key: k, ...v }));
+            allLeads  = Object.entries(leads  || {}).map(([k, v]) => ({ _key: k, ...v }));
+            allEvents = Object.entries(events || {}).map(([k, v]) => ({ _key: k, ...v }));
 
             updateStats();
             renderLeads();
