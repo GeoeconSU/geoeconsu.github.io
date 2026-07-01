@@ -295,7 +295,7 @@
         <div id="gateDenied" style="display:none;" class="gate-denied">
             <i class="ri-lock-line"></i>
             <h3>Access Restricted</h3>
-            <p>This console is restricted to GSU directors. Contact your administrator if you need access.</p>
+            <p>This console is restricted to GSU directors, founders, and employees. Your account does not have the required permissions.</p>
         </div>
     </div>
 </div>
@@ -438,8 +438,13 @@
 
     // ── Auth ──────────────────────────────────────────────────
     function onAuthReady(user) {
-        if (!user) return; // gate stays up
-        if (!levelAtMost(1)) {
+        if (!user || (!user.emailVerified && user.providerData[0]?.providerId === 'password')) {
+            // Not signed in, or email/password account with unverified email — show sign-in form
+            document.getElementById('gateForm').style.display   = '';
+            document.getElementById('gateDenied').style.display = 'none';
+            return;
+        }
+        if (!isEmployee()) {
             document.getElementById('gateForm').style.display    = 'none';
             document.getElementById('gateDenied').style.display  = 'flex';
             return;
