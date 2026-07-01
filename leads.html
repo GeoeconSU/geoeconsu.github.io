@@ -450,7 +450,9 @@
         document.getElementById('mainContent').style.display = 'block';
         const initials = (user.displayName || user.email || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
         document.getElementById('userAvatar').textContent = initials;
-        rtdb = firebase.app().database('https://gsu-tracker-default-rtdb.europe-west1.firebasedatabase.app');
+        const leadsApp = firebase.apps.find(a => a.name === 'gsu-leads')
+            || firebase.initializeApp({ ...firebaseConfig, databaseURL: 'https://gsu-tracker-default-rtdb.europe-west1.firebasedatabase.app' }, 'gsu-leads');
+        rtdb = leadsApp.database();
         loadData();
     }
 
