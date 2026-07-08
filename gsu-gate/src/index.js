@@ -14,7 +14,7 @@ const ALLOWED_PDFS = {
 const SITE_BASE = 'https://geoecon.solutions';
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
     const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
     const cors = {
@@ -36,6 +36,12 @@ export default {
       }
       if (url.pathname === '/track' && request.method === 'POST') {
         return await handleTrack(request, env, cors);
+      }
+      if (url.pathname === '/track-email' && request.method === 'GET') {
+        return handleTrackEmail(request, env, ctx);
+      }
+      if (url.pathname === '/track-open' && request.method === 'GET') {
+        return handleTrackOpen(request, env, ctx);
       }
       if (url.pathname === '/search' && request.method === 'POST') {
         return await handleSearch(request, env, cors);
@@ -105,6 +111,62 @@ async function handleTrack(request, env, cors) {
     ts: new Date().toISOString(),
   });
   return respond({ ok: true }, 200, cors);
+}
+
+// ── Email click & open tracking ───────────────────────────────────────────────
+
+// GET /track-email?campaign=grb_q2_2026&to=EMAIL
+// Logs the click to RTDB then redirects to the PDF immediately.
+function handleTrackEmail(request, env, ctx) {
+  const url = new URL(request.url);
+  const campaign = url.searchParams.get('campaign') || 'unknown';
+  const to       = url.searchParams.get('to')       || null;
+
+  ctx.waitUntil(dbWrite(env, `email_clicks/${Date.now()}`, {
+    event:    'email_click',
+    campaign,
+    to,
+    ts: new Date().toISOString(),
+    ua: request.headers.get('User-Agent') || null,
+  }));
+
+  return Response.redirect('https://geoecon.solutions/docs/GRB%20Q2%202026.pdf', 302);
+}
+
+// GET /track-open?campaign=grb_q2_2026&to=EMAIL
+// Returns a 1×1 transparent GIF and logs the open to RTDB.
+// Note: Apple Mail Privacy Protection pre-fetches pixels — open counts are approximate.
+function handleTrackOpen(request, env, ctx) {
+  const url = new URL(request.url);
+  const campaign = url.searchParams.get('campaign') || 'unknown';
+  const to       = url.searchParams.get('to')       || null;
+
+  ctx.waitUntil(dbWrite(env, `email_opens/${Date.now()}`, {
+    event:    'email_open',
+    campaign,
+    to,
+    ts: new Date().toISOString(),
+    ua: request.headers.get('User-Agent') || null,
+  }));
+
+  // Minimal 1×1 transparent GIF (43 bytes)
+  const gif = new Uint8Array([
+    0x47,0x49,0x46,0x38,0x39,0x61,0x01,0x00,0x01,0x00,
+    0x80,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0xFF,0x21,
+    0xF9,0x04,0x01,0x0A,0x00,0x01,0x00,0x2C,0x00,0x00,
+    0x00,0x00,0x01,0x00,0x01,0x00,0x00,0x02,0x02,0x4C,
+    0x01,0x00,0x3B,
+  ]);
+
+  return new Response(gif, {
+    status: 200,
+    headers: {
+      'Content-Type':  'image/gif',
+      'Cache-Control': 'no-store, no-cache, must-revalidate',
+      'Pragma':        'no-cache',
+      'Expires':       '0',
+    },
+  });
 }
 
 // ── Resend ────────────────────────────────────────────────────────────────────
@@ -229,10 +291,12 @@ async function handleGetLeads(request, env, cors) {
     return respond({ error: 'FIREBASE_DB_SECRET not configured on worker.' }, 503, cors);
   }
 
-  // Read both collections from Firebase Realtime DB using legacy secret
-  const [leadsRes, eventsRes] = await Promise.all([
+  // Read all collections from Firebase Realtime DB using legacy secret
+  const [leadsRes, eventsRes, clicksRes, opensRes] = await Promise.all([
     fetch(`${env.FIREBASE_DB_URL}/gate_leads.json?auth=${env.FIREBASE_DB_SECRET}`),
     fetch(`${env.FIREBASE_DB_URL}/barometer_events.json?auth=${env.FIREBASE_DB_SECRET}`),
+    fetch(`${env.FIREBASE_DB_URL}/email_clicks.json?auth=${env.FIREBASE_DB_SECRET}`),
+    fetch(`${env.FIREBASE_DB_URL}/email_opens.json?auth=${env.FIREBASE_DB_SECRET}`),
   ]);
 
   if (!leadsRes.ok || !eventsRes.ok) {
@@ -241,8 +305,10 @@ async function handleGetLeads(request, env, cors) {
     return respond({ error: 'Failed to read from database.' }, 502, cors);
   }
 
-  const leads  = await leadsRes.json();
-  const events = await eventsRes.json();
+  const leads       = await leadsRes.json();
+  const events      = await eventsRes.json();
+  const emailClicks = clicksRes.ok  ? await clicksRes.json()  : null;
+  const emailOpens  = opensRes.ok   ? await opensRes.json()   : null;
 
   // Catch Firebase permission-denied errors returned as 200 with an error body
   if (leads?.error || events?.error) {
@@ -250,7 +316,7 @@ async function handleGetLeads(request, env, cors) {
     return respond({ error: 'Database permission denied. Check FIREBASE_DB_SECRET.' }, 403, cors);
   }
 
-  return respond({ leads, events }, 200, cors);
+  return respond({ leads, events, emailClicks, emailOpens }, 200, cors);
 }
 
 // ── Firebase Realtime Database (REST) ─────────────────────────────────────────

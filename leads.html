@@ -367,7 +367,7 @@
         <button class="refresh-btn" onclick="loadData()"><i class="ri-refresh-line"></i> Refresh</button>
     </div>
 
-    <!-- Stat Cards -->
+    <!-- Stat Cards — gate & page activity -->
     <div class="stats-row">
         <div class="stat-card">
             <div class="stat-label">Total Leads</div>
@@ -388,6 +388,28 @@
             <div class="stat-label">Page Views</div>
             <div class="stat-value" id="statViews">—</div>
             <div class="stat-sub">Barometer visits</div>
+        </div>
+    </div>
+
+    <!-- Stat Cards — cold email outreach -->
+    <div style="margin-bottom:0.6rem;">
+        <div class="page-eyebrow" style="margin-bottom:0;">Cold Email Outreach</div>
+    </div>
+    <div class="stats-row" style="grid-template-columns:repeat(3,1fr); margin-bottom:2.5rem;">
+        <div class="stat-card">
+            <div class="stat-label">Email Clicks</div>
+            <div class="stat-value gold" id="statEmailClicks">—</div>
+            <div class="stat-sub">Barometer link clicks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Email Opens</div>
+            <div class="stat-value" id="statEmailOpens">—</div>
+            <div class="stat-sub">Pixel loads (approx.)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Click Rate</div>
+            <div class="stat-value" id="statClickRate">—</div>
+            <div class="stat-sub">Clicks ÷ opens</div>
         </div>
     </div>
 
@@ -430,6 +452,32 @@
             <div class="empty-state" id="leadsEmpty" style="display:none;">
                 <i class="ri-inbox-line"></i>
                 <p>No leads found</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email Clicks Table -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">Email Clicks</div>
+            <span class="section-count" id="emailClicksCount"></span>
+        </div>
+        <div class="table-card">
+            <div class="loading-state" id="emailClicksLoading">Loading email clicks…</div>
+            <table class="data-table" id="emailClicksTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Campaign</th>
+                        <th>Recipient</th>
+                        <th>Timestamp</th>
+                        <th>User Agent</th>
+                    </tr>
+                </thead>
+                <tbody id="emailClicksTbody"></tbody>
+            </table>
+            <div class="empty-state" id="emailClicksEmpty" style="display:none;">
+                <i class="ri-mail-send-line"></i>
+                <p>No email clicks yet</p>
             </div>
         </div>
     </div>
@@ -501,8 +549,10 @@
         || firebase.initializeApp(TRACKER_CONFIG, 'gsu-tracker');
     const rtdb = trackerApp.database();
 
-    let allLeads  = [];
-    let allEvents = [];
+    let allLeads       = [];
+    let allEvents      = [];
+    let allEmailClicks = [];
+    let allEmailOpens  = [];
     let sortState = { leads: { col: 'sentAt', dir: 'desc' }, events: { col: 'ts', dir: 'desc' } };
 
     // ── Auth ──────────────────────────────────────────────────
@@ -556,21 +606,27 @@
     // ── Data ──────────────────────────────────────────────────
     async function loadData() {
         try {
-            const [leadsSnap, eventsSnap] = await Promise.all([
+            const [leadsSnap, eventsSnap, clicksSnap, opensSnap] = await Promise.all([
                 rtdb.ref('gate_leads').once('value'),
                 rtdb.ref('barometer_events').once('value'),
+                rtdb.ref('email_clicks').once('value'),
+                rtdb.ref('email_opens').once('value'),
             ]);
-            allLeads  = Object.entries(leadsSnap.val()  || {}).map(([k, v]) => ({ _key: k, ...v }));
-            allEvents = Object.entries(eventsSnap.val() || {}).map(([k, v]) => ({ _key: k, ...v }));
+            allLeads       = Object.entries(leadsSnap.val()  || {}).map(([k, v]) => ({ _key: k, ...v }));
+            allEvents      = Object.entries(eventsSnap.val() || {}).map(([k, v]) => ({ _key: k, ...v }));
+            allEmailClicks = Object.entries(clicksSnap.val() || {}).map(([k, v]) => ({ _key: k, ...v }));
+            allEmailOpens  = Object.entries(opensSnap.val()  || {}).map(([k, v]) => ({ _key: k, ...v }));
 
             updateStats();
             renderLeads();
+            renderEmailClicks();
             renderEvents();
             toast('Data refreshed', 'ok');
         } catch (e) {
             toast(e.message, 'err');
-            document.getElementById('leadsLoading').textContent  = 'Failed to load — ' + e.message;
-            document.getElementById('eventsLoading').textContent = 'Failed to load — ' + e.message;
+            document.getElementById('leadsLoading').textContent       = 'Failed to load — ' + e.message;
+            document.getElementById('eventsLoading').textContent      = 'Failed to load — ' + e.message;
+            document.getElementById('emailClicksLoading').textContent = 'Failed to load — ' + e.message;
         }
     }
 
@@ -580,6 +636,44 @@
         document.getElementById('statSent').textContent  = events.filter(e => e.event === 'gate_success').length;
         document.getElementById('statOpens').textContent = events.filter(e => e.event === 'gate_open').length;
         document.getElementById('statViews').textContent = events.filter(e => e.event === 'barometer_page_view').length;
+
+        const clicks = allEmailClicks.length;
+        const opens  = allEmailOpens.length;
+        document.getElementById('statEmailClicks').textContent = clicks;
+        document.getElementById('statEmailOpens').textContent  = opens;
+        document.getElementById('statClickRate').textContent   = opens > 0
+            ? Math.round(clicks / opens * 100) + '%'
+            : (clicks > 0 ? clicks + ' clicks' : '—');
+    }
+
+    // ── Email Clicks ──────────────────────────────────────────
+    function renderEmailClicks() {
+        const rows = [...allEmailClicks].sort((a, b) => (b.ts || '').localeCompare(a.ts || ''));
+        document.getElementById('emailClicksCount').textContent = rows.length + ' click' + (rows.length !== 1 ? 's' : '');
+
+        const tbody = document.getElementById('emailClicksTbody');
+        tbody.innerHTML = '';
+
+        if (rows.length === 0) {
+            document.getElementById('emailClicksTable').style.display   = 'none';
+            document.getElementById('emailClicksLoading').style.display = 'none';
+            document.getElementById('emailClicksEmpty').style.display   = 'flex';
+            return;
+        }
+        document.getElementById('emailClicksLoading').style.display = 'none';
+        document.getElementById('emailClicksEmpty').style.display   = 'none';
+        document.getElementById('emailClicksTable').style.display   = 'table';
+
+        rows.forEach(c => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><span class="badge badge-gold">${esc(c.campaign || 'unknown')}</span></td>
+                <td class="mono-cell">${esc(c.to || '—')}</td>
+                <td class="date-cell">${c.ts ? formatDate(c.ts) : '—'}</td>
+                <td class="mono-cell" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(c.ua||'')}">${esc(truncate(c.ua || '—', 36))}</td>
+            `;
+            tbody.appendChild(tr);
+        });
     }
 
     // ── Leads ─────────────────────────────────────────────────
