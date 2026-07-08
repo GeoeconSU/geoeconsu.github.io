@@ -55,6 +55,12 @@ export default {
       if (url.pathname === '/get-leads' && request.method === 'GET') {
         return await handleGetLeads(request, env, cors);
       }
+      if (url.pathname === '/send-cold-email' && request.method === 'POST') {
+        return await handleSendColdEmail(request, env, cors);
+      }
+      if (url.pathname === '/contact' && request.method === 'POST') {
+        return await handleContact(request, env, cors);
+      }
       return respond({ error: 'Not found' }, 404, cors);
     } catch (err) {
       console.error(err);
@@ -167,6 +173,108 @@ function handleTrackOpen(request, env, ctx) {
       'Expires':       '0',
     },
   });
+}
+
+// ── Contact form ─────────────────────────────────────────────────────────────
+
+// POST /contact
+// Body: { name, email, organisation, role, message }
+async function handleContact(request, env, cors) {
+  const { name, email, organisation, role, message } = await request.json();
+
+  if (!name || name.trim().length < 2)
+    return respond({ error: 'Please enter your full name.' }, 400, cors);
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return respond({ error: 'Please enter a valid email address.' }, 400, cors);
+  if (!message || message.trim().length < 10)
+    return respond({ error: 'Please add a brief message.' }, 400, cors);
+
+  const html = `
+    <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#192030;">
+      <div style="padding:24px 32px 18px;border-bottom:2px solid #cba84e;">
+        <img src="https://geoecon.solutions/assets/GSU_Navy_Transparent.png" alt="GSU" style="height:30px;width:auto;">
+      </div>
+      <div style="padding:28px 32px;">
+        <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#cba84e;margin:0 0 20px;">New Contact Request</p>
+        <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+          <tr><td style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#888;width:120px;">Name</td>
+              <td style="padding:8px 0;border-bottom:1px solid #eee;font-size:15px;font-weight:600;">${name.trim()}</td></tr>
+          <tr><td style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#888;">Email</td>
+              <td style="padding:8px 0;border-bottom:1px solid #eee;font-size:15px;"><a href="mailto:${email}" style="color:#192030;">${email}</a></td></tr>
+          ${organisation ? `<tr><td style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#888;">Organisation</td>
+              <td style="padding:8px 0;border-bottom:1px solid #eee;font-size:15px;">${organisation.trim()}</td></tr>` : ''}
+          ${role ? `<tr><td style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#888;">Role</td>
+              <td style="padding:8px 0;border-bottom:1px solid #eee;font-size:15px;">${role.trim()}</td></tr>` : ''}
+        </table>
+        <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#cba84e;margin:0 0 10px;">Message</p>
+        <p style="font-size:15px;line-height:1.7;color:#333;background:#f9f7f4;padding:16px;border-left:2px solid #cba84e;margin:0;">${message.trim().replace(/\n/g, '<br>')}</p>
+      </div>
+    </div>`;
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: 'contact@geoecon.solutions',
+      to: ['geoecon@16thcouncil.uk'],
+      reply_to: email,
+      subject: `Contact Request — ${name.trim()}${organisation ? ' · ' + organisation.trim() : ''}`,
+      html,
+    }),
+  });
+
+  if (!res.ok) {
+    console.error('Resend contact error:', await res.text());
+    return respond({ error: 'Failed to send. Please try again.' }, 500, cors);
+  }
+  return respond({ ok: true }, 200, cors);
+}
+
+// ── Cold email ────────────────────────────────────────────────────────────────
+
+// POST /send-cold-email
+// Body: { authKey, to, recipientCompany, senderName, senderTitle }
+async function handleSendColdEmail(request, env, cors) {
+  const { authKey, to, recipientCompany, senderName, senderTitle } = await request.json();
+
+  if (authKey !== env.FIREBASE_API_KEY) {
+    return respond({ error: 'Unauthorized' }, 401, cors);
+  }
+  if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
+    return respond({ error: 'Invalid recipient email' }, 400, cors);
+  }
+
+  // Fetch the live template and fill merge fields
+  const templateRes = await fetch('https://geoecon.solutions/email_grb_q2_2026.html');
+  if (!templateRes.ok) return respond({ error: 'Could not fetch template' }, 500, cors);
+
+  let html = await templateRes.text();
+  html = html.replace(/\[Email\]/g, encodeURIComponent(to));
+  html = html.replace(/\[Name\]/g, senderName || 'GSU Research Team');
+  html = html.replace(/\[Title\]/g, senderTitle || 'Research Analyst');
+  html = html.replace(/\[Company Name\]/g, recipientCompany || 'your organisation');
+  // Strip the preview-page banner (not relevant in a real inbox)
+  html = html.replace(/<div class="preview-label">[\s\S]*?<\/div>/, '');
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'research@geoecon.solutions',
+      to: [to],
+      subject: 'Q2 2026 Geoeconomic Risk Barometer — Geoeconomic Strategy Unit',
+      html,
+    }),
+  });
+
+  if (!res.ok) {
+    console.error('Resend cold email error:', await res.text());
+    return respond({ error: 'Failed to send email' }, 500, cors);
+  }
+  return respond({ ok: true }, 200, cors);
 }
 
 // ── Resend ────────────────────────────────────────────────────────────────────
