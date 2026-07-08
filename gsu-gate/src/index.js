@@ -203,40 +203,6 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
 
             <a href="${pdfUrl}" style="display:inline-block;background:#192030;color:#cba84e;font-family:Georgia,serif;font-size:14px;letter-spacing:0.3px;text-decoration:none;padding:13px 28px;border-radius:2px;margin-bottom:40px;">Download Report &rarr;</a>
 
-            <hr style="border:none;border-top:1px solid #eee;margin:0 0 28px;">
-
-            <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#cba84e;margin:0 0 20px;">Also from GSU</p>
-
-            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:28px;">
-              <tr>
-                <td width="49%" valign="top">
-                  <a href="https://www.youtube.com/watch?v=HGa1Xbx7IjQ" style="text-decoration:none;display:block;">
-                    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-                      <tr>
-                        <td height="130" style="background-image:url('https://img.youtube.com/vi/HGa1Xbx7IjQ/mqdefault.jpg');background-size:cover;background-position:center;text-align:center;vertical-align:middle;">
-                          <span style="display:inline-block;width:34px;height:34px;line-height:34px;background:rgba(203,168,78,0.92);border-radius:50%;font-size:13px;color:#192030;text-align:center;">&#9654;</span>
-                        </td>
-                      </tr>
-                    </table>
-                    <p style="font-family:Georgia,serif;font-size:12px;color:#192030;margin:7px 0 0;font-style:italic;">Introducing the GSU</p>
-                  </a>
-                </td>
-                <td width="2%"></td>
-                <td width="49%" valign="top">
-                  <a href="https://www.youtube.com/watch?v=QHCTxijJNWw" style="text-decoration:none;display:block;">
-                    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-                      <tr>
-                        <td height="130" style="background-image:url('https://img.youtube.com/vi/QHCTxijJNWw/mqdefault.jpg');background-size:cover;background-position:center;text-align:center;vertical-align:middle;">
-                          <span style="display:inline-block;width:34px;height:34px;line-height:34px;background:rgba(203,168,78,0.92);border-radius:50%;font-size:13px;color:#192030;text-align:center;">&#9654;</span>
-                        </td>
-                      </tr>
-                    </table>
-                    <p style="font-family:Georgia,serif;font-size:12px;color:#192030;margin:7px 0 0;font-style:italic;">GSU: Researching Risk, Mapping Markets</p>
-                  </a>
-                </td>
-              </tr>
-            </table>
-
             <hr style="border:none;border-top:1px solid #eee;margin:0 0 24px;">
 
             <p style="font-size:13px;color:#888;line-height:1.6;margin:0 0 20px;">
@@ -250,9 +216,14 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
                     <img src="https://img.icons8.com/color/32/linkedin.png" width="26" height="26" alt="LinkedIn" style="border:0;display:block;">
                   </a>
                 </td>
-                <td>
+                <td style="padding-right:12px;">
                   <a href="https://www.instagram.com/geoeconomicstrategyunit" style="text-decoration:none;display:inline-block;">
                     <img src="https://img.icons8.com/color/32/instagram-new.png" width="26" height="26" alt="Instagram" style="border:0;display:block;">
+                  </a>
+                </td>
+                <td>
+                  <a href="https://www.youtube.com/watch?v=HGa1Xbx7IjQ" style="text-decoration:none;display:inline-block;">
+                    <img src="https://img.icons8.com/color/32/youtube-play.png" width="26" height="26" alt="YouTube" style="border:0;display:block;">
                   </a>
                 </td>
               </tr>
