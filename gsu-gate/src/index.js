@@ -215,7 +215,7 @@ async function handleContact(request, env, cors) {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from: 'contact@geoecon.solutions',
+      from: 'research@geoecon.solutions',
       to: ['geoecon@16thcouncil.uk'],
       reply_to: email,
       subject: `Contact Request — ${name.trim()}${organisation ? ' · ' + organisation.trim() : ''}`,
