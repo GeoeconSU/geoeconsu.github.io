@@ -216,7 +216,7 @@ async function handleContact(request, env, cors) {
     headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       from: 'research@geoecon.solutions',
-      to: ['geoecon@16thcouncil.uk'],
+      to: ['nir.b@geoecon.solutions'],
       reply_to: email,
       subject: `Contact Request — ${name.trim()}${organisation ? ' · ' + organisation.trim() : ''}`,
       html,
@@ -250,8 +250,8 @@ async function handleSendColdEmail(request, env, cors) {
 
   let html = await templateRes.text();
   html = html.replace(/\[Email\]/g, encodeURIComponent(to));
-  html = html.replace(/\[Name\]/g, senderName || 'GSU Research Team');
-  html = html.replace(/\[Title\]/g, senderTitle || 'Research Analyst');
+  html = html.replace(/\[Name\]/g, senderName || 'Nir Bhattacharjee');
+  html = html.replace(/\[Title\]/g, senderTitle || 'Chief Strategy Officer');
   html = html.replace(/\[Company Name\]/g, recipientCompany || 'your organisation');
   // Strip the preview-page banner (not relevant in a real inbox)
   html = html.replace(/<div class="preview-label">[\s\S]*?<\/div>/, '');
@@ -263,7 +263,7 @@ async function handleSendColdEmail(request, env, cors) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'research@geoecon.solutions',
+      from: 'nir.b@geoecon.solutions',
       to: [to],
       subject: 'Q2 2026 Geoeconomic Risk Barometer — Geoeconomic Strategy Unit',
       html,
