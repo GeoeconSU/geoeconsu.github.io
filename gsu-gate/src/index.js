@@ -14,7 +14,7 @@ const ALLOWED_PDFS = {
 const SITE_BASE = 'https://geoecon.solutions';
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get('Origin') || '';
     const corsOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
     const cors = {
@@ -37,6 +37,12 @@ export default {
       if (url.pathname === '/track' && request.method === 'POST') {
         return await handleTrack(request, env, cors);
       }
+      if (url.pathname === '/track-email' && request.method === 'GET') {
+        return handleTrackEmail(request, env, ctx);
+      }
+      if (url.pathname === '/track-open' && request.method === 'GET') {
+        return handleTrackOpen(request, env, ctx);
+      }
       if (url.pathname === '/search' && request.method === 'POST') {
         return await handleSearch(request, env, cors);
       }
@@ -48,6 +54,12 @@ export default {
       }
       if (url.pathname === '/get-leads' && request.method === 'GET') {
         return await handleGetLeads(request, env, cors);
+      }
+      if (url.pathname === '/send-cold-email' && request.method === 'POST') {
+        return await handleSendColdEmail(request, env, cors);
+      }
+      if (url.pathname === '/contact' && request.method === 'POST') {
+        return await handleContact(request, env, cors);
       }
       return respond({ error: 'Not found' }, 404, cors);
     } catch (err) {
@@ -107,6 +119,164 @@ async function handleTrack(request, env, cors) {
   return respond({ ok: true }, 200, cors);
 }
 
+// ── Email click & open tracking ───────────────────────────────────────────────
+
+// GET /track-email?campaign=grb_q2_2026&to=EMAIL
+// Logs the click to RTDB then redirects to the PDF immediately.
+function handleTrackEmail(request, env, ctx) {
+  const url = new URL(request.url);
+  const campaign = url.searchParams.get('campaign') || 'unknown';
+  const to       = url.searchParams.get('to')       || null;
+
+  ctx.waitUntil(dbWrite(env, `email_clicks/${Date.now()}`, {
+    event:    'email_click',
+    campaign,
+    to,
+    ts: new Date().toISOString(),
+    ua: request.headers.get('User-Agent') || null,
+  }));
+
+  return Response.redirect('https://geoecon.solutions/docs/GRB%20Q2%202026.pdf', 302);
+}
+
+// GET /track-open?campaign=grb_q2_2026&to=EMAIL
+// Returns a 1×1 transparent GIF and logs the open to RTDB.
+// Note: Apple Mail Privacy Protection pre-fetches pixels — open counts are approximate.
+function handleTrackOpen(request, env, ctx) {
+  const url = new URL(request.url);
+  const campaign = url.searchParams.get('campaign') || 'unknown';
+  const to       = url.searchParams.get('to')       || null;
+
+  ctx.waitUntil(dbWrite(env, `email_opens/${Date.now()}`, {
+    event:    'email_open',
+    campaign,
+    to,
+    ts: new Date().toISOString(),
+    ua: request.headers.get('User-Agent') || null,
+  }));
+
+  // Minimal 1×1 transparent GIF (43 bytes)
+  const gif = new Uint8Array([
+    0x47,0x49,0x46,0x38,0x39,0x61,0x01,0x00,0x01,0x00,
+    0x80,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0xFF,0x21,
+    0xF9,0x04,0x01,0x0A,0x00,0x01,0x00,0x2C,0x00,0x00,
+    0x00,0x00,0x01,0x00,0x01,0x00,0x00,0x02,0x02,0x4C,
+    0x01,0x00,0x3B,
+  ]);
+
+  return new Response(gif, {
+    status: 200,
+    headers: {
+      'Content-Type':  'image/gif',
+      'Cache-Control': 'no-store, no-cache, must-revalidate',
+      'Pragma':        'no-cache',
+      'Expires':       '0',
+    },
+  });
+}
+
+// ── Contact form ─────────────────────────────────────────────────────────────
+
+// POST /contact
+// Body: { name, email, organisation, role, message }
+async function handleContact(request, env, cors) {
+  const { name, email, organisation, role, message } = await request.json();
+
+  if (!name || name.trim().length < 2)
+    return respond({ error: 'Please enter your full name.' }, 400, cors);
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return respond({ error: 'Please enter a valid email address.' }, 400, cors);
+  if (!message || message.trim().length < 10)
+    return respond({ error: 'Please add a brief message.' }, 400, cors);
+
+  const html = `
+    <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#192030;">
+      <div style="padding:24px 32px 18px;border-bottom:2px solid #cba84e;">
+        <img src="https://geoecon.solutions/assets/GSU_Navy_Transparent.png" alt="GSU" style="height:30px;width:auto;">
+      </div>
+      <div style="padding:28px 32px;">
+        <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#cba84e;margin:0 0 20px;">New Contact Request</p>
+        <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+          <tr><td style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#888;width:120px;">Name</td>
+              <td style="padding:8px 0;border-bottom:1px solid #eee;font-size:15px;font-weight:600;">${name.trim()}</td></tr>
+          <tr><td style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#888;">Email</td>
+              <td style="padding:8px 0;border-bottom:1px solid #eee;font-size:15px;"><a href="mailto:${email}" style="color:#192030;">${email}</a></td></tr>
+          ${organisation ? `<tr><td style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#888;">Organisation</td>
+              <td style="padding:8px 0;border-bottom:1px solid #eee;font-size:15px;">${organisation.trim()}</td></tr>` : ''}
+          ${role ? `<tr><td style="padding:8px 0;border-bottom:1px solid #eee;font-size:13px;color:#888;">Role</td>
+              <td style="padding:8px 0;border-bottom:1px solid #eee;font-size:15px;">${role.trim()}</td></tr>` : ''}
+        </table>
+        <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#cba84e;margin:0 0 10px;">Message</p>
+        <p style="font-size:15px;line-height:1.7;color:#333;background:#f9f7f4;padding:16px;border-left:2px solid #cba84e;margin:0;">${message.trim().replace(/\n/g, '<br>')}</p>
+      </div>
+    </div>`;
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: 'research@geoecon.solutions',
+      to: ['nir.b@geoecon.solutions'],
+      reply_to: email,
+      subject: `Contact Request — ${name.trim()}${organisation ? ' · ' + organisation.trim() : ''}`,
+      html,
+    }),
+  });
+
+  if (!res.ok) {
+    console.error('Resend contact error:', await res.text());
+    return respond({ error: 'Failed to send. Please try again.' }, 500, cors);
+  }
+  return respond({ ok: true }, 200, cors);
+}
+
+// ── Cold email ────────────────────────────────────────────────────────────────
+
+// POST /send-cold-email
+// Body: { authKey, to, recipientCompany, senderName, senderTitle }
+async function handleSendColdEmail(request, env, cors) {
+  const { authKey, to, recipientCompany, senderName, senderTitle } = await request.json();
+
+  if (authKey !== env.FIREBASE_API_KEY) {
+    return respond({ error: 'Unauthorized' }, 401, cors);
+  }
+  if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
+    return respond({ error: 'Invalid recipient email' }, 400, cors);
+  }
+
+  // Fetch the live template and fill merge fields
+  const templateRes = await fetch('https://geoecon.solutions/email_grb_q2_2026.html');
+  if (!templateRes.ok) return respond({ error: 'Could not fetch template' }, 500, cors);
+
+  let html = await templateRes.text();
+  html = html.replace(/\[Email\]/g, encodeURIComponent(to));
+  html = html.replace(/\[Name\]/g, senderName || 'Nir Bhattacharjee');
+  html = html.replace(/\[Title\]/g, senderTitle || 'Chief Strategy Officer');
+  html = html.replace(/\[Company Name\]/g, recipientCompany || 'your organisation');
+  // Strip the preview-page banner (not relevant in a real inbox)
+  html = html.replace(/<div class="preview-label">[\s\S]*?<\/div>/, '');
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'nir.b@geoecon.solutions',
+      to: [to],
+      subject: 'Q2 2026 Geoeconomic Risk Barometer — Geoeconomic Strategy Unit',
+      html,
+    }),
+  });
+
+  if (!res.ok) {
+    console.error('Resend cold email error:', await res.text());
+    return respond({ error: 'Failed to send email' }, 500, cors);
+  }
+  return respond({ ok: true }, 200, cors);
+}
+
 // ── Resend ────────────────────────────────────────────────────────────────────
 
 async function sendReportEmail(env, to, name, filename, pdfUrl) {
@@ -141,40 +311,6 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
 
             <a href="${pdfUrl}" style="display:inline-block;background:#192030;color:#cba84e;font-family:Georgia,serif;font-size:14px;letter-spacing:0.3px;text-decoration:none;padding:13px 28px;border-radius:2px;margin-bottom:40px;">Download Report &rarr;</a>
 
-            <hr style="border:none;border-top:1px solid #eee;margin:0 0 28px;">
-
-            <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#cba84e;margin:0 0 20px;">Also from GSU</p>
-
-            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-bottom:28px;">
-              <tr>
-                <td width="49%" valign="top">
-                  <a href="https://www.youtube.com/watch?v=HGa1Xbx7IjQ" style="text-decoration:none;display:block;">
-                    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-                      <tr>
-                        <td height="130" style="background-image:url('https://img.youtube.com/vi/HGa1Xbx7IjQ/mqdefault.jpg');background-size:cover;background-position:center;text-align:center;vertical-align:middle;">
-                          <span style="display:inline-block;width:34px;height:34px;line-height:34px;background:rgba(203,168,78,0.92);border-radius:50%;font-size:13px;color:#192030;text-align:center;">&#9654;</span>
-                        </td>
-                      </tr>
-                    </table>
-                    <p style="font-family:Georgia,serif;font-size:12px;color:#192030;margin:7px 0 0;font-style:italic;">Introducing the GSU</p>
-                  </a>
-                </td>
-                <td width="2%"></td>
-                <td width="49%" valign="top">
-                  <a href="https://www.youtube.com/watch?v=QHCTxijJNWw" style="text-decoration:none;display:block;">
-                    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-                      <tr>
-                        <td height="130" style="background-image:url('https://img.youtube.com/vi/QHCTxijJNWw/mqdefault.jpg');background-size:cover;background-position:center;text-align:center;vertical-align:middle;">
-                          <span style="display:inline-block;width:34px;height:34px;line-height:34px;background:rgba(203,168,78,0.92);border-radius:50%;font-size:13px;color:#192030;text-align:center;">&#9654;</span>
-                        </td>
-                      </tr>
-                    </table>
-                    <p style="font-family:Georgia,serif;font-size:12px;color:#192030;margin:7px 0 0;font-style:italic;">GSU: Researching Risk, Mapping Markets</p>
-                  </a>
-                </td>
-              </tr>
-            </table>
-
             <hr style="border:none;border-top:1px solid #eee;margin:0 0 24px;">
 
             <p style="font-size:13px;color:#888;line-height:1.6;margin:0 0 20px;">
@@ -188,9 +324,14 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
                     <img src="https://img.icons8.com/color/32/linkedin.png" width="26" height="26" alt="LinkedIn" style="border:0;display:block;">
                   </a>
                 </td>
-                <td>
+                <td style="padding-right:12px;">
                   <a href="https://www.instagram.com/geoeconomicstrategyunit" style="text-decoration:none;display:inline-block;">
                     <img src="https://img.icons8.com/color/32/instagram-new.png" width="26" height="26" alt="Instagram" style="border:0;display:block;">
+                  </a>
+                </td>
+                <td>
+                  <a href="https://www.youtube.com/watch?v=HGa1Xbx7IjQ" style="text-decoration:none;display:inline-block;">
+                    <img src="https://img.icons8.com/color/32/youtube-play.png" width="26" height="26" alt="YouTube" style="border:0;display:block;">
                   </a>
                 </td>
               </tr>
@@ -229,10 +370,12 @@ async function handleGetLeads(request, env, cors) {
     return respond({ error: 'FIREBASE_DB_SECRET not configured on worker.' }, 503, cors);
   }
 
-  // Read both collections from Firebase Realtime DB using legacy secret
-  const [leadsRes, eventsRes] = await Promise.all([
+  // Read all collections from Firebase Realtime DB using legacy secret
+  const [leadsRes, eventsRes, clicksRes, opensRes] = await Promise.all([
     fetch(`${env.FIREBASE_DB_URL}/gate_leads.json?auth=${env.FIREBASE_DB_SECRET}`),
     fetch(`${env.FIREBASE_DB_URL}/barometer_events.json?auth=${env.FIREBASE_DB_SECRET}`),
+    fetch(`${env.FIREBASE_DB_URL}/email_clicks.json?auth=${env.FIREBASE_DB_SECRET}`),
+    fetch(`${env.FIREBASE_DB_URL}/email_opens.json?auth=${env.FIREBASE_DB_SECRET}`),
   ]);
 
   if (!leadsRes.ok || !eventsRes.ok) {
@@ -241,8 +384,10 @@ async function handleGetLeads(request, env, cors) {
     return respond({ error: 'Failed to read from database.' }, 502, cors);
   }
 
-  const leads  = await leadsRes.json();
-  const events = await eventsRes.json();
+  const leads       = await leadsRes.json();
+  const events      = await eventsRes.json();
+  const emailClicks = clicksRes.ok  ? await clicksRes.json()  : null;
+  const emailOpens  = opensRes.ok   ? await opensRes.json()   : null;
 
   // Catch Firebase permission-denied errors returned as 200 with an error body
   if (leads?.error || events?.error) {
@@ -250,7 +395,7 @@ async function handleGetLeads(request, env, cors) {
     return respond({ error: 'Database permission denied. Check FIREBASE_DB_SECRET.' }, 403, cors);
   }
 
-  return respond({ leads, events }, 200, cors);
+  return respond({ leads, events, emailClicks, emailOpens }, 200, cors);
 }
 
 // ── Firebase Realtime Database (REST) ─────────────────────────────────────────

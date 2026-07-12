@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Geoeconomic Strategy Unit</title>
+  <link rel="icon" type="image/x-icon" href="assets/gsu.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-bg: #192030;
+      --secondary-bg: #1f283b;
+      --text-white: #ffffff;
+      --accent-gold: #cba84e;
+      --font-head: 'Playfair Display', serif;
+      --font-body: 'EB Garamond', serif;
+      --easing: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--primary-bg);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    nav {
+      padding: 1.6rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(25,32,48,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo img { height: 46px; width: auto; display: block; }
+
+    .nav-links a {
+      font-family: var(--font-head);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      margin-left: 2rem;
+      opacity: 0.7;
+      text-decoration: none;
+      color: var(--text-white);
+      transition: 0.3s ease;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--accent-gold); }
+
+    /* ── Page layout ── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 2rem 80px;
+    }
+
+    .page-inner {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    /* ── Eyebrow ── */
+    .eyebrow {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 1rem;
+    }
+
+    /* ── Heading ── */
+    .page-title {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text-white);
+      margin-bottom: 1rem;
+    }
+
+    .page-subtitle {
+      font-family: var(--font-body);
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+      margin-bottom: 2.8rem;
+      max-width: 52ch;
+    }
+
+    /* ── Form card ── */
+    .form-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 4px;
+      padding: 2.8rem 3rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    input, textarea, select {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2px;
+      color: var(--text-white);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.25s ease, background 0.25s ease;
+      width: 100%;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: rgba(255,255,255,0.2);
+    }
+
+    input:focus, textarea:focus {
+      border-color: rgba(203,168,78,0.5);
+      background: rgba(255,255,255,0.07);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 130px;
+    }
+
+    /* ── Divider ── */
+    .form-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+      grid-column: 1 / -1;
+      margin: 0.4rem 0;
+    }
+
+    /* ── Submit ── */
+    .form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-top: 1.8rem;
+      flex-wrap: wrap;
+    }
+
+    .form-note {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.3);
+      font-style: italic;
+    }
+
+    .btn-submit {
+      display: inline-block;
+      background: var(--accent-gold);
+      color: #192030;
+      border: none;
+      border-radius: 2px;
+      padding: 0.85rem 2.4rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s var(--easing);
+      white-space: nowrap;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: #d9bc82;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(203,168,78,0.25);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ── States ── */
+    .status-msg {
+      display: none;
+      grid-column: 1 / -1;
+      padding: 0.9rem 1.1rem;
+      border-radius: 2px;
+      font-size: 0.98rem;
+      font-family: var(--font-body);
+    }
+
+    .status-msg.success {
+      background: rgba(80,180,100,0.12);
+      border: 1px solid rgba(80,180,100,0.3);
+      color: #7dda8f;
+    }
+
+    .status-msg.error {
+      background: rgba(220,80,80,0.12);
+      border: 1px solid rgba(220,80,80,0.3);
+      color: #f08080;
+    }
+
+    /* ── Success overlay ── */
+    .success-panel {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .success-icon {
+      width: 52px;
+      height: 52px;
+      border: 1.5px solid var(--accent-gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.4rem;
+      color: var(--accent-gold);
+    }
+
+    .success-panel h3 {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--text-white);
+      margin-bottom: 0.75rem;
+    }
+
+    .success-panel p {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.55);
+      max-width: 38ch;
+      margin: 0 auto;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .form-card { padding: 1.8rem 1.4rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+      .form-footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <img src="assets/gsu.png" alt="Geoeconomic Strategy Unit">
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Page -->
+<div class="page">
+  <div class="page-inner">
+
+    <p class="eyebrow">Geoeconomic Strategy Unit</p>
+    <h1 class="page-title">Schedule a Conversation</h1>
+    <p class="page-subtitle">
+      Tell us about your organisation and what you'd like to discuss.
+      We'll be in touch within one business day to arrange a time.
+    </p>
+
+    <!-- Form card -->
+    <div class="form-card" id="formCard">
+
+      <form id="contactForm" novalidate>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" placeholder="jane@company.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="organisation">Organisation</label>
+            <input type="text" id="organisation" name="organisation" placeholder="Your company or institution">
+          </div>
+
+          <div class="form-group">
+            <label for="role">Role / Title</label>
+            <input type="text" id="role" name="role" placeholder="e.g. Chief Risk Officer">
+          </div>
+
+          <div class="form-divider"></div>
+
+          <div class="form-group full">
+            <label for="message">What would you like to discuss? *</label>
+            <textarea id="message" name="message" placeholder="Brief context on your markets of interest, timeline, or specific questions…" required></textarea>
+          </div>
+
+          <div class="status-msg" id="statusMsg"></div>
+
+        </div>
+
+        <div class="form-footer">
+          <span class="form-note">We typically respond within one business day.</span>
+          <button type="submit" class="btn-submit" id="submitBtn">Send Message</button>
+        </div>
+      </form>
+
+      <!-- Success state -->
+      <div class="success-panel" id="successPanel">
+        <div class="success-icon">✓</div>
+        <h3>Message received.</h3>
+        <p>We'll be in touch within one business day to arrange a time.</p>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  geoecon.solutions &nbsp;·&nbsp; The Sixteenth Council &nbsp;·&nbsp; London
+</footer>
+
+<script>
+  const form = document.getElementById('contactForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const statusMsg = document.getElementById('statusMsg');
+  const successPanel = document.getElementById('successPanel');
+
+  function showStatus(msg, type) {
+    statusMsg.textContent = msg;
+    statusMsg.className = 'status-msg ' + type;
+    statusMsg.style.display = 'block';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name     = form.name.value.trim();
+    const email    = form.email.value.trim();
+    const message  = form.message.value.trim();
+
+    if (!name || name.length < 2)    return showStatus('Please enter your full name.', 'error');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showStatus('Please enter a valid email address.', 'error');
+    if (!message || message.length < 10) return showStatus('Please add a brief message.', 'error');
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+    statusMsg.style.display = 'none';
+
+    try {
+      const res = await fetch('https://gsu-gate.guduruadip.workers.dev/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          organisation: form.organisation.value.trim(),
+          role:         form.role.value.trim(),
+          message,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to send.');
+
+      form.style.display = 'none';
+      successPanel.style.display = 'block';
+    } catch (err) {
+      showStatus(err.message || 'Something went wrong. Please try again.', 'error');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message';
+    }
+  });
+</script>
+
+</body>
+</html>
