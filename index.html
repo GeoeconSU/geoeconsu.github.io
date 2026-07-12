@@ -737,6 +737,104 @@
             letter-spacing: 0.5px;
         }
 
+        /* Partners Section */
+        .partner-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 3rem 2.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .partner-card:hover {
+            border-color: var(--accent-gold);
+            background: rgba(255,255,255,0.05);
+            transform: translateY(-5px);
+        }
+
+        .partner-logo-slot {
+            height: 90px;
+            width: 100%;
+            max-width: 260px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            align-self: center;
+        }
+
+        .partner-logo-slot img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .partner-name {
+            font-family: var(--font-head);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--accent-gold);
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .partner-bio {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .partner-link {
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+            border-bottom: 1px solid var(--accent-gold);
+            padding-bottom: 2px;
+            align-self: flex-start;
+        }
+
+        .partner-person {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            text-align: left;
+            width: 100%;
+        }
+
+        .partner-person img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .partner-person-role {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .partner-person-name {
+            font-family: var(--font-head);
+            font-size: 1.05rem;
+            display: block;
+        }
+
+        .partner-person-bio {
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            opacity: 0.85;
+        }
+
         /* Footer */
         footer {
             padding: 5rem 0;
@@ -820,6 +918,7 @@
             <a href="#services">Services</a>
             <a href="#rao-engine">RAO Engine</a>
             <a href="#team">Our Team</a>
+            <a href="#partners">Our Partners</a>
             <a href="mailto:geoecon@16thcouncil.uk?subject=Inquiry regarding Strategic Advice">Contact</a>
         </div>
     </nav>
@@ -1082,17 +1181,6 @@
                 <div class="carousel" id="teamCarousel">
                     
                     <div class="team-card">
-                        <img src="team/brian.png" alt="Dr. Brian O. Reuben" class="team-photo">
-                        <div class="team-header">
-                            <span class="team-role">Founder, 16th Council</span>
-                            <div class="team-name-row">
-                                <span class="team-name">Dr. Brian O. Reuben</span>
-                            </div>
-                        </div>
-                        <p class="team-bio">With over two decades of experience, Dr. Reuben empowers businesses and governments to deliver sustainable value through strategic decision-making and responsible leadership.</p>
-                    </div>
-
-                    <div class="team-card">
                         <img src="team/ishan.png" alt="Ishan Jasuja" class="team-photo">
                         <div class="team-header">
                             <span class="team-role">Director</span>
@@ -1309,6 +1397,44 @@
                         <p class="team-bio">An AI engineer with expertise in building intelligent applications that address complex, real-world challenges. At the GSU, he contributes to the development of AI-driven tools and analytical systems.</p>
                     </div>
 
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="partners">
+        <div class="container">
+            <div class="fade-up" style="margin-bottom: 3rem; max-width: 100%;">
+                <h2>Our Partners</h2>
+                <p style="max-width: 100%;">We work alongside leading institutions to extend our reach and deepen our expertise.</p>
+            </div>
+
+            <div class="grid-2 fade-up delay-1">
+                <div class="partner-card">
+                    <div class="partner-logo-slot">
+                        <img src="logos/16thcouncil-logo.png" alt="The Sixteenth Council">
+                    </div>
+                    <div class="partner-name">The Sixteenth Council</div>
+                    <p class="partner-bio">A global strategic platform that convenes leaders, institutions, governments, and stakeholders to address the critical issues shaping economies, industries, and societies worldwide — delivering geopolitical intelligence, policy dialogue, and cross-border collaboration through research initiatives, high-level forums, and investment facilitation. The GSU operates as the Sixteenth Council's geoeconomic research and advisory unit.</p>
+                    <a href="http://www.16thcouncil.uk" target="_blank" class="partner-link">www.16thcouncil.uk</a>
+
+                    <div class="partner-person">
+                        <img src="team/brian.png" alt="Dr. Brian O. Reuben">
+                        <div>
+                            <span class="partner-person-role">Founder, 16th Council</span>
+                            <span class="partner-person-name">Dr. Brian O. Reuben</span>
+                            <p class="partner-person-bio">With over two decades of experience, Dr. Reuben empowers businesses and governments to deliver sustainable value through strategic decision-making and responsible leadership.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="partner-card">
+                    <div class="partner-logo-slot">
+                        <img src="logos/jgu-logo.png" alt="O.P. Jindal Global University">
+                    </div>
+                    <div class="partner-name">O.P. Jindal Global University</div>
+                    <p class="partner-bio">India's premier private university, offering interdisciplinary programmes across law, business, liberal arts, psychology, economics, media, and international relations to over 16,000 students, with a faculty of 1,100+. Recognised as an Institution of Eminence, JGU combines global exposure with experiential learning to cultivate ethical leaders committed to public service, backed by partnerships with 600+ international universities.</p>
+                    <a href="https://jgu.edu.in/" target="_blank" class="partner-link">jgu.edu.in</a>
                 </div>
             </div>
         </div>
