@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSU | Geoeconomic Strategy Unit</title>
+    <link rel="icon" type="image/x-icon" href="assets/gsu.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg:    #192030;
+            --secondary-bg:  #1f283b;
+            --text-white:    #eeeae0;
+            --text-muted:    rgba(238,234,224,.52);
+            --text-faint:    rgba(238,234,224,.28);
+            --accent-gold:   #C2A56D;
+            --border-subtle: rgba(255,255,255,.07);
+            --border-gold:   rgba(194,165,109,.26);
+            --ease-expo:     cubic-bezier(.16,1,.3,1);
+            --ease-std:      cubic-bezier(.4,0,.2,1);
+            --card-bg:       linear-gradient(160deg,rgba(30,40,60,.97) 0%,rgba(22,32,50,.93) 100%);
+            --card-shadow:   0 2px 14px rgba(0,0,0,.22),0 1px 0 rgba(255,255,255,.04) inset;
+            --card-hover:    0 6px 28px rgba(0,0,0,.32),0 0 18px rgba(194,165,109,.05),0 1px 0 rgba(255,255,255,.06) inset;
+            --font-head: 'Playfair Display', serif;
+            --font-body: 'EB Garamond', serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+
+        html { scroll-behavior: smooth; }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            line-height: 1.72;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* === LAYOUT === */
+        .wrap {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 80px;
+        }
+        section { position: relative; overflow: hidden; }
+        .sp { padding: 140px 0; }
+        .alt { background: var(--secondary-bg); }
+
+        /* === TYPOGRAPHY === */
+        h1,h2,h3,h4,h5 { font-family: var(--font-head); font-weight:400; }
+
+        .eyebrow {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .28em;
+            color: var(--accent-gold);
+            margin-bottom: 1.25rem;
+        }
+
+        .sec-title {
+            font-size: clamp(2.2rem,3.8vw,3.6rem);
+            line-height: 1.08;
+            letter-spacing: -.016em;
+            color: var(--text-white);
+            margin-bottom: .75rem;
+        }
+        .sec-title em { font-style:italic; color:var(--accent-gold); }
+
+        .sec-sub {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.78;
+            max-width: 60ch;
+        }
+
+        .gold-rule {
+            display: block;
+            width: 52px;
+            height: 1.5px;
+            background: var(--accent-gold);
+            margin: 1.5rem 0;
+        }
+
+        .sec-head { margin-bottom: 4rem; }
+
+        p { font-size: 1.05rem; line-height: 1.78; color: var(--text-muted); }
+        a { text-decoration:none; color:inherit; }
+
+        /* === GHOST MARKS === */
+        .ghost {
+            position: absolute;
+            font-family: var(--font-head);
+            font-size: 14vw;
+            font-weight: 700;
+            opacity: .038;
+            color: var(--text-white);
+            pointer-events: none;
+            user-select: none;
+            line-height: 1;
+            letter-spacing: -.02em;
+            z-index: 0;
+        }
+
+        /* === NAV === */
+        #nav {
+            position: fixed;
+            top:0; left:0; right:0;
+            z-index: 200;
+            background: rgba(25,32,48,.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid transparent;
+            transition: border-color .5s var(--ease-expo);
+        }
+        #nav.scrolled { border-bottom-color: var(--border-subtle); }
+
+        .nav-inner {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 80px;
+            height: 72px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: height .5s var(--ease-expo);
+        }
+        #nav.scrolled .nav-inner { height: 56px; }
+
+        .nav-logo img {
+            height: 40px; width:auto;
+            transition: height .5s var(--ease-expo);
+        }
+        #nav.scrolled .nav-logo img { height: 32px; }
+
+        .nav-links { display:flex; align-items:center; gap:0; }
+
+        .nav-links a {
+            font-family: var(--font-body);
+            font-size: .88rem;
+            letter-spacing: .05em;
+            color: var(--text-muted);
+            padding: .5rem 1.1rem;
+            position: relative;
+            transition: color .3s var(--ease-std);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 1.1rem; right: 1.1rem;
+            height: 1px;
+            background: var(--accent-gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .4s var(--ease-expo);
+        }
+        .nav-links a:hover { color: var(--text-white); }
+        .nav-links a:hover::after { transform: scaleX(1); }
+
+        .nav-cta {
+            margin-left: 1.25rem;
+            font-family: var(--font-mono);
+            font-size: .68rem;
+            font-weight: 600;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            border: 1px solid var(--border-gold);
+            padding: .5rem 1.25rem;
+            transition: background .3s, color .3s;
+        }
+        .nav-cta:hover { background: var(--accent-gold); color: var(--primary-bg); }
+
+        /* === BUTTONS === */
+        .btn {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: .7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            padding: .9rem 2.2rem;
+            border: 1px solid var(--border-gold);
+            color: var(--text-white);
+            background: transparent;
+            cursor: pointer;
+            transition: background .35s var(--ease-expo), border-color .35s, transform .35s var(--ease-expo), box-shadow .35s;
+        }
+        .btn:hover {
+            background: rgba(194,165,109,.09);
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(0,0,0,.2);
+        }
+        .btn-solid {
+            background: var(--accent-gold);
+            color: var(--primary-bg);
+            border-color: var(--accent-gold);
+        }
+        .btn-solid:hover { background: rgba(194,165,109,.85); color: var(--primary-bg); }
+
+        /* === SCROLL REVEAL === */
+        .fu {
+            opacity: 0;
+            transform: translateY(34px);
+            transition: opacity .9s var(--ease-expo), transform .9s var(--ease-expo);
+        }
+        .fu.vis { opacity:1; transform:translateY(0); }
+        .d1 { transition-delay:.1s; }
+        .d2 { transition-delay:.2s; }
+        .d3 { transition-delay:.3s; }
+        .d4 { transition-delay:.4s; }
+        .d5 { transition-delay:.5s; }
+
+        /* === HERO === */
+        #hero {
+            height: 100vh;
+            min-height: 680px;
+            display: flex;
+            align-items: center;
+            padding-top: 72px;
+            overflow: hidden;
+        }
+
+        .hero-layout {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 80px;
+        }
+
+        .hero-text {
+            width: 46%;
+            flex-shrink: 0;
+            z-index: 5;
+            position: relative;
+        }
+
+        .hero-ghost {
+            position: absolute;
+            font-family: var(--font-head);
+            font-size: 19vw;
+            font-weight: 700;
+            opacity: .022;
+            color: var(--text-white);
+            pointer-events: none;
+            user-select: none;
+            line-height: .85;
+            letter-spacing: -.03em;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .hero-eyebrow {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .28em;
+            color: var(--accent-gold);
+            margin-bottom: 1.75rem;
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity .9s var(--ease-expo) .2s, transform .9s var(--ease-expo) .2s;
+        }
+        .hero-eyebrow.vis { opacity:1; transform:translateY(0); }
+
+        #hero-h1 {
+            font-size: clamp(3rem,5.5vw,5.6rem);
+            line-height: 1.05;
+            letter-spacing: -.019em;
+            color: var(--text-white);
+            margin-bottom: 0;
+        }
+
+        .hw {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .8s var(--ease-expo), transform .8s var(--ease-expo), color .35s;
+        }
+        .hw.vis { opacity:1; transform:translateY(0); }
+
+        .hw-last {
+            position: relative;
+            white-space: nowrap;
+        }
+        .hw-last::after {
+            content: '';
+            position: absolute;
+            bottom: 3px; left: 0; right: .06em;
+            height: 2px;
+            background: var(--accent-gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .8s var(--ease-expo);
+        }
+        .hw-last.ul::after { transform: scaleX(1); }
+
+        .hero-lede {
+            font-size: 1.15rem;
+            line-height: 1.75;
+            color: var(--text-muted);
+            max-width: 50ch;
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity .9s var(--ease-expo), transform .9s var(--ease-expo);
+        }
+        .hero-lede.vis { opacity:1; transform:translateY(0); }
+
+        .hero-ctas {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            margin-top: 2.5rem;
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity .9s var(--ease-expo), transform .9s var(--ease-expo);
+        }
+        .hero-ctas.vis { opacity:1; transform:translateY(0); }
+
+        #canvas-container {
+            position: absolute;
+            top: 0; right: 0;
+            width: 60%;
+            height: 100%;
+            z-index: 1;
+            cursor: grab;
+        }
+        #canvas-container:active { cursor: grabbing; }
+
+        /* === TICKER === */
+        .ticker-band {
+            background: rgba(255,255,255,.025);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            height: 44px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .ticker-label {
+            flex-shrink: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: 0 1.5rem 0 2rem;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .22em;
+            color: var(--accent-gold);
+            background: var(--primary-bg);
+            border-right: 1px solid var(--border-subtle);
+            z-index: 2;
+        }
+
+        .ticker-dot { width:5px; height:5px; border-radius:50%; background:var(--accent-gold); flex-shrink:0; }
+
+        .ticker-scroll {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        .ticker-scroll::before, .ticker-scroll::after {
+            content: '';
+            position: absolute; top:0; bottom:0; width:50px; z-index:1; pointer-events:none;
+        }
+        .ticker-scroll::before { left:0; background:linear-gradient(90deg,var(--primary-bg),transparent); }
+        .ticker-scroll::after  { right:0; background:linear-gradient(270deg,var(--primary-bg),transparent); }
+
+        .ticker-track {
+            display: flex;
+            width: max-content;
+            animation: tkr 42s linear infinite;
+        }
+
+        .tk-item {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            padding: 0 2.5rem;
+            font-family: var(--font-mono);
+            font-size: 9.5px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .17em;
+            color: var(--text-muted);
+            white-space: nowrap;
+            border-right: 1px solid var(--border-subtle);
+        }
+        .tk-arr { color: var(--accent-gold); }
+
+        @keyframes tkr {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* === ABOUT / THE DIFFERENCE === */
+        #about { background: var(--secondary-bg); }
+
+        .about-map {
+            position: absolute;
+            top:0; left:0; right:0; bottom:0;
+            width:100%; height:100%;
+            object-fit: cover;
+            opacity: .07;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .about-intro {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 90px;
+            margin-bottom: 5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .diff-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border-subtle);
+            position: relative;
+            z-index: 2;
+        }
+
+        .diff-card {
+            background: var(--secondary-bg);
+            padding: 3rem 2.5rem;
+            transition: background .42s var(--ease-expo);
+        }
+        .diff-card:hover { background: rgba(194,165,109,.06); }
+
+        .diff-num {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-bottom: 1.25rem;
+        }
+
+        .diff-title {
+            display: block;
+            font-family: var(--font-head);
+            font-size: 1.65rem;
+            color: var(--text-white);
+            letter-spacing: -.01em;
+            margin-bottom: 1.1rem;
+        }
+
+        .diff-body {
+            font-size: .98rem;
+            color: var(--text-muted);
+            line-height: 1.75;
+        }
+
+        /* === RAO ENGINE === */
+        #rao { background: var(--primary-bg); }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 1px;
+            background: var(--border-subtle);
+            margin-bottom: 5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-cell {
+            background: var(--primary-bg);
+            padding: 2.5rem 2rem;
+        }
+
+        .stat-n {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: clamp(2rem,3.2vw,2.8rem);
+            font-weight: 400;
+            color: var(--accent-gold);
+            line-height: 1;
+            margin-bottom: .5rem;
+        }
+        .stat-n sup {
+            font-size: .45em;
+            letter-spacing: .04em;
+            vertical-align: super;
+        }
+
+        .stat-lbl {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: var(--text-muted);
+            margin-bottom: .28rem;
+        }
+
+        .stat-note {
+            display: block;
+            font-family: var(--font-body);
+            font-style: italic;
+            font-size: .82rem;
+            color: var(--text-faint);
+        }
+
+        .rao-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: start;
+            position: relative;
+            z-index: 2;
+        }
+
+        .weight-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color .45s var(--ease-expo), box-shadow .45s var(--ease-expo);
+        }
+        .weight-card::before {
+            content:'';
+            position:absolute; top:0; left:15%; right:15%; height:1px;
+            background: linear-gradient(90deg,transparent,rgba(194,165,109,.3),transparent);
+            opacity:0; transition:opacity .4s;
+        }
+        .weight-card:hover::before { opacity:1; }
+        .weight-card:hover { border-color:var(--border-gold); box-shadow:var(--card-hover); }
+
+        .weight-card h3 { font-size:1.35rem; color:var(--text-white); margin-bottom:1.25rem; }
+
+        .weight-row { margin-bottom:1.2rem; }
+        .weight-row:last-child { margin-bottom:0; }
+
+        .wlabel {
+            font-family: var(--font-mono);
+            font-size: .88rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: .25rem;
+        }
+        .wdesc { font-size:.92rem; color:var(--text-muted); line-height:1.62; }
+
+        .flowchart {
+            background: rgba(255,255,255,.02);
+            border: 1px solid var(--border-subtle);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .flow-step {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-gold);
+            padding: 1.35rem 1.75rem;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            transition: border-color .3s, box-shadow .3s;
+        }
+        .flow-step:hover { border-color:var(--accent-gold); box-shadow:0 0 20px rgba(194,165,109,.1); }
+        .flow-step h5 { font-family:var(--font-head); color:var(--accent-gold); font-size:1rem; margin-bottom:.35rem; font-weight:400; }
+        .flow-step p  { font-size:.88rem; color:var(--text-muted); margin:0; line-height:1.6; }
+
+        .arrow-dn {
+            width: 1.5px;
+            height: 1.5rem;
+            background: linear-gradient(to bottom, rgba(255,255,255,.08), var(--accent-gold));
+        }
+
+        .hc-badge {
+            position: absolute;
+            top:-10px; right:-10px;
+            background: var(--accent-gold);
+            color: var(--primary-bg);
+            font-family: var(--font-mono);
+            font-size: .56rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+        }
+
+        /* === PRODUCTS (BAROMETER) === */
+        #barometer { background: var(--secondary-bg); }
+
+        .prod-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .prod-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: border-color .45s var(--ease-expo), transform .45s var(--ease-expo), box-shadow .45s;
+        }
+        .prod-card::before {
+            content:'';
+            position:absolute; top:0; left:10%; right:10%; height:1px;
+            background:linear-gradient(90deg,transparent,rgba(194,165,109,.28),transparent);
+            opacity:0; transition:opacity .4s;
+        }
+        .prod-card:hover::before { opacity:1; }
+        .prod-card:hover { border-color:var(--border-gold); transform:translateY(-4px); box-shadow:var(--card-hover); }
+
+        .prod-num {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+            color: var(--text-faint);
+            margin-bottom: .75rem;
+        }
+
+        .prod-flag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 7.5px;
+            font-weight: 600;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--primary-bg);
+            background: var(--accent-gold);
+            padding: 2px 8px;
+            margin-bottom: 1rem;
+        }
+
+        .prod-title { font-size:1.4rem; color:var(--text-white); margin-bottom:.75rem; line-height:1.25; }
+        .prod-desc  { font-size:.98rem; color:var(--text-muted); line-height:1.72; flex:1; margin-bottom:0; }
+
+        .prod-actions { margin-top:2rem; }
+
+        .btn-dl {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: .65rem;
+            font-weight: 600;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            padding: .6rem 1.1rem;
+            border: 1px solid var(--border-gold);
+            color: var(--text-white);
+            background: transparent;
+            cursor: pointer;
+            margin-right: .45rem;
+            margin-bottom: .45rem;
+            transition: background .3s, border-color .3s;
+        }
+        .btn-dl:hover { background:rgba(194,165,109,.1); border-color:var(--accent-gold); }
+        .btn-dl.dim   { opacity:.55; }
+        .btn-dl.dimr  { opacity:.32; }
+
+        .prod-link {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: .68rem;
+            font-weight: 600;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-top: .25rem;
+            transition: opacity .2s;
+        }
+        .prod-link:hover { opacity:.65; }
+
+        /* === INSIGHTS === */
+        #insights { background: var(--primary-bg); }
+
+        .brief-featured-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .brief-featured {
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            background: rgba(255,255,255,.02);
+            border: 1px solid var(--border-subtle);
+            border-top: 2px solid var(--accent-gold);
+            text-decoration: none;
+            transition: transform .4s var(--ease-expo), box-shadow .4s, background .3s;
+        }
+        .brief-featured:hover { transform:translateY(-5px); box-shadow:0 20px 50px rgba(0,0,0,.3); background:rgba(255,255,255,.04); }
+
+        .brief-category {
+            font-family: var(--font-mono);
+            font-size: .62rem;
+            font-weight: 600;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: .75rem;
+            opacity: .8;
+        }
+        .brief-featured-title    { font-size:1.38rem; color:var(--text-white); margin-bottom:.65rem; line-height:1.25; flex:1; }
+        .brief-featured-subtitle { font-size:.9rem; color:var(--text-muted); line-height:1.6; margin-bottom:1.25rem; }
+        .brief-author  { font-size:.78rem; color:var(--text-faint); font-style:italic; display:block; margin-bottom:1rem; }
+        .brief-read-link {
+            font-family: var(--font-mono);
+            font-size: .68rem;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+        }
+
+        .i-divider {
+            height: 1px;
+            margin: 4rem 0;
+            background: linear-gradient(90deg, transparent, var(--border-subtle) 30%, var(--border-subtle) 70%, transparent);
+            position: relative;
+            z-index: 2;
+        }
+
+        .sub-label {
+            font-family: var(--font-mono);
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1.75rem;
+            display: block;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border: 1px solid var(--border-gold);
+            background: rgba(255,255,255,.02);
+            transition: all .4s var(--ease-expo);
+        }
+        .video-wrapper:hover { border-color:var(--accent-gold); transform:translateY(-4px); box-shadow:0 12px 30px rgba(0,0,0,.25); }
+        .video-wrapper iframe { position:absolute; top:0; left:0; width:100%; height:100%; }
+
+        /* === QUOTE BAND === */
+        .quote-band {
+            background: var(--secondary-bg);
+            padding: 120px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .q-mark {
+            display: block;
+            font-family: var(--font-head);
+            font-size: clamp(4rem,7vw,7rem);
+            line-height: .65;
+            color: var(--accent-gold);
+            opacity: .55;
+            margin-bottom: .5rem;
+        }
+
+        .quote-band blockquote {
+            font-family: var(--font-head);
+            font-style: italic;
+            font-size: clamp(1.5rem,2.8vw,2.85rem);
+            line-height: 1.38;
+            color: var(--text-white);
+            max-width: 860px;
+            margin: 0 auto 2rem;
+            letter-spacing: -.01em;
+        }
+        .quote-band blockquote em { color:var(--accent-gold); font-style:italic; }
+
+        .q-attr { display:flex; align-items:center; justify-content:center; gap:1rem; }
+        .q-rule { width:36px; height:1px; background:var(--accent-gold); opacity:.45; }
+        .q-src {
+            font-family: var(--font-mono);
+            font-size: 9.5px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .22em;
+            color: var(--text-faint);
+        }
+
+        /* === TEAM === */
+        #team { background: var(--primary-bg); }
+
+        .carousel-hdr {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .carousel-wrap { overflow:hidden; padding:1rem 0 2rem; position:relative; z-index:2; }
+
+        .carousel {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 1.5rem;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .carousel::-webkit-scrollbar { display:none; }
+
+        .team-card {
+            min-width: 300px; max-width: 300px;
+            background: rgba(255,255,255,.03);
+            border-top: 2px solid var(--accent-gold);
+            padding: 2rem;
+            scroll-snap-align: start;
+            transition: background .3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .team-card:hover { background:rgba(255,255,255,.055); }
+
+        .team-photo {
+            width: 78px; height: 78px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1.25rem;
+            border: 1px solid var(--border-gold);
+        }
+
+        .team-role {
+            font-family: var(--font-mono);
+            font-size: 8.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: .28rem;
+        }
+
+        .team-name-row { display:flex; align-items:center; gap:.75rem; margin-bottom:.65rem; }
+        .team-name { font-family:var(--font-head); font-size:1.3rem; line-height:1.2; color:var(--text-white); }
+        .li-icon { opacity:.45; transition:opacity .25s; display:flex; }
+        .li-icon:hover { opacity:1; }
+        .li-icon svg { fill:var(--text-white); width:16px; height:16px; }
+        .team-bio { font-size:.9rem; color:var(--text-muted); line-height:1.6; margin-top:auto; padding-top:.65rem; }
+
+        .ctrl-btns { display:flex; gap:.75rem; }
+        .ctrl-btn {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-white);
+            width:40px; height:40px;
+            border-radius:50%;
+            cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            font-size:1rem;
+            transition: border-color .3s, color .3s;
+        }
+        .ctrl-btn:hover { border-color:var(--accent-gold); color:var(--accent-gold); }
+
+        /* === NETWORK === */
+        #network { background: var(--secondary-bg); }
+
+        .partners-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .partner-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--card-shadow);
+            padding: 3rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+            transition: border-color .45s var(--ease-expo), transform .45s var(--ease-expo), box-shadow .45s;
+        }
+        .partner-card::before {
+            content:'';
+            position:absolute; top:0; left:15%; right:15%; height:1px;
+            background:linear-gradient(90deg,transparent,rgba(194,165,109,.26),transparent);
+            opacity:0; transition:opacity .4s;
+        }
+        .partner-card:hover::before { opacity:1; }
+        .partner-card:hover { border-color:var(--border-gold); transform:translateY(-4px); box-shadow:var(--card-hover); }
+
+        .partner-logo-slot { height:80px; display:flex; align-items:center; margin-bottom:2rem; }
+        .partner-logo-slot img { max-height:100%; max-width:200px; object-fit:contain; }
+
+        .partner-name { font-size:1.3rem; color:var(--accent-gold); margin-bottom:.9rem; }
+        .partner-bio { font-size:.96rem; color:var(--text-muted); line-height:1.72; margin-bottom:1.5rem; }
+
+        .partner-link {
+            font-family: var(--font-mono);
+            font-size: .68rem;
+            font-weight: 600;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            border-bottom: 1px solid var(--border-gold);
+            padding-bottom: 2px;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            transition: border-color .2s;
+        }
+        .partner-link:hover { border-bottom-color:var(--accent-gold); }
+
+        .partner-person {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: auto;
+        }
+        .partner-person img { width:52px; height:52px; border-radius:50%; object-fit:cover; border:1px solid var(--border-gold); flex-shrink:0; }
+        .pp-role { font-family:var(--font-mono); font-size:8px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--accent-gold); display:block; margin-bottom:.2rem; }
+        .pp-name { font-family:var(--font-head); font-size:1rem; display:block; color:var(--text-white); }
+        .pp-bio  { font-size:.83rem; color:var(--text-muted); margin-top:.28rem; line-height:1.55; }
+
+        .sec-divider {
+            height: 1px;
+            margin: 4.5rem 0;
+            background: linear-gradient(90deg,transparent,var(--border-subtle) 30%,var(--border-subtle) 70%,transparent);
+            position: relative;
+            z-index: 2;
+        }
+
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .client-card {
+            background: rgba(255,255,255,.03);
+            border: 1px solid var(--border-subtle);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: border-color .3s, transform .4s var(--ease-expo);
+        }
+        .client-card a { display:flex; flex-direction:column; align-items:center; width:100%; }
+        .client-card:hover { border-color:var(--accent-gold); transform:translateY(-4px); }
+
+        .client-logo { height:60px; width:auto; max-width:80%; margin-bottom:1.5rem; filter:grayscale(100%) brightness(200%); opacity:.65; transition:filter .4s, opacity .4s; }
+        .client-card:hover .client-logo { filter:grayscale(0%) brightness(100%); opacity:1; }
+
+        .client-name { font-size:1.05rem; color:var(--accent-gold); margin-bottom:.65rem; }
+        .client-desc { font-size:.86rem; color:var(--text-muted); line-height:1.6; }
+
+        /* === FOOTER === */
+        footer { background:#141826; }
+
+        .cta-banner {
+            text-align: center;
+            padding: 110px 80px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: radial-gradient(ellipse 60% 55% at 50% 50%,rgba(194,165,109,.04) 0%,transparent 70%);
+        }
+
+        .cta-banner h2 {
+            font-size: clamp(2rem,3.6vw,3.3rem);
+            color: var(--text-white);
+            margin-bottom: 1.35rem;
+            letter-spacing: -.013em;
+            line-height: 1.18;
+        }
+        .cta-banner h2 em { font-style:italic; color:var(--accent-gold); }
+        .cta-banner p { color:var(--text-muted); font-size:1.08rem; max-width:50ch; margin:0 auto 2.5rem; }
+
+        .footer-main {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 70px 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 60px;
+        }
+
+        .f-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .22em;
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: 1.25rem;
+        }
+
+        .f-text { font-size:.93rem; color:var(--text-muted); line-height:1.78; }
+        .f-text a { color:var(--text-muted); border-bottom:1px solid transparent; transition:border-color .2s, color .2s; }
+        .f-text a:hover { color:var(--text-white); border-bottom-color:var(--accent-gold); }
+
+        .f-nav { display:flex; flex-direction:column; gap:.55rem; }
+        .f-nav a { font-size:.9rem; color:var(--text-muted); transition:color .2s; }
+        .f-nav a:hover { color:var(--accent-gold); }
+
+        .footer-btm {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 2rem 80px 3rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .f-copy {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 400;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--text-faint);
+        }
+
+        /* === GATE === */
+        .gate-overlay {
+            position:fixed; inset:0;
+            background:rgba(10,14,24,.88);
+            backdrop-filter:blur(6px);
+            -webkit-backdrop-filter:blur(6px);
+            z-index:9999;
+            display:flex; align-items:center; justify-content:center;
+            padding:1rem;
+        }
+        .gate-overlay[hidden] { display:none; }
+
+        .gate-modal {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-gold);
+            padding: 3rem 2.5rem;
+            max-width: 440px; width:100%;
+            position: relative;
+            animation: gfadeIn .25s ease;
+        }
+        @keyframes gfadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+        .gate-close { position:absolute; top:1rem; right:1.25rem; background:none; border:none; color:rgba(255,255,255,.4); font-size:1.5rem; cursor:pointer; line-height:1; padding:0; transition:color .2s; }
+        .gate-close:hover { color:#fff; }
+        .gate-ey { font-family:var(--font-mono); font-size:.65rem; letter-spacing:3px; text-transform:uppercase; color:var(--accent-gold); margin:0 0 1rem; }
+        .gate-ttl { font-family:var(--font-head); font-size:1.6rem; font-weight:400; color:#fff; margin:0 0 .6rem; }
+        .gate-sub { font-size:.9rem; color:rgba(255,255,255,.55); margin:0 0 1.75rem; line-height:1.5; }
+        .gate-inp { display:block; width:100%; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); color:#fff; font-family:var(--font-body); font-size:1rem; padding:.75rem 1rem; margin-bottom:.85rem; outline:none; transition:border-color .2s; }
+        .gate-inp::placeholder { color:rgba(255,255,255,.3); }
+        .gate-inp:focus { border-color:rgba(194,165,109,.6); }
+        .gate-btn { display:block; width:100%; background:var(--accent-gold); color:var(--primary-bg); border:none; font-family:var(--font-body); font-size:1rem; font-weight:600; padding:.85rem 1rem; cursor:pointer; transition:opacity .2s; margin-top:.25rem; }
+        .gate-btn:hover { opacity:.88; }
+        .gate-btn:disabled { opacity:.5; cursor:not-allowed; }
+        .gate-err { color:#e07070; font-size:.85rem; margin:.6rem 0 0; }
+        .gate-err[hidden] { display:none; }
+        .gate-ok { display:flex; flex-direction:column; align-items:center; padding:1rem 0 0; }
+        .gate-ok .gate-sub, .gate-ok .gate-ey { text-align:center; }
+        .gate-ul { width:80px; height:2px; background:var(--accent-gold); margin:.5rem auto 1.25rem; }
+
+        /* === RESPONSIVE === */
+        @media (max-width:1100px) {
+            .wrap,.hero-layout,.nav-inner,.footer-main,.cta-banner,.footer-btm { padding-left:48px; padding-right:48px; }
+        }
+
+        @media (max-width:900px) {
+            .sp { padding:90px 0; }
+            .wrap,.hero-layout,.nav-inner,.footer-main,.cta-banner,.footer-btm { padding-left:32px; padding-right:32px; }
+            .nav-links { display:none; }
+            #hero { height:auto; min-height:100vh; padding-bottom:60px; flex-direction:column; align-items:flex-start; }
+            .hero-layout { flex-direction:column; align-items:flex-start; padding-top:20px; }
+            .hero-text { width:100%; }
+            #canvas-container { position:relative; width:100%; height:50vh; }
+            .about-intro { grid-template-columns:1fr; gap:2.5rem; }
+            .diff-grid { grid-template-columns:1fr; }
+            .stats-row { grid-template-columns:1fr 1fr; }
+            .rao-layout { grid-template-columns:1fr; gap:3rem; }
+            .prod-grid { grid-template-columns:1fr; }
+            .brief-featured-grid { grid-template-columns:1fr; }
+            .video-grid { grid-template-columns:repeat(2,1fr); }
+            .partners-grid { grid-template-columns:1fr; }
+            .clients-grid { grid-template-columns:1fr 1fr; }
+            .footer-main { grid-template-columns:1fr; gap:2.5rem; }
+            .footer-btm { flex-direction:column; gap:1rem; align-items:flex-start; }
+        }
+
+        @media (max-width:600px) {
+            .stats-row { grid-template-columns:1fr; }
+            .video-grid { grid-template-columns:1fr; }
+            .clients-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ====== NAV ====== -->
+<nav id="nav">
+    <div class="nav-inner">
+        <a href="#hero" class="nav-logo"><img src="assets/gsu.png" alt="GSU"></a>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#rao">RAO</a>
+            <a href="#barometer">Barometer</a>
+            <a href="#insights">Insights</a>
+            <a href="#team">Team</a>
+            <a href="#network">Partners</a>
+            <a href="mailto:geoecon@16thcouncil.uk?subject=Inquiry regarding Strategic Advice" class="nav-cta">Contact</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ====== HERO ====== -->
+<section id="hero">
+    <div class="hero-layout">
+        <div class="hero-text">
+            <span class="hero-ghost" aria-hidden="true">GSU</span>
+            <span class="hero-eyebrow" id="heroEy">Geoeconomic Strategy Unit</span>
+            <h1 id="hero-h1">Geopolitics, measured.</h1>
+            <p class="hero-lede" id="heroLede">GSU delivers actionable intelligence at the intersection of geopolitics and capital — data-driven sovereign risk analysis that traditional consultancies don't build and financial houses don't have the expertise to create.</p>
+            <div class="hero-ctas" id="heroCtas">
+                <button class="btn btn-solid" onclick="openGate('GRB Q2 2026.pdf')">View The Risk Barometer</button>
+                <a href="map.html" class="btn">Explore RAO Index</a>
+            </div>
+        </div>
+        <div id="canvas-container"></div>
+    </div>
+</section>
+
+<!-- ====== TICKER ====== -->
+<div class="ticker-band" aria-label="Early Warning Watchlist">
+    <div class="ticker-label">
+        <span class="ticker-dot"></span>
+        Early Warning
+    </div>
+    <div class="ticker-scroll">
+        <div class="ticker-track">
+            <div class="tk-item"><span class="tk-arr">▲</span>Angola — Debt Stress</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Yemen — Regime Fragility</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>DR Congo — Governance Drift</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Bangladesh — Trajectory Break</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Kenya — Debt Stress</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Uzbekistan — Outlook Shift</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Romania — Governance Drift</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Pakistan — Trajectory Risk</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Angola — Debt Stress</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Yemen — Regime Fragility</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>DR Congo — Governance Drift</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Bangladesh — Trajectory Break</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Kenya — Debt Stress</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Uzbekistan — Outlook Shift</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Romania — Governance Drift</div>
+            <div class="tk-item"><span class="tk-arr">▲</span>Pakistan — Trajectory Risk</div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== ABOUT / THE DIFFERENCE ====== -->
+<section id="about">
+    <img src="GSUMapGold.png" alt="" class="about-map" aria-hidden="true">
+    <span class="ghost" aria-hidden="true" style="top:-30px;right:-55px;">01</span>
+    <div class="sp">
+        <div class="wrap">
+            <div class="sec-head fu">
+                <span class="eyebrow">Who We Are</span>
+                <h2 class="sec-title">Narrative intelligence is abundant.<br><em>Evidence is scarce.</em></h2>
+                <span class="gold-rule"></span>
+                <p class="sec-sub">Most geopolitical advice is opinion dressed as analysis. The Geoeconomic Strategy Unit is built on a different premise: sovereign risk can be measured, tested, and forecast — and the output should change decisions, not just inform them.</p>
+            </div>
+
+            <div class="about-intro fu d1">
+                <p>The <strong style="color:var(--text-white);">Geoeconomic Strategy Unit</strong> is a practitioner-led, research-driven firm that translates the complexity of geopolitics and global economics into clear, actionable intelligence for business leaders. We combine on-the-ground insight, policy analysis, and quantitative frameworks to help executives decide where to deploy capital, how to structure business models, and when to exercise strategic patience.</p>
+                <p>Our mission is to improve capital mobility and unlock cross-border growth by highlighting risks, aligning incentives, and sequencing action across high-growth trade corridors. We draw on long-standing relationships with ministries, investors, media, and corporations to translate analysis into financing structures and risk-mitigation strategies.</p>
+            </div>
+
+            <div class="diff-grid fu d2">
+                <div class="diff-card">
+                    <span class="diff-num">#01</span>
+                    <span class="diff-title">Empirical</span>
+                    <p class="diff-body">Every claim traces to data. Our frameworks are built on fifteen years of observations across 156 countries — with the causal tests to back them, not anecdotes from the ground.</p>
+                </div>
+                <div class="diff-card">
+                    <span class="diff-num">#02</span>
+                    <span class="diff-title">Quantitative</span>
+                    <p class="diff-body">RAO scores, regime classification, and trajectory signals — outputs you can put in a model, not just a memo. Intelligence that earns its place in a spreadsheet.</p>
+                </div>
+                <div class="diff-card">
+                    <span class="diff-num">#03</span>
+                    <span class="diff-title">Actionable</span>
+                    <p class="diff-body">Analysis is only intelligence when it changes a decision. Every deliverable ends where it should begin: what to do, where to do it, and when to move.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== RAO ENGINE ====== -->
+<section id="rao">
+    <span class="ghost" aria-hidden="true" style="bottom:-40px;left:-55px;">02</span>
+    <div class="sp">
+        <div class="wrap">
+            <div class="sec-head fu">
+                <span class="eyebrow">Core IP</span>
+                <h2 class="sec-title">The RAO Framework</h2>
+                <span class="gold-rule"></span>
+                <p class="sec-sub">Risk-Adjusted Opportunity — a quantitative scoring system measuring governance quality, growth trajectory, and fragility risk across the sovereign universe. Our proprietary engine processes continuous data signals to deliver scores on demand.</p>
+            </div>
+
+            <div class="stats-row fu d1">
+                <div class="stat-cell">
+                    <span class="stat-n">156</span>
+                    <span class="stat-lbl">Countries Scored</span>
+                    <span class="stat-note">Full sovereign universe</span>
+                </div>
+                <div class="stat-cell">
+                    <span class="stat-n">15<sup>yrs</sup></span>
+                    <span class="stat-lbl">Panel Data</span>
+                    <span class="stat-note">2010 – 2025</span>
+                </div>
+                <div class="stat-cell">
+                    <span class="stat-n">4</span>
+                    <span class="stat-lbl">Independent Pillars</span>
+                    <span class="stat-note">Opportunity · Stability · Capacity · Trajectory</span>
+                </div>
+                <div class="stat-cell">
+                    <span class="stat-n">60<sup>/40</sup></span>
+                    <span class="stat-lbl">Weighting</span>
+                    <span class="stat-note">Opportunity / Fragility</span>
+                </div>
+            </div>
+
+            <div class="rao-layout">
+                <div class="fu d2">
+                    <div class="weight-card">
+                        <h3>The 60/40 Weighting</h3>
+                        <p style="font-size:.93rem;margin-bottom:1.5rem;">Our algorithm balances two competing forces to produce a composite RAO score (0–10):</p>
+                        <div class="weight-row">
+                            <span class="wlabel">60% Opportunity</span>
+                            <p class="wdesc">GDP growth, trade balances, policy incentives, and market entry feasibility.</p>
+                        </div>
+                        <div class="weight-row">
+                            <span class="wlabel">40% Fragility</span>
+                            <p class="wdesc">Sovereign spreads, currency volatility, conflict risks, and regulatory shifts.</p>
+                        </div>
+                    </div>
+                    <p style="margin-bottom:2rem;">Beyond country-level data, our system allows for <strong style="color:var(--text-white);">on-demand, sector-specific scoring</strong>. Whether you operate in Fintech, Renewable Energy, or Critical Minerals, we isolate the regulatory environments and supply chain risks that matter to your industry.</p>
+                    <a href="map.html" class="btn">View RAO Heatmap</a>
+                </div>
+
+                <div class="flowchart fu d3">
+                    <div class="flow-step">
+                        <h5>1. Global Data Ingestion</h5>
+                        <p>Continuous monitoring of World Bank data, Central Bank feeds, and global news outlets.</p>
+                    </div>
+                    <div class="arrow-dn"></div>
+                    <div class="flow-step">
+                        <h5>2. LLM Analysis Engine</h5>
+                        <p>AI evaluates data against Opportunity &amp; Fragility variables to identify material changes.</p>
+                    </div>
+                    <div class="arrow-dn"></div>
+                    <div class="flow-step">
+                        <h5>3. Dynamic Scoring</h5>
+                        <p>Calculation of updated RAO scores using our weighted 60/40 methodology.</p>
+                    </div>
+                    <div class="arrow-dn"></div>
+                    <div class="flow-step" style="position:relative;">
+                        <span class="hc-badge">Human Check</span>
+                        <h5>4. Analyst Quality Control</h5>
+                        <p>Significant score movements trigger mandatory review by our human experts to ensure accuracy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== BAROMETER & PRODUCTS ====== -->
+<section id="barometer" class="alt">
+    <span class="ghost" aria-hidden="true" style="top:-20px;right:-45px;">03</span>
+    <div class="sp">
+        <div class="wrap">
+            <div class="sec-head fu">
+                <span class="eyebrow">Intelligence Products</span>
+                <h2 class="sec-title">Mapping the next moves of<br><em>capital and power.</em></h2>
+                <span class="gold-rule"></span>
+                <p class="sec-sub">Three distinct products. One analytical foundation. Each built to deliver intelligence at the level of specificity your decisions require.</p>
+            </div>
+
+            <div class="prod-grid">
+                <div class="prod-card fu">
+                    <span class="prod-num">#01</span>
+                    <span class="prod-flag">Flagship</span>
+                    <h3 class="prod-title">Geoeconomic Risk Barometer</h3>
+                    <p class="prod-desc">Country and corridor risk-and-opportunity assessments grounded in RAO scores. Where the exposure is, where the upside is, and what would change the call. Published quarterly, with interim updates when conditions materially shift.</p>
+                    <div class="prod-actions">
+                        <button class="btn-dl" onclick="openGate('GRB Q2 2026.pdf')">Q2 2026 ↓</button>
+                        <button class="btn-dl dim" onclick="openGate('GRB Q1 2026.pdf')">Q1 2026</button>
+                        <button class="btn-dl dimr" onclick="openGate('GRB Q4 2025.pdf')">Q4 2025</button>
+                    </div>
+                </div>
+
+                <div class="prod-card fu d1">
+                    <span class="prod-num">#02</span>
+                    <h3 class="prod-title">India Monthly</h3>
+                    <p class="prod-desc">The investor and executive briefing on India — macro and policy shifts, rotating sector deep-dives, and a forward watch. Official sources only; strict source discipline throughout every edition.</p>
+                    <div class="prod-actions">
+                        <a class="prod-link" href="mailto:geoecon@16thcouncil.uk?subject=India Monthly Subscription">Request Subscription →</a>
+                    </div>
+                </div>
+
+                <div class="prod-card fu d2">
+                    <span class="prod-num">#03</span>
+                    <h3 class="prod-title">Strategic Advisory</h3>
+                    <p class="prod-desc">Bespoke engagement for market entry, corridor strategy, and portfolio exposure. C-suite and board briefings, scenario workshops, and risk-mitigation design — calibrated to your time horizon and risk appetite.</p>
+                    <div class="prod-actions">
+                        <a class="prod-link" href="mailto:geoecon@16thcouncil.uk?subject=Advisory Inquiry">Enquire →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== INSIGHTS ====== -->
+<section id="insights">
+    <span class="ghost" aria-hidden="true" style="bottom:-30px;left:-40px;">04</span>
+    <div class="sp">
+        <div class="wrap">
+            <div class="sec-head fu">
+                <span class="eyebrow">Latest Insights</span>
+                <h2 class="sec-title">Expert analysis from the field.</h2>
+                <span class="gold-rule"></span>
+            </div>
+
+            <span class="sub-label fu d1">Strategic Briefs</span>
+            <div id="strategic-briefs-grid" class="fu d2"></div>
+
+            <div class="i-divider fu d3"></div>
+
+            <span class="sub-label fu d3">Video Intelligence</span>
+            <div class="video-grid fu d4" id="video-grid"></div>
+
+            <script>
+                fetch('videos.json')
+                    .then(r=>r.json())
+                    .then(videos=>{
+                        document.getElementById('video-grid').innerHTML=videos.map(v=>`
+                            <div class="video-wrapper">
+                                <iframe src="https://www.youtube.com/embed/${v.id}?rel=0&modestbranding=1"
+                                    title="${v.title.replace(/"/g,'&quot;')}"
+                                    frameborder="0"
+                                    allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin"
+                                    allowfullscreen></iframe>
+                            </div>`).join('');
+                    }).catch(()=>{});
+            </script>
+
+            <div style="text-align:center;margin-top:3rem;" class="fu d5">
+                <a href="https://www.youtube.com/@GeoeconomicStrategyUnit" target="_blank" class="btn">Visit Our Channel</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== QUOTE BAND ====== -->
+<div class="quote-band alt">
+    <span class="ghost" aria-hidden="true" style="top:50%;left:50%;transform:translate(-50%,-50%);font-size:32vw;opacity:.018;">&ldquo;</span>
+    <div class="wrap" style="position:relative;z-index:2;">
+        <span class="q-mark fu">&ldquo;</span>
+        <blockquote class="fu d1">Regulatory quality — not GDP growth — is the number one determinant of a country's <em>geoeconomic position.</em></blockquote>
+        <div class="q-attr fu d2">
+            <span class="q-rule"></span>
+            <span class="q-src">Geoeconomic Strategy Unit &middot; RAO Framework Research</span>
+            <span class="q-rule"></span>
+        </div>
+    </div>
+</div>
+
+<!-- ====== TEAM ====== -->
+<section id="team">
+    <span class="ghost" aria-hidden="true" style="top:-20px;right:-55px;">05</span>
+    <div class="sp">
+        <div class="wrap">
+            <div class="carousel-hdr fu">
+                <div>
+                    <span class="eyebrow">Our People</span>
+                    <h2 class="sec-title" style="margin-bottom:0;">The Analysts Behind the Analysis</h2>
+                </div>
+                <div class="ctrl-btns">
+                    <button class="ctrl-btn" id="prevBtn">&#8592;</button>
+                    <button class="ctrl-btn" id="nextBtn">&#8594;</button>
+                </div>
+            </div>
+
+            <div class="carousel-wrap fu d1">
+                <div class="carousel" id="teamCarousel">
+
+                    <div class="team-card">
+                        <img src="team/ishan.png" alt="Ishan Jasuja" class="team-photo">
+                        <div><span class="team-role">Director</span>
+                        <div class="team-name-row">
+                            <span class="team-name">Ishan Jasuja</span>
+                            <a href="https://www.linkedin.com/in/ishanjasuja/" target="_blank" class="li-icon"><svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                        </div></div>
+                        <p class="team-bio">Holds a Master's in International Political Economy from King's College London. His experience spans financial services, strategic advisory, and diplomacy, informing the GSU's institutional strategy and client engagements.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/adip.png" alt="Adip Krishna Guduru" class="team-photo">
+                        <div><span class="team-role">Chief Technology Officer</span>
+                        <div class="team-name-row">
+                            <span class="team-name">Adip Krishna Guduru</span>
+                            <a href="https://www.linkedin.com/in/adipkg/" target="_blank" class="li-icon"><svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                        </div></div>
+                        <p class="team-bio">Holds a BTech in Computer Science Engineering with a specialisation in AI and Machine Learning from Woxsen University. At the GSU, he leads the unit's technological infrastructure, digital strategy, and data-driven intelligence platforms.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/pranoy.png" alt="Pranoy Roy Choudhury" class="team-photo">
+                        <div><span class="team-role">Chief Data Officer</span>
+                        <div class="team-name-row">
+                            <span class="team-name">Pranoy Roy Choudhury</span>
+                            <a href="https://www.linkedin.com/in/pranoy-roy-choudhury/" target="_blank" class="li-icon"><svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                        </div></div>
+                        <p class="team-bio">Pursuing an MA in International Political Economy at King's College London, with interests in monetary systems, capital flows, and financial stability. As Chief Data Officer, he builds the quantitative frameworks and analytical systems that underpin the GSU's country risk and opportunity assessments.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/bhuvanya.jpeg" alt="Bhuvanya Ranjan" class="team-photo">
+                        <div><span class="team-role">Operations Lead</span>
+                        <div class="team-name-row">
+                            <span class="team-name">Bhuvanya Ranjan</span>
+                            <a href="https://www.linkedin.com/in/bhuvanyaranjan" target="_blank" class="li-icon"><svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                        </div></div>
+                        <p class="team-bio">Holds an MSc in Politics and International Relations from SOAS University of London. As Operations Lead, she oversees the GSU's day-to-day operations and organisational strategy, with research interests spanning South Asian politics, geoeconomics, and regional security.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/vrinda.png" alt="Vrinda Rastogi" class="team-photo">
+                        <div><span class="team-role">Marketing and Outreach Head</span>
+                        <div class="team-name-row"><span class="team-name">Vrinda Rastogi</span></div></div>
+                        <p class="team-bio">Pursuing an MSc in International Relations at the London School of Economics, with a focus on international development, geoeconomics, and conflict studies. As Marketing and Outreach Head, she leads the GSU's brand identity and communications strategy across all outputs.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/nir.jpeg" alt="Nir Bhattacharjee" class="team-photo">
+                        <div><span class="team-role">Chief Strategy Officer</span>
+                        <div class="team-name-row"><span class="team-name">Nir Bhattacharjee</span></div></div>
+                        <p class="team-bio">As Chief Strategy Officer, he leads the GSU's Strategic vertical with a focus on business development and market entry across high-growth markets. His work spans regulatory navigation and investment sequencing, with a geographic focus on India, the GCC, Sub-Saharan Africa, and Latin America.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/tansi.jpeg" alt="Tansi Rawat" class="team-photo">
+                        <div><span class="team-role">Research Head</span>
+                        <div class="team-name-row"><span class="team-name">Tansi Rawat</span></div></div>
+                        <p class="team-bio">Holds an MSc in International Public Policy from University College London and a BA in Economics. At the GSU, she leads the Research vertical, contributing to geopolitical research and strategic policy analysis, with interests in global governance and emerging markets.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/shubhangi.jpeg" alt="Shubhangi Sharma" class="team-photo">
+                        <div><span class="team-role">Analyst</span>
+                        <div class="team-name-row">
+                            <span class="team-name">Shubhangi Sharma</span>
+                            <a href="https://www.linkedin.com/in/shubhangi-sharma-72b22a28a" target="_blank" class="li-icon"><svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                        </div></div>
+                        <p class="team-bio">Studying International Relations and Economics at Ashoka University. She contributes to policy research and strategic market analysis at the GSU, with a focus on crafting clear, insight-driven narratives.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/shiva.png" alt="Shiva Dang" class="team-photo">
+                        <div><span class="team-role">Analyst</span>
+                        <div class="team-name-row"><span class="team-name">Shiva Dang</span></div></div>
+                        <p class="team-bio">Holds an MA in International Relations from King's College London. His work focuses on public–private sector collaboration, policy engagement, and sustainability, examining how regulatory frameworks and political risk shape strategic decision-making.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/indulekha.jpeg" alt="Indulekha A" class="team-photo">
+                        <div><span class="team-role">Research Analyst</span>
+                        <div class="team-name-row"><span class="team-name">Indulekha A</span></div></div>
+                        <p class="team-bio">Holds an MSc in Financial Economics and brings two years of experience as an analyst at Goldman Sachs. At the GSU, she works as a Research Analyst with interests in geoeconomics and macroeconomic developments, with a particular focus on emerging markets.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/nicla.png" alt="Nicla Bussoli" class="team-photo">
+                        <div><span class="team-role">Analyst</span>
+                        <div class="team-name-row"><span class="team-name">Nicla Bussoli</span></div></div>
+                        <p class="team-bio">Holds a Master's in International Relations and Global Security from Sapienza University of Rome. She specialises in geopolitical analysis, OSINT research, and international security, bringing a multidisciplinary perspective to the study of global risk and strategic dynamics.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/william.png" alt="William Finn" class="team-photo">
+                        <div><span class="team-role">Research Analyst</span>
+                        <div class="team-name-row"><span class="team-name">William Finn</span></div></div>
+                        <p class="team-bio">Holds a Master's in Global Political Economy from Leiden University and a degree in Politics and Sociology from UCL. At the GSU, he is a Research Analyst and podcast co-host, with expertise in Pakistan's political economy and prior experience at a UK think tank and in retail investment.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/nurein.png" alt="Nurein Akindele" class="team-photo">
+                        <div><span class="team-role">Regional Policy Fellow</span>
+                        <div class="team-name-row">
+                            <span class="team-name">Nurein Akindele</span>
+                            <a href="https://www.linkedin.com/in/nurein-akindele/" target="_blank" class="li-icon"><svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+                        </div></div>
+                        <p class="team-bio">Contributes to policy briefs and geoeconomic trend analysis through the GSU's Europe Programme. He brings extensive experience in international development and sustainability strategy.</p>
+                    </div>
+
+                    <div class="team-card">
+                        <img src="team/ojaswin.jpeg" alt="Ojaswin" class="team-photo">
+                        <div><span class="team-role">AI Engineer</span>
+                        <div class="team-name-row"><span class="team-name">Ojaswin</span></div></div>
+                        <p class="team-bio">An AI engineer with expertise in building intelligent applications that address complex, real-world challenges. At the GSU, he contributes to the development of AI-driven tools and analytical systems.</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== NETWORK ====== -->
+<section id="network" class="alt">
+    <span class="ghost" aria-hidden="true" style="bottom:-30px;left:-40px;">06</span>
+    <div class="sp">
+        <div class="wrap">
+            <div class="sec-head fu">
+                <span class="eyebrow">Our Network</span>
+                <h2 class="sec-title">Partners &amp; Clients</h2>
+                <span class="gold-rule"></span>
+                <p class="sec-sub">We work alongside leading institutions to extend our reach and deepen our expertise across geographies and sectors.</p>
+            </div>
+
+            <div class="partners-grid fu d1">
+                <a class="partner-card" href="http://www.16thcouncil.uk" target="_blank">
+                    <div class="partner-logo-slot">
+                        <img src="logos/16thcouncil-logo.png" alt="The Sixteenth Council">
+                    </div>
+                    <h3 class="partner-name">The Sixteenth Council</h3>
+                    <p class="partner-bio">A global strategic platform that convenes leaders, institutions, governments, and stakeholders to address the critical issues shaping economies, industries, and societies worldwide, delivering geopolitical intelligence, policy dialogue, and cross-border collaboration through research initiatives, high-level forums, and investment facilitation.</p>
+                    <span class="partner-link">www.16thcouncil.uk</span>
+                    <div class="partner-person">
+                        <img src="team/brian.png" alt="Dr. Brian O. Reuben">
+                        <div>
+                            <span class="pp-role">Founder, 16th Council</span>
+                            <span class="pp-name">Dr. Brian O. Reuben</span>
+                            <p class="pp-bio">With over two decades of experience, Dr. Reuben empowers businesses and governments to deliver sustainable value through strategic decision-making and responsible leadership.</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="partner-card" href="https://jgu.edu.in/" target="_blank">
+                    <div class="partner-logo-slot">
+                        <img src="logos/jgu-logo.png" alt="O.P. Jindal Global University">
+                    </div>
+                    <h3 class="partner-name">O.P. Jindal Global University</h3>
+                    <p class="partner-bio">India's premier private university, offering interdisciplinary programmes across law, business, liberal arts, psychology, economics, media, and international relations to over 16,000 students, with a faculty of 1,100+. Recognised as an Institution of Eminence, JGU combines global exposure with experiential learning, backed by partnerships with 600+ international universities.</p>
+                    <span class="partner-link">jgu.edu.in</span>
+                </a>
+            </div>
+
+            <div class="sec-divider fu d2"></div>
+
+            <div class="fu d2" style="margin-bottom:2.5rem;">
+                <span class="eyebrow">Our Clients</span>
+                <p class="sec-sub" style="margin-top:.5rem;">Trusted by leaders across industries to navigate complexity and find opportunity.</p>
+            </div>
+
+            <div class="clients-grid fu d3">
+                <div class="client-card">
+                    <a href="https://ksrmarine.com/" target="_blank">
+                        <img src="logos/ksr-logo.svg" alt="KSR Marine Services" class="client-logo">
+                        <div class="client-name">KSR Marine Services</div>
+                        <p class="client-desc">A leader in maritime logistics, providing robust supply chain solutions that navigate the complexities of global trade routes and marine engineering.</p>
+                    </a>
+                </div>
+                <div class="client-card">
+                    <a href="https://tcaglobal.in/" target="_blank">
+                        <img src="logos/tca-logo.png" alt="Compounding Advantage India" class="client-logo">
+                        <div class="client-name">Compounding Advantage India</div>
+                        <p class="client-desc">A mutual fund distributor and investment advisory service, helping clients navigate complex financial landscapes to build long-term wealth.</p>
+                    </a>
+                </div>
+                <div class="client-card">
+                    <a href="https://www.altmin.in/" target="_blank">
+                        <img src="logos/altmin1.avif" alt="Altmin" class="client-logo">
+                        <div class="client-name">Altmin</div>
+                        <p class="client-desc">A leading producer of next-generation battery materials, developing indigenous Lithium-ion chemistries and supply chains to enable the world's future energy requirements.</p>
+                    </a>
+                </div>
+                <div class="client-card">
+                    <a href="https://gttcindia.com/" target="_blank">
+                        <img src="logos/GTTCI-LOGO.jpeg" alt="GTTCI" class="client-logo">
+                        <div class="client-name">GTTCI</div>
+                        <p class="client-desc">An apex trade and technology chamber promoting bilateral trade between India and countries across the globe, connecting industry leaders through business delegations and B2B engagements.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer id="contact">
+    <div class="cta-banner fu">
+        <h2>Ready to see what your exposure <em>actually</em> looks like?</h2>
+        <p>We open every client relationship with a complimentary corridor brief — a working sample of the Barometer on the market you care about.</p>
+        <a href="mailto:geoecon@16thcouncil.uk?subject=Corridor Brief Request" class="btn btn-solid">Request a Corridor Brief</a>
+    </div>
+    <div class="footer-main">
+        <div>
+            <span class="f-label">The Sixteenth Council</span>
+            <p class="f-text">Office 5336<br>182–184 High Street North<br>East Ham London, E6 2JA<br>United Kingdom</p>
+        </div>
+        <div>
+            <span class="f-label">Contact</span>
+            <p class="f-text">
+                <a href="mailto:geoecon@16thcouncil.uk">geoecon@16thcouncil.uk</a><br>
+                +44 7881 1644457<br>
+                <a href="http://www.16thcouncil.uk" target="_blank">www.16thcouncil.uk</a>
+            </p>
+        </div>
+        <div>
+            <span class="f-label">Navigate</span>
+            <nav class="f-nav">
+                <a href="#about">About</a>
+                <a href="#rao">RAO Framework</a>
+                <a href="#barometer">Intelligence Products</a>
+                <a href="#insights">Insights</a>
+                <a href="#team">Our People</a>
+                <a href="#network">Partners &amp; Clients</a>
+            </nav>
+        </div>
+    </div>
+    <div class="footer-btm">
+        <span class="f-copy">&copy; 2026 Sixteenth Council Geoeconomic Strategy Unit. All Rights Reserved.</span>
+        <img src="assets/gsu.png" alt="GSU" style="height:26px;opacity:.25;">
+    </div>
+</footer>
+
+<!-- ====== GATE MODAL ====== -->
+<div id="gateOverlay" class="gate-overlay" role="dialog" aria-modal="true" aria-labelledby="gateTtl" hidden>
+    <div class="gate-modal">
+        <button class="gate-close" onclick="closeGate()" aria-label="Close">&times;</button>
+        <div id="gateForm">
+            <p class="gate-ey">Geoeconomic Risk Barometer</p>
+            <h2 id="gateTtl" class="gate-ttl">Access the Report</h2>
+            <p class="gate-sub">Enter your details and we'll send the report directly to your inbox.</p>
+            <form onsubmit="submitGate(event)" novalidate>
+                <input type="text"  id="gateName"  class="gate-inp" placeholder="Full name"   autocomplete="name"  required>
+                <input type="email" id="gateEmail" class="gate-inp" placeholder="Work email"  autocomplete="email" required>
+                <button type="submit" class="gate-btn" id="gateSubmitBtn">Send Me the Report</button>
+            </form>
+            <p id="gateError" class="gate-err" hidden></p>
+        </div>
+        <div id="gateSuccess" hidden>
+            <div class="gate-ok">
+                <p class="gate-ey">Report Sent</p>
+                <h2 class="gate-ttl">Check Your Inbox</h2>
+                <div class="gate-ul"></div>
+                <p class="gate-sub">The Geoeconomic Risk Barometer is on its way to <strong id="gateEmailDisplay" style="color:#fff;"></strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== THREE.JS GLOBE ====== -->
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js" } }</script>
+<script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/controls/OrbitControls.js';
+
+    const vertex = `
+        varying vec2 vUv; varying vec3 vPosition; uniform float u_time;
+        void main() {
+            vUv = uv; vPosition = position;
+            vec3 newPosition = position + position * (sin(u_time * 2.0) * 0.005);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+            gl_PointSize = 3.0;
+        }
+    `;
+    const fragment = `
+        varying vec2 vUv; varying vec3 vPosition; uniform float u_time;
+        vec3 colorGold = vec3(0.796,0.658,0.305);
+        vec3 colorWhite = vec3(0.8,0.85,0.9);
+        void main() {
+            float disc = length(gl_PointCoord - vec2(0.5));
+            if (disc > 0.5) discard;
+            float pct = abs(sin(u_time * 0.5 + vPosition.x));
+            vec3 color = mix(colorGold, colorWhite, pct);
+            gl_FragColor = vec4(color, 1.0);
+        }
+    `;
+
+    const container = document.querySelector('#canvas-container');
+    let scene, camera, renderer, controls;
+    let materials = [];
+    const R = 16;
+
+    const routes = [
+        {start:{lat:51.5,lon:-0.1},end:{lat:40.7,lon:-74.0}},
+        {start:{lat:51.5,lon:-0.1},end:{lat:25.2,lon:55.2}},
+        {start:{lat:51.5,lon:-0.1},end:{lat:1.3,lon:103.8}},
+        {start:{lat:51.5,lon:-0.1},end:{lat:19.0,lon:72.8}},
+        {start:{lat:48.8,lon:2.3},end:{lat:35.6,lon:139.6}},
+        {start:{lat:40.7,lon:-74.0},end:{lat:34.0,lon:-118.2}},
+        {start:{lat:34.0,lon:-118.2},end:{lat:35.6,lon:139.6}},
+        {start:{lat:40.7,lon:-74.0},end:{lat:-23.5,lon:-46.6}},
+        {start:{lat:25.2,lon:55.2},end:{lat:22.3,lon:114.1}},
+        {start:{lat:19.0,lon:72.8},end:{lat:1.3,lon:103.8}},
+        {start:{lat:1.3,lon:103.8},end:{lat:-33.8,lon:151.2}},
+        {start:{lat:35.6,lon:139.6},end:{lat:1.3,lon:103.8}},
+        {start:{lat:39.9,lon:116.4},end:{lat:55.7,lon:37.6}}
+    ];
+
+    function latLonToVec3(lat,lon,r) {
+        const phi = (90-lat)*(Math.PI/180);
+        const theta = (lon+180)*(Math.PI/180);
+        return new THREE.Vector3(-(r*Math.sin(phi)*Math.cos(theta)),(r*Math.cos(phi)),(r*Math.sin(phi)*Math.sin(theta)));
+    }
+
+    function init() {
+        const w = container.offsetWidth, h = container.offsetHeight;
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(45, w/h, 0.1, 1000);
+        camera.position.set(window.innerWidth>900?15:0, window.innerWidth>900?10:0, window.innerWidth>900?45:50);
+        renderer = new THREE.WebGLRenderer({alpha:true,antialias:true});
+        renderer.setSize(w,h);
+        renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+        container.appendChild(renderer.domElement);
+        controls = new OrbitControls(camera,renderer.domElement);
+        controls.enableDamping=true; controls.dampingFactor=0.05;
+        controls.enableZoom=false; controls.autoRotate=true; controls.autoRotateSpeed=0.8;
+
+        new THREE.ImageLoader().load('assets/world_alpha_mini.jpg', img => {
+            const cv=document.createElement('canvas'); cv.width=img.width; cv.height=img.height;
+            const ctx=cv.getContext('2d'); ctx.drawImage(img,0,0);
+            const d=ctx.getImageData(0,0,cv.width,cv.height);
+            buildGlobe(d.data,img.width,img.height);
+        }, undefined, ()=>fallbackGlobe());
+
+        buildLines(); animate();
+        window.addEventListener('resize',onResize);
+    }
+
+    function buildGlobe(data,w,h) {
+        const map={};
+        for(let y=0;y<h;y++) { const lat=90-y; if(!map[lat]) map[lat]=[]; for(let x=0;x<w;x++) { const i=(y*w+x)*4; if(data[i]<80&&data[i+1]<80&&data[i+2]<80) map[lat].push(-180+x); } }
+        const vis=(lon,lat)=>{ const k=Math.round(lat); if(!map[k]||!map[k].length) return false; const cl=map[k].reduce((p,c)=>Math.abs(c-lon)<Math.abs(p-lon)?c:p); return Math.abs(lon-cl)<1.5; };
+        const cp=[],op=[]; const dd=2.5;
+        for(let lat=90;lat>-90;lat--) { const rad=Math.cos(Math.abs(lat)*(Math.PI/180))*R; const dots=rad*Math.PI*2*dd; for(let x=0;x<dots;x++) { const lon=-180+(x*360/dots); const pos=latLonToVec3(lat,lon,R); (vis(lon,lat)?cp:op).push(pos.x,pos.y,pos.z); } }
+        const mkMat=(gCol,wCol)=>new THREE.ShaderMaterial({uniforms:{u_time:{value:0}},vertexShader:vertex,fragmentShader:fragment.replace('vec3 colorGold = vec3(0.796,0.658,0.305);','vec3 colorGold = vec3('+gCol+');').replace('vec3 colorWhite = vec3(0.8,0.85,0.9);','vec3 colorWhite = vec3('+wCol+');'),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false});
+        const cg=new THREE.BufferGeometry(); cg.setAttribute('position',new THREE.Float32BufferAttribute(cp,3));
+        const cm=mkMat('0.796,0.658,0.305','0.796,0.658,0.305'); scene.add(new THREE.Points(cg,cm)); materials.push(cm);
+        const og=new THREE.BufferGeometry(); og.setAttribute('position',new THREE.Float32BufferAttribute(op,3));
+        const om=mkMat('0.9,0.9,0.92','0.85,0.85,0.87'); scene.add(new THREE.Points(og,om)); materials.push(om);
+        const inner=new THREE.Mesh(new THREE.SphereGeometry(R-0.5,32,32),new THREE.MeshBasicMaterial({color:0x192030})); scene.add(inner);
+    }
+
+    function fallbackGlobe() {
+        const g=new THREE.BufferGeometry(), p=[];
+        for(let i=0;i<3000;i++){const v=latLonToVec3((Math.random()-.5)*180,(Math.random()-.5)*360,R); p.push(v.x,v.y,v.z);}
+        g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
+        const m=new THREE.ShaderMaterial({uniforms:{u_time:{value:0}},vertexShader:vertex,fragmentShader:fragment,transparent:true});
+        scene.add(new THREE.Points(g,m)); materials.push(m);
+    }
+
+    function buildLines() {
+        const lg=new THREE.Group(); scene.add(lg);
+        routes.forEach(rt=>{
+            const v1=latLonToVec3(rt.start.lat,rt.start.lon,R), v2=latLonToVec3(rt.end.lat,rt.end.lon,R);
+            const mid=v1.clone().add(v2).multiplyScalar(0.5).normalize().multiplyScalar(R+(v1.distanceTo(v2)*.3));
+            const curve=new THREE.QuadraticBezierCurve3(v1,mid,v2);
+            const pts=curve.getPoints(50);
+            const geo=new THREE.BufferGeometry().setFromPoints(pts);
+            const uvs=[]; for(let i=0;i<=50;i++) uvs.push(i/50,0);
+            geo.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
+            const mat=new THREE.ShaderMaterial({uniforms:{color:{value:new THREE.Color(0xC2A56D)},uTime:{value:0}},vertexShader:`varying float vP; void main(){vP=uv.x;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform vec3 color;uniform float uTime;varying float vP;void main(){float d=sin(vP*10.0-uTime*3.0);if(d<0.5)discard;float o=smoothstep(0.0,0.2,vP)*smoothstep(1.0,0.8,vP);gl_FragColor=vec4(color,o);}`,transparent:true});
+            lg.add(new THREE.Line(geo,mat)); materials.push(mat);
+        });
+    }
+
+    function onResize() {
+        const w=container.offsetWidth,h=container.offsetHeight;
+        camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h);
+        camera.position.set(window.innerWidth>900?15:0,window.innerWidth>900?10:0,window.innerWidth>900?45:50);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const t=performance.now()*.001;
+        materials.forEach(m=>{ if(m.uniforms.u_time) m.uniforms.u_time.value=t; if(m.uniforms.uTime) m.uniforms.uTime.value=t; });
+        controls.update(); renderer.render(scene,camera);
+    }
+
+    init();
+</script>
+
+<!-- ====== UI LOGIC ====== -->
+<script>
+    /* Nav scroll collapse */
+    window.addEventListener('scroll',()=>{ document.getElementById('nav').classList.toggle('scrolled',scrollY>40); });
+
+    /* Hero word-reveal (bc.html adapted) */
+    (function initHero() {
+        const h1 = document.getElementById('hero-h1');
+        const raw = h1.textContent.trim();
+        const words = raw.split(/\s+/);
+        h1.innerHTML = '';
+        words.forEach((w,i) => {
+            const sp = document.createElement('span');
+            sp.className = 'hw' + (i===words.length-1?' hw-last':'');
+            sp.textContent = w;
+            sp.style.transitionDelay = (0.38+i*.18)+'s';
+            h1.appendChild(sp);
+            if(i<words.length-1) h1.appendChild(document.createTextNode(' '));
+        });
+        requestAnimationFrame(()=>{
+            document.getElementById('heroEy').classList.add('vis');
+            document.querySelectorAll('.hw').forEach((sp,i)=>{
+                setTimeout(()=>{
+                    sp.classList.add('vis');
+                    sp.style.color = 'var(--accent-gold)';
+                    setTimeout(()=>{ sp.style.color=''; }, 220);
+                    if(sp.classList.contains('hw-last')) setTimeout(()=>sp.classList.add('ul'),480);
+                },(380+i*180));
+            });
+            const total = 380+words.length*180+250;
+            setTimeout(()=>document.getElementById('heroLede').classList.add('vis'), total);
+            setTimeout(()=>document.getElementById('heroCtas').classList.add('vis'), total+150);
+        });
+    })();
+
+    /* Scroll reveal */
+    const obs = new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target);} }); },{threshold:0.1});
+    document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+
+    /* Carousel */
+    const carousel = document.getElementById('teamCarousel');
+    document.getElementById('nextBtn').addEventListener('click',()=>carousel.scrollBy({left:318,behavior:'smooth'}));
+    document.getElementById('prevBtn').addEventListener('click',()=>carousel.scrollBy({left:-318,behavior:'smooth'}));
+
+    /* Gate */
+    const GW='https://gsu-gate.guduruadip.workers.dev';
+    let _gpdf='';
+    function openGate(pdf){ _gpdf=pdf; document.getElementById('gateOverlay').hidden=false; document.body.style.overflow='hidden'; document.getElementById('gateForm').hidden=false; document.getElementById('gateSuccess').hidden=true; document.getElementById('gateName').focus(); }
+    function closeGate(){ document.getElementById('gateOverlay').hidden=true; document.body.style.overflow=''; document.getElementById('gateError').hidden=true; document.getElementById('gateName').value=''; document.getElementById('gateEmail').value=''; document.getElementById('gateSubmitBtn').textContent='Send Me the Report'; document.getElementById('gateSubmitBtn').disabled=false; }
+    async function submitGate(e){ e.preventDefault(); const n=document.getElementById('gateName').value.trim(),em=document.getElementById('gateEmail').value.trim(),btn=document.getElementById('gateSubmitBtn'),err=document.getElementById('gateError'); btn.textContent='Sending…'; btn.disabled=true; err.hidden=true; try{ const r=await fetch(`${GW}/send-report`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,email:em,pdf:_gpdf})}); const d=await r.json(); if(!r.ok) throw new Error(d.error||'Something went wrong.'); document.getElementById('gateEmailDisplay').textContent=em; document.getElementById('gateForm').hidden=true; document.getElementById('gateSuccess').hidden=false; }catch(ex){ err.textContent=ex.message; err.hidden=false; }finally{ btn.textContent='Send Me the Report'; btn.disabled=false; } }
+    document.getElementById('gateOverlay').addEventListener('click',function(e){ if(e.target===this) closeGate(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!document.getElementById('gateOverlay').hidden) closeGate(); });
+</script>
+
+<!-- ====== STRATEGIC BRIEFS ====== -->
+<script src="load-briefs.js"></script>
+
+</body>
+</html>
