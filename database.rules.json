@@ -1,0 +1,13 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "protected-data": {
+      "rao9_csv": {
+        ".read": "auth != null && auth.token.email_verified == true",
+        ".write": false
+      }
+    }
+  }
+}

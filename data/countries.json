@@ -1,0 +1,710 @@
+{
+  "AFG": {
+    "name": "AFG",
+    "region": "South Asia"
+  },
+  "AGO": {
+    "name": "AGO",
+    "region": "Central Africa"
+  },
+  "ALB": {
+    "name": "ALB",
+    "region": "Southern Europe"
+  },
+  "ARE": {
+    "name": "ARE",
+    "region": "Middle East"
+  },
+  "ARG": {
+    "name": "Argentina",
+    "region": "South America"
+  },
+  "ARM": {
+    "name": "ARM",
+    "region": "Middle East"
+  },
+  "AUS": {
+    "name": "AUS",
+    "region": "Australasia"
+  },
+  "AUT": {
+    "name": "AUT",
+    "region": "Western Europe"
+  },
+  "AZE": {
+    "name": "AZE",
+    "region": "Central Asia"
+  },
+  "BDI": {
+    "name": "BDI",
+    "region": "East Africa"
+  },
+  "BEL": {
+    "name": "BEL",
+    "region": "Western Europe"
+  },
+  "BEN": {
+    "name": "BEN",
+    "region": "West Africa"
+  },
+  "BFA": {
+    "name": "BFA",
+    "region": "West Africa"
+  },
+  "BGD": {
+    "name": "Bangladesh",
+    "region": "South Asia"
+  },
+  "BGR": {
+    "name": "BGR",
+    "region": "Eastern Europe"
+  },
+  "BHR": {
+    "name": "BHR",
+    "region": "Middle East"
+  },
+  "BIH": {
+    "name": "BIH",
+    "region": "Southern Europe"
+  },
+  "BLR": {
+    "name": "BLR",
+    "region": "Eastern Europe"
+  },
+  "BLZ": {
+    "name": "BLZ",
+    "region": "Central America"
+  },
+  "BOL": {
+    "name": "BOL",
+    "region": "South America"
+  },
+  "BRA": {
+    "name": "Brazil",
+    "region": "South America"
+  },
+  "BTN": {
+    "name": "BTN",
+    "region": "South Asia"
+  },
+  "BWA": {
+    "name": "BWA",
+    "region": "Southern Africa"
+  },
+  "CAF": {
+    "name": "CAF",
+    "region": "Central Africa"
+  },
+  "CAN": {
+    "name": "CAN",
+    "region": "North America"
+  },
+  "CHE": {
+    "name": "CHE",
+    "region": "Western Europe"
+  },
+  "CHL": {
+    "name": "CHL",
+    "region": "South America"
+  },
+  "CHN": {
+    "name": "China",
+    "region": "East Asia"
+  },
+  "CIV": {
+    "name": "Cte d'Ivoire",
+    "region": "West Africa"
+  },
+  "CMR": {
+    "name": "CMR",
+    "region": "Central Africa"
+  },
+  "COD": {
+    "name": "COD",
+    "region": "Central Africa"
+  },
+  "COG": {
+    "name": "COG",
+    "region": "Central Africa"
+  },
+  "COL": {
+    "name": "Colombia",
+    "region": "South America"
+  },
+  "CRI": {
+    "name": "CRI",
+    "region": "Central America"
+  },
+  "CYP": {
+    "name": "CYP",
+    "region": "Southern Europe"
+  },
+  "CZE": {
+    "name": "CZE",
+    "region": "Eastern Europe"
+  },
+  "DEU": {
+    "name": "DEU",
+    "region": "Western Europe"
+  },
+  "DJI": {
+    "name": "DJI",
+    "region": "East Africa"
+  },
+  "DNK": {
+    "name": "DNK",
+    "region": "Western Europe"
+  },
+  "DOM": {
+    "name": "DOM",
+    "region": "Caribbean"
+  },
+  "DZA": {
+    "name": "DZA",
+    "region": "North Africa"
+  },
+  "ECU": {
+    "name": "ECU",
+    "region": "South America"
+  },
+  "EGY": {
+    "name": "Egypt",
+    "region": "North Africa"
+  },
+  "ERI": {
+    "name": "ERI",
+    "region": "East Africa"
+  },
+  "ESP": {
+    "name": "ESP",
+    "region": "Western Europe"
+  },
+  "EST": {
+    "name": "EST",
+    "region": "Eastern Europe"
+  },
+  "ETH": {
+    "name": "Ethiopia",
+    "region": "East Africa"
+  },
+  "FIN": {
+    "name": "FIN",
+    "region": "Western Europe"
+  },
+  "FRA": {
+    "name": "FRA",
+    "region": "Western Europe"
+  },
+  "G001": {
+    "name": "G001",
+    "region": "Other"
+  },
+  "G110": {
+    "name": "G110",
+    "region": "Other"
+  },
+  "G119": {
+    "name": "G119",
+    "region": "Other"
+  },
+  "G163": {
+    "name": "G163",
+    "region": "Other"
+  },
+  "G200": {
+    "name": "G200",
+    "region": "Other"
+  },
+  "G205": {
+    "name": "G205",
+    "region": "Other"
+  },
+  "G400": {
+    "name": "G400",
+    "region": "Other"
+  },
+  "G505": {
+    "name": "G505",
+    "region": "Other"
+  },
+  "G510": {
+    "name": "G510",
+    "region": "Other"
+  },
+  "G603": {
+    "name": "G603",
+    "region": "Other"
+  },
+  "G903": {
+    "name": "G903",
+    "region": "Other"
+  },
+  "G998": {
+    "name": "G998",
+    "region": "Other"
+  },
+  "GAB": {
+    "name": "GAB",
+    "region": "Central Africa"
+  },
+  "GBR": {
+    "name": "GBR",
+    "region": "Western Europe"
+  },
+  "GEO": {
+    "name": "GEO",
+    "region": "Middle East"
+  },
+  "GHA": {
+    "name": "Ghana",
+    "region": "West Africa"
+  },
+  "GIN": {
+    "name": "GIN",
+    "region": "West Africa"
+  },
+  "GMB": {
+    "name": "GMB",
+    "region": "West Africa"
+  },
+  "GNB": {
+    "name": "GNB",
+    "region": "West Africa"
+  },
+  "GRC": {
+    "name": "GRC",
+    "region": "Southern Europe"
+  },
+  "GTM": {
+    "name": "Guatemala",
+    "region": "Central America"
+  },
+  "GUY": {
+    "name": "GUY",
+    "region": "South America"
+  },
+  "GX123": {
+    "name": "GX123",
+    "region": "Other"
+  },
+  "HND": {
+    "name": "Honduras",
+    "region": "Central America"
+  },
+  "HRV": {
+    "name": "HRV",
+    "region": "Southern Europe"
+  },
+  "HTI": {
+    "name": "HTI",
+    "region": "Caribbean"
+  },
+  "HUN": {
+    "name": "HUN",
+    "region": "Eastern Europe"
+  },
+  "IDN": {
+    "name": "Indonesia",
+    "region": "Southeast Asia"
+  },
+  "IND": {
+    "name": "India",
+    "region": "South Asia"
+  },
+  "IRL": {
+    "name": "IRL",
+    "region": "Western Europe"
+  },
+  "IRN": {
+    "name": "IRN",
+    "region": "Middle East"
+  },
+  "IRQ": {
+    "name": "IRQ",
+    "region": "Middle East"
+  },
+  "ISL": {
+    "name": "ISL",
+    "region": "Western Europe"
+  },
+  "ISR": {
+    "name": "ISR",
+    "region": "Middle East"
+  },
+  "ITA": {
+    "name": "ITA",
+    "region": "Western Europe"
+  },
+  "JAM": {
+    "name": "JAM",
+    "region": "Caribbean"
+  },
+  "JOR": {
+    "name": "JOR",
+    "region": "Middle East"
+  },
+  "JPN": {
+    "name": "JPN",
+    "region": "East Asia"
+  },
+  "KAZ": {
+    "name": "Kazakhstan",
+    "region": "Central Asia"
+  },
+  "KEN": {
+    "name": "Kenya",
+    "region": "East Africa"
+  },
+  "KGZ": {
+    "name": "KGZ",
+    "region": "Central Asia"
+  },
+  "KHM": {
+    "name": "KHM",
+    "region": "Southeast Asia"
+  },
+  "KOR": {
+    "name": "KOR",
+    "region": "East Asia"
+  },
+  "KOS": {
+    "name": "KOS",
+    "region": "Southern Europe"
+  },
+  "KWT": {
+    "name": "KWT",
+    "region": "Middle East"
+  },
+  "LAO": {
+    "name": "LAO",
+    "region": "Southeast Asia"
+  },
+  "LBN": {
+    "name": "LBN",
+    "region": "Middle East"
+  },
+  "LBR": {
+    "name": "LBR",
+    "region": "West Africa"
+  },
+  "LBY": {
+    "name": "LBY",
+    "region": "North Africa"
+  },
+  "LIE": {
+    "name": "LIE",
+    "region": "Western Europe"
+  },
+  "LKA": {
+    "name": "Sri Lanka",
+    "region": "South Asia"
+  },
+  "LSO": {
+    "name": "LSO",
+    "region": "Southern Africa"
+  },
+  "LTU": {
+    "name": "LTU",
+    "region": "Eastern Europe"
+  },
+  "LUX": {
+    "name": "LUX",
+    "region": "Western Europe"
+  },
+  "LVA": {
+    "name": "LVA",
+    "region": "Eastern Europe"
+  },
+  "MAR": {
+    "name": "Morocco",
+    "region": "North Africa"
+  },
+  "MDA": {
+    "name": "MDA",
+    "region": "Eastern Europe"
+  },
+  "MDG": {
+    "name": "MDG",
+    "region": "East Africa"
+  },
+  "MEX": {
+    "name": "Mexico",
+    "region": "North America"
+  },
+  "MKD": {
+    "name": "MKD",
+    "region": "Southern Europe"
+  },
+  "MLI": {
+    "name": "MLI",
+    "region": "West Africa"
+  },
+  "MLT": {
+    "name": "MLT",
+    "region": "Southern Europe"
+  },
+  "MMR": {
+    "name": "MMR",
+    "region": "Southeast Asia"
+  },
+  "MNE": {
+    "name": "MNE",
+    "region": "Southern Europe"
+  },
+  "MNG": {
+    "name": "Mongolia",
+    "region": "East Asia"
+  },
+  "MOZ": {
+    "name": "Mozambique",
+    "region": "East Africa"
+  },
+  "MRT": {
+    "name": "MRT",
+    "region": "North Africa"
+  },
+  "MUS": {
+    "name": "MUS",
+    "region": "Southern Africa"
+  },
+  "MWI": {
+    "name": "MWI",
+    "region": "Southern Africa"
+  },
+  "MYS": {
+    "name": "Malaysia",
+    "region": "Southeast Asia"
+  },
+  "NAM": {
+    "name": "NAM",
+    "region": "Southern Africa"
+  },
+  "NER": {
+    "name": "NER",
+    "region": "West Africa"
+  },
+  "NGA": {
+    "name": "Nigeria",
+    "region": "West Africa"
+  },
+  "NIC": {
+    "name": "NIC",
+    "region": "Central America"
+  },
+  "NLD": {
+    "name": "NLD",
+    "region": "Western Europe"
+  },
+  "NOR": {
+    "name": "NOR",
+    "region": "Western Europe"
+  },
+  "NPL": {
+    "name": "NPL",
+    "region": "South Asia"
+  },
+  "NZL": {
+    "name": "NZL",
+    "region": "Australasia"
+  },
+  "OMN": {
+    "name": "OMN",
+    "region": "Middle East"
+  },
+  "PAK": {
+    "name": "Pakistan",
+    "region": "South Asia"
+  },
+  "PAN": {
+    "name": "PAN",
+    "region": "Central America"
+  },
+  "PER": {
+    "name": "Peru",
+    "region": "South America"
+  },
+  "PHL": {
+    "name": "Philippines",
+    "region": "Southeast Asia"
+  },
+  "PNG": {
+    "name": "PNG",
+    "region": "Pacific Islands"
+  },
+  "POL": {
+    "name": "POL",
+    "region": "Eastern Europe"
+  },
+  "PRT": {
+    "name": "PRT",
+    "region": "Western Europe"
+  },
+  "PRY": {
+    "name": "PRY",
+    "region": "South America"
+  },
+  "QAT": {
+    "name": "QAT",
+    "region": "Middle East"
+  },
+  "ROU": {
+    "name": "ROU",
+    "region": "Eastern Europe"
+  },
+  "RUS": {
+    "name": "RUS",
+    "region": "Eastern Europe"
+  },
+  "RWA": {
+    "name": "Rwanda",
+    "region": "East Africa"
+  },
+  "SAU": {
+    "name": "SAU",
+    "region": "Middle East"
+  },
+  "SDN": {
+    "name": "SDN",
+    "region": "North Africa"
+  },
+  "SEN": {
+    "name": "Senegal",
+    "region": "West Africa"
+  },
+  "SGP": {
+    "name": "SGP",
+    "region": "Southeast Asia"
+  },
+  "SLE": {
+    "name": "SLE",
+    "region": "West Africa"
+  },
+  "SLV": {
+    "name": "SLV",
+    "region": "Central America"
+  },
+  "SOM": {
+    "name": "SOM",
+    "region": "East Africa"
+  },
+  "SRB": {
+    "name": "SRB",
+    "region": "Southern Europe"
+  },
+  "SSD": {
+    "name": "SSD",
+    "region": "East Africa"
+  },
+  "SUR": {
+    "name": "SUR",
+    "region": "South America"
+  },
+  "SVK": {
+    "name": "SVK",
+    "region": "Eastern Europe"
+  },
+  "SVN": {
+    "name": "SVN",
+    "region": "Eastern Europe"
+  },
+  "SWE": {
+    "name": "SWE",
+    "region": "Western Europe"
+  },
+  "SWZ": {
+    "name": "SWZ",
+    "region": "Southern Africa"
+  },
+  "SYR": {
+    "name": "SYR",
+    "region": "Middle East"
+  },
+  "TCD": {
+    "name": "TCD",
+    "region": "Central Africa"
+  },
+  "TGO": {
+    "name": "TGO",
+    "region": "West Africa"
+  },
+  "THA": {
+    "name": "Thailand",
+    "region": "Southeast Asia"
+  },
+  "TJK": {
+    "name": "TJK",
+    "region": "Central Asia"
+  },
+  "TKM": {
+    "name": "TKM",
+    "region": "Central Asia"
+  },
+  "TLS": {
+    "name": "TLS",
+    "region": "Southeast Asia"
+  },
+  "TTO": {
+    "name": "TTO",
+    "region": "Caribbean"
+  },
+  "TUN": {
+    "name": "Tunisia",
+    "region": "North Africa"
+  },
+  "TUR": {
+    "name": "Trkiye",
+    "region": "Middle East"
+  },
+  "TZA": {
+    "name": "Tanzania",
+    "region": "East Africa"
+  },
+  "UGA": {
+    "name": "UGA",
+    "region": "East Africa"
+  },
+  "UKR": {
+    "name": "Ukraine",
+    "region": "Eastern Europe"
+  },
+  "URY": {
+    "name": "URY",
+    "region": "South America"
+  },
+  "USA": {
+    "name": "USA",
+    "region": "North America"
+  },
+  "UVK": {
+    "name": "UVK",
+    "region": "Southern Europe"
+  },
+  "UZB": {
+    "name": "Uzbekistan",
+    "region": "Central Asia"
+  },
+  "VEN": {
+    "name": "VEN",
+    "region": "South America"
+  },
+  "VNM": {
+    "name": "Vietnam",
+    "region": "Southeast Asia"
+  },
+  "YEM": {
+    "name": "YEM",
+    "region": "Middle East"
+  },
+  "ZAF": {
+    "name": "South Africa",
+    "region": "Southern Africa"
+  },
+  "ZMB": {
+    "name": "ZMB",
+    "region": "Southern Africa"
+  },
+  "ZWE": {
+    "name": "ZWE",
+    "region": "Southern Africa"
+  }
+}

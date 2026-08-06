@@ -9,6 +9,12 @@ config.js
 # Dev/test pages (not for deployment)
 dev/
 
+# Proprietary RAO dataset — lives in the Firebase Realtime Database
+# (protected-data/rao9_csv), gated by database.rules.json, not shipped as a
+# public static file. See CLAUDE.md.
+data/rao9.csv
+data/rao9_rtdb_import.json
+
 # Claude Code documentation
 CLAUDE.md
 RAO_METHODOLOGY.md

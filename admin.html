@@ -1594,8 +1594,9 @@ function revokePlan(uid) {
 }
 
 // ══ MARKET PICKER ══════════════════════════════════════════════════════════
-// Country names come from the same dataset the dashboard renders, fetched once
-// and lazily — there is no second country list to keep in sync.
+// Country names/regions come from a small public lookup file (iso -> name,
+// region) — no analytical RAO data needed here, so this doesn't touch the
+// gated rao9.csv dataset at all.
 let MARKET_NAMES = {};
 let MARKET_REGIONS = {};
 let _marketDataState = 'idle';   // idle | loading | ready | error
@@ -1606,19 +1607,10 @@ async function ensureMarketData() {
     if (_marketDataState === 'loading' || _marketDataState === 'ready') return;
     _marketDataState = 'loading';
     try {
-        const text = await fetch('data/rao9.csv').then(r => r.text());
-        const lines = text.split('\n');
-        const head  = lines[0].split(',').map(h => h.trim());
-        const iIso  = head.indexOf('country');
-        const iName = head.indexOf('country_name');
-        const iReg  = head.indexOf('region');
-        for (let i = 1; i < lines.length; i++) {
-            if (!lines[i].trim()) continue;
-            const cols = lines[i].split(',');
-            const iso = (cols[iIso] || '').trim();
-            if (!iso || MARKET_NAMES[iso]) continue;
-            MARKET_NAMES[iso]   = (cols[iName] || iso).trim().replace(/^"|"$/g, '');
-            MARKET_REGIONS[iso] = (cols[iReg]  || 'Other').trim().replace(/^"|"$/g, '');
+        const countries = await fetch('data/countries.json').then(r => r.json());
+        for (const [iso, info] of Object.entries(countries)) {
+            MARKET_NAMES[iso]   = info.name   || iso;
+            MARKET_REGIONS[iso] = info.region || 'Other';
         }
         _marketDataState = 'ready';
     } catch (e) {

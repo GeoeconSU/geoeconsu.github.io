@@ -22,6 +22,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     <style>
         :root {
@@ -6385,7 +6386,9 @@ const INVERSE_VARIABLES = ['norm_cpi_inflation','norm_government_debt_pct_gdp','
 google.charts.load('current', { packages: ['geochart', 'corechart'] });
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadDefaultCSV();
+    // The RAO dataset is proprietary and lives in the Firebase Realtime
+    // Database, gated to signed-in verified users only — it is loaded from
+    // onAuthReady() once Firebase confirms that, not unconditionally here.
     updateFavoritesUI();
 
     // Enhancement #50: Keyboard Shortcuts
@@ -6408,10 +6411,18 @@ document.addEventListener('click', (e) => {
 });
 
 // ===== FILE HANDLING =====
+// rao9.csv is proprietary — it is not a static repo file, it lives in the
+// Firebase Realtime Database under protected-data/rao9_csv, gated by
+// database.rules.json to signed-in verified users only. Call this only after
+// onAuthReady() confirms that.
+let _rao9Loaded = false;
 function loadDefaultCSV() {
+    if (_rao9Loaded) return;
+    _rao9Loaded = true;
     Promise.all([
         fetch('regions.json').then(r => r.json()),
-        fetch('data/rao9.csv').then(r => r.text())
+        firebase.database().ref('protected-data/rao9_csv').once('value')
+            .then(snap => snap.val())
     ])
     .then(([regionsData, csvText]) => {
         REGIONS = {};
@@ -6429,7 +6440,8 @@ function loadDefaultCSV() {
     })
     .catch(err => {
         console.error('Error loading data:', err);
-        alert('Error loading data files. Please ensure regions.json and data/rao9.csv exist.');
+        _rao9Loaded = false;
+        alert('Error loading data. Please ensure you are signed in with a verified account and try again.');
     });
 }
 
@@ -16830,6 +16842,7 @@ function toggleAnalyticsReadonly() {
         // Gate first: nothing behind it is usable without a verified account.
         if (user && !isUnverified) {
             hideAppGate();
+            loadDefaultCSV();
         } else {
             // A signed-in-but-unverified user lands straight on the verify panel.
             showAppGate(isUnverified ? 'verify' : null);
