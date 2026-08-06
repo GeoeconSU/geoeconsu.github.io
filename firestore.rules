@@ -35,11 +35,21 @@ service cloud.firestore {
       // Any signed-in user can read their own document.
       allow get: if isSignedIn() && request.auth.uid == userId;
 
-      // Users can update their own non-sensitive fields (role & level are locked).
+      // Users can update their own non-sensitive fields. Identity (role/level)
+      // and commercial entitlements (plan/allowedCountries/countryQuota) are
+      // admin-granted only. requestedPlan/requestedCountries/planStatus stay
+      // writable so a customer can file an upgrade request themselves —
+      // planStatus is additionally constrained to 'pending' below.
       allow update: if isSignedIn()
                     && request.auth.uid == userId
                     && !request.resource.data.diff(resource.data)
-                         .affectedKeys().hasAny(['level', 'role']);
+                         .affectedKeys().hasAny([
+                           'level', 'role',
+                           'plan', 'allowedCountries', 'countryQuota',
+                           'planApprovedBy', 'planApprovedAt', 'planNotes'
+                         ])
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['planStatus'])
+                        || request.resource.data.planStatus == 'pending');
 
       // Directors & founders: full listing + individual reads (admin console).
       // Employees (level 2–3): read-only listing for admin console.
@@ -47,10 +57,15 @@ service cloud.firestore {
       allow list, get: if isEmployee();
 
       // Self-registration on first sign-in: must create own doc at free tier only.
+      // A chosen Personal/Enterprise plan may only be recorded as a *request*;
+      // the granted plan and entitlements must start empty.
       allow create: if isSignedIn()
                     && request.auth.uid == userId
                     && request.resource.data.get('role',  'free') == 'free'
-                    && request.resource.data.get('level', 5)      >= 5;
+                    && request.resource.data.get('level', 5)      >= 5
+                    && request.resource.data.get('plan',  'free') == 'free'
+                    && request.resource.data.get('allowedCountries', []) == []
+                    && request.resource.data.get('countryQuota', 0) == 0;
 
       // Directors/founders can create docs for others.
       // Founders: unrestricted.  Directors: cannot create another director/founder (level ≤ 1).

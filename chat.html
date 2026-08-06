@@ -4292,7 +4292,9 @@
 const GEMINI_CHAT_URL   = 'https://gsu-gate.guduruadip.workers.dev/gemini-chat';
 const GEMINI_STREAM_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-stream';
 const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
-const TODAY_DATE = '1 June 2026';
+// Computed, not hardcoded — it lands in the system prompt and the brief header,
+// so a stale literal makes the assistant confidently wrong about what "now" is.
+const TODAY_DATE = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 let selectedModel = 'gemini-3.1-flash-lite';
 
 function selectModel(modelId) {
@@ -4305,16 +4307,18 @@ const MAX_AGENT_STEPS = 10;
 
 const ALL_TOOLS = [
     { type: 'function', function: { name: 'get_country_profile',
-        description: 'Retrieve full RAO profile for 1–5 countries: all pillars, TOS/SIS/DGI/RVS scores, regime, archetype, trajectory class, and all normalized indicator variables. Use for any country-level analysis.',
+        description: 'Retrieve the full RAO profile for 1–8 countries: all pillars, TOS/SIS/DGI/RVS scores, regime, archetype, trajectory classification, and all 22 normalized indicator variables. This is the primary analytical tool. For a single-country deep dive, or any question about WHY a score is what it is, ALWAYS request history so you receive the complete indicator set across years — the four pillar headlines alone are not enough to explain a score.',
         parameters: { type: 'object', required: ['countries'], properties: {
-            countries: { type: 'array', items: { type: 'string' }, description: 'Country names or ISO-3 codes.' },
-            include_history: { type: 'boolean', description: 'Include 2010–2024 panel history.' }
+            countries: { type: 'array', items: { type: 'string' }, description: 'Country names or ISO-3 codes. Up to 8.' },
+            include_history: { type: 'boolean', description: 'Include the year-by-year panel, with all 22 normalized indicators for every year.' },
+            years: { description: 'Which years the history should cover: "latest", "all" (2010→present), a single year number, or a [from, to] pair. Defaults to 2018 onwards. Implies include_history.', oneOf: [ { type: 'string', enum: ['latest','all'] }, { type: 'number' }, { type: 'array', items: { type: 'number' }, minItems: 2, maxItems: 2 } ] }
         }}
     }},
     { type: 'function', function: { name: 'compare_countries',
-        description: 'Side-by-side structured comparison of 2–5 countries across all RAO pillars, TOS signal, regime, and rank.',
+        description: 'Side-by-side structured comparison of 2–8 countries across all RAO pillars, TOS signal, regime and rank. Set include_indicators to true whenever the comparison needs to explain the differences rather than merely state them — without it you receive headline scores only.',
         parameters: { type: 'object', required: ['countries'], properties: {
-            countries: { type: 'array', items: { type: 'string' } }
+            countries: { type: 'array', items: { type: 'string' } },
+            include_indicators: { type: 'boolean', description: 'Also return all 22 normalized indicator variables for each country.' }
         }}
     }},
     { type: 'function', function: { name: 'rank_by_pillar',
@@ -10623,8 +10627,9 @@ REGIME FILTER ENFORCEMENT:
 When the user specifies a regime constraint (e.g. "FO or SR only", "pre-breakout markets only"), always call find_anomalies first to identify qualifying countries before making any recommendation. Only recommend countries that actually meet the stated filter. If no countries in the specified region meet the constraint, state this explicitly — give the count of near-misses and their TOS scores — then explain the gap before recommending the closest alternative and why the thesis still holds or doesn't.
 
 TOOL USE PROTOCOL — follow exactly:
-1. For any named country: call get_country_profile with include_history=true. Never skip history.
-2. For comparisons of 2+ countries: call get_country_profile(include_history=true) for EACH country individually — do not rely on compare_countries alone, as it lacks history and trajectory context.
+1. For any named country: call get_country_profile with include_history=true. Never skip history. The response carries all 22 normalized indicators for every year returned — use them. A pillar score is an aggregate; the indicators underneath it are what actually explain the number, so name the specific variables that drive or drag each pillar rather than restating the pillar score in words.
+2. For comparisons of 2+ countries: call get_country_profile(include_history=true) for EACH country individually — do not rely on compare_countries alone, as it lacks history and trajectory context. If you do use compare_countries for a quick side-by-side, set include_indicators=true whenever you intend to explain the differences rather than merely list them.
+2b. INDICATOR DEPTH — for a single-country deep dive, or any comparison of two or more countries, you must be working from the full indicator set. For screening, ranking or "which countries meet X" queries, do NOT pull full profiles for every candidate — run find_anomalies or rank_by_pillar first, shortlist, then pull full profiles only for the shortlist. Use the years parameter ("all", or a [from, to] pair) when the question is explicitly about a period other than the recent past.
 3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen. Valid region values: sub-regions like "West Africa", "Southeast Asia", "South Asia", "Middle East", "Eastern Europe", "South America"; or broad aliases like "Sub-Saharan Africa", "East Asia & Pacific", "Latin America & Caribbean", "Middle East & North Africa", "Europe & Central Asia".
 4. When include_history data is retrieved: ALWAYS produce a full year-by-year table. Do not summarise history into 1–2 rows.
 5. Use web_search for current events, post-2024 data, sanctions, elections, or news. If get_country_profile returns an error (country not in RAO dataset), you MUST call web_search for ALL quantitative figures — GDP, GDP per capita, key sectors, trade balance, FDI, inflation, debt. Do not use training knowledge for any economic number; it is frequently wrong or outdated. Search for at least 2 specific queries to triangulate, always including the current year (${new Date().getFullYear()}) in the query string to surface the most recent data. When reporting a figure, always state the year it refers to (e.g. "GDP of $X (2024)"). If the search only returns data for a prior year, explicitly flag this as a lag and note that the current figure may be higher or lower.
@@ -10658,7 +10663,9 @@ async function runAgentLoop(userText, onTextChunk = null) {
     ];
 
     for (let step = 0; step < MAX_AGENT_STEPS; step++) {
-        const maxTok = step === 0 ? 500 : 8000;
+        // Step 0 is kept short to push the model straight into tool calls, but
+        // not so short that a multi-country retrieval plan gets truncated.
+        const maxTok = step === 0 ? 1500 : 8000;
         const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok, onTextChunk);
 
         if (response.tool_calls && response.tool_calls.length > 0) {
@@ -10791,9 +10798,42 @@ async function executeToolCall(name, args) {
     }
 }
 
-function toolGetCountryProfile({ countries = [], include_history = false } = {}) {
+// Maximum countries a single profile/compare call will resolve. Anything beyond
+// this is reported back to the model rather than dropped silently.
+const PROFILE_COUNTRY_CAP = 8;
+
+// Pull every norm_* variable off a panel row.
+function _normIndicators(row) {
+    const out = {};
+    for (const [k, v] of Object.entries(row)) { if (k.startsWith('norm_')) out[k] = v; }
+    return out;
+}
+
+// Year-by-year history for a country, resolved against the `years` argument:
+//   'latest'   → the most recent year only
+//   'all'      → the full 2010→latest panel
+//   2019       → that single year
+//   [from, to] → inclusive range
+// Anything else defaults to 2018 onwards, which keeps a temporal answer rich
+// without shipping fifteen years of twenty-two variables per country.
+function _historyRows(iso, years) {
+    const all = getCountryHistory(iso);
+    if (!all.length) return [];
+    if (years === 'latest') return all.slice(-1);
+    if (years === 'all') return all;
+    if (typeof years === 'number') return all.filter(r => r.year === years);
+    if (Array.isArray(years) && years.length === 2) {
+        const [a, b] = years.map(Number);
+        const lo = Math.min(a, b), hi = Math.max(a, b);
+        return all.filter(r => r.year >= lo && r.year <= hi);
+    }
+    return all.filter(r => r.year >= 2018);
+}
+
+function toolGetCountryProfile({ countries = [], include_history = false, years } = {}) {
     const results = [];
-    for (const name of countries.slice(0, 5)) {
+    const requested = countries.length;
+    for (const name of countries.slice(0, PROFILE_COUNTRY_CAP)) {
         const c = resolveCountry(name);
         if (!c) { results.push({ error: 'Not found: ' + name, instruction: 'This country is NOT in the RAO dataset. You MUST call web_search to retrieve all quantitative data (GDP, GDP per capita, sectors, trade, FDI, investment climate) for this country. Do NOT use training knowledge for any economic figures — it is frequently wrong or outdated. Search for specific, sourced, current-year data.' }); continue; }
         const row = getLatestRow(c.country) || c;
@@ -10803,26 +10843,43 @@ function toolGetCountryProfile({ countries = [], include_history = false } = {})
             overlay_adjustment: row.overlay_adjustment, volatility_band: row.volatility_band,
             pillars: { opportunity: row.pillar_opportunity, stability: row.pillar_stability, absorptive_capacity: row.pillar_absorptive_capacity, trajectory: row.pillar_trajectory },
             tos_score: row.tos_score, tos_signal: row.tos_signal_label, sis_score: row.sis_score, dgi_score: row.dgi_score, rvs_score: row.rvs_score,
-            regime: row.regime, regime_label: row.regime_label, archetype: row.archetype, trajectory_class: row.trajectory_class, rank: row.rank
+            regime: row.regime, regime_label: row.regime_label, archetype: row.archetype, trajectory_class: row.trajectory_classification, rank: row.rank
         };
-        const indicators = {};
-        for (const [k, v] of Object.entries(row)) { if (k.startsWith('norm_')) indicators[k] = v; }
-        profile.normalized_indicators = indicators;
-        if (include_history) {
-            profile.history = getCountryHistory(c.country).map(r => ({ year: r.year, rao: r.rao_score, opp: r.pillar_opportunity, stab: r.pillar_stability, ac: r.pillar_absorptive_capacity, traj: r.pillar_trajectory, regime: r.regime, tos: r.tos_score }));
+        profile.normalized_indicators = _normIndicators(row);
+        if (include_history || years) {
+            // History carries the full indicator set per year, not just the four
+            // pillar headlines — otherwise any question spanning time sees
+            // twenty-two variables for one year and none for the rest.
+            profile.history = _historyRows(c.country, years)
+                .map(r => ({
+                    year: r.year, rao: r.rao_score,
+                    opp: r.pillar_opportunity, stab: r.pillar_stability,
+                    ac: r.pillar_absorptive_capacity, traj: r.pillar_trajectory,
+                    regime: r.regime, tos: r.tos_score,
+                    ...(_normIndicators(r))
+                }));
         }
         results.push(profile);
+    }
+    if (requested > PROFILE_COUNTRY_CAP) {
+        results.push({ note: `Only the first ${PROFILE_COUNTRY_CAP} of ${requested} requested countries were returned. Call get_country_profile again for the remainder.` });
     }
     return JSON.stringify(results, null, 2);
 }
 
-function toolCompareCountries({ countries = [] } = {}) {
-    const resolved = countries.slice(0, 5).map(n => resolveCountry(n)).filter(Boolean);
+function toolCompareCountries({ countries = [], include_indicators = false } = {}) {
+    const resolved = countries.slice(0, PROFILE_COUNTRY_CAP).map(n => resolveCountry(n)).filter(Boolean);
     if (!resolved.length) return 'No countries found.';
-    return JSON.stringify(resolved.map(c => {
+    const rows = resolved.map(c => {
         const r = getLatestRow(c.country) || c;
-        return { country: r.country_name, iso: r.country, year: r.year, rao: +r.rao_score?.toFixed(2), opp: +r.pillar_opportunity?.toFixed(3), stab: +r.pillar_stability?.toFixed(3), ac: +r.pillar_absorptive_capacity?.toFixed(3), traj: +r.pillar_trajectory?.toFixed(3), tos: +r.tos_score?.toFixed(2), regime: r.regime, archetype: r.archetype, rank: r.rank };
-    }), null, 2);
+        const out = { country: r.country_name, iso: r.country, year: r.year, rao: +r.rao_score?.toFixed(2), opp: +r.pillar_opportunity?.toFixed(3), stab: +r.pillar_stability?.toFixed(3), ac: +r.pillar_absorptive_capacity?.toFixed(3), traj: +r.pillar_trajectory?.toFixed(3), tos: +r.tos_score?.toFixed(2), regime: r.regime, archetype: r.archetype, rank: r.rank };
+        if (include_indicators) out.normalized_indicators = _normIndicators(r);
+        return out;
+    });
+    if (countries.length > PROFILE_COUNTRY_CAP) {
+        rows.push({ note: `Only the first ${PROFILE_COUNTRY_CAP} of ${countries.length} requested countries were compared.` });
+    }
+    return JSON.stringify(rows, null, 2);
 }
 
 // Maps broad region aliases → sub-region labels stored in CSV

@@ -528,6 +528,140 @@
         }
 
         /* ── REVIEW MODAL ────────────────────────────────────────────────────── */
+        /* ── CONSOLE TABS ─────────────────────────────────────────────────── */
+        .console-tabs {
+            display: flex; gap: 0.25rem; margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .console-tab {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            padding: 0.6rem 1rem; background: none; border: none; cursor: pointer;
+            font-family: var(--font-minor); font-size: 0.66rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.13em; color: var(--text-muted);
+            border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.18s;
+        }
+        .console-tab i { font-size: 0.9rem; }
+        .console-tab:hover { color: var(--text); }
+        .console-tab.active { color: var(--role-director); border-bottom-color: var(--accent-gold); }
+        .console-tab-badge {
+            background: var(--accent-gold); color: #fff; border-radius: 9px;
+            font-family: var(--font-mono); font-size: 0.58rem; line-height: 1;
+            padding: 0.2rem 0.4rem; min-width: 17px; text-align: center;
+        }
+
+        /* ── PLAN FILTER CHIPS ────────────────────────────────────────────── */
+        .plan-filter-chips { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+        .plan-chip {
+            padding: 0.42rem 0.8rem; cursor: pointer;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; font-family: var(--font-minor); font-size: 0.6rem;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-muted); transition: all 0.18s;
+        }
+        .plan-chip:hover { border-color: var(--border-gold); color: var(--text); }
+        .plan-chip.active {
+            background: var(--gold-faint); border-color: var(--accent-gold);
+            color: var(--role-director);
+        }
+
+        /* ── PLANS TABLE ──────────────────────────────────────────────────── */
+        .plans-table td { vertical-align: middle; }
+        .plan-badge {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            font-family: var(--font-minor); font-size: 0.56rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            padding: 0.22rem 0.55rem; border-radius: 11px; white-space: nowrap;
+        }
+        .plan-badge.free       { background: rgba(26,31,46,.05); color: var(--text-muted); border: 1px solid var(--border); }
+        .plan-badge.personal   { background: var(--role-employee-bg); color: var(--role-employee); border: 1px solid rgba(74,106,136,0.25); }
+        .plan-badge.enterprise { background: var(--role-director-bg); color: var(--role-director); border: 1px solid var(--border-gold); }
+        .plan-badge.pending    { background: rgba(194,165,109,0.16); color: var(--role-director); border: 1px solid var(--border-gold); }
+        .plan-badge.declined   { background: rgba(138,74,74,0.1); color: var(--accent-red); border: 1px solid rgba(138,74,74,0.25); }
+        .plan-badge.none       { background: transparent; color: var(--text-faint); border: 1px dashed var(--border); }
+        .market-summary {
+            display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;
+            font-family: var(--font-mono); font-size: 0.74rem; color: var(--text);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 0.3rem 0.55rem; background: var(--bg-card); transition: all 0.15s;
+            max-width: 220px;
+        }
+        .market-summary:hover { border-color: var(--accent-gold); background: var(--gold-faint); }
+        .market-summary.empty { color: var(--text-faint); font-family: var(--font-minor); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        .market-summary.na { border-style: dashed; cursor: default; }
+        .market-summary.na:hover { border-color: var(--border); background: var(--bg-card); }
+        .market-summary .m-names { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .market-summary .m-over { color: var(--accent-red); font-weight: 600; }
+        .quota-input {
+            width: 62px; padding: 0.3rem 0.45rem; text-align: center;
+            font-family: var(--font-mono); font-size: 0.78rem; color: var(--text);
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+        }
+        .quota-input:focus { outline: none; border-color: var(--accent-gold); }
+        .quota-input:disabled { background: var(--bg-tertiary); color: var(--text-faint); }
+        .req-cell { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+        .req-apply {
+            font-family: var(--font-minor); font-size: 0.54rem; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--role-director); cursor: pointer;
+            border: none; background: none; padding: 0; border-bottom: 1px solid var(--border-gold);
+        }
+        .req-apply:hover { color: var(--accent-gold); }
+
+        /* ── MARKET PICKER ────────────────────────────────────────────────── */
+        .market-overlay {
+            position: fixed; inset: 0; z-index: 3600;
+            background: rgba(245,241,234,0.8); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center;
+        }
+        .market-overlay.show { display: flex; }
+        .market-box {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); box-shadow: var(--shadow-lg);
+            width: 520px; max-width: calc(100vw - 2rem); max-height: 84vh;
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .market-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; min-height: 1.4rem; }
+        .market-chips:empty::after {
+            content: 'No markets selected'; font-family: var(--font-minor);
+            font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint);
+        }
+        .market-chip {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            background: var(--gold-faint); border: 1px solid var(--border-gold);
+            color: var(--role-director); border-radius: 12px; padding: 0.16rem 0.5rem;
+            font-family: var(--font-minor); font-size: 0.58rem; letter-spacing: 0.05em;
+        }
+        .market-chip i { cursor: pointer; font-size: 0.7rem; opacity: 0.65; }
+        .market-chip i:hover { opacity: 1; }
+        .market-warn {
+            margin-top: 0.5rem; padding: 0.4rem 0.6rem; border-radius: var(--radius);
+            background: rgba(138,74,74,0.08); border: 1px solid rgba(138,74,74,0.2);
+            font-family: var(--font-minor); font-size: 0.56rem; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--accent-red);
+        }
+        .market-list { overflow-y: auto; padding: 0 1.25rem 0.75rem; flex: 1; min-height: 0; }
+        .market-group {
+            font-family: var(--font-minor); font-size: 0.54rem; text-transform: uppercase;
+            letter-spacing: 0.16em; color: var(--text-faint);
+            padding: 0.7rem 0 0.3rem; position: sticky; top: 0; background: var(--bg-card);
+        }
+        .market-item {
+            display: flex; align-items: center; gap: 0.55rem; padding: 0.3rem 0.25rem;
+            cursor: pointer; font-size: 0.86rem; color: var(--text);
+            border-radius: var(--radius); transition: background 0.12s;
+        }
+        .market-item:hover { background: var(--bg-card-hover); }
+        .market-item .m-box {
+            flex: 0 0 14px; width: 14px; height: 14px; border-radius: 2px;
+            border: 1.5px solid var(--border); display: flex; align-items: center;
+            justify-content: center; font-size: 9px; color: #fff; transition: all 0.14s;
+        }
+        .market-item.checked .m-box { background: var(--accent-gold); border-color: var(--accent-gold); }
+        .market-item .m-iso { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-faint); margin-left: auto; }
+        .market-empty {
+            font-family: var(--font-minor); font-size: 0.58rem; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--text-faint); padding: 1.5rem 0; text-align: center;
+        }
+
         .review-overlay {
             position: fixed; inset: 0; z-index: 3500;
             background: rgba(245,241,234,0.8); backdrop-filter: blur(8px);
@@ -730,10 +864,21 @@
     <div class="page-header">
         <div class="page-header-left">
             <div class="page-eyebrow">Geoeconomic Strategy Unit</div>
-            <h1 class="page-title">User <em>Management</em></h1>
-            <div class="page-subtitle">Manage roles and access levels across the GSU member base</div>
+            <h1 class="page-title" id="page-title">User <em>Management</em></h1>
+            <div class="page-subtitle" id="page-subtitle">Manage roles and access levels across the GSU member base</div>
             <div class="last-updated" id="last-updated"></div>
         </div>
+    </div>
+
+    <!-- Console tabs -->
+    <div class="console-tabs">
+        <button class="console-tab active" id="ctab-users" onclick="switchConsoleTab('users')">
+            <i class="ri-team-line"></i> Users
+        </button>
+        <button class="console-tab" id="ctab-plans" onclick="switchConsoleTab('plans')">
+            <i class="ri-vip-diamond-line"></i> Plans
+            <span class="console-tab-badge" id="ctab-plans-badge" style="display:none;">0</span>
+        </button>
     </div>
 
     <!-- Read-only notice (shown for employees, hidden for directors) -->
@@ -741,6 +886,9 @@
         <i class="ri-eye-line" style="margin-right:0.4rem;"></i>
         Read-only view — role and level changes require director or founder access.
     </div>
+
+    <!-- ══ USERS VIEW ═══════════════════════════════════════════════════════ -->
+    <div id="view-users">
 
     <!-- Stats -->
     <div class="stats-row">
@@ -813,7 +961,99 @@
             </tbody>
         </table>
     </div>
+    </div><!-- /#view-users -->
+
+    <!-- ══ PLANS VIEW ═══════════════════════════════════════════════════════ -->
+    <div id="view-plans" style="display:none;">
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Awaiting Review</div>
+                <div class="stat-value gold" id="stat-pending">—</div>
+                <div class="stat-sub">plan requests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Personal</div>
+                <div class="stat-value" id="stat-personal" style="font-size:1.8rem;">—</div>
+                <div class="stat-sub">active subscriptions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Enterprise</div>
+                <div class="stat-value" id="stat-enterprise" style="font-size:1.8rem;">—</div>
+                <div class="stat-sub">active subscriptions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Markets Granted</div>
+                <div class="stat-value" id="stat-markets" style="font-size:1.8rem;">—</div>
+                <div class="stat-sub">across Personal plans</div>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="search-wrap">
+                <i class="ri-search-line"></i>
+                <input type="text" id="plans-search" placeholder="Search by name or email…" oninput="renderPlans()">
+            </div>
+            <div class="plan-filter-chips">
+                <button class="plan-chip active" data-filter="pending" onclick="setPlanFilter('pending')">Pending</button>
+                <button class="plan-chip" data-filter="personal" onclick="setPlanFilter('personal')">Personal</button>
+                <button class="plan-chip" data-filter="enterprise" onclick="setPlanFilter('enterprise')">Enterprise</button>
+                <button class="plan-chip" data-filter="all" onclick="setPlanFilter('all')">All</button>
+            </div>
+            <button class="modify-btn" id="save-changes-btn-plans" onclick="openReviewModal()">
+                <i class="ri-edit-2-line"></i> Modify <span class="modify-count" id="modify-count-plans">0</span>
+            </button>
+            <button class="reset-btn" id="reset-changes-btn-plans" onclick="resetChanges()">
+                <i class="ri-arrow-go-back-line"></i> Reset
+            </button>
+            <div class="toolbar-count" id="plans-count"></div>
+        </div>
+
+        <div class="table-card">
+            <table class="user-table plans-table">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Requested</th>
+                        <th>Plan</th>
+                        <th>Markets</th>
+                        <th>Quota</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="plans-tbody">
+                    <tr><td colspan="7"><div class="empty-state"><i class="ri-loader-4-line spin"></i><p>Loading plans…</p></div></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- /#view-plans -->
 </main>
+
+<!-- ── MARKET PICKER (admin) ──────────────────────────────────────────────── -->
+<div class="market-overlay" id="market-modal">
+    <div class="market-box">
+        <div class="review-header">
+            <div>
+                <h4>Market Entitlements</h4>
+                <p id="market-modal-sub">Select the countries this account can access</p>
+            </div>
+            <button class="review-close" onclick="closeMarketPicker()">&#x2715;</button>
+        </div>
+        <div style="padding:0 1.25rem 0.75rem;">
+            <div class="market-chips" id="market-chips"></div>
+            <input class="gate-input" type="search" id="market-search" placeholder="Search countries…"
+                   autocomplete="off" oninput="renderMarketList(this.value)" style="margin-top:0.6rem;">
+            <div id="market-quota-warn" class="market-warn" style="display:none;"></div>
+        </div>
+        <div class="market-list" id="market-list"></div>
+        <div class="review-footer">
+            <span class="review-note" id="market-count-note"></span>
+            <button class="confirm-btn" onclick="closeMarketPicker()">Cancel</button>
+            <button class="confirm-btn" style="background:var(--accent-gold);color:#111926;border-color:var(--accent-gold);" onclick="applyMarketPicker()">Apply</button>
+        </div>
+    </div>
+</div>
 
 <!-- ── TOAST CONTAINER ────────────────────────────────────────────────────── -->
 <div class="toast-wrap" id="toast-wrap"></div>
@@ -1054,6 +1294,7 @@ function startRealtimeUsers() {
         }
         updateStats();
         renderUsers();
+        if (currentConsoleTab === 'plans') renderPlans();
         document.getElementById('last-updated').textContent =
             'Live · updated ' + new Date().toLocaleTimeString();
     }, err => {
@@ -1070,7 +1311,410 @@ function updateStats() {
     document.getElementById('stat-directors').textContent = leadership;
     document.getElementById('stat-employees').textContent = team;
     document.getElementById('stat-free').textContent      = free;
+
+    // Plans view
+    const pending    = allUsers.filter(u => u.planStatus === 'pending').length;
+    const personal   = allUsers.filter(u => (u.plan || 'free') === 'personal').length;
+    const enterprise = allUsers.filter(u => (u.plan || 'free') === 'enterprise').length;
+    const markets    = allUsers.reduce((n, u) =>
+        n + ((u.plan === 'personal' && Array.isArray(u.allowedCountries)) ? u.allowedCountries.length : 0), 0);
+    setText('stat-pending', pending);
+    setText('stat-personal', personal);
+    setText('stat-enterprise', enterprise);
+    setText('stat-markets', markets);
+
+    const badge = document.getElementById('ctab-plans-badge');
+    if (badge) { badge.textContent = pending; badge.style.display = pending ? '' : 'none'; }
 }
+function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+// ══ CONSOLE TABS ═══════════════════════════════════════════════════════════
+let currentConsoleTab = 'users';
+
+function switchConsoleTab(tab) {
+    currentConsoleTab = tab;
+    document.getElementById('ctab-users').classList.toggle('active', tab === 'users');
+    document.getElementById('ctab-plans').classList.toggle('active', tab === 'plans');
+    document.getElementById('view-users').style.display = tab === 'users' ? '' : 'none';
+    document.getElementById('view-plans').style.display = tab === 'plans' ? '' : 'none';
+    document.getElementById('page-title').innerHTML =
+        tab === 'plans' ? 'Plan <em>Management</em>' : 'User <em>Management</em>';
+    document.getElementById('page-subtitle').textContent = tab === 'plans'
+        ? 'Approve subscriptions and set the markets each account can access'
+        : 'Manage roles and access levels across the GSU member base';
+    if (tab === 'plans') { ensureMarketData(); renderPlans(); }
+}
+
+// ══ PLANS ══════════════════════════════════════════════════════════════════
+const PLAN_LABELS = { free: 'Free', personal: 'Personal', enterprise: 'Enterprise' };
+let planFilter = 'pending';
+
+function setPlanFilter(f) {
+    planFilter = f;
+    document.querySelectorAll('.plan-chip').forEach(c =>
+        c.classList.toggle('active', c.dataset.filter === f));
+    renderPlans();
+}
+
+// Effective (staged-or-saved) values for a row, so the table reflects unsaved edits.
+function planStateOf(u) {
+    const p = pendingChanges[u.uid];
+    return {
+        plan:      p && p.plan      !== undefined ? p.plan      : (u.plan || 'free'),
+        countries: p && p.countries !== undefined ? p.countries : (Array.isArray(u.allowedCountries) ? u.allowedCountries : []),
+        quota:     p && p.quota     !== undefined ? p.quota     : (typeof u.countryQuota === 'number' ? u.countryQuota : 0),
+        status:    p && p.status    !== undefined ? p.status    : (u.planStatus || 'none'),
+    };
+}
+
+function renderPlans() {
+    const tbody = document.getElementById('plans-tbody');
+    if (!tbody) return;
+    const q = (document.getElementById('plans-search').value || '').toLowerCase().trim();
+
+    // Staff resolve to full access through their level, so they are not
+    // subscription rows — showing them here would only be noise.
+    const list = allUsers.filter(u => {
+        if ((u.level ?? 5) <= 3) return false;
+        const s = planStateOf(u);
+        const matchQ = !q || (u.displayName || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
+        if (!matchQ) return false;
+        if (planFilter === 'pending')    return s.status === 'pending';
+        if (planFilter === 'personal')   return s.plan === 'personal';
+        if (planFilter === 'enterprise') return s.plan === 'enterprise';
+        return true;
+    }).sort((a, b) => {
+        // Pending first, then newest.
+        const ap = planStateOf(a).status === 'pending' ? 0 : 1;
+        const bp = planStateOf(b).status === 'pending' ? 0 : 1;
+        if (ap !== bp) return ap - bp;
+        return (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0);
+    });
+
+    document.getElementById('plans-count').textContent =
+        list.length + ' account' + (list.length !== 1 ? 's' : '');
+
+    if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="ri-inbox-line"></i><p>${
+            planFilter === 'pending' ? 'No plan requests awaiting review' : 'No accounts match this filter'
+        }</p></div></td></tr>`;
+        return;
+    }
+
+    const canEdit = getAdminIsFounder() || currentAdminLevel() <= 1;
+
+    tbody.innerHTML = list.map(u => {
+        const name     = u.displayName || u.email?.split('@')[0] || '—';
+        const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        const s        = planStateOf(u);
+        const isPending = !!pendingChanges[u.uid];
+        const dis = canEdit ? '' : 'disabled';
+
+        // ── Requested column ──────────────────────────────────────────────
+        const reqCount = Array.isArray(u.requestedCountries) ? u.requestedCountries.length : 0;
+        const reqCell = u.requestedPlan
+            ? `<div class="req-cell">
+                   <span class="plan-badge ${u.requestedPlan}">${PLAN_LABELS[u.requestedPlan]}</span>
+                   ${reqCount ? `<span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${reqCount} mkt</span>` : ''}
+                   ${canEdit ? `<button class="req-apply" onclick="applyRequest('${u.uid}')">Use request</button>` : ''}
+               </div>`
+            : `<span class="plan-badge none">—</span>`;
+
+        // ── Plan column ───────────────────────────────────────────────────
+        const planSelect = `<select class="inline-select" ${dis} style="max-width:130px;"
+            onchange="stagePlanChange('${u.uid}','plan',this.value)">
+            ${['free','personal','enterprise'].map(p =>
+                `<option value="${p}"${s.plan === p ? ' selected' : ''}>${PLAN_LABELS[p]}</option>`).join('')}
+        </select>`;
+
+        // ── Markets column ────────────────────────────────────────────────
+        let marketCell;
+        if (s.plan !== 'personal') {
+            marketCell = `<span class="market-summary na">${s.plan === 'enterprise' ? 'All 162' : '—'}</span>`;
+        } else if (!s.countries.length) {
+            marketCell = `<span class="market-summary empty" onclick="${canEdit ? `openMarketPicker('${u.uid}')` : ''}">
+                <i class="ri-add-line"></i> Add markets</span>`;
+        } else {
+            const names = s.countries.slice(0, 3).map(iso => MARKET_NAMES[iso] || iso).join(', ');
+            const more  = s.countries.length > 3 ? ` +${s.countries.length - 3}` : '';
+            const over  = s.quota > 0 && s.countries.length > s.quota;
+            marketCell = `<span class="market-summary" onclick="${canEdit ? `openMarketPicker('${u.uid}')` : ''}"
+                title="${s.countries.map(iso => MARKET_NAMES[iso] || iso).join(', ')}">
+                <span class="m-names">${escapeHtml(names)}${more}</span>
+                ${over ? `<i class="ri-error-warning-line m-over" title="Over quota"></i>` : ''}
+            </span>`;
+        }
+
+        // ── Quota column ──────────────────────────────────────────────────
+        const quotaCell = `<input class="quota-input" type="number" min="0" max="162" value="${s.quota}"
+            ${s.plan === 'personal' ? dis : 'disabled'}
+            onchange="stagePlanChange('${u.uid}','quota',parseInt(this.value)||0)">`;
+
+        // ── Status column ─────────────────────────────────────────────────
+        const statusSelect = `<select class="inline-select" ${dis} style="max-width:112px;"
+            onchange="stagePlanChange('${u.uid}','status',this.value)">
+            ${['none','pending','active','declined'].map(v =>
+                `<option value="${v}"${s.status === v ? ' selected' : ''}>${v === 'none' ? '—' : v[0].toUpperCase() + v.slice(1)}</option>`).join('')}
+        </select>`;
+
+        // ── Actions ───────────────────────────────────────────────────────
+        const actions = canEdit ? `
+            ${s.status === 'pending' ? `
+                <button class="action-btn" title="Approve request" onclick="approvePlan('${u.uid}')"><i class="ri-check-line"></i></button>
+                <button class="action-btn danger" title="Decline request" onclick="declinePlan('${u.uid}')"><i class="ri-close-line"></i></button>
+            ` : ''}
+            ${s.plan !== 'free' ? `<button class="action-btn danger" title="Revoke to Free" onclick="revokePlan('${u.uid}')"><i class="ri-arrow-go-back-line"></i></button>` : ''}
+        ` : '';
+
+        return `<tr id="prow-${u.uid}" data-uid="${u.uid}"${isPending ? ' class="row-pending"' : ''}>
+            <td>
+                <div class="user-cell">
+                    <div class="user-initials">${initials}</div>
+                    <div>
+                        <div class="user-name">${escapeHtml(name)}${isPending ? '<span class="pending-dot" title="Unsaved changes"></span>' : ''}</div>
+                        <div class="user-email">${escapeHtml(u.email || '—')}</div>
+                    </div>
+                </div>
+            </td>
+            <td>${reqCell}</td>
+            <td>${planSelect}</td>
+            <td>${marketCell}</td>
+            <td>${quotaCell}</td>
+            <td>${statusSelect}</td>
+            <td><div class="actions-cell">${actions}</div></td>
+        </tr>`;
+    }).join('');
+}
+
+function currentAdminLevel() {
+    return allUsers.find(u => u.uid === currentAdminUid)?.level ?? 5;
+}
+
+// ── Plan staging (shares the Users tab's pendingChanges + batch commit) ────
+function stagePlanChange(uid, field, value) {
+    const user = allUsers.find(u => u.uid === uid);
+    if (!user) return;
+    if (!pendingChanges[uid]) pendingChanges[uid] = _basePending(user);
+    pendingChanges[uid][field] = value;
+
+    // Moving off Personal makes an explicit market list meaningless — clear it
+    // so we never write entitlements that the plan cannot express.
+    if (field === 'plan' && value !== 'personal') {
+        pendingChanges[uid].countries = [];
+        pendingChanges[uid].quota = 0;
+    }
+
+    _dropIfUnchanged(uid);
+    updateSaveBtn();
+    renderPlans();
+}
+
+function _basePending(user) {
+    return {
+        displayName: user.displayName || user.email || user.uid,
+        email: user.email || '',
+        originalRole:  user.role  || 'free',
+        originalLevel: user.level || 5,
+        role:  user.role  || 'free',
+        level: user.level || 5,
+        originalPlan:      user.plan || 'free',
+        originalCountries: Array.isArray(user.allowedCountries) ? user.allowedCountries.slice() : [],
+        originalQuota:     typeof user.countryQuota === 'number' ? user.countryQuota : 0,
+        originalStatus:    user.planStatus || 'none',
+    };
+}
+
+function _sameSet(a, b) {
+    if (!a || !b || a.length !== b.length) return false;
+    const s = new Set(b);
+    return a.every(x => s.has(x));
+}
+
+function _dropIfUnchanged(uid) {
+    const p = pendingChanges[uid];
+    if (!p) return;
+    const roleSame   = p.role  === p.originalRole && p.level === p.originalLevel;
+    const planSame   = p.plan      === undefined || p.plan   === p.originalPlan;
+    const quotaSame  = p.quota     === undefined || p.quota  === p.originalQuota;
+    const statusSame = p.status    === undefined || p.status === p.originalStatus;
+    const cSame      = p.countries === undefined || _sameSet(p.countries, p.originalCountries);
+    if (roleSame && planSame && quotaSame && statusSame && cSame) delete pendingChanges[uid];
+}
+
+// One-click flows. Each stages the change; nothing is written until the
+// existing Modify → review → batch commit path runs.
+function applyRequest(uid) {
+    const u = allUsers.find(x => x.uid === uid);
+    if (!u || !u.requestedPlan) return;
+    if (!pendingChanges[uid]) pendingChanges[uid] = _basePending(u);
+    pendingChanges[uid].plan = u.requestedPlan;
+    if (u.requestedPlan === 'personal') {
+        const req = Array.isArray(u.requestedCountries) ? u.requestedCountries.slice() : [];
+        pendingChanges[uid].countries = req;
+        // Seed the quota from what they asked for so it is never left at zero.
+        if (!pendingChanges[uid].quota) pendingChanges[uid].quota = Math.max(req.length, planStateOf(u).quota);
+    } else {
+        pendingChanges[uid].countries = [];
+        pendingChanges[uid].quota = 0;
+    }
+    _dropIfUnchanged(uid);
+    updateSaveBtn();
+    renderPlans();
+}
+
+function approvePlan(uid) {
+    const u = allUsers.find(x => x.uid === uid);
+    if (!u) return;
+    applyRequest(uid);
+    if (!pendingChanges[uid]) pendingChanges[uid] = _basePending(u);
+    pendingChanges[uid].status = 'active';
+    _dropIfUnchanged(uid);
+    updateSaveBtn();
+    renderPlans();
+}
+
+function declinePlan(uid) {
+    const u = allUsers.find(x => x.uid === uid);
+    if (!u) return;
+    if (!pendingChanges[uid]) pendingChanges[uid] = _basePending(u);
+    pendingChanges[uid].status = 'declined';
+    _dropIfUnchanged(uid);
+    updateSaveBtn();
+    renderPlans();
+}
+
+function revokePlan(uid) {
+    const u = allUsers.find(x => x.uid === uid);
+    if (!u) return;
+    if (!pendingChanges[uid]) pendingChanges[uid] = _basePending(u);
+    Object.assign(pendingChanges[uid], { plan: 'free', countries: [], quota: 0, status: 'none' });
+    _dropIfUnchanged(uid);
+    updateSaveBtn();
+    renderPlans();
+}
+
+// ══ MARKET PICKER ══════════════════════════════════════════════════════════
+// Country names come from the same dataset the dashboard renders, fetched once
+// and lazily — there is no second country list to keep in sync.
+let MARKET_NAMES = {};
+let MARKET_REGIONS = {};
+let _marketDataState = 'idle';   // idle | loading | ready | error
+let _marketUid = null;
+let _marketSelection = [];
+
+async function ensureMarketData() {
+    if (_marketDataState === 'loading' || _marketDataState === 'ready') return;
+    _marketDataState = 'loading';
+    try {
+        const text = await fetch('data/rao9.csv').then(r => r.text());
+        const lines = text.split('\n');
+        const head  = lines[0].split(',').map(h => h.trim());
+        const iIso  = head.indexOf('country');
+        const iName = head.indexOf('country_name');
+        const iReg  = head.indexOf('region');
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
+            const cols = lines[i].split(',');
+            const iso = (cols[iIso] || '').trim();
+            if (!iso || MARKET_NAMES[iso]) continue;
+            MARKET_NAMES[iso]   = (cols[iName] || iso).trim().replace(/^"|"$/g, '');
+            MARKET_REGIONS[iso] = (cols[iReg]  || 'Other').trim().replace(/^"|"$/g, '');
+        }
+        _marketDataState = 'ready';
+    } catch (e) {
+        _marketDataState = 'error';
+        showToast('Could not load the country list', 'err');
+    }
+    renderPlans();
+}
+
+function openMarketPicker(uid) {
+    const u = allUsers.find(x => x.uid === uid);
+    if (!u) return;
+    _marketUid = uid;
+    _marketSelection = planStateOf(u).countries.slice();
+    document.getElementById('market-modal-sub').textContent =
+        (u.displayName || u.email || uid) + ' · Personal plan';
+    document.getElementById('market-search').value = '';
+    document.getElementById('market-modal').classList.add('show');
+    if (_marketDataState !== 'ready') {
+        document.getElementById('market-list').innerHTML = '<div class="market-empty">Loading countries…</div>';
+        ensureMarketData().then(() => { if (_marketUid) { renderMarketChips(); renderMarketList(); } });
+        return;
+    }
+    renderMarketChips();
+    renderMarketList();
+}
+
+function closeMarketPicker() {
+    document.getElementById('market-modal').classList.remove('show');
+    _marketUid = null;
+}
+
+function renderMarketList(query) {
+    const list = document.getElementById('market-list');
+    if (!list) return;
+    if (_marketDataState !== 'ready') { list.innerHTML = '<div class="market-empty">Loading countries…</div>'; return; }
+    const q = (query || '').trim().toLowerCase();
+
+    const groups = {};
+    Object.keys(MARKET_NAMES).forEach(iso => {
+        if (q && !MARKET_NAMES[iso].toLowerCase().includes(q) && !iso.toLowerCase().includes(q)) return;
+        const g = MARKET_REGIONS[iso] || 'Other';
+        (groups[g] = groups[g] || []).push(iso);
+    });
+
+    const html = Object.keys(groups).sort().map(g => {
+        const rows = groups[g].sort((a, b) => MARKET_NAMES[a].localeCompare(MARKET_NAMES[b]));
+        return `<div class="market-group">${escapeHtml(g)}</div>` + rows.map(iso => {
+            const on = _marketSelection.includes(iso);
+            return `<div class="market-item${on ? ' checked' : ''}" onclick="toggleMarket('${iso}')">
+                <div class="m-box"><i class="ri-check-line"></i></div>
+                <div>${escapeHtml(MARKET_NAMES[iso])}</div>
+                <div class="m-iso">${iso}</div>
+            </div>`;
+        }).join('');
+    }).join('');
+
+    list.innerHTML = html || '<div class="market-empty">No countries match that search</div>';
+}
+
+function renderMarketChips() {
+    const chips = document.getElementById('market-chips');
+    if (!chips) return;
+    chips.innerHTML = _marketSelection
+        .slice()
+        .sort((a, b) => (MARKET_NAMES[a] || a).localeCompare(MARKET_NAMES[b] || b))
+        .map(iso => `<span class="market-chip">${escapeHtml(MARKET_NAMES[iso] || iso)}<i class="ri-close-line" onclick="event.stopPropagation();toggleMarket('${iso}')"></i></span>`)
+        .join('');
+
+    const u = allUsers.find(x => x.uid === _marketUid);
+    const quota = u ? planStateOf(u).quota : 0;
+    const note = document.getElementById('market-count-note');
+    if (note) note.textContent = `${_marketSelection.length} selected${quota ? ` · quota ${quota}` : ''}`;
+
+    // Over-quota is a warning, not a block — the admin sets both numbers and
+    // may deliberately grant more than the nominal allowance.
+    const warn = document.getElementById('market-quota-warn');
+    if (warn) {
+        const over = quota > 0 && _marketSelection.length > quota;
+        warn.style.display = over ? '' : 'none';
+        if (over) warn.textContent = `${_marketSelection.length} markets selected but the quota is ${quota} — raise the quota or remove ${_marketSelection.length - quota}.`;
+    }
+}
+
+function toggleMarket(iso) {
+    const i = _marketSelection.indexOf(iso);
+    if (i === -1) _marketSelection.push(iso); else _marketSelection.splice(i, 1);
+    renderMarketChips();
+    renderMarketList(document.getElementById('market-search').value);
+}
+
+function applyMarketPicker() {
+    if (_marketUid) stagePlanChange(_marketUid, 'countries', _marketSelection.slice());
+    closeMarketPicker();
+}
+
 
 // ── Render ─────────────────────────────────────────────────────────────────
 function filterUsers() {
@@ -1196,16 +1840,7 @@ function renderTable(list) {
 function stageChange(uid, field, value) {
     const user = allUsers.find(u => u.uid === uid);
     if (!user) return;
-    if (!pendingChanges[uid]) {
-        pendingChanges[uid] = {
-            displayName: user.displayName || user.email || uid,
-            email: user.email || '',
-            originalRole: user.role || 'free',
-            originalLevel: user.level || 5,
-            role: user.role || 'free',
-            level: user.level || 5,
-        };
-    }
+    if (!pendingChanges[uid]) pendingChanges[uid] = _basePending(user);
     pendingChanges[uid][field] = value;
 
     // Sync linked field
@@ -1237,8 +1872,8 @@ function stageChange(uid, field, value) {
 
     // If reverted to original, drop from pending and restore role options to original level filter
     const p = pendingChanges[uid];
-    if (p.role === p.originalRole && p.level === p.originalLevel) {
-        delete pendingChanges[uid];
+    _dropIfUnchanged(uid);
+    if (!pendingChanges[uid]) {
         if (row) {
             const s = row.querySelector('.inline-select');
             const allowed = getAdminIsHead() ? getAdminAssignableRoles() : undefined;
@@ -1263,13 +1898,18 @@ function stageChange(uid, field, value) {
 
 function updateSaveBtn() {
     const count = Object.keys(pendingChanges).length;
-    const btn   = document.getElementById('save-changes-btn');
-    const badge = document.getElementById('modify-count');
-    const reset = document.getElementById('reset-changes-btn');
-    if (!btn) return;
-    btn.classList.toggle('active', count > 0);
-    if (badge) badge.textContent = count;
-    if (reset) reset.classList.toggle('active', count > 0);
+    // Both tabs stage into the same pendingChanges map and commit through the
+    // same batch, so their Modify/Reset controls stay in lockstep.
+    [['save-changes-btn', 'modify-count', 'reset-changes-btn'],
+     ['save-changes-btn-plans', 'modify-count-plans', 'reset-changes-btn-plans']]
+        .forEach(([btnId, badgeId, resetId]) => {
+            const btn   = document.getElementById(btnId);
+            const badge = document.getElementById(badgeId);
+            const reset = document.getElementById(resetId);
+            if (btn)   btn.classList.toggle('active', count > 0);
+            if (badge) badge.textContent = count;
+            if (reset) reset.classList.toggle('active', count > 0);
+        });
 }
 
 function resetChanges() {
@@ -1277,6 +1917,7 @@ function resetChanges() {
     pendingChanges = {};
     updateSaveBtn();
     filterUsers();
+    renderPlans();
 }
 
 function openReviewModal() {
@@ -1301,6 +1942,28 @@ function openReviewModal() {
                 <span class="review-pill-arrow">→</span>
                 <span class="review-pill new">${escapeHtml(levelLabel(p.level))}</span>
             </div>` : '';
+
+        // ── Plan / entitlement rows ───────────────────────────────────────
+        const change = (label, from, to) => `
+            <div class="review-change-row">
+                <span class="review-change-label">${label}</span>
+                <span class="review-pill old">${escapeHtml(String(from))}</span>
+                <span class="review-pill-arrow">→</span>
+                <span class="review-pill new">${escapeHtml(String(to))}</span>
+            </div>`;
+        const marketsLabel = arr => !arr || !arr.length ? 'none'
+            : arr.length <= 3 ? arr.map(iso => MARKET_NAMES[iso] || iso).join(', ')
+            : `${arr.length} markets`;
+
+        const planRow   = (p.plan   !== undefined && p.plan   !== p.originalPlan)
+            ? change('Plan', PLAN_LABELS[p.originalPlan] || p.originalPlan, PLAN_LABELS[p.plan] || p.plan) : '';
+        const quotaRow  = (p.quota  !== undefined && p.quota  !== p.originalQuota)
+            ? change('Quota', p.originalQuota, p.quota) : '';
+        const statusRow = (p.status !== undefined && p.status !== p.originalStatus)
+            ? change('Status', p.originalStatus, p.status) : '';
+        const mktRow    = (p.countries !== undefined && !_sameSet(p.countries, p.originalCountries))
+            ? change('Markets', marketsLabel(p.originalCountries), marketsLabel(p.countries)) : '';
+
         return `
         <div class="review-card">
             <div class="review-card-head">
@@ -1310,7 +1973,7 @@ function openReviewModal() {
                     <div class="review-card-email">${escapeHtml(p.email)}</div>
                 </div>
             </div>
-            <div class="review-card-body">${roleRow}${lvlRow}</div>
+            <div class="review-card-body">${roleRow}${lvlRow}${planRow}${mktRow}${quotaRow}${statusRow}</div>
         </div>`;
     }).join('');
     document.getElementById('review-modal').classList.add('show');
@@ -1326,12 +1989,24 @@ async function confirmSaveAll() {
     try {
         const batch = db.batch();
         entries.forEach(([uid, p]) => {
-            batch.update(db.collection('users').doc(uid), { role: p.role, level: p.level });
+            const payload = { role: p.role, level: p.level };
+            // Only send the plan keys the admin actually touched, so a Users-tab
+            // edit never silently rewrites someone's entitlements.
+            if (p.plan      !== undefined) payload.plan             = p.plan;
+            if (p.countries !== undefined) payload.allowedCountries = p.countries;
+            if (p.quota     !== undefined) payload.countryQuota     = p.quota;
+            if (p.status    !== undefined) payload.planStatus       = p.status;
+            if (p.plan !== undefined || p.countries !== undefined || p.status !== undefined) {
+                payload.planApprovedBy = currentAdminUid;
+                payload.planApprovedAt = firebase.firestore.FieldValue.serverTimestamp();
+            }
+            batch.update(db.collection('users').doc(uid), payload);
         });
         await batch.commit();
         const count = entries.length;
         pendingChanges = {};
         updateSaveBtn();
+        renderPlans();
         showToast(`Saved ${count} change${count !== 1 ? 's' : ''}`, 'ok');
     } catch (e) {
         showToast('Save failed: ' + e.message, 'err');
