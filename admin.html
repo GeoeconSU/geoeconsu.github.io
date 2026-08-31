@@ -1160,12 +1160,13 @@ function getAdminAssignableRoles() {
 // levelFilter: if provided, only show roles at that level; allowedRoles: whitelist for exec edits
 function buildRoleOptions(currentRole, isFounderAdmin, levelFilter, allowedRoles) {
     const visible = ALL_ROLES.filter(r => {
+        // Always keep the user's actual current role visible, even if a filter
+        // below would otherwise exclude it — otherwise the dropdown's sole
+        // remaining option silently misrepresents their real stored role.
+        if (r.value === currentRole) return true;
         if (r.value === 'founder' && !isFounderAdmin) return false;
         if (levelFilter !== undefined && ROLE_LEVEL_MAP[r.value] !== levelFilter) return false;
-        // Always keep the user's actual current role visible, even if it falls
-        // outside the viewing head's assignable set — otherwise the dropdown's
-        // sole remaining option silently misrepresents their real stored role.
-        if (allowedRoles !== undefined && r.value !== currentRole && !allowedRoles.includes(r.value)) return false;
+        if (allowedRoles !== undefined && !allowedRoles.includes(r.value)) return false;
         return true;
     });
     const groups = [...new Set(visible.map(r => r.group))];
