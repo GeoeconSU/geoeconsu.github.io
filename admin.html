@@ -1006,9 +1006,6 @@
             <button class="reset-btn" id="reset-changes-btn-plans" onclick="resetChanges()">
                 <i class="ri-arrow-go-back-line"></i> Reset
             </button>
-            <button class="reset-btn" id="bulk-fill-btn-plans" onclick="bulkFillEmptyMarkets()" title="Stage a random set of markets for every Personal-plan member with none assigned yet">
-                <i class="ri-shuffle-line"></i> Fill Empty Markets
-            </button>
             <div class="toolbar-count" id="plans-count"></div>
         </div>
 
@@ -1598,34 +1595,6 @@ function revokePlan(uid) {
     _dropIfUnchanged(uid);
     updateSaveBtn();
     renderPlans();
-}
-
-// Backfill: Personal-plan free-tier members whose allowedCountries came back
-// empty (e.g. legacy docs created before the market-picker existed) get a
-// random market set so their entitlement isn't silently zero. Only stages
-// the change — nothing writes until the admin reviews via Modify → Save.
-async function bulkFillEmptyMarkets() {
-    await ensureMarketData();
-    if (_marketDataState !== 'ready') { showToast('Country list failed to load', 'err'); return; }
-    const DEFAULT_COUNT = 6;
-    const pool = Object.keys(MARKET_NAMES);
-    if (!pool.length) return;
-
-    const targets = allUsers.filter(u => {
-        if ((u.level || 5) !== 5) return false;
-        const s = planStateOf(u);
-        return s.plan === 'personal' && s.countries.length === 0;
-    });
-    if (!targets.length) { showToast('No Personal-plan members are missing markets', 'ok'); return; }
-
-    targets.forEach(u => {
-        const quota = planStateOf(u).quota;
-        const count = Math.min(quota > 0 ? quota : DEFAULT_COUNT, pool.length);
-        const picked = [...pool].sort(() => Math.random() - 0.5).slice(0, count);
-        stagePlanChange(u.uid, 'countries', picked);
-        if (!quota) stagePlanChange(u.uid, 'quota', count);
-    });
-    showToast(`Staged random markets for ${targets.length} member${targets.length !== 1 ? 's' : ''} — review under Modify`, 'ok');
 }
 
 // ══ MARKET PICKER ══════════════════════════════════════════════════════════
