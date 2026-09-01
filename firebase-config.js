@@ -87,6 +87,13 @@ let currentUserQuota     = 0;     // admin-set country allowance for 'personal'
 let currentPlanStatus    = 'none';// 'none' | 'pending' | 'active' | 'declined'
 let currentRequestedPlan = null;  // 'personal' | 'enterprise' while awaiting approval
 
+// ── Campaign registrant state (e.g. BRICS 2026) — independent of plan/role ────
+// role stays permanently on the doc as a lead marker; only planExpiresAt
+// governs when the *access* actually lapses (see effectivePlan below).
+let currentUserOrganization = '';
+let currentUserDesignation  = '';
+let currentPlanExpiresAt    = null; // firebase.firestore.Timestamp | null
+
 // ── Access helpers (lower level number = more privilege) ──────────────────────
 // levelAtMost(n): true if user has a DB record AND their level ≤ n
 function levelAtMost(n) { return currentUserLevel !== null && currentUserLevel <= n; }
@@ -105,6 +112,11 @@ const PLAN_RANK = { free: 0, personal: 1, enterprise: 2 };
 function effectivePlan() {
     if (currentUserLevel === null) return null;   // signed out / unverified
     if (levelAtMost(4)) return 'enterprise';
+    // A time-boxed grant (e.g. a conference campaign) lapses to free once its
+    // window closes — checked purely client-side, no write-back needed. The
+    // doc's role/plan fields are left untouched; only the *effective* access
+    // changes, which is what every gate call site below actually reads.
+    if (currentPlanExpiresAt && currentPlanExpiresAt.toMillis() < Date.now()) return 'free';
     return currentUserPlan || 'free';
 }
 function planAtLeast(tier) {
@@ -131,12 +143,19 @@ function entitledCountries() {
 // The user doc is only created on first *verified* sign-in, which can be days
 // after registration. Stash the plan choice locally and apply it at creation.
 const PLAN_INTENT_KEY = 'gsu_plan_intent';
-function stashPlanIntent(email, plan, countries) {
+// extra: optional { role, organization, designation, src } for a campaign
+// self-registration (e.g. brics2026.html) — orthogonal to plan/countries,
+// which stay null/[] for that path.
+function stashPlanIntent(email, plan, countries, extra) {
     try {
         localStorage.setItem(PLAN_INTENT_KEY, JSON.stringify({
             email: (email || '').toLowerCase(),
             plan:  plan || null,
-            countries: countries || []
+            countries: countries || [],
+            role:         extra?.role         || null,
+            organization: extra?.organization || '',
+            designation:  extra?.designation  || '',
+            src:          extra?.src          || null
         }));
     } catch (e) { /* private browsing — request is simply lost, not fatal */ }
 }
@@ -174,6 +193,9 @@ function _resetUserState() {
     currentUserQuota     = 0;
     currentPlanStatus    = 'none';
     currentRequestedPlan = null;
+    currentUserOrganization = '';
+    currentUserDesignation  = '';
+    currentPlanExpiresAt    = null;
 }
 
 function _applyUserDoc(data) {
@@ -184,6 +206,9 @@ function _applyUserDoc(data) {
     currentUserQuota     = typeof data.countryQuota === 'number' ? data.countryQuota : 0;
     currentPlanStatus    = data.planStatus    || 'none';
     currentRequestedPlan = data.requestedPlan || null;
+    currentUserOrganization = data.organization  || '';
+    currentUserDesignation  = data.designation   || '';
+    currentPlanExpiresAt    = data.planExpiresAt || null;
 }
 
 // Live listener on the caller's own user doc, so an admin approving a plan
@@ -218,21 +243,27 @@ auth.onAuthStateChanged(async (user) => {
             // First sign-in after verification: create the doc at free tier and
             // carry over any plan the user picked at registration as a request.
             const intent = readPlanIntent(user.email) || {};
-            const wantsPaid = intent.plan === 'personal' || intent.plan === 'enterprise';
-            await ref.set({
-                email:              user.email,
-                displayName:        user.displayName || user.email.split('@')[0],
-                role:               'free',
-                level:              5,
-                plan:               'free',
-                allowedCountries:   [],
-                countryQuota:       0,
-                requestedPlan:      wantsPaid ? intent.plan : null,
-                requestedCountries: wantsPaid ? (intent.countries || []) : [],
-                planStatus:         wantsPaid ? 'pending' : 'none',
-                planRequestedAt:    wantsPaid ? firebase.firestore.FieldValue.serverTimestamp() : null,
-                createdAt:          firebase.firestore.FieldValue.serverTimestamp()
-            });
+            if (intent.role) {
+                // Campaign self-registration (e.g. brics2026.html) — grants a
+                // config-driven country set immediately, no approval step.
+                await _createCampaignUserDoc(ref, user, intent);
+            } else {
+                const wantsPaid = intent.plan === 'personal' || intent.plan === 'enterprise';
+                await ref.set({
+                    email:              user.email,
+                    displayName:        user.displayName || user.email.split('@')[0],
+                    role:               'free',
+                    level:              5,
+                    plan:               'free',
+                    allowedCountries:   [],
+                    countryQuota:       0,
+                    requestedPlan:      wantsPaid ? intent.plan : null,
+                    requestedCountries: wantsPaid ? (intent.countries || []) : [],
+                    planStatus:         wantsPaid ? 'pending' : 'none',
+                    planRequestedAt:    wantsPaid ? firebase.firestore.FieldValue.serverTimestamp() : null,
+                    createdAt:          firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
             clearPlanIntent();
         }
     } catch (e) {
@@ -270,6 +301,58 @@ async function signUpWithEmail(email, password, displayName, plan, countries) {
 
 async function signInWithGoogle() {
     return auth.signInWithPopup(googleProvider);
+}
+
+// ── Campaign self-registration (e.g. BRICS 2026, brics2026.html) ─────────────
+// Grants a fixed-country, time-boxed 'personal' plan driven entirely by the
+// named config/{docId} doc, so a director can retune the country list,
+// expiry window, or on-off switch without any redeploy. Falls back to a
+// normal free account if the campaign is inactive/missing by the time this
+// runs (brics2026.html already checks this before showing its form — this
+// is only a defensive backstop for the gap between registering and, for the
+// email/password path, verifying).
+async function _createCampaignUserDoc(ref, user, intent) {
+    const configSnap = await db.collection('config').doc('brics_event').get();
+    const config = configSnap.exists ? configSnap.data() : null;
+    const base = {
+        email:              user.email,
+        displayName:        user.displayName || user.email.split('@')[0],
+        level:              5,
+        requestedPlan:      null,
+        requestedCountries: [],
+        planStatus:         'none',
+        planRequestedAt:    null,
+        createdAt:          firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    if (!config || !config.active || config.role !== intent.role) {
+        await ref.set({ ...base, role: 'free', plan: 'free', allowedCountries: [], countryQuota: 0 });
+        return;
+    }
+
+    const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + config.expiresInDays * 86400000);
+    await ref.set({
+        ...base,
+        role:             config.role,
+        plan:             'personal',
+        allowedCountries: config.allowedCountries,
+        countryQuota:     config.allowedCountries.length,
+        organization:     intent.organization || '',
+        designation:      intent.designation  || '',
+        signupSource:     intent.src || null,
+        planExpiresAt:    expiresAt
+    });
+}
+
+// email/password path for a campaign landing page. Mirrors signUpWithEmail,
+// but stashes campaign identity instead of a plan/countries choice — applied
+// at doc-creation time above, same "stash now, apply once verified" pattern.
+async function signUpForCampaign(email, password, displayName, role, organization, designation, src) {
+    stashPlanIntent(email, null, [], { role, organization, designation, src });
+    const cred = await auth.createUserWithEmailAndPassword(email, password);
+    await cred.user.updateProfile({ displayName });
+    await cred.user.sendEmailVerification();
+    return cred;
 }
 
 async function signOut() {

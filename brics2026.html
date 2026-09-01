@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRICS Summit 2026 — GSU RAO Dashboard</title>
+  <link rel="icon" type="image/x-icon" href="assets/gsu.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+  <style>
+    :root {
+      --primary-bg: #192030;
+      --secondary-bg: #1f283b;
+      --text-white: #ffffff;
+      --accent-gold: #cba84e;
+      --font-head: 'Playfair Display', serif;
+      --font-body: 'EB Garamond', serif;
+      --easing: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--primary-bg);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    nav {
+      padding: 1.6rem 0;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(25,32,48,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .logo img { height: 46px; width: auto; display: block; }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 130px 1.5rem 60px;
+    }
+    .page-inner { width: 100%; max-width: 480px; }
+
+    .eyebrow {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 0.9rem;
+      text-align: center;
+    }
+    .page-title {
+      font-family: var(--font-head);
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      font-weight: 400;
+      line-height: 1.15;
+      text-align: center;
+      margin-bottom: 0.9rem;
+    }
+    .page-subtitle {
+      font-size: 1.02rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+      margin-bottom: 2.2rem;
+      text-align: center;
+    }
+
+    .form-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 4px;
+      padding: 2.4rem 2.4rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1.05rem; }
+    label {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    input {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2px;
+      color: var(--text-white);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      padding: 0.72rem 1rem;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+    input::placeholder { color: rgba(255,255,255,0.2); }
+    input:focus { border-color: rgba(203,168,78,0.5); background: rgba(255,255,255,0.07); }
+
+    .terms {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      font-size: 0.8rem; color: rgba(255,255,255,0.5);
+      margin: 0.9rem 0 1.3rem; cursor: pointer;
+    }
+    .terms .box {
+      width: 16px; height: 16px; border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 2px; flex-shrink: 0; margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; color: transparent;
+    }
+    .terms.checked .box { background: var(--accent-gold); border-color: var(--accent-gold); color: #192030; }
+    .terms a { color: var(--accent-gold); text-decoration: none; }
+
+    .btn {
+      display: block; width: 100%; text-align: center; border: none; border-radius: 2px;
+      padding: 0.82rem 1.5rem; font-family: 'Playfair Display', serif; font-size: 0.76rem;
+      font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
+      transition: all 0.3s var(--easing); text-decoration: none;
+    }
+    .btn-primary { background: var(--accent-gold); color: #192030; }
+    .btn-primary:hover:not(:disabled) { background: #d9bc82; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(203,168,78,0.25); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-google {
+      background: #fff; color: #192030; display: flex; align-items: center;
+      justify-content: center; gap: 0.6rem; margin-top: 0.85rem;
+    }
+    .btn-google:hover { background: #f1f1f1; }
+
+    .divider {
+      display: flex; align-items: center; gap: 0.8rem; margin: 1.1rem 0;
+      color: rgba(255,255,255,0.3); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+
+    .error-msg { color: #f08080; font-size: 0.86rem; margin-bottom: 0.9rem; min-height: 1.2em; }
+
+    .state { display: none; }
+    .state.active { display: block; }
+
+    .info-icon { font-size: 2rem; text-align: center; margin-bottom: 0.9rem; color: var(--accent-gold); }
+    .info-title { font-family: var(--font-head); font-size: 1.35rem; text-align: center; margin-bottom: 0.6rem; }
+    .info-text { text-align: center; color: rgba(255,255,255,0.55); font-size: 0.94rem; line-height: 1.65; margin-bottom: 1.4rem; }
+    .info-text a { color: var(--accent-gold); }
+
+    footer { text-align: center; padding: 2rem; font-size: 0.8rem; color: rgba(255,255,255,0.2); letter-spacing: 0.08em; }
+
+    @media (max-width: 600px) { .form-card { padding: 1.8rem 1.4rem; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <img src="assets/gsu.png" alt="Geoeconomic Strategy Unit">
+    </a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-inner">
+
+    <p class="eyebrow">Geoeconomic Strategy Unit</p>
+    <h1 class="page-title">BRICS Summit 2026</h1>
+    <p class="page-subtitle">
+      Register for 14 days of full access to the RAO Insights Dashboard across
+      every BRICS and partner market.
+    </p>
+
+    <div class="form-card">
+
+      <!-- Checking whether the campaign is currently open -->
+      <div class="state active" id="state-loading">
+        <p class="info-text" style="margin-bottom:0;">Checking registration status…</p>
+      </div>
+
+      <!-- Campaign inactive / not yet configured -->
+      <div class="state" id="state-closed">
+        <p class="info-text" style="margin-bottom:0;">
+          Registration for this event has closed. If you'd still like access to
+          the RAO Dashboard, please <a href="contact.html">get in touch</a>.
+        </p>
+      </div>
+
+      <!-- Registration form -->
+      <form class="state" id="state-form" novalidate>
+        <div class="form-group">
+          <label for="f-name">Full Name</label>
+          <input type="text" id="f-name" placeholder="Jane Smith" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="f-org">Organization</label>
+          <input type="text" id="f-org" placeholder="Your company or institution" autocomplete="organization">
+        </div>
+        <div class="form-group">
+          <label for="f-designation">Designation</label>
+          <input type="text" id="f-designation" placeholder="e.g. Director of Strategy" autocomplete="organization-title">
+        </div>
+        <div class="form-group">
+          <label for="f-email">Email Address</label>
+          <input type="email" id="f-email" placeholder="jane@company.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="f-password">Password</label>
+          <input type="password" id="f-password" placeholder="Min. 6 characters" autocomplete="new-password">
+        </div>
+
+        <div class="terms" id="terms-check" onclick="toggleTerms()">
+          <div class="box"><span id="terms-check-mark">&#10003;</span></div>
+          <div>I agree to the <a href="terms.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Terms of Service</a>
+            and <a href="privacy.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Privacy Policy</a>.</div>
+        </div>
+
+        <div class="error-msg" id="form-error"></div>
+
+        <button type="button" class="btn btn-primary" id="submit-btn" onclick="handleRegister()">Create Account</button>
+
+        <div class="divider">or</div>
+
+        <button type="button" class="btn btn-google" onclick="handleGoogleRegister()">
+          <svg width="18" height="18" viewBox="0 0 48 48">
+            <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
+            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z"/>
+            <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+          </svg>
+          Continue with Google
+        </button>
+      </form>
+
+      <!-- Google path: waiting for the account grant to finish writing -->
+      <div class="state" id="state-finishing">
+        <div class="info-icon"><i>&#8635;</i></div>
+        <p class="info-title">Setting up your access…</p>
+        <p class="info-text" style="margin-bottom:0;">This only takes a moment.</p>
+      </div>
+
+      <!-- Email/password path: verification required before signing in -->
+      <div class="state" id="state-verify">
+        <div class="info-icon">&#9993;</div>
+        <p class="info-title">Check your inbox</p>
+        <p class="info-text">
+          A verification link has been sent to <strong id="verify-email-shown"></strong>.
+          Click it to activate your account, then sign in from the dashboard to
+          start exploring.
+        </p>
+        <a href="dashboard.html?tab=login" class="btn btn-primary">Go to Sign In</a>
+      </div>
+
+      <!-- Already has an account -->
+      <div class="state" id="state-existing">
+        <p class="info-text">
+          This email is already registered. Sign in from the dashboard to
+          access your account.
+        </p>
+        <a href="dashboard.html?tab=login" class="btn btn-primary">Go to Sign In</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>geoecon.solutions &nbsp;&middot;&nbsp; The Sixteenth Council &nbsp;&middot;&nbsp; London</footer>
+
+<script src="firebase-config.js"></script>
+<script>
+  const CAMPAIGN_ROLE = 'BRICS2026';
+  const CONFIG_DOC     = 'brics_event';
+  const SRC_PARAM       = new URLSearchParams(location.search).get('src') || null;
+
+  let termsAccepted = false;
+  function toggleTerms() {
+      termsAccepted = !termsAccepted;
+      document.getElementById('terms-check').classList.toggle('checked', termsAccepted);
+  }
+
+  function showState(id) {
+      document.querySelectorAll('.state').forEach(el => el.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+  }
+
+  function setError(msg) { document.getElementById('form-error').textContent = msg || ''; }
+
+  function friendlyAuthError(code) {
+      const map = {
+          'auth/email-already-in-use':  'That email is already registered.',
+          'auth/invalid-email':         'Please enter a valid email.',
+          'auth/weak-password':         'Password must be at least 6 characters.',
+          'auth/popup-closed-by-user':  'Google sign-in was cancelled.',
+          'auth/network-request-failed':'Network error. Check your connection.',
+          'auth/invalid-credential':    'Incorrect email or password.',
+      };
+      return map[code] || 'Something went wrong. Please try again.';
+  }
+
+  function readFields() {
+      return {
+          name:         document.getElementById('f-name').value.trim(),
+          organization: document.getElementById('f-org').value.trim(),
+          designation:  document.getElementById('f-designation').value.trim(),
+          email:        document.getElementById('f-email').value.trim(),
+          password:     document.getElementById('f-password').value,
+      };
+  }
+
+  function validateFields(requireEmailPassword) {
+      const f = readFields();
+      if (!f.name)         { setError('Please enter your full name.'); return null; }
+      if (!f.organization) { setError('Please enter your organization.'); return null; }
+      if (!f.designation)  { setError('Please enter your designation.'); return null; }
+      if (requireEmailPassword) {
+          if (!f.email) { setError('Please enter your email address.'); return null; }
+          if (!f.password || f.password.length < 6) { setError('Password must be at least 6 characters.'); return null; }
+      }
+      if (!termsAccepted) { setError('Please accept the Terms and Privacy Policy.'); return null; }
+      setError('');
+      return f;
+  }
+
+  async function handleRegister() {
+      const f = validateFields(true);
+      if (!f) return;
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true; btn.textContent = 'Creating…';
+      try {
+          await signUpForCampaign(f.email, f.password, f.name, CAMPAIGN_ROLE, f.organization, f.designation, SRC_PARAM);
+          Analytics.signUp('email');
+          document.getElementById('verify-email-shown').textContent = f.email;
+          showState('state-verify');
+      } catch (e) {
+          if (e.code === 'auth/email-already-in-use') {
+              showState('state-existing');
+          } else {
+              setError(friendlyAuthError(e.code));
+          }
+      } finally {
+          btn.disabled = false; btn.textContent = 'Create Account';
+      }
+  }
+
+  // Waits for the Firestore doc that firebase-config.js's own auth listener
+  // creates on this same page to actually land, before we navigate away —
+  // otherwise a fast redirect can outrun that write and dashboard.html would
+  // race to create a plain free doc instead of the campaign grant.
+  function _waitForUserDoc(uid) {
+      return new Promise(resolve => {
+          let done = false;
+          const finish = () => { if (!done) { done = true; unsub(); resolve(); } };
+          const unsub = db.collection('users').doc(uid).onSnapshot(
+              snap => { if (snap.exists) finish(); },
+              () => finish()
+          );
+          setTimeout(finish, 8000); // safety net — never trap the user here
+      });
+  }
+
+  async function handleGoogleRegister() {
+      const f = validateFields(false);
+      if (!f) return;
+      // Stash *before* the popup, not after: this page's own auth listener
+      // may fire before the outer await below resolves, so the intent must
+      // already be in localStorage by the time that happens.
+      stashPlanIntent(null, null, [], {
+          role: CAMPAIGN_ROLE,
+          organization: f.organization,
+          designation: f.designation,
+          src: SRC_PARAM
+      });
+      try {
+          const cred = await signInWithGoogle();
+          Analytics.signUp('google');
+          showState('state-finishing');
+          await _waitForUserDoc(cred.user.uid);
+          location.href = 'dashboard.html';
+      } catch (e) {
+          clearPlanIntent();
+          setError(friendlyAuthError(e.code));
+      }
+  }
+
+  // Already signed in and verified (e.g. returning to this link after
+  // registering) — skip straight to the dashboard.
+  function onAuthReady(user) {
+      if (user && (user.providerData[0]?.providerId !== 'password' || user.emailVerified)) {
+          location.href = 'dashboard.html';
+      }
+  }
+
+  // Gate the whole form on whether the campaign is currently active — a
+  // public read (see firestore.rules), so it works before sign-in.
+  db.collection('config').doc(CONFIG_DOC).get().then(snap => {
+      const config = snap.exists ? snap.data() : null;
+      if (config && config.active && config.role === CAMPAIGN_ROLE) {
+          showState('state-form');
+      } else {
+          showState('state-closed');
+      }
+  }).catch(() => showState('state-closed'));
+</script>
+
+</body>
+</html>

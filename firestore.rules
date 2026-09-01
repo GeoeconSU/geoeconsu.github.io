@@ -29,6 +29,15 @@ service cloud.firestore {
     function isEmployee()          { return isSignedIn() && callerLevel() <= 3; }
     function isRegistered()        { return isSignedIn() && callerLevel() < 999; }
 
+    // ── Named campaign config doc (e.g. config/brics_event) ───────────────────
+    //    Single source of truth for a self-registration campaign's country
+    //    list, role tag, expiry window and on/off switch — read here the same
+    //    way callerLevel() reads the caller's own doc, so the create rule below
+    //    can validate against it without a separate read grant.
+    function bricsConfig() {
+      return get(/databases/$(database)/documents/config/brics_event).data;
+    }
+
     // ── Users ─────────────────────────────────────────────────────────────────
     match /users/{userId} {
 
@@ -66,6 +75,22 @@ service cloud.firestore {
                     && request.resource.data.get('plan',  'free') == 'free'
                     && request.resource.data.get('allowedCountries', []) == []
                     && request.resource.data.get('countryQuota', 0) == 0;
+
+      // Campaign self-registration (e.g. BRICS 2026, brics2026.html): grants
+      // the exact country list config/brics_event currently publishes, capped
+      // to its expiry window, only while the campaign is active. role/plan/
+      // allowedCountries/level are immutable afterwards via the update rule
+      // above, so this grant can't be self-extended or the role reverted.
+      allow create: if isSignedIn()
+                    && request.auth.uid == userId
+                    && bricsConfig().active == true
+                    && request.resource.data.get('role', '')  == bricsConfig().role
+                    && request.resource.data.get('level', 5)  == 5
+                    && request.resource.data.get('plan', '')  == 'personal'
+                    && request.resource.data.get('allowedCountries', []) == bricsConfig().allowedCountries
+                    && request.resource.data.get('countryQuota', 0)      == bricsConfig().allowedCountries.size()
+                    && request.resource.data.get('planExpiresAt', request.time)
+                         <= request.time + duration.value(bricsConfig().expiresInDays, 'd');
 
       // Directors/founders can create docs for others.
       // Founders: unrestricted.  Directors: cannot create another director/founder (level ≤ 1).
@@ -120,7 +145,12 @@ service cloud.firestore {
 
     // ── App config — any registered user can read; directors/founders write ───
     match /config/{docId} {
-      allow read:  if isRegistered();
+      // config/brics_event must be readable pre-signup (the registration page
+      // checks whether the campaign is still active before showing its form)
+      // and mid-signup (the caller isn't "registered" yet at that exact
+      // moment) — carved out as public-read. Every other config doc keeps the
+      // registered-only default.
+      allow read:  if docId == 'brics_event' || isRegistered();
       allow write: if isDirectorOrFounder();
     }
 
