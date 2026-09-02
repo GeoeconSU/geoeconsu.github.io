@@ -1632,14 +1632,17 @@
         }
         .variable-row:hover { background: rgba(255,255,255,0.025); }
         .variable-row.header {
-            background: transparent;
+            background: var(--tertiary-bg, rgba(255,255,255,0.04));
             font-family: var(--font-minor);
             font-weight: 600;
-            font-size: 0.6rem;
+            font-size: 0.68rem;
             text-transform: uppercase;
-            letter-spacing: 0.14em;
-            color: var(--w45);
+            letter-spacing: 0.12em;
+            color: var(--accent-gold);
             border-bottom: 1px solid var(--border-subtle);
+            position: sticky;
+            top: 0;
+            z-index: 2;
         }
         .variable-name {
             font-family: var(--font-body);
@@ -6384,6 +6387,20 @@ const NORM_VAR_LABELS = {
     norm_inflation_trend:             'Inflation Trend'
 };
 
+// Variables shown but visually blurred for BRICS-campaign registrants
+// (role: 'BRICS2026') — a limited/teaser preview rather than full depth.
+// Client-side only, matching the rest of this dashboard's gating model
+// (e.g. canSeeCountry) — the values still exist in the page, just obscured.
+const BRICS_BLURRED_VARS = new Set([
+    'norm_export_growth', 'norm_gross_capital_formation', 'norm_secondary_school_enrolment',
+    'norm_current_account_pct_gdp', 'norm_rule_of_law', 'norm_control_of_corruption',
+    'norm_natural_resource_rents_pct_gdp', 'norm_vulnerable_employment', 'norm_regulatory_quality',
+    'norm_fdi_trend', 'norm_governance_trend', 'norm_inflation_trend'
+]);
+function isBlurredVar(varKey) {
+    return currentUserRole === 'BRICS2026' && BRICS_BLURRED_VARS.has(varKey);
+}
+
 // Legacy pillar configs (kept for old tab code — Phase 2 removes these)
 const OPPORTUNITY_PILLARS = [
     { key: 'market_access',       name: 'Opportunity',         vars: ['norm_gdp_growth','norm_export_growth','norm_net_fdi_pct_gdp'] },
@@ -8137,13 +8154,24 @@ function renderNormVarBreakdown(iso, year) {
             const val = row[v] ?? 0;
             const avg = globalMeans[v];
             const delta = val - avg;
-            const barW = Math.round(val * 100);
-            const deltaCol = delta >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+            const blurred = isBlurredVar(v);
+            // A CSS blur on the real bar/text still leaks the value — a
+            // blurred bar at 73% width still visibly reads as "about
+            // three-quarters full". For blurred variables, don't put the
+            // real number in the page at all: fixed-width neutral bar, fixed
+            // placeholder text, so there's nothing to eyeball or read back.
+            const barW      = blurred ? 50 : Math.round(val * 100);
+            const barColor  = blurred ? 'rgba(255,255,255,0.14)' : g.color;
+            const valColor  = blurred ? 'var(--text-muted)' : g.color;
+            const valDisp   = blurred ? '••••' : val.toFixed(3);
+            const deltaCol  = blurred ? 'var(--text-muted)' : (delta >= 0 ? 'var(--accent-green)' : 'var(--accent-red)');
+            const deltaDisp = blurred ? '••••' : `${delta>=0?'+':''}${delta.toFixed(3)}`;
+            const lockIcon  = blurred ? ' <i class="ri-lock-2-line" style="font-size:0.58rem;color:var(--text-muted);margin-left:0.3rem;cursor:help;" title="Limited Preview: not included in BRICS Summit access. Available on Personal and Enterprise plans."></i>' : '';
             return `<tr style="border-bottom:1px solid rgba(255,255,255,0.03);" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background=''">
-                <td style="padding:0.45rem 1rem 0.45rem 1.4rem;font-family:var(--font-minor);font-size:0.68rem;color:var(--w65);">${NORM_VAR_LABELS[v]||v}</td>
-                <td style="padding:0.45rem 0.5rem;width:42%;"><div style="height:6px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;"><div style="width:${barW}%;height:100%;background:${g.color};border-radius:2px;transition:width 0.4s;"></div></div></td>
-                <td style="padding:0.45rem 0.75rem;font-family:var(--font-mono);font-size:0.68rem;color:${g.color};text-align:right;white-space:nowrap;">${val.toFixed(3)}</td>
-                <td style="padding:0.45rem 1rem 0.45rem 0.25rem;font-family:var(--font-mono);font-size:0.65rem;color:${deltaCol};text-align:right;white-space:nowrap;">${delta>=0?'+':''}${delta.toFixed(3)}</td>
+                <td style="padding:0.45rem 1rem 0.45rem 1.4rem;font-family:var(--font-minor);font-size:0.68rem;color:var(--w65);">${NORM_VAR_LABELS[v]||v}${lockIcon}</td>
+                <td style="padding:0.45rem 0.5rem;width:42%;"><div style="height:6px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;"><div style="width:${barW}%;height:100%;background:${barColor};border-radius:2px;transition:width 0.4s;"></div></div></td>
+                <td style="padding:0.45rem 0.75rem;font-family:var(--font-mono);font-size:0.68rem;color:${valColor};text-align:right;white-space:nowrap;">${valDisp}</td>
+                <td style="padding:0.45rem 1rem 0.45rem 0.25rem;font-family:var(--font-mono);font-size:0.65rem;color:${deltaCol};text-align:right;white-space:nowrap;">${deltaDisp}</td>
             </tr>`;
         }).join('');
         const pillarVal = row[PILLARS[g.key]?.key] ?? null;
@@ -10052,7 +10080,8 @@ function renderAllVariablesComparison(c1, c2) {
             name: VARIABLE_NAMES[v] || v,
             v1, v2, diff,
             absDiff: Math.abs(diff),
-            winner: Math.abs(diff) < 0.1 ? 'tie' : (v1 > v2 ? c1.country_name : c2.country_name)
+            winner: Math.abs(diff) < 0.1 ? 'tie' : (v1 > v2 ? c1.country_name : c2.country_name),
+            blurred: isBlurredVar(v)
         };
     });
 
@@ -10080,14 +10109,22 @@ function renderAllVariablesComparison(c1, c2) {
                             <div>${c2.country_name}</div>
                             <div>Difference</div>
                         </div>
-                        ${varData.map(vd => `
+                        ${varData.map(vd => {
+                            // Placeholder text, not a blurred real value — a blur
+                            // still leaks the number's rough shape/length; a fixed
+                            // placeholder leaks nothing.
+                            const lockIcon = vd.blurred ? ' <i class="ri-lock-2-line" style="font-size:0.7rem;color:var(--text-muted);cursor:help;" title="Limited Preview: not included in BRICS Summit access. Available on Personal and Enterprise plans."></i>' : '';
+                            const v1Disp = vd.blurred ? '••••' : vd.v1.toFixed(2);
+                            const v2Disp = vd.blurred ? '••••' : vd.v2.toFixed(2);
+                            const diffDisp = vd.blurred ? '••••' : `${vd.diff > 0 ? '+' : ''}${vd.diff.toFixed(2)}`;
+                            return `
                             <div class="variable-row">
-                                <div class="variable-name">${vd.name}</div>
-                                <div class="variable-value ${vd.winner === c1.country_name ? 'winner' : ''}">${vd.v1.toFixed(2)}</div>
-                                <div class="variable-value ${vd.winner === c2.country_name ? 'winner' : ''}">${vd.v2.toFixed(2)}</div>
-                                <div class="variable-diff ${vd.diff > 0 ? 'positive' : vd.diff < 0 ? 'negative' : ''}">${vd.diff > 0 ? '+' : ''}${vd.diff.toFixed(2)}</div>
+                                <div class="variable-name">${vd.name}${lockIcon}</div>
+                                <div class="variable-value ${!vd.blurred && vd.winner === c1.country_name ? 'winner' : ''}">${v1Disp}</div>
+                                <div class="variable-value ${!vd.blurred && vd.winner === c2.country_name ? 'winner' : ''}">${v2Disp}</div>
+                                <div class="variable-diff ${vd.blurred ? '' : vd.diff > 0 ? 'positive' : vd.diff < 0 ? 'negative' : ''}">${diffDisp}</div>
                             </div>
-                        `).join('')}
+                        `; }).join('')}
                     </div>
                 </div>
             </div>
