@@ -95,3 +95,33 @@ The `src` query param is already threaded through the stash → Firestore (`sign
 BRICS members: Brazil (BRA), China (CHN), Egypt (EGY), Ethiopia (ETH), India (IND), Indonesia (IDN), Iran (IRN), Russia (RUS), Saudi Arabia (SAU), South Africa (ZAF), UAE (ARE).
 Partner countries: Belarus (BLR), Bolivia (BOL), Cuba (CUB), Kazakhstan (KAZ), Malaysia (MYS), Nigeria (NGA), Thailand (THA), Uganda (UGA), Uzbekistan (UZB), Vietnam (VNM).
 21 countries total. No open items remain before implementation.
+
+## Later addition: limited variable preview for BRICS registrants
+Beyond country scope, 12 specific normalized indicators are hidden from BRICS registrants specifically — a visual/UX limitation, not a data-security boundary (see the note under Tier 1 below on what this does and doesn't protect against).
+
+- `dashboard.html`: `BRICS_BLURRED_VARS` (a `Set` of 12 `norm_*` field keys) and `isBlurredVar(varKey)` — defined right after `NORM_VAR_LABELS`. Returns true only when `currentUserRole === 'BRICS2026'` and the field is in the set.
+- Applied in two render functions: `renderNormVarBreakdown()` (Analysis tab's Variable Breakdown by Pillar) and `renderAllVariablesComparison()` (Compare tab's All Variables Comparison). For a blurred variable, the real value/delta/bar-width is never put in the page at all — replaced with a fixed placeholder (`••••`, a neutral fixed-width bar) plus a small lock icon carrying a `title` tooltip ("Limited Preview: not included in BRICS Summit access...").
+- The 12 hidden variables: Export Growth, Gross Capital Formation, Secondary Enrolment, Current Account (% GDP), Rule of Law, Control of Corruption, Resource Rents (% GDP), Vulnerable Employment, Regulatory Quality, FDI Trend, Governance Trend, Inflation Trend.
+
+## Removal checklist — once the event + trial window (+ some buffer) is over
+
+Not everything touched during this work is BRICS-specific — some of it fixed pre-existing, unrelated bugs found along the way. Removing the wrong tier would either leave BRICS code behind or reintroduce real bugs. Three tiers:
+
+### Tier 1 — BRICS-specific, safe to delete entirely
+- **Delete the file** `brics2026.html` (the whole registration page).
+- **Firebase Console → Firestore → `config` collection**: delete the `brics_event` document (or just leave `active: false` permanently if you'd rather keep the historical record — either is safe, since nothing reads it once no code path creates new `role:'BRICS2026'` docs).
+- **`firestore.rules`**: remove the `bricsConfig()` helper function, remove the second `allow create` clause under `match /users/{userId}` (the block commented "Campaign self-registration"), and revert the `config/{docId}` block's read rule back to `allow read: if isRegistered();` (drop the `docId == 'brics_event' ||` carve-out). **Redeploy rules after editing** — this file doesn't take effect until pushed via the Firebase Console or CLI, same as the initial setup.
+- **`firebase-config.js`**: remove `_createCampaignUserDoc()` and `signUpForCampaign()`, and the `if (intent.role) { ... } else { ... }` branch inside `auth.onAuthStateChanged` (collapse back to just the `else` body, which is the original default-signup path).
+- **`dashboard.html`**: remove `BRICS_BLURRED_VARS` and `isBlurredVar()`, and revert the blur-related branches inside `renderNormVarBreakdown()` and `renderAllVariablesComparison()` back to always showing the real value/bar/delta (i.e. drop the `blurred ? ... : ...` conditionals, keep the `: ...` side).
+- **Reminder on what this did and didn't protect**: this was always a client-side/UI limitation, not a hard data boundary — the full dataset is fetched to every verified user's browser regardless of plan/role (see firebase-config.js's RTDB fetch), so a technically determined user could already read the real numbers via DevTools. Nothing here needs a "was it actually secure" audit before removal; it was cosmetic by design.
+
+### Tier 2 — reusable infrastructure; keep only if you expect another campaign like this
+This was deliberately built generic (not hardcoded to "BRICS"), specifically so a future event wouldn't need new code:
+- `admin.html`: `isCampaignUser()`, the **Custom** tab (button, `#view-custom` markup, `renderCustom()`, `isCampaignExpired()`), and the campaign-exclusion filters inside `updateStats()`, `filterUsers()`, and `renderPlans()`.
+- `firebase-config.js`: `currentUserOrganization`/`currentUserDesignation`/`currentPlanExpiresAt` state, the `effectivePlan()` expiry check, and the extended `stashPlanIntent(email, plan, countries, extra)` signature.
+- If no other campaign is planned, these can be removed too, following the same "does anything still reference it" check as Tier 1. If you do plan another one, keep this tier — a future event would only need a new registration page plus a new `config/{docId}` doc and a matching `firestore.rules` create clause (`_createCampaignUserDoc()` in firebase-config.js currently hardcodes the `'brics_event'` doc path — that line would need generalizing, e.g. keyed off `intent.role`, to serve more than one campaign at a time).
+
+### Tier 3 — do NOT remove; unrelated bug fixes made in the same period
+Found and fixed while working on BRICS-related mobile testing, but these are genuine pre-existing bugs, not BRICS code:
+- `dashboard.html` mobile chart-sizing fixes: the `aspectRatio:1`/wrapper-height exclusions for `#country-pillar-radar`, `#country-rao-timeseries`, `#compare-radar-chart`, `#compare-pillar-bars`, `#compare-timeseries-chart`; the `.peer-row-grid` class and its CSS exclusion from the blanket mobile grid-collapse rule; the `#peer-comparison-content` horizontal-scroll fix; the `compare-pillar-bars` tick `maxRotation`/`autoSkip` fix; and the `.variable-row.header` visibility/sticky-header fix in the Compare tab's All Variables table.
+- `CLAUDE.md`'s corrected documentation of `rao9.csv` (it was already wrong before any BRICS work started — it lives in Firebase Realtime Database, not as a repo file).
