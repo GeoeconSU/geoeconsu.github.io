@@ -4431,13 +4431,23 @@
         @media (max-width: 768px) {
             .bento-cell { min-height: 240px; }
             .bento-cell canvas { height: clamp(200px, 35vw, 300px) !important; }
-            .analysis-card canvas { height: clamp(180px, 30vw, 260px) !important; }
+            /* country-pillar-radar / compare-radar-chart (aspectRatio:1) and
+               country-rao-timeseries / compare-pillar-bars / compare-timeseries-chart
+               (each sized by its own wrapper's explicit height) already manage
+               their own height via Chart.js/their container — forcing a
+               clamp() height here on top of that fights it and stretches or
+               truncates the chart. */
+            .analysis-card canvas:not(#country-pillar-radar):not(#country-rao-timeseries):not(#compare-radar-chart):not(#compare-pillar-bars):not(#compare-timeseries-chart) { height: clamp(180px, 30vw, 260px) !important; }
+            .rao-timeseries-wrap { height: 200px; }
+            .compare-pillar-bars-wrap, .compare-timeseries-wrap { height: 200px; }
         }
         @media (max-width: 480px) {
             .bento-cell { min-height: 200px; }
             .bento-cell canvas { height: clamp(180px, 55vw, 260px) !important; }
-            .analysis-card canvas,
+            .analysis-card canvas:not(#country-pillar-radar):not(#country-rao-timeseries):not(#compare-radar-chart):not(#compare-pillar-bars):not(#compare-timeseries-chart),
             .compare-card canvas { height: clamp(160px, 50vw, 240px) !important; }
+            .rao-timeseries-wrap { height: 180px; }
+            .compare-pillar-bars-wrap, .compare-timeseries-wrap { height: 180px; }
         }
 
         /* ── MOBILE FIXES (supplements the blocks above) ─────────────────── */
@@ -4446,7 +4456,11 @@
             .insights-workspace { height: calc(100vh - 125px); }
             .rankings-filter select { width: 100%; max-width: 100%; }
             .tab-lock p { max-width: min(340px, calc(100vw - 3rem)); }
-            [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+            /* :not(.peer-row-grid) — the archetype peer list's per-row grid
+               (rank/name/score/delta side-by-side) must stay 4 columns; this
+               blanket rule was collapsing it to 1, stacking each value onto
+               its own line and making the list look sparse/empty. */
+            [style*="grid-template-columns"]:not(.peer-row-grid) { grid-template-columns: 1fr !important; }
             .rtm-grid { grid-template-columns: 80px repeat(4, 1fr) !important; overflow-x: auto; display: block; }
             .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; }
             .bento-span-2, .bento-span-3 { border-right: none !important; }
@@ -4456,7 +4470,7 @@
             .kpi-grid, .chart-grid, .analysis-grid, .compare-grid,
             .insights-grid, .summary-stats, .pillar-winners-grid,
             .detail-grid, .selector-row, .global-insights-grid,
-            .tt-pillars, [style*="grid-template-columns"] {
+            .tt-pillars, [style*="grid-template-columns"]:not(.peer-row-grid) {
                 grid-template-columns: 1fr !important;
             }
             .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; }
@@ -5195,7 +5209,7 @@
                     <!-- ── ROW 4: RAO Score Trajectory (full width) ── -->
                     <div class="analysis-card" style="margin-bottom:12px;">
                         <div class="card-title">RAO Score Trajectory (2010–2025)</div>
-                        <div style="padding:0.5rem 1.2rem 1rem;position:relative;aspect-ratio:3/1;min-height:180px;">
+                        <div class="rao-timeseries-wrap" style="padding:0.5rem 1.2rem 1rem;position:relative;height:220px;">
                             <canvas id="country-rao-timeseries"></canvas>
                         </div>
                     </div>
@@ -5261,7 +5275,7 @@
                     <!-- ── ROW 9: Peer Comparison (full) ── -->
                     <div class="analysis-card" style="margin-bottom:12px;">
                         <div class="card-title">Peer Comparison · All Pillars</div>
-                        <div id="peer-comparison-content"></div>
+                        <div id="peer-comparison-content" style="overflow-x:auto;-webkit-overflow-scrolling:touch;"></div>
                     </div>
 
                     <!-- deep-dive-content stub retained for legacy JS compatibility -->
@@ -5324,15 +5338,15 @@
                                 <span>4-Pillar Profile Overlay</span>
                                 <span id="compare-radar-legend" style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:flex-end;"></span>
                             </div>
-                            <div style="padding:0.25rem 1.2rem 0.75rem;"><canvas id="compare-radar-chart" height="160"></canvas></div>
+                            <div style="padding:0.25rem 1.2rem 0.75rem;position:relative;"><canvas id="compare-radar-chart"></canvas></div>
                         </div>
                         <div class="analysis-card" style="display:flex;flex-direction:column;">
                             <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
                                 <span>Pillar Comparison</span>
                                 <span id="compare-pillar-legend" style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:flex-end;"></span>
                             </div>
-                            <div style="padding:0.25rem 1.2rem 0.75rem;flex:1;display:flex;align-items:center;">
-                                <canvas id="compare-pillar-bars" height="160" style="width:100%;"></canvas>
+                            <div class="compare-pillar-bars-wrap" style="padding:0.25rem 1.2rem 0.75rem;position:relative;height:220px;">
+                                <canvas id="compare-pillar-bars"></canvas>
                             </div>
                         </div>
                     </div>
@@ -5340,7 +5354,7 @@
                     <!-- ── RAO v8: Time Series Overlay ── -->
                     <div class="analysis-card" style="margin-bottom:12px;">
                         <div class="card-title">RAO Score History (2010–2025)</div>
-                        <div style="padding:0.5rem 1.2rem 1rem;"><canvas id="compare-timeseries-chart" height="90"></canvas></div>
+                        <div class="compare-timeseries-wrap" style="padding:0.5rem 1.2rem 1rem;position:relative;height:220px;"><canvas id="compare-timeseries-chart"></canvas></div>
                     </div>
 
                     <!-- ── RAO v8: Stacked Regime Timelines ── -->
@@ -8165,7 +8179,7 @@ function renderArchetypePeers(iso, year) {
     const rows = peers.map((p, i) => {
         const delta = p.rao_score - row.rao_score;
         const isThis = p.country === iso;
-        return `<div style="display:grid;grid-template-columns:24px 1fr 60px 60px;align-items:center;gap:0.75rem;padding:0.5rem 1.2rem;border-bottom:1px solid var(--border-subtle);${isThis?'background:rgba(194,165,109,0.06);':''}" onclick="openCountryAnalysis('${p.country}')">
+        return `<div class="peer-row-grid" style="display:grid;grid-template-columns:24px 1fr 60px 60px;align-items:center;gap:0.75rem;padding:0.5rem 1.2rem;border-bottom:1px solid var(--border-subtle);${isThis?'background:rgba(194,165,109,0.06);':''}" onclick="openCountryAnalysis('${p.country}')">
             <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${i+1}</span>
             <span style="font-size:0.82rem;color:${isThis?'var(--accent-gold)':'var(--w65)'};">${p.country_name}${isThis?' ◀':''}</span>
             <span style="font-family:var(--font-mono);font-size:0.82rem;color:var(--accent-gold);">${p.rao_score.toFixed(2)}</span>
@@ -8174,7 +8188,7 @@ function renderArchetypePeers(iso, year) {
     }).join('');
 
     el.innerHTML = `<div style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-muted);padding:0.5rem 1.2rem;">${archetypeBadge(row.archetype)}</div>
-        <div style="display:grid;grid-template-columns:24px 1fr 60px 60px;gap:0.75rem;padding:0.3rem 1.2rem;border-bottom:1px solid var(--border-subtle);">
+        <div class="peer-row-grid" style="display:grid;grid-template-columns:24px 1fr 60px 60px;gap:0.75rem;padding:0.3rem 1.2rem;border-bottom:1px solid var(--border-subtle);">
             <span style="font-family:var(--font-minor);font-size:0.55rem;color:var(--text-muted);">#</span>
             <span style="font-family:var(--font-minor);font-size:0.55rem;color:var(--text-muted);">Country</span>
             <span style="font-family:var(--font-minor);font-size:0.55rem;color:var(--text-muted);">RAO</span>
@@ -8940,7 +8954,7 @@ function renderPeerComparison(country) {
     const labelStyle = `font-family:var(--font-minor); font-size:0.58rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-muted); text-align:right; width:72px; flex-shrink:0;`;
 
     const headerRow = `
-        <div style="display:flex; align-items:center; padding:0.5rem 1.2rem; border-bottom:1px solid var(--border-subtle); gap:0.5rem;">
+        <div style="display:flex; align-items:center; padding:0.5rem 1.2rem; border-bottom:1px solid var(--border-subtle); gap:0.5rem; min-width:520px;">
             <div style="flex:1;"></div>
             <div style="${labelStyle}">Country</div>
             <div style="${labelStyle}">Reg Avg</div>
@@ -8958,7 +8972,7 @@ function renderPeerComparison(country) {
                     <div style="font-family:var(--font-mono); font-size:0.62rem; color:${dc}; text-align:right; width:72px; flex-shrink:0;">${sign}${d.toFixed(2)}</div>`;
         };
         return `
-            <div style="display:flex; align-items:center; padding:0.6rem 1.2rem; border-bottom:1px solid var(--border-subtle); gap:0.5rem;"
+            <div style="display:flex; align-items:center; padding:0.6rem 1.2rem; border-bottom:1px solid var(--border-subtle); gap:0.5rem; min-width:520px;"
                 onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background=''">
                 <div style="flex:1; font-family:var(--font-body); font-size:0.88rem; color:var(--text-white);">${p.name}</div>
                 <div style="${colStyle} color:var(--accent-gold); font-weight:600;">${p.country.toFixed(2)}</div>
@@ -8978,7 +8992,7 @@ function renderPeerComparison(country) {
     };
 
     const sectionHeader = (label, color) => `
-        <div style="display:flex; align-items:center; padding:0.45rem 1.2rem; background:var(--tertiary-bg);">
+        <div style="display:flex; align-items:center; padding:0.45rem 1.2rem; background:var(--tertiary-bg); min-width:520px;">
             <span style="font-family:var(--font-minor); font-size:0.58rem; font-weight:600; text-transform:uppercase; letter-spacing:0.16em; color:${color};">${label}</span>
         </div>`;
 
@@ -9260,7 +9274,7 @@ function _renderCompareRadar(isos) {
         type: 'radar',
         data: { labels, datasets },
         options: {
-            responsive:true, maintainAspectRatio:true,
+            responsive:true, maintainAspectRatio:true, aspectRatio:1,
             scales: { r: { min:0, max:1, grid:{color:'rgba(255,255,255,0.08)'}, angleLines:{color:'rgba(255,255,255,0.08)'},
                 ticks:{display:false}, pointLabels:{color:'rgba(238,234,224,0.6)',font:{size:9}} } },
             plugins: { legend:{display:false} }
@@ -9295,10 +9309,18 @@ function _renderComparePillarBars(isos) {
         type: 'bar',
         data: { labels, datasets },
         options: {
-            responsive:true, maintainAspectRatio:true,
+            responsive:true, maintainAspectRatio:false,
             plugins: { legend:{display:false} },
             scales: {
-                x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'rgba(238,234,224,0.5)',font:{size:10}} },
+                // maxRotation/minRotation:0 keeps these long pillar names
+                // (e.g. "Absorptive Capacity") horizontal instead of diagonal.
+                // autoSkip:false is required alongside that — with only 4
+                // categories and rotation disabled, Chart.js's default
+                // autoSkip was hiding every other label (Stability, Trajectory)
+                // rather than rotating them; long labels wrap onto a second
+                // line instead, which reads better than either rotating or
+                // silently dropping half the axis.
+                x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'rgba(238,234,224,0.5)',font:{size:9},maxRotation:0,minRotation:0,autoSkip:false} },
                 y: { min:0, max:1, grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'rgba(238,234,224,0.4)',font:{size:10}} }
             }
         }
@@ -9328,7 +9350,7 @@ function _renderCompareTimeSeries(isos) {
         type: 'line',
         data: { labels: allYears, datasets },
         options: {
-            responsive:true, maintainAspectRatio:true,
+            responsive:true, maintainAspectRatio:false,
             plugins: { legend:{display:true,position:'bottom',labels:{color:'rgba(238,234,224,0.5)',font:{size:10},boxWidth:10,padding:12}} },
             scales: {
                 x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'rgba(238,234,224,0.4)',font:{size:10}} },

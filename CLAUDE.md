@@ -58,8 +58,8 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 │   ├── rao2.csv             - RAO 2.0 (ACTIVE: used by map.html)
 │   ├── rao3.csv             - RAO 3.0 detailed (ACTIVE: used by console.html)
 │   ├── rao4.csv             - RAO 3.0 enhanced (ACTIVE: used by console.html)
-│   ├── rao9.csv             - RAO 9.0 panel 2010–2024 (ACTIVE: used by dashboard.html)
 │   └── legacy/              - Archived datasets (rao.csv, rao5–rao8.csv; not referenced)
+│   (rao9.csv is NOT in this directory/repo — see Data Files below)
 ├── notes/                   - Internal documentation (not deployed as pages)
 │   ├── design.md            - Design system reference (tokens, typography, components)
 │   ├── structure.md         - Full project structure map
@@ -100,15 +100,15 @@ This is a **GitHub Pages static website** for the Geoeconomic Strategy Unit (GSU
 ```
 
 ### Data Files
-- **Location**: `data/` directory
+- **Location**: `data/` directory (public, git-tracked datasets only)
 - **Active datasets**:
   - `rao2.csv` → `map.html` (country + score + regime, single snapshot)
   - `rao3.csv` / `rao4.csv` → `console.html` (detailed pillar data)
-  - `rao9.csv` → `dashboard.html` (ACTIVE MAIN: panel data 2010–2024)
 - **Archived datasets** (moved to `data/legacy/`; not referenced by any page):
   - `rao.csv` (v1.0), `rao5.csv`, `rao6.csv`, `rao7.csv`, `rao8.csv`
-- **rao9.csv schema**: `country_iso, country_name, year, rao_score, rao_score_pre_overlay, overlay_adjustment, market_size_bonus, cvar25, volatility_band, pillar_opportunity, pillar_stability, pillar_absorptive_capacity, pillar_trajectory, tos_score, tos_signal_label, sis_score, dgi_score, rvs_score, regime, regime_label, archetype, trajectory_class, [normalized indicators]`
-- **4 pillars** (rao9): Opportunity · Stability · Absorptive Capacity · Trajectory
+- **rao9.csv is NOT a repo file.** It is proprietary panel data (2010–2025) and is **not** shipped in git — it lives in the `gsu-members` Firebase project's **Realtime Database** at `protected-data/rao9_csv` (a single string value holding the CSV text), gated by `database.rules.json` to signed-in, email-verified users only (`.write` is `false` there — it can only be updated via the Firebase Console, never from app code). `dashboard.html` fetches it with `firebase.database().ref('protected-data/rao9_csv').once('value')` ([dashboard.html:6432](dashboard.html#L6432)) and parses it with the same RFC 4180 CSV parser used elsewhere. `data/rao9.csv` and `data/rao9_rtdb_import.json` are both listed in `.gitignore` — a local copy may exist on a developer's machine (e.g. for the import step, or for `test_stream.py`) but must never be committed.
+  - Schema: `country_iso, country_name, year, rao_score, rao_score_pre_overlay, overlay_adjustment, market_size_bonus, cvar25, volatility_band, pillar_opportunity, pillar_stability, pillar_absorptive_capacity, pillar_trajectory, tos_score, tos_signal_label, sis_score, dgi_score, rvs_score, regime, regime_label, archetype, trajectory_class, [normalized indicators]`
+  - 4 pillars: Opportunity · Stability · Absorptive Capacity · Trajectory
 
 ### Authentication
 - **Dashboard only** (`dashboard.html`) is protected — all other pages are public.
@@ -241,9 +241,8 @@ npx serve .
 ## Common Tasks
 
 ### Updating RAO Data
-1. Edit `data/rao9.csv` (dashboard) or `data/rao2.csv` (map)
-2. Schema for rao9.csv: panel data — see Data Files section above for full column list
-3. Changes reflect immediately after page reload
+1. `data/rao2.csv` (map): edit the file directly — changes reflect immediately after page reload.
+2. `rao9.csv` (dashboard): **not a repo file** — update it by pasting a fresh copy of the CSV as the value of `protected-data/rao9_csv` directly in the Firebase Console (Realtime Database → `gsu-members` project). App code cannot write to that path (`.write: false` in `database.rules.json`), so this is a manual, console-only operation. Schema: panel data — see Data Files section above for full column list.
 
 ### Adding Team Members
 1. Add photo to `team/` directory (100x100px, PNG/JPEG)
@@ -295,7 +294,7 @@ The `gsu-gate` Cloudflare Worker gates the GRB quarterly reports:
 ### Naming
 - Lowercase for standard pages (`index.html`, `dashboard.html`)
 - Client-specific pages use client name (`angelone.html`)
-- CSV files use descriptive names (`rao2.csv`, `rao9.csv`)
+- CSV files use descriptive names (`rao2.csv`, `rao3.csv`, `rao4.csv`); `rao9.csv` follows the same naming convention but is not a repo file (see Data Files)
 - Images use descriptive names, lowercase preferred
 
 ### Structure
@@ -316,7 +315,7 @@ The `gsu-gate` Cloudflare Worker gates the GRB quarterly reports:
 
 - **Globe rendering**: Computationally intensive, uses WebGL shaders
 - **Image optimization**: Team photos and logos can be large (1-2MB)
-- **CSV loading**: rao9.csv is the largest dataset, loaded client-side
+- **CSV loading**: rao9.csv is the largest dataset, loaded client-side from Firebase Realtime Database (not a static file — see Data Files)
 - **Mobile optimization**: Globe scales down, grids collapse to single column
 - **Chart instances**: dashboard.html maintains a chart registry (`_chartInstances`); instances are re-created on tab switch
 
@@ -331,7 +330,7 @@ The `gsu-gate` Cloudflare Worker gates the GRB quarterly reports:
 
 1. **Three.js imports**: Must use Skypack CDN with specific version (v0.128.0)
 2. **Globe image path**: `world_alpha_mini.jpg` is in `assets/` — referenced as `assets/world_alpha_mini.jpg` in `index.html`
-3. **CSV parsing**: No header validation, ensure consistent format; rao9.csv uses RFC 4180 quoting
+3. **CSV parsing**: No header validation, ensure consistent format; rao9.csv (fetched from Firebase Realtime Database, not a repo file) uses RFC 4180 quoting
 4. **Shader errors**: WebGL context issues on some browsers/devices
 5. **Scroll behavior**: `scroll-behavior: smooth` may conflict with Safari
 6. **Responsive breakpoint**: 900px is the main mobile threshold
