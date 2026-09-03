@@ -8162,6 +8162,11 @@ function renderNormVarBreakdown(iso, year) {
             // placeholder text, so there's nothing to eyeball or read back.
             const barW      = blurred ? 50 : Math.round(val * 100);
             const barColor  = blurred ? 'rgba(255,255,255,0.14)' : g.color;
+            // Safe to blur now that the bar's width is fixed at 50% rather
+            // than the real value — a blur on a constant-width bar leaks
+            // nothing, and visually signals "hidden" more intuitively than a
+            // plain flat bar would.
+            const barBlur   = blurred ? 'filter:blur(2.5px);' : '';
             const valColor  = blurred ? 'var(--text-muted)' : g.color;
             const valDisp   = blurred ? '••••' : val.toFixed(3);
             const deltaCol  = blurred ? 'var(--text-muted)' : (delta >= 0 ? 'var(--accent-green)' : 'var(--accent-red)');
@@ -8169,7 +8174,7 @@ function renderNormVarBreakdown(iso, year) {
             const lockIcon  = blurred ? ' <i class="ri-lock-2-line" style="font-size:0.58rem;color:var(--text-muted);margin-left:0.3rem;cursor:help;" title="Limited Preview: not included in BRICS Summit access. Available on Personal and Enterprise plans."></i>' : '';
             return `<tr style="border-bottom:1px solid rgba(255,255,255,0.03);" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background=''">
                 <td style="padding:0.45rem 1rem 0.45rem 1.4rem;font-family:var(--font-minor);font-size:0.68rem;color:var(--w65);">${NORM_VAR_LABELS[v]||v}${lockIcon}</td>
-                <td style="padding:0.45rem 0.5rem;width:42%;"><div style="height:6px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;"><div style="width:${barW}%;height:100%;background:${barColor};border-radius:2px;transition:width 0.4s;"></div></div></td>
+                <td style="padding:0.45rem 0.5rem;width:42%;"><div style="height:6px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;${barBlur}"><div style="width:${barW}%;height:100%;background:${barColor};border-radius:2px;transition:width 0.4s;"></div></div></td>
                 <td style="padding:0.45rem 0.75rem;font-family:var(--font-mono);font-size:0.68rem;color:${valColor};text-align:right;white-space:nowrap;">${valDisp}</td>
                 <td style="padding:0.45rem 1rem 0.45rem 0.25rem;font-family:var(--font-mono);font-size:0.65rem;color:${deltaCol};text-align:right;white-space:nowrap;">${deltaDisp}</td>
             </tr>`;
