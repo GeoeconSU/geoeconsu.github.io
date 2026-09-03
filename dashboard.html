@@ -4521,6 +4521,7 @@
         .auth-overlay.visible { opacity: 1; pointer-events: all; }
         .auth-modal {
             width: 420px; max-width: calc(100vw - 40px);
+            max-height: min(680px, calc(100vh - 48px)); overflow-y: auto;
             background: #192030;
             border: 1px solid rgba(194,165,109,0.18);
             border-radius: 3px;
@@ -4528,6 +4529,8 @@
             padding: 2.25rem 2.25rem 2rem;
             transform: translateY(16px); transition: transform 0.28s var(--easing);
         }
+        .auth-modal::-webkit-scrollbar { width: 5px; }
+        .auth-modal::-webkit-scrollbar-thumb { background: rgba(194,165,109,0.25); border-radius: 3px; }
         .auth-overlay.visible .auth-modal { transform: translateY(0); }
         .auth-modal-logo { text-align: center; margin-bottom: 1.75rem; }
         .auth-modal-logo img { width: 42px; margin-bottom: 0.85rem; opacity: 0.92; display: block; margin-left: auto; margin-right: auto; }
@@ -4710,7 +4713,12 @@
             font-family: var(--font-minor); font-size: 0.56rem; text-transform: uppercase;
             letter-spacing: 0.12em; color: var(--text-muted); line-height: 1.6;
         }
-        .country-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+        .country-chips {
+            display: flex; flex-wrap: wrap; gap: 0.3rem;
+            max-height: 92px; overflow-y: auto; overscroll-behavior: contain;
+        }
+        .country-chips::-webkit-scrollbar { width: 4px; }
+        .country-chips::-webkit-scrollbar-thumb { background: rgba(194,165,109,0.25); border-radius: 3px; }
         .country-chip {
             display: inline-flex; align-items: center; gap: 0.35rem;
             background: rgba(194,165,109,0.14); border: 1px solid rgba(194,165,109,0.4);
@@ -16384,7 +16392,7 @@ function toggleAnalyticsReadonly() {
 
 <!-- ══ UPGRADE MODAL — shown to signed-in users who hit a locked surface ═════ -->
 <div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
-    <div class="auth-modal" style="position:relative; width:520px;">
+    <div class="auth-modal" style="position:relative; width:560px;">
         <button class="auth-close-btn" onclick="closeUpgradeModal()"><i class="ri-close-line"></i></button>
         <div class="auth-modal-logo">
             <h2>Unlock <em>the full picture</em></h2>
