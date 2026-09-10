@@ -5181,8 +5181,6 @@
         .quiet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 4px; max-height: 260px; overflow-y: auto; padding-right: 4px; }
         .quiet-chip { font-family: var(--font-mono); font-size: 0.56rem; text-align: center; padding: 0.25rem 0; border: 1px solid var(--border-subtle); border-radius: 2px; color: var(--w45); cursor: pointer; transition: all 0.15s; }
         .quiet-chip:hover { border-color: var(--accent-gold-dim); color: var(--accent-gold); }
-        .quiet-chip.ineligible { border-style: dashed; opacity: 0.55; cursor: default; }
-        .quiet-chip.ineligible:hover { border-color: var(--border-subtle); color: var(--w45); }
 
         /* ─── Analysis tab: live signal card ───────────────────────────── */
         .live-quiet { display: flex; align-items: center; gap: 0.85rem; padding: 1.1rem 1.4rem; }
@@ -7221,6 +7219,12 @@ function computeLive(iso, at) {
 function decorateSliceWithNews() {
     if (!latestSlice || !latestSlice.length) return;
 
+    // Entities the news pipeline excludes. In the current vintage this is
+    // always empty in practice: the fifteen ineligible codes carry no
+    // rao_score, so parseMainCSV drops them before they ever reach latestSlice.
+    // The guard stays because a future vintage could ship a scored entity that
+    // the pipeline still declines to review, and that must not be handed a
+    // fabricated live score.
     NEWS.ineligible = new Set(
         latestSlice.filter(r => !NEWS.snapshots[r.country]).map(r => r.country)
     );
@@ -7229,8 +7233,6 @@ function decorateSliceWithNews() {
     latestSlice.forEach(row => {
         if (!NEWS.ok) { row.news = null; row.liveRank = row.rank; return; }
         if (NEWS.ineligible.has(row.country)) {
-            // No structural baseline in the news pipeline — published frozen and
-            // flagged rather than silently given a fabricated live score.
             row.news = { ineligible: true, impact: 0, working: row.rao_score, baseline: row.rao_score };
             return;
         }
@@ -13747,7 +13749,7 @@ let _pulseSort = 'impact';
 let _pulseFilters = { direction: 'all', band: 'all', type: 'all', region: 'all' };
 let _pulseOpen = new Set();
 let _pulsePanel = {};                 // delta_id → which expanded panel is showing
-let _newsroomFilters = { source: 'all', region: 'all', cited: 'all' };
+let _newsroomFilters = { source: 'all', region: 'all' };
 let _newsroomLoaded = false;
 
 function initializePulseTab() {
@@ -14219,23 +14221,27 @@ function renderNewsroom() {
         return;
     }
 
+    // The Newsroom is the evidence base, not the inbox: only articles that
+    // supplied a verified quote to an applied delta belong here. The rest of
+    // the corpus was ingested and reviewed, but it did not move a score, and
+    // listing it would dilute exactly the claim this view exists to make.
     const cited = newsroomCitedIds();
     const signalIsos = new Set(Object.keys(NEWS.byCountry));
+    const citedArticles = all.filter(a => cited.has(a.id));
+
+    if (!citedArticles.length) {
+        if (fEl) fEl.innerHTML = '';
+        el.innerHTML = pulseEmptyState('No cited articles',
+            'No applied signal currently traces to a verified quote in the corpus.');
+        return;
+    }
 
     if (fEl) {
-        const sources = [...new Set(all.map(a => a.source))].filter(Boolean).sort();
-        const regions = [...new Set(all.flatMap(a => a.regions || []))].filter(Boolean).sort();
-        const chip = (g, v, label, count) =>
-            `<div class="screener-chip ${_newsroomFilters[g] === v ? 'active' : ''}" onclick="setNewsroomFilter('${g}','${v}')">${label}${count != null ? ` <span style="opacity:.55;">${count}</span>` : ''}</div>`;
+        const sources = [...new Set(citedArticles.map(a => a.source))].filter(Boolean).sort();
+        const regions = [...new Set(citedArticles.flatMap(a => a.regions || []))].filter(Boolean).sort();
         fEl.innerHTML = `
             <div class="pulse-filter-group">
-                <span class="pulse-filter-label">Show</span>
-                ${chip('cited','all','All', all.length)}
-                ${chip('cited','cited','Cited as evidence', cited.size)}
-                ${chip('cited','signal','From moved markets')}
-            </div>
-            <div class="pulse-sep"></div>
-            <div class="pulse-filter-group">
+                <span class="pulse-filter-label">Filter</span>
                 <select class="pulse-select" onchange="setNewsroomFilter('source', this.value)">
                     <option value="all">All ${sources.length} sources</option>
                     ${sources.map(s => `<option value="${s}" ${_newsroomFilters.source === s ? 'selected' : ''}>${s}</option>`).join('')}
@@ -14243,21 +14249,16 @@ function renderNewsroom() {
                 <select class="pulse-select" onchange="setNewsroomFilter('region', this.value)">
                     <option value="all">All regions</option>
                     ${regions.map(r => `<option value="${r}" ${_newsroomFilters.region === r ? 'selected' : ''}>${r}</option>`).join('')}
-                    <option value="__none" ${_newsroomFilters.region === '__none' ? 'selected' : ''}>Unattributed</option>
                 </select>
             </div>`;
     }
 
-    let rows = all.slice();
+    let rows = citedArticles.slice();
     const f = _newsroomFilters;
-    if (f.cited === 'cited')  rows = rows.filter(a => cited.has(a.id));
-    if (f.cited === 'signal') rows = rows.filter(a => (a.countries || []).some(c => signalIsos.has(c)));
-    if (f.source !== 'all')   rows = rows.filter(a => a.source === f.source);
-    if (f.region === '__none') rows = rows.filter(a => !(a.regions || []).length);
-    else if (f.region !== 'all') rows = rows.filter(a => (a.regions || []).includes(f.region));
+    if (f.source !== 'all') rows = rows.filter(a => a.source === f.source);
+    if (f.region !== 'all') rows = rows.filter(a => (a.regions || []).includes(f.region));
 
     rows.sort((a, b) => (b.published_at || '').localeCompare(a.published_at || ''));
-    rows = rows.slice(0, 400);
 
     if (!rows.length) {
         el.innerHTML = pulseEmptyState('No articles match', 'Try a different source or region.');
@@ -14269,14 +14270,13 @@ function renderNewsroom() {
 
     el.innerHTML = `
         <div style="font-family:var(--font-minor);font-size:0.58rem;color:var(--w45);padding:0.25rem 0 0.5rem;">
-            ${rows.length} of ${all.length} articles · gold marks the ones that supplied a verified evidence quote
+            ${rows.length}${rows.length !== citedArticles.length ? ` of ${citedArticles.length}` : ''} article${rows.length === 1 ? '' : 's'} that supplied a verified evidence quote to an applied signal
         </div>
         ${Object.keys(byDay).sort().reverse().map(day => `
             <div class="news-day">${day || 'Undated'} <span style="color:var(--w45);font-weight:400;">· ${byDay[day].length}</span></div>
             ${byDay[day].map(a => {
-                const isCited = cited.has(a.id);
                 const time = (a.published_at || '').slice(11, 16);
-                return `<div class="article-row ${isCited ? 'cited' : ''}">
+                return `<div class="article-row cited">
                     <span class="article-time">${time}</span>
                     <a class="article-title" href="${a.url}" target="_blank" rel="noopener">${a.title || a.url}</a>
                     <span class="article-isos">${(a.countries || []).slice(0, 4).map(c =>
@@ -14303,12 +14303,16 @@ function renderPulseCoverage() {
 
     const moved = new Set(Object.keys(NEWS.byCountry));
     const quiet = latestSlice.filter(r => r.news && !r.news.ineligible && r.news.quiet);
-    const ineligible = latestSlice.filter(r => r.news && r.news.ineligible);
 
     const sweepCounts = {};
     NEWS.sweepLog.forEach(s => { sweepCounts[s.outcome] = (sweepCounts[s.outcome] || 0) + 1; });
 
-    const queue = NEWS.reviewQueue.filter(q => q.status !== 'RESOLVED');
+    // Outcomes arrive as snake_case enum values; the rows around them are
+    // sentence case, so match that rather than shouting the enum.
+    const sentenceCase = s => {
+        const t = String(s).replace(/_/g, ' ');
+        return t.charAt(0).toUpperCase() + t.slice(1);
+    };
 
     el.innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" class="grid-2-col">
@@ -14335,37 +14339,10 @@ function renderPulseCoverage() {
             <div style="padding:0.9rem 1.2rem 1.1rem;">
                 <div class="cov-row"><span class="cov-key">Countries swept</span><span class="cov-val">${NEWS.sweepLog.length}</span></div>
                 ${Object.entries(sweepCounts).map(([k, v]) => `
-                    <div class="cov-row"><span class="cov-key">${k.replace(/_/g, ' ')}</span><span class="cov-val">${v}</span></div>`).join('')}
+                    <div class="cov-row"><span class="cov-key">${sentenceCase(k)}</span><span class="cov-val">${v}</span></div>`).join('')}
                 <div class="cov-row"><span class="cov-key">Articles in corpus</span><span class="cov-val">${NEWS.articles ? NEWS.articles.length : '—'}</span></div>
                 <div class="cov-row"><span class="cov-key">Events classified</span><span class="cov-val">${Object.keys(NEWS.events).length}</span></div>
                 <div class="cov-row"><span class="cov-key">Deltas applied</span><span class="cov-val">${NEWS.deltas.length}</span></div>
-            </div>
-        </div>
-
-        <div class="analysis-card">
-            <div class="card-title">Pending Human Review</div>
-            <div style="padding:0.9rem 1.2rem 1.1rem;">
-                <p style="font-family:var(--font-body);font-size:0.83rem;color:var(--text-muted);line-height:1.6;margin-bottom:0.75rem;">
-                    When the auditor and the proposer cannot converge, the score is left unchanged and the suggestion is escalated rather than guessed at.
-                </p>
-                ${queue.length ? queue.map(q => `
-                    <div class="cov-row">
-                        <span class="cov-key">${ISO_TO_NAME[q.country] || q.country}</span>
-                        <span class="cov-val" style="font-size:0.62rem;color:var(--accent-amber);">${q.status}</span>
-                    </div>`).join('')
-                : `<div class="entity-empty">Queue is empty — nothing is waiting on a human.</div>`}
-            </div>
-        </div>
-
-        <div class="analysis-card">
-            <div class="card-title">Ineligible Entities · ${ineligible.length}</div>
-            <div style="padding:0.9rem 1.2rem 1.1rem;">
-                <p style="font-family:var(--font-body);font-size:0.83rem;color:var(--text-muted);line-height:1.6;margin-bottom:0.75rem;">
-                    These carry no structural baseline in the news pipeline. They are published frozen and flagged rather than silently given a fabricated live score.
-                </p>
-                <div class="quiet-grid">
-                    ${ineligible.map(r => `<div class="quiet-chip ineligible" title="${r.country_name} — no live score">${r.country}</div>`).join('')}
-                </div>
             </div>
         </div>
 
@@ -15325,8 +15302,7 @@ function toolGetLiveSignals({ countries, top_n = 15, direction = 'all', min_band
             active_signals: allMoved.length,
             markets_moved: allMoved.length,
             net_effect_rao_points: +allMoved.reduce((s, r) => s + newsImpactOf(r), 0).toFixed(3),
-            markets_at_baseline: latestSlice.length - allMoved.length - NEWS.ineligible.size,
-            ineligible_entities: NEWS.ineligible.size
+            markets_at_baseline: latestSlice.length - allMoved.length - NEWS.ineligible.size
         },
         returned: signals.length,
         signals
