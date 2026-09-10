@@ -7,6 +7,12 @@
       "rao9_csv": {
         ".read": "auth != null && auth.token.email_verified == true",
         ".write": false
+      },
+      "rao_news_state": {
+        ".read": "auth != null && auth.token.email_verified == true"
+      },
+      "rao_news_articles": {
+        ".read": "auth != null && auth.token.email_verified == true"
       }
     }
   }
