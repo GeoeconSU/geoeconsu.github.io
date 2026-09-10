@@ -6,8 +6,12 @@ commit.sh
 config.js
 .env
 
-# Dev/test pages (not for deployment)
-dev/
+# Dev/test pages — tracked, but not linked from any deployed page.
+# The symlinks below only exist so dev/ can be served locally (the pages use
+# root-relative asset paths); the real files live in the repo root.
+dev/firebase-config.js
+dev/regions.json
+dev/assets
 
 # Proprietary RAO dataset — lives in the Firebase Realtime Database
 # (protected-data/rao9_csv), gated by database.rules.json, not shipped as a
