@@ -16698,6 +16698,27 @@ function toggleAnalyticsReadonly() {
             }
         }
     }
+    // auth/account-exists-with-different-credential fires when the popup's
+    // email already has a Firebase account under a *different* method (e.g.
+    // registered with email/password, then tried Google, or vice versa).
+    // Firebase deliberately won't auto-merge those — look up which method the
+    // existing account actually uses so the message tells the user what to do,
+    // instead of a generic "something went wrong".
+    async function describeAuthError(e) {
+        if (e.code === 'auth/account-exists-with-different-credential') {
+            const email = e.email || e.customData?.email;
+            let methods = [];
+            try { if (email) methods = await auth.fetchSignInMethodsForEmail(email); } catch (_) {}
+            const label = methods.includes('google.com') ? 'Google'
+                : methods.includes('microsoft.com') ? 'Microsoft'
+                : methods.includes('password') ? 'email and password'
+                : 'a different method';
+            return email
+                ? `An account already exists for ${email} via ${label}. Please sign in that way instead.`
+                : 'An account already exists with this email via a different sign-in method.';
+        }
+        return friendlyAuthError(e.code);
+    }
     async function handleGoogleLogin() {
         // If the user is on the Register tab, carry their plan choice through the
         // Google popup the same way the email path does.
@@ -16716,7 +16737,7 @@ function toggleAnalyticsReadonly() {
                 Analytics.planRequested(_regPlan, _regCountries.length);
             }
             Analytics[isNew ? 'signUp' : 'login']('google');
-        } catch (e) { setAuthError(onRegister ? 'register' : 'login', friendlyAuthError(e.code)); }
+        } catch (e) { setAuthError(onRegister ? 'register' : 'login', await describeAuthError(e)); }
     }
     async function handleMicrosoftLogin() {
         // Mirrors handleGoogleLogin() exactly — same plan-intent carry-through,
@@ -16737,7 +16758,7 @@ function toggleAnalyticsReadonly() {
                 Analytics.planRequested(_regPlan, _regCountries.length);
             }
             Analytics[isNew ? 'signUp' : 'login']('microsoft');
-        } catch (e) { setAuthError(onRegister ? 'register' : 'login', friendlyAuthError(e.code)); }
+        } catch (e) { setAuthError(onRegister ? 'register' : 'login', await describeAuthError(e)); }
     }
 
     // Reassure a Personal/Enterprise registrant that the request landed and that
@@ -16896,7 +16917,7 @@ function toggleAnalyticsReadonly() {
             'auth/network-request-failed': 'Network error. Check your connection.',
             'auth/invalid-credential': 'Incorrect email or password.',
         };
-        return map[code] || 'Something went wrong. Please try again.';
+        return map[code] || `Something went wrong (${code || 'unknown error'}). Please try again.`;
     }
 
     function showAuthToast(msg) {

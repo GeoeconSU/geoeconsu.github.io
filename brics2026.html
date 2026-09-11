@@ -327,7 +327,7 @@
           'auth/network-request-failed':'Network error. Check your connection.',
           'auth/invalid-credential':    'Incorrect email or password.',
       };
-      return map[code] || 'Something went wrong. Please try again.';
+      return map[code] || `Something went wrong (${code || 'unknown error'}). Please try again.`;
   }
 
   function readFields() {
@@ -391,6 +391,27 @@
       });
   }
 
+  // auth/account-exists-with-different-credential fires when the popup's
+  // email already has a Firebase account under a *different* method (e.g.
+  // registered with email/password, then tried Google, or vice versa).
+  // Firebase deliberately won't auto-merge those — look up which method the
+  // existing account actually uses so the message tells the user what to do.
+  async function describeAuthError(e) {
+      if (e.code === 'auth/account-exists-with-different-credential') {
+          const email = e.email || e.customData?.email;
+          let methods = [];
+          try { if (email) methods = await auth.fetchSignInMethodsForEmail(email); } catch (_) {}
+          const label = methods.includes('google.com') ? 'Google'
+              : methods.includes('microsoft.com') ? 'Microsoft'
+              : methods.includes('password') ? 'email and password'
+              : 'a different method';
+          return email
+              ? `An account already exists for ${email} via ${label}. Please sign in that way instead.`
+              : 'An account already exists with this email via a different sign-in method.';
+      }
+      return friendlyAuthError(e.code);
+  }
+
   async function handleGoogleRegister() {
       const f = validateFields(false);
       if (!f) return;
@@ -411,7 +432,7 @@
           location.href = 'dashboard.html';
       } catch (e) {
           clearPlanIntent();
-          setError(friendlyAuthError(e.code));
+          setError(await describeAuthError(e));
       }
   }
 
@@ -434,7 +455,7 @@
           location.href = 'dashboard.html';
       } catch (e) {
           clearPlanIntent();
-          setError(friendlyAuthError(e.code));
+          setError(await describeAuthError(e));
       }
   }
 
