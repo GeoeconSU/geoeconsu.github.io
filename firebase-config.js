@@ -73,6 +73,11 @@ const Analytics = {
 // ── Google provider ──────────────────────────────────────────────────────────
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
+// ── Microsoft provider — covers both work/school (Microsoft 365/Azure AD)
+// and personal (outlook.com/hotmail) accounts, per the Azure app registration's
+// "any organizational directory and personal Microsoft accounts" setting. ─────
+const microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
+
 // ── Current user state (updated by onAuthStateChanged) ───────────────────────
 let currentUser      = null;
 let currentUserRole  = null;  // semantic label: 'founder' | 'ops-lead' | 'cto' | 'cdo' | 'cso' | 'marketing-lead' | 'research-lead' | 'analyst' | 'associate' | 'developer' | 'consultant' | 'client' | 'free'
@@ -301,6 +306,10 @@ async function signUpWithEmail(email, password, displayName, plan, countries) {
 
 async function signInWithGoogle() {
     return auth.signInWithPopup(googleProvider);
+}
+
+async function signInWithMicrosoft() {
+    return auth.signInWithPopup(microsoftProvider);
 }
 
 // ── Campaign self-registration (e.g. BRICS 2026, brics2026.html) ─────────────

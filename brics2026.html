@@ -253,6 +253,16 @@
           </svg>
           Continue with Google
         </button>
+
+        <button type="button" class="btn btn-google" onclick="handleMicrosoftRegister()">
+          <svg width="18" height="18" viewBox="0 0 21 21">
+            <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+            <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+            <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+            <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+          </svg>
+          Continue with Microsoft
+        </button>
       </form>
 
       <!-- Google path: waiting for the account grant to finish writing -->
@@ -313,7 +323,7 @@
           'auth/email-already-in-use':  'That email is already registered.',
           'auth/invalid-email':         'Please enter a valid email.',
           'auth/weak-password':         'Password must be at least 6 characters.',
-          'auth/popup-closed-by-user':  'Google sign-in was cancelled.',
+          'auth/popup-closed-by-user':  'Sign-in was cancelled.',
           'auth/network-request-failed':'Network error. Check your connection.',
           'auth/invalid-credential':    'Incorrect email or password.',
       };
@@ -396,6 +406,29 @@
       try {
           const cred = await signInWithGoogle();
           Analytics.signUp('google');
+          showState('state-finishing');
+          await _waitForUserDoc(cred.user.uid);
+          location.href = 'dashboard.html';
+      } catch (e) {
+          clearPlanIntent();
+          setError(friendlyAuthError(e.code));
+      }
+  }
+
+  // Mirrors handleGoogleRegister() exactly — same stash-before-popup pattern,
+  // same wait-for-doc-then-redirect, just a different provider.
+  async function handleMicrosoftRegister() {
+      const f = validateFields(false);
+      if (!f) return;
+      stashPlanIntent(null, null, [], {
+          role: CAMPAIGN_ROLE,
+          organization: f.organization,
+          designation: f.designation,
+          src: SRC_PARAM
+      });
+      try {
+          const cred = await signInWithMicrosoft();
+          Analytics.signUp('microsoft');
           showState('state-finishing');
           await _waitForUserDoc(cred.user.uid);
           location.href = 'dashboard.html';

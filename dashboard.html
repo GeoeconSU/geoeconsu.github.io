@@ -16298,6 +16298,15 @@ function toggleAnalyticsReadonly() {
                     </svg>
                     Continue with Google
                 </button>
+                <button class="auth-btn auth-btn-google" onclick="handleMicrosoftLogin()">
+                    <svg width="18" height="18" viewBox="0 0 21 21">
+                        <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+                        <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+                        <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+                        <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+                    </svg>
+                    Continue with Microsoft
+                </button>
                 <div class="auth-link" onclick="switchAuthTab('reset')">Forgot password?</div>
             </div>
         </div>
@@ -16357,6 +16366,15 @@ function toggleAnalyticsReadonly() {
                         <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
                     </svg>
                     Continue with Google
+                </button>
+                <button class="auth-btn auth-btn-google" onclick="handleMicrosoftLogin()">
+                    <svg width="18" height="18" viewBox="0 0 21 21">
+                        <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+                        <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+                        <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+                        <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+                    </svg>
+                    Continue with Microsoft
                 </button>
             </div>
         </div>
@@ -16700,6 +16718,27 @@ function toggleAnalyticsReadonly() {
             Analytics[isNew ? 'signUp' : 'login']('google');
         } catch (e) { setAuthError(onRegister ? 'register' : 'login', friendlyAuthError(e.code)); }
     }
+    async function handleMicrosoftLogin() {
+        // Mirrors handleGoogleLogin() exactly — same plan-intent carry-through,
+        // same doc-creation pipeline in firebase-config.js, just a different
+        // popup provider.
+        const onRegister = document.getElementById('auth-register-form').style.display !== 'none';
+        if (onRegister) {
+            if (!_regTermsAccepted) { setAuthError('register', 'Please accept the Terms and Privacy Policy.'); return; }
+            if (_regPlan === 'personal' && _regCountries.length === 0) {
+                setAuthError('register', 'Select at least one market for your Personal plan.'); return;
+            }
+        }
+        try {
+            const cred = await signInWithMicrosoft();
+            const isNew = cred?.additionalUserInfo?.isNewUser;
+            if (onRegister && _regPlan !== 'free' && cred?.user) {
+                stashPlanIntent(cred.user.email, _regPlan, _regCountries);
+                Analytics.planRequested(_regPlan, _regCountries.length);
+            }
+            Analytics[isNew ? 'signUp' : 'login']('microsoft');
+        } catch (e) { setAuthError(onRegister ? 'register' : 'login', friendlyAuthError(e.code)); }
+    }
 
     // Reassure a Personal/Enterprise registrant that the request landed and that
     // they are not locked out while it is reviewed.
@@ -16853,7 +16892,7 @@ function toggleAnalyticsReadonly() {
             'auth/email-already-in-use': 'That email is already registered.',
             'auth/invalid-email': 'Please enter a valid email.',
             'auth/weak-password': 'Password must be at least 6 characters.',
-            'auth/popup-closed-by-user': 'Google sign-in was cancelled.',
+            'auth/popup-closed-by-user': 'Sign-in was cancelled.',
             'auth/network-request-failed': 'Network error. Check your connection.',
             'auth/invalid-credential': 'Incorrect email or password.',
         };
