@@ -509,6 +509,9 @@
               A verification link has been sent to <strong id="verify-email-shown"></strong>.
               Click it to activate your account, then come back and sign in below.
             </p>
+            <p class="info-text">
+              Don't see it? Check your spam or junk folder.
+            </p>
             <div class="success-msg" id="verify-resend-msg"></div>
             <button type="button" class="btn btn-primary btn-block" onclick="switchToSignIn()">I've Verified — Sign In</button>
             <p class="switch-link">Didn't get it? <a onclick="handleResendVerification()">Resend email</a></p>
@@ -585,8 +588,20 @@
   function setSheetOpen(isOpen) {
       document.getElementById('auth-panel').classList.toggle('open', isOpen);
       document.getElementById('auth-backdrop').classList.toggle('open', isOpen);
-      document.body.style.overflow = isOpen ? 'hidden' : '';
+      // Body scroll only needs locking behind the mobile bottom-sheet overlay.
+      // On desktop the panel is just a normal sticky sidebar, so focusing a
+      // field there (which also calls this via expandSheet()) must not touch
+      // page scroll at all.
+      if (window.matchMedia('(max-width: 899px)').matches) {
+          document.body.style.overflow = isOpen ? 'hidden' : '';
+      }
   }
+  // Safety net for resizing across the breakpoint (e.g. DevTools device
+  // toolbar) while the mobile sheet was left open — desktop should never
+  // have page scroll locked.
+  window.addEventListener('resize', () => {
+      if (!window.matchMedia('(max-width: 899px)').matches) document.body.style.overflow = '';
+  });
   function expandSheet() { setSheetOpen(true); }
   function collapseSheet() { setSheetOpen(false); }
 
