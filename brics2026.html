@@ -21,6 +21,7 @@
       --font-head: 'Playfair Display', serif;
       --font-body: 'EB Garamond', serif;
       --easing: cubic-bezier(0.23, 1, 0.32, 1);
+      --nav-h: 76px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,8 +38,9 @@
       min-height: 100vh;
     }
 
+    /* ── Nav — logo + wordmark, no actions (sign-in now lives in the panel) ── */
     nav {
-      padding: 1.6rem 0;
+      padding: 1rem 0;
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
@@ -47,78 +49,117 @@
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     .nav-inner {
-      max-width: 1280px;
+      max-width: 1150px;
       margin: 0 auto;
-      padding: 0 2rem;
+      padding: 0 1.5rem;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-    .logo img { height: 46px; width: auto; display: block; }
-
-    .page {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 130px 1.5rem 60px;
+    .brand { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: var(--text-white); }
+    .brand-mark { height: 40px; width: auto; display: block; }
+    .brand-name {
+      font-family: var(--font-head); font-size: 1.05rem; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
+      color: rgba(255,255,255,0.85);
     }
-    .page-inner { width: 100%; max-width: 480px; }
+    @media (max-width: 480px) {
+      .brand-mark { height: 30px; }
+      .brand-name { font-size: 0.68rem; }
+    }
 
+    /* ── Shell / two-column layout ──────────────────────────────────────── */
+    .shell { max-width: 1150px; margin: 0 auto; padding: calc(var(--nav-h) + 2.2rem) 1.5rem 4rem; }
+
+    .hero { max-width: 680px; margin: 0 auto 2.6rem; text-align: center; }
     .eyebrow {
       font-family: 'Playfair Display', serif;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-bottom: 0.9rem;
-      text-align: center;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--accent-gold); margin-bottom: 0.9rem;
     }
     .page-title {
-      font-family: var(--font-head);
-      font-size: clamp(1.8rem, 5vw, 2.5rem);
-      font-weight: 400;
-      line-height: 1.15;
-      text-align: center;
-      margin-bottom: 0.9rem;
+      font-family: var(--font-head); font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 400;
+      line-height: 1.15; margin-bottom: 0.9rem;
     }
-    .page-subtitle {
-      font-size: 1.02rem;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.7;
-      margin-bottom: 2.2rem;
-      text-align: center;
+    .page-subtitle { font-size: 1.02rem; color: rgba(255,255,255,0.6); line-height: 1.7; }
+
+    .layout { display: flex; flex-direction: column; gap: 2.4rem; }
+
+    @media (min-width: 900px) {
+      .layout { flex-direction: row; align-items: flex-start; gap: 3.2rem; }
+      .layout-main { flex: 1 1 65%; max-width: 65%; min-width: 0; }
+      .layout-aside { flex: 0 0 35%; max-width: 35%; position: sticky; top: calc(var(--nav-h) + 1.5rem); }
     }
 
+    /* ── Buttons ─────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-block; text-align: center; border: none; border-radius: 2px;
+      padding: 0.85rem 1.7rem; font-family: 'Playfair Display', serif; font-size: 0.78rem;
+      font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+      transition: all 0.3s var(--easing); text-decoration: none;
+    }
+    .btn-block { display: block; width: 100%; }
+    .btn-primary { background: var(--accent-gold); color: #192030; }
+    .btn-primary:hover:not(:disabled) { background: #d9bc82; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(203,168,78,0.25); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-outline { background: transparent; color: var(--text-white); border: 1px solid rgba(255,255,255,0.3); }
+    .btn-outline:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+    .btn-google {
+      background: #fff; color: #192030; display: flex; align-items: center;
+      justify-content: center; gap: 0.6rem; margin-top: 0.85rem; width: 100%;
+    }
+    .btn-google:hover { background: #f1f1f1; }
+
+    /* ── About section (left column) ───────────────────────────────────── */
+    .about h2 {
+      font-family: var(--font-head); font-size: 1.55rem; font-weight: 400;
+      margin-bottom: 1.1rem;
+    }
+    .about .lead { font-size: 1.01rem; color: rgba(255,255,255,0.72); margin-bottom: 1.8rem; }
+
+    .about-points { list-style: none; display: grid; gap: 1rem; margin-bottom: 2.1rem; }
+    .about-points li {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 4px;
+      padding: 1rem 1.2rem; font-size: 0.92rem; color: rgba(255,255,255,0.65);
+    }
+    .about-points strong {
+      display: block; margin-bottom: 0.3rem; color: var(--text-white);
+      font-family: var(--font-head); font-weight: 600; font-size: 1rem;
+    }
+    @media (min-width: 640px) and (max-width: 899px) { .about-points { grid-template-columns: repeat(3, 1fr); } }
+
+    .stat-row { display: flex; gap: 2.6rem; margin: 0.3rem 0 2.1rem; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-num { display: block; font-family: var(--font-head); font-size: 2rem; color: var(--accent-gold); line-height: 1; }
+    .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.13em; color: rgba(255,255,255,0.4); margin-top: 0.35rem; display: block; }
+
+    .about-extra { font-size: 0.93rem; color: rgba(255,255,255,0.6); margin-bottom: 1.2rem; }
+    .about-closing { font-size: 0.93rem; color: rgba(255,255,255,0.55); }
+
+    @media (max-width: 899px) {
+      .about, .hero { text-align: center; }
+      .about-points li { text-align: left; }
+      .stat-row { justify-content: center; }
+      .about-extra, .about-closing { text-align: center; }
+    }
+
+    /* ── Auth panel: sticky sidebar on desktop, bottom sheet on mobile ───── */
     .form-card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
+      background: var(--secondary-bg);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 4px;
-      padding: 2.4rem 2.4rem;
-      backdrop-filter: blur(8px);
+      padding: 2.2rem 2.1rem;
     }
 
     .form-group { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1.05rem; }
     label {
-      font-family: 'Playfair Display', serif;
-      font-size: 0.66rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
+      font-family: 'Playfair Display', serif; font-size: 0.66rem; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.45);
     }
     input {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 2px;
-      color: var(--text-white);
-      font-family: var(--font-body);
-      font-size: 1rem;
-      padding: 0.72rem 1rem;
-      outline: none;
-      width: 100%;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 2px;
+      color: var(--text-white); font-family: var(--font-body); font-size: 1rem;
+      padding: 0.72rem 1rem; outline: none; width: 100%;
       transition: border-color 0.25s ease, background 0.25s ease;
     }
     input::placeholder { color: rgba(255,255,255,0.2); }
@@ -138,21 +179,6 @@
     .terms.checked .box { background: var(--accent-gold); border-color: var(--accent-gold); color: #192030; }
     .terms a { color: var(--accent-gold); text-decoration: none; }
 
-    .btn {
-      display: block; width: 100%; text-align: center; border: none; border-radius: 2px;
-      padding: 0.82rem 1.5rem; font-family: 'Playfair Display', serif; font-size: 0.76rem;
-      font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer;
-      transition: all 0.3s var(--easing); text-decoration: none;
-    }
-    .btn-primary { background: var(--accent-gold); color: #192030; }
-    .btn-primary:hover:not(:disabled) { background: #d9bc82; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(203,168,78,0.25); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-google {
-      background: #fff; color: #192030; display: flex; align-items: center;
-      justify-content: center; gap: 0.6rem; margin-top: 0.85rem;
-    }
-    .btn-google:hover { background: #f1f1f1; }
-
     .divider {
       display: flex; align-items: center; gap: 0.8rem; margin: 1.1rem 0;
       color: rgba(255,255,255,0.3); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.1em;
@@ -160,144 +186,308 @@
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
 
     .error-msg { color: #f08080; font-size: 0.86rem; margin-bottom: 0.9rem; min-height: 1.2em; }
+    .success-msg { color: #7fce9a; font-size: 0.86rem; margin-bottom: 0.9rem; min-height: 1.2em; }
+
+    .switch-link { text-align: center; font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 1.1rem; }
+    .switch-link a, .inline-link { color: var(--accent-gold); cursor: pointer; text-decoration: underline; }
+
+    .modal-title { font-family: var(--font-head); font-size: 1.25rem; text-align: center; margin-bottom: 1.3rem; font-weight: 400; }
 
     .state { display: none; }
     .state.active { display: block; }
 
     .info-icon { font-size: 2rem; text-align: center; margin-bottom: 0.9rem; color: var(--accent-gold); }
-    .info-title { font-family: var(--font-head); font-size: 1.35rem; text-align: center; margin-bottom: 0.6rem; }
+    .info-title { font-family: var(--font-head); font-size: 1.3rem; text-align: center; margin-bottom: 0.6rem; }
     .info-text { text-align: center; color: rgba(255,255,255,0.55); font-size: 0.94rem; line-height: 1.65; margin-bottom: 1.4rem; }
-    .info-text a { color: var(--accent-gold); }
+    .info-text a, .info-text .inline-link { color: var(--accent-gold); }
+
+    /* auth-panel: no special positioning by default (desktop = plain sticky child) */
+    .modal-close { display: none; }
+    .auth-backdrop { display: none; }
+
+    @media (max-width: 899px) {
+      .auth-backdrop {
+        display: block; position: fixed; inset: 0; z-index: 490;
+        background: rgba(8,10,16,0.65); backdrop-filter: blur(3px);
+        opacity: 0; pointer-events: none; transition: opacity 0.25s var(--easing);
+      }
+      .auth-backdrop.open { opacity: 1; pointer-events: auto; }
+
+      .auth-panel {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
+        max-height: 88vh; overflow-y: auto;
+        transform: translateY(112%);
+        transition: transform 0.3s var(--easing);
+        padding: 0 0.6rem 0.6rem;
+      }
+      .auth-panel.open { transform: translateY(0); }
+      .modal-close {
+        display: block; position: absolute; top: 0.4rem; right: 1rem; z-index: 2;
+        background: transparent; border: none; color: rgba(255,255,255,0.45);
+        font-size: 1.6rem; line-height: 1; padding: 0.5rem; cursor: pointer;
+      }
+      .modal-close:hover { color: var(--text-white); }
+      .form-card { border-radius: 14px 14px 0 0; padding-top: 2.5rem; }
+    }
+
+    /* Floating glass sign-in trigger — mobile only, styled like the dashboard's
+       glass nav pill (translucent gold, blurred, pill radius). */
+    .mobile-signin-fab {
+      display: none;
+      position: fixed; left: 50%; bottom: 1.3rem; transform: translateX(-50%);
+      width: 60%; max-width: 420px;
+      z-index: 480; height: 50px; padding: 0 1.5rem; border-radius: 999px;
+      border: 1px solid rgba(194,165,109,0.55);
+      background: rgba(194,165,109,0.12);
+      color: var(--accent-gold);
+      font-family: 'Playfair Display', serif; font-size: 0.8rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.4);
+      cursor: pointer; align-items: center; justify-content: center; gap: 0.4rem;
+      transition: all 0.25s var(--easing);
+    }
+    .mobile-signin-fab:hover, .mobile-signin-fab:active {
+      background: rgba(194,165,109,0.2); box-shadow: 0 10px 30px rgba(194,165,109,0.25);
+    }
+    @media (max-width: 899px) { .mobile-signin-fab { display: inline-flex; } }
 
     footer { text-align: center; padding: 2rem; font-size: 0.8rem; color: rgba(255,255,255,0.2); letter-spacing: 0.08em; }
 
-    @media (max-width: 600px) { .form-card { padding: 1.8rem 1.4rem; } }
+    @media (max-width: 600px) { .form-card { padding: 1.9rem 1.4rem; } }
+    /* room at the bottom of the page so content isn't hidden behind the FAB */
+    @media (max-width: 899px) { .shell { padding-bottom: 6rem; } }
   </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
-    <a href="index.html" class="logo">
-      <img src="assets/gsu.png" alt="Geoeconomic Strategy Unit">
+    <a href="index.html" class="brand">
+      <img src="assets/gsu.png" alt="Geoeconomic Strategy Unit" class="brand-mark">
+      <span class="brand-name">Geoeconomic Strategy Unit</span>
     </a>
   </div>
 </nav>
 
-<div class="page">
-  <div class="page-inner">
+<main class="shell">
 
+  <div class="hero">
     <p class="eyebrow">Geoeconomic Strategy Unit</p>
     <h1 class="page-title">BRICS Summit 2026</h1>
     <p class="page-subtitle">
       Register for 14 days of full access to the RAO Insights Dashboard across
       every BRICS and partner market.
     </p>
-
-    <div class="form-card">
-
-      <!-- Checking whether the campaign is currently open -->
-      <div class="state active" id="state-loading">
-        <p class="info-text" style="margin-bottom:0;">Checking registration status…</p>
-      </div>
-
-      <!-- Campaign inactive / not yet configured -->
-      <div class="state" id="state-closed">
-        <p class="info-text" style="margin-bottom:0;">
-          Registration for this event has closed. If you'd still like access to
-          the RAO Dashboard, please <a href="contact.html">get in touch</a>.
-        </p>
-      </div>
-
-      <!-- Registration form -->
-      <form class="state" id="state-form" novalidate>
-        <div class="form-group">
-          <label for="f-name">Full Name</label>
-          <input type="text" id="f-name" placeholder="Jane Smith" autocomplete="name">
-        </div>
-        <div class="form-group">
-          <label for="f-org">Organization</label>
-          <input type="text" id="f-org" placeholder="Your company or institution" autocomplete="organization">
-        </div>
-        <div class="form-group">
-          <label for="f-designation">Designation</label>
-          <input type="text" id="f-designation" placeholder="e.g. Director of Strategy" autocomplete="organization-title">
-        </div>
-        <div class="form-group">
-          <label for="f-email">Email Address</label>
-          <input type="email" id="f-email" placeholder="jane@company.com" autocomplete="email">
-        </div>
-        <div class="form-group">
-          <label for="f-password">Password</label>
-          <input type="password" id="f-password" placeholder="Min. 6 characters" autocomplete="new-password">
-        </div>
-
-        <div class="terms" id="terms-check" onclick="toggleTerms()">
-          <div class="box"><span id="terms-check-mark">&#10003;</span></div>
-          <div>I agree to the <a href="terms.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Terms of Service</a>
-            and <a href="privacy.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Privacy Policy</a>.</div>
-        </div>
-
-        <div class="error-msg" id="form-error"></div>
-
-        <button type="button" class="btn btn-primary" id="submit-btn" onclick="handleRegister()">Create Account</button>
-
-        <div class="divider">or</div>
-
-        <button type="button" class="btn btn-google" onclick="handleGoogleRegister()">
-          <svg width="18" height="18" viewBox="0 0 48 48">
-            <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
-            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
-            <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z"/>
-            <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
-          </svg>
-          Continue with Google
-        </button>
-
-        <button type="button" class="btn btn-google" onclick="handleMicrosoftRegister()">
-          <svg width="18" height="18" viewBox="0 0 21 21">
-            <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
-            <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
-            <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
-            <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
-          </svg>
-          Continue with Microsoft
-        </button>
-      </form>
-
-      <!-- Google path: waiting for the account grant to finish writing -->
-      <div class="state" id="state-finishing">
-        <div class="info-icon"><i>&#8635;</i></div>
-        <p class="info-title">Setting up your access…</p>
-        <p class="info-text" style="margin-bottom:0;">This only takes a moment.</p>
-      </div>
-
-      <!-- Email/password path: verification required before signing in -->
-      <div class="state" id="state-verify">
-        <div class="info-icon">&#9993;</div>
-        <p class="info-title">Check your inbox</p>
-        <p class="info-text">
-          A verification link has been sent to <strong id="verify-email-shown"></strong>.
-          Click it to activate your account, then sign in from the dashboard to
-          start exploring.
-        </p>
-        <a href="dashboard.html?tab=login" class="btn btn-primary">Go to Sign In</a>
-      </div>
-
-      <!-- Already has an account -->
-      <div class="state" id="state-existing">
-        <p class="info-text">
-          This email is already registered. Sign in from the dashboard to
-          access your account.
-        </p>
-        <a href="dashboard.html?tab=login" class="btn btn-primary">Go to Sign In</a>
-      </div>
-
-    </div>
   </div>
-</div>
+
+  <div class="layout">
+    <div class="layout-main about">
+      <h2>About the Geoeconomic Strategy Unit</h2>
+      <p class="lead">
+        GSU is a research-led strategic advisory firm helping businesses, investors, and
+        institutions assess how geopolitical and economic developments affect trade,
+        investment, supply chains, regulation, and markets — turning complexity into
+        decision-ready intelligence that lets leadership teams compare markets, anticipate
+        disruption, and act with greater confidence.
+      </p>
+
+      <ul class="about-points">
+        <li><strong>Market Entry &amp; Risk</strong>Market attractiveness, regulatory and stakeholder constraints, and supply-chain / trade-corridor exposure — supporting decisions on sequencing, sourcing, and partnerships.</li>
+        <li><strong>Continuous Monitoring</strong>Tariffs, sanctions, export controls, policy shifts, supply-chain disruption, and political instability — flagged as early warning before they bite.</li>
+        <li><strong>Integrated Intelligence</strong>Proprietary research databases and quantitative indices behind every recommendation, not one-off judgment calls.</li>
+      </ul>
+
+      <div class="stat-row">
+        <div class="stat"><span class="stat-num">28</span><span class="stat-label">Indicators</span></div>
+        <div class="stat"><span class="stat-num">162</span><span class="stat-label">Countries</span></div>
+      </div>
+
+      <p class="about-extra">
+        Our principal differentiator is the integration of research, data, and advisory.
+        Structured, repeatable benchmarks — including the Risk-Adjusted Opportunity Index
+        and the Geoeconomic Risk Barometer — replace one-off judgment calls with a
+        consistent way to compare markets and track regional risk, trade corridors, and
+        early-warning signals over time.
+      </p>
+
+      <p class="about-closing">
+        Our in-house platforms adapt to each client's geography, sector, exposure, and
+        strategic priorities — bespoke research frameworks, market-comparison models, risk
+        dashboards, and monitoring systems that connect global developments directly to
+        specific investments and operations.
+      </p>
+    </div>
+
+    <aside class="layout-aside">
+      <div class="auth-panel" id="auth-panel">
+        <button type="button" class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+        <div class="form-card">
+
+          <!-- Checking whether the campaign is currently open -->
+          <div class="state active" id="state-loading">
+            <p class="info-text" style="margin-bottom:0;">Checking registration status…</p>
+          </div>
+
+          <!-- Campaign inactive / not yet configured -->
+          <div class="state" id="state-closed">
+            <p class="info-text">
+              Registration for this event has closed. If you'd still like access to
+              the RAO Dashboard, please <a href="contact.html">get in touch</a>.
+            </p>
+            <p class="switch-link">Already registered? <a onclick="showState('state-signin')">Sign in</a></p>
+          </div>
+
+          <!-- Registration form -->
+          <form class="state" id="state-form" novalidate>
+            <p class="modal-title">Create Your Account</p>
+            <div class="form-group">
+              <label for="f-name">Full Name</label>
+              <input type="text" id="f-name" placeholder="Jane Smith" autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label for="f-org">Organization</label>
+              <input type="text" id="f-org" placeholder="Your company or institution" autocomplete="organization">
+            </div>
+            <div class="form-group">
+              <label for="f-designation">Designation</label>
+              <input type="text" id="f-designation" placeholder="e.g. Director of Strategy" autocomplete="organization-title">
+            </div>
+            <div class="form-group">
+              <label for="f-email">Email Address</label>
+              <input type="email" id="f-email" placeholder="jane@company.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="f-password">Password</label>
+              <input type="password" id="f-password" placeholder="Min. 6 characters" autocomplete="new-password">
+            </div>
+
+            <div class="terms" id="terms-check" onclick="toggleTerms()">
+              <div class="box"><span id="terms-check-mark">&#10003;</span></div>
+              <div>I agree to the <a href="terms.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Terms of Service</a>
+                and <a href="privacy.html" target="_blank" rel="noopener" onclick="event.stopPropagation()">Privacy Policy</a>.</div>
+            </div>
+
+            <div class="error-msg" id="form-error"></div>
+
+            <button type="button" class="btn btn-primary btn-block" id="submit-btn" onclick="handleRegister()">Create Account</button>
+
+            <div class="divider">or</div>
+
+            <button type="button" class="btn btn-google" onclick="handleGoogleRegister()">
+              <svg width="18" height="18" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+                <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
+                <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z"/>
+                <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+              </svg>
+              Continue with Google
+            </button>
+
+            <button type="button" class="btn btn-google" onclick="handleMicrosoftRegister()">
+              <svg width="18" height="18" viewBox="0 0 21 21">
+                <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+                <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+                <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+                <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+              </svg>
+              Continue with Microsoft
+            </button>
+
+            <p class="switch-link">Already have an account? <a onclick="showState('state-signin')">Sign in</a></p>
+          </form>
+
+          <!-- Sign in (returning / already-registered users) -->
+          <div class="state" id="state-signin">
+            <p class="modal-title">Sign In</p>
+            <div class="form-group">
+              <label for="si-email">Email Address</label>
+              <input type="email" id="si-email" placeholder="jane@company.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+              <label for="si-password">Password</label>
+              <input type="password" id="si-password" placeholder="Your password" autocomplete="current-password">
+            </div>
+
+            <div class="error-msg" id="signin-error"></div>
+
+            <button type="button" class="btn btn-primary btn-block" id="signin-btn" onclick="handleSignIn()">Sign In</button>
+
+            <div class="divider">or</div>
+
+            <button type="button" class="btn btn-google" onclick="handleGoogleRegister()">
+              <svg width="18" height="18" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/>
+                <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z"/>
+                <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z"/>
+                <path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z"/>
+              </svg>
+              Continue with Google
+            </button>
+
+            <button type="button" class="btn btn-google" onclick="handleMicrosoftRegister()">
+              <svg width="18" height="18" viewBox="0 0 21 21">
+                <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+                <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+                <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+                <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+              </svg>
+              Continue with Microsoft
+            </button>
+
+            <p class="switch-link">
+              <a onclick="handleForgotPassword()">Forgot password?</a> &nbsp;·&nbsp;
+              New here? <a onclick="showState('state-form')">Create an account</a>
+            </p>
+          </div>
+
+          <!-- Google/Microsoft path: waiting for the account grant to finish writing -->
+          <div class="state" id="state-finishing">
+            <div class="info-icon"><i>&#8635;</i></div>
+            <p class="info-title">Setting up your access…</p>
+            <p class="info-text" style="margin-bottom:0;">This only takes a moment.</p>
+          </div>
+
+          <!-- Email/password path: verification required before signing in -->
+          <div class="state" id="state-verify">
+            <div class="info-icon">&#9993;</div>
+            <p class="info-title">Check your inbox</p>
+            <p class="info-text">
+              A verification link has been sent to <strong id="verify-email-shown"></strong>.
+              Click it to activate your account, then come back and sign in below.
+            </p>
+            <div class="success-msg" id="verify-resend-msg"></div>
+            <button type="button" class="btn btn-primary btn-block" onclick="switchToSignIn()">I've Verified — Sign In</button>
+            <p class="switch-link">Didn't get it? <a onclick="handleResendVerification()">Resend email</a></p>
+          </div>
+
+          <!-- Already has an account -->
+          <div class="state" id="state-existing">
+            <p class="info-text">
+              This email is already registered. Sign in below to access your account.
+            </p>
+            <button type="button" class="btn btn-primary btn-block" onclick="switchToSignIn()">Sign In</button>
+          </div>
+
+          <!-- Signed in and verified: the two things we want them to do next -->
+          <div class="state" id="state-signedin">
+            <p class="modal-title">Welcome Aboard</p>
+            <p class="info-text">Your access is live. Here's where to go next.</p>
+            <a href="dashboard.html" class="btn btn-primary btn-block">Proceed to RAO Dashboard</a>
+            <a href="index.html" target="_blank" rel="noopener" class="btn btn-outline btn-block" style="margin-top:0.8rem;">Explore more about GSU ↗</a>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+  </div>
+
+</main>
 
 <footer>geoecon.solutions &nbsp;&middot;&nbsp; The Sixteenth Council &nbsp;&middot;&nbsp; London</footer>
+
+<div class="auth-backdrop" id="auth-backdrop" onclick="closeModal()"></div>
+<button type="button" class="mobile-signin-fab" id="mobile-signin-fab" onclick="openModal()">Sign In</button>
 
 <script src="firebase-config.js"></script>
 <script>
@@ -317,6 +507,11 @@
   }
 
   function setError(msg) { document.getElementById('form-error').textContent = msg || ''; }
+  function setSignInError(msg) {
+      const el = document.getElementById('signin-error');
+      el.style.color = ''; // clear any success-green left by handleForgotPassword
+      el.textContent = msg || '';
+  }
 
   function friendlyAuthError(code) {
       const map = {
@@ -326,8 +521,34 @@
           'auth/popup-closed-by-user':  'Sign-in was cancelled.',
           'auth/network-request-failed':'Network error. Check your connection.',
           'auth/invalid-credential':    'Incorrect email or password.',
+          'auth/user-not-found':        'No account found with that email.',
+          'auth/wrong-password':        'Incorrect password.',
+          'auth/too-many-requests':     'Too many attempts. Please wait a moment and try again.',
       };
       return map[code] || `Something went wrong (${code || 'unknown error'}). Please try again.`;
+  }
+
+  // ── Mobile bottom-sheet open/close (no-op visually on desktop, where the
+  // panel is always shown via CSS) ───────────────────────────────────────────
+  function openModal() {
+      document.getElementById('auth-panel').classList.add('open');
+      document.getElementById('auth-backdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+      document.getElementById('auth-panel').classList.remove('open');
+      document.getElementById('auth-backdrop').classList.remove('open');
+      document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('auth-panel').classList.contains('open')) closeModal();
+  });
+
+  function switchToSignIn() {
+      const prefill = document.getElementById('f-email').value.trim() ||
+                      document.getElementById('verify-email-shown').textContent.trim();
+      if (prefill) document.getElementById('si-email').value = prefill;
+      showState('state-signin');
   }
 
   function readFields() {
@@ -375,10 +596,54 @@
       }
   }
 
+  async function handleSignIn() {
+      const email = document.getElementById('si-email').value.trim();
+      const password = document.getElementById('si-password').value;
+      if (!email || !password) { setSignInError('Please enter your email and password.'); return; }
+      const btn = document.getElementById('signin-btn');
+      btn.disabled = true; btn.textContent = 'Signing In…';
+      try {
+          await signInWithEmail(email, password);
+          Analytics.login('email');
+          setSignInError('');
+          // applyAuthState() (via onAuthReady) swaps to state-signedin once confirmed.
+      } catch (e) {
+          setSignInError(friendlyAuthError(e.code));
+      } finally {
+          btn.disabled = false; btn.textContent = 'Sign In';
+      }
+  }
+
+  async function handleForgotPassword() {
+      const email = document.getElementById('si-email').value.trim();
+      const errEl = document.getElementById('signin-error');
+      if (!email) { setSignInError('Enter your email above first, then click "Forgot password?" again.'); return; }
+      try {
+          await sendPasswordReset(email);
+          errEl.style.color = '#7fce9a';
+          errEl.textContent = 'Reset link sent — check your inbox.';
+      } catch (e) {
+          errEl.style.color = '#f08080';
+          setSignInError(friendlyAuthError(e.code));
+      }
+  }
+
+  async function handleResendVerification() {
+      const user = auth.currentUser;
+      const msg = document.getElementById('verify-resend-msg');
+      if (!user) { msg.textContent = ''; return; }
+      try {
+          await user.sendEmailVerification();
+          msg.textContent = 'Verification email resent!';
+      } catch (e) {
+          msg.textContent = 'Could not resend. Please wait a moment and try again.';
+      }
+  }
+
   // Waits for the Firestore doc that firebase-config.js's own auth listener
-  // creates on this same page to actually land, before we navigate away —
-  // otherwise a fast redirect can outrun that write and dashboard.html would
-  // race to create a plain free doc instead of the campaign grant.
+  // creates on this same page to actually land, before we finish the
+  // "setting up your access" state — otherwise a fast finish can outrun that
+  // write and the panel would flash the signed-out state briefly.
   function _waitForUserDoc(uid) {
       return new Promise(resolve => {
           let done = false;
@@ -429,7 +694,7 @@
           Analytics.signUp('google');
           showState('state-finishing');
           await _waitForUserDoc(cred.user.uid);
-          location.href = 'dashboard.html';
+          closeModal();
       } catch (e) {
           clearPlanIntent();
           setError(await describeAuthError(e));
@@ -437,7 +702,7 @@
   }
 
   // Mirrors handleGoogleRegister() exactly — same stash-before-popup pattern,
-  // same wait-for-doc-then-redirect, just a different provider.
+  // same wait-for-doc-then-close, just a different provider.
   async function handleMicrosoftRegister() {
       const f = validateFields(false);
       if (!f) return;
@@ -452,31 +717,71 @@
           Analytics.signUp('microsoft');
           showState('state-finishing');
           await _waitForUserDoc(cred.user.uid);
-          location.href = 'dashboard.html';
+          closeModal();
       } catch (e) {
           clearPlanIntent();
           setError(await describeAuthError(e));
       }
   }
 
-  // Already signed in and verified (e.g. returning to this link after
-  // registering) — skip straight to the dashboard.
-  function onAuthReady(user) {
-      if (user && (user.providerData[0]?.providerId !== 'password' || user.emailVerified)) {
-          location.href = 'dashboard.html';
-      }
+  // ── Panel state resolution ──────────────────────────────────────────────
+  // The panel is now always visible (sticky sidebar on desktop), so — unlike
+  // a plain modal — its default content has to be resolved proactively from
+  // two independent async sources: the campaign on/off check, and Firebase
+  // auth state. Whichever settles the "am I signed in" question always wins;
+  // the campaign check only decides the signed-out default (form vs closed),
+  // and never overwrites a state the user navigated to themselves.
+  const SIGNED_OUT_OWNED_STATES = ['state-form', 'state-signin', 'state-closed'];
+
+  let campaignActive = null;
+  const campaignCheckPromise = db.collection('config').doc(CONFIG_DOC).get().then(snap => {
+      const config = snap.exists ? snap.data() : null;
+      campaignActive = !!(config && config.active && config.role === CAMPAIGN_ROLE);
+      return campaignActive;
+  }).catch(() => { campaignActive = false; return false; });
+
+  function showCampaignDefaultState() {
+      if (campaignActive === null) { showState('state-loading'); return; }
+      showState(campaignActive ? 'state-form' : 'state-closed');
+  }
+  campaignCheckPromise.then(() => { if (lastAuthUser === undefined || !lastAuthUser) applyAuthState(); });
+
+  let lastAuthUser; // undefined = auth not yet resolved once
+  function updateFab(label) {
+      const fab = document.getElementById('mobile-signin-fab');
+      if (fab) fab.textContent = label;
   }
 
-  // Gate the whole form on whether the campaign is currently active — a
-  // public read (see firestore.rules), so it works before sign-in.
-  db.collection('config').doc(CONFIG_DOC).get().then(snap => {
-      const config = snap.exists ? snap.data() : null;
-      if (config && config.active && config.role === CAMPAIGN_ROLE) {
-          showState('state-form');
-      } else {
-          showState('state-closed');
+  function applyAuthState() {
+      const user = lastAuthUser;
+      if (user === undefined) return;
+
+      const isUnverified = !!(user && !user.emailVerified && user.providerData[0]?.providerId === 'password');
+      const isSignedIn    = !!(user && !isUnverified);
+
+      if (isUnverified) {
+          const shown = document.getElementById('verify-email-shown');
+          if (shown) shown.textContent = user.email || '';
+          showState('state-verify');
+          updateFab('Verify Email');
+          return;
       }
-  }).catch(() => showState('state-closed'));
+      if (isSignedIn) {
+          showState('state-signedin');
+          updateFab('Continue');
+          return;
+      }
+
+      updateFab('Sign In');
+      const current = document.querySelector('.state.active')?.id;
+      if (!SIGNED_OUT_OWNED_STATES.includes(current)) showCampaignDefaultState();
+  }
+
+  // Called globally by firebase-config.js's onAuthStateChanged listener.
+  function onAuthReady(user) {
+      lastAuthUser = user;
+      applyAuthState();
+  }
 </script>
 
 </body>
