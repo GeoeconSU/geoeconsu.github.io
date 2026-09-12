@@ -136,11 +136,23 @@
     .about-extra { font-size: 0.93rem; color: rgba(255,255,255,0.6); margin-bottom: 1.2rem; }
     .about-closing { font-size: 0.93rem; color: rgba(255,255,255,0.55); }
 
+    /* Full write-up: desktop/tablet only. Phones get the condensed version below. */
+    .about-compact { display: none; }
+
     @media (max-width: 899px) {
       .about, .hero { text-align: center; }
       .about-points li { text-align: left; }
       .stat-row { justify-content: center; }
       .about-extra, .about-closing { text-align: center; }
+
+      .about-full { display: none; }
+      .about-compact { display: block; }
+      .about-compact h2 { font-family: var(--font-head); font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; }
+      .about-compact h3 {
+        font-family: var(--font-head); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+        text-transform: uppercase; color: var(--accent-gold); margin: 1.4rem 0 0.5rem;
+      }
+      .about-compact p { font-size: 0.95rem; color: rgba(255,255,255,0.68); }
     }
 
     /* ── Auth panel: sticky sidebar on desktop, bottom sheet on mobile ───── */
@@ -204,6 +216,7 @@
     /* auth-panel: no special positioning by default (desktop = plain sticky child) */
     .modal-close { display: none; }
     .auth-backdrop { display: none; }
+    .sheet-peek { display: none; }
 
     @media (max-width: 899px) {
       .auth-backdrop {
@@ -213,50 +226,59 @@
       }
       .auth-backdrop.open { opacity: 1; pointer-events: auto; }
 
+      /* Half card at rest: only the peek header shows above the fold, the
+         rest of the sheet (the form-card) sits just below the viewport.
+         ↓↓↓ EDIT THIS ONE LINE to change the collapsed (peek) card height. ↓↓↓
+         Accepts px (fixed) or vh (percentage of viewport height). Overflow/
+         scroll only kicks in once the sheet is expanded (.open) — while
+         collapsed there's nothing to scroll, so no scrollbar shows. */
       .auth-panel {
+        --peek-h: 30vh;
         position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
-        max-height: 88vh; overflow-y: auto;
-        transform: translateY(112%);
+        overflow: visible;
+        background: var(--secondary-bg);
+        border: 1px solid rgba(255,255,255,0.1); border-bottom: none;
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -8px 32px rgba(0,0,0,0.45);
+        transform: translateY(calc(100% - var(--peek-h)));
         transition: transform 0.3s var(--easing);
-        padding: 0 0.6rem 0.6rem;
       }
-      .auth-panel.open { transform: translateY(0); }
-      .modal-close {
-        display: block; position: absolute; top: 0.4rem; right: 1rem; z-index: 2;
+      .auth-panel.open {
+        transform: translateY(0);
+        max-height: 88vh; overflow-y: auto;
+      }
+
+      .modal-close { display: none; }
+      .auth-panel.open .modal-close {
+        display: block; position: absolute; top: 0.3rem; right: 0.9rem; z-index: 2;
         background: transparent; border: none; color: rgba(255,255,255,0.45);
         font-size: 1.6rem; line-height: 1; padding: 0.5rem; cursor: pointer;
       }
       .modal-close:hover { color: var(--text-white); }
-      .form-card { border-radius: 14px 14px 0 0; padding-top: 2.5rem; }
-    }
+      .form-card { background: transparent; border: none; border-radius: 0; padding: 0.4rem 1.4rem 1.6rem; }
 
-    /* Floating glass sign-in trigger — mobile only, styled like the dashboard's
-       glass nav pill (translucent gold, blurred, pill radius). */
-    .mobile-signin-fab {
-      display: none;
-      position: fixed; left: 50%; bottom: 1.3rem; transform: translateX(-50%);
-      width: 60%; max-width: 420px;
-      z-index: 480; height: 50px; padding: 0 1.5rem; border-radius: 999px;
-      border: 1px solid rgba(194,165,109,0.55);
-      background: rgba(194,165,109,0.12);
-      color: var(--accent-gold);
-      font-family: 'Playfair Display', serif; font-size: 0.8rem; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.4);
-      cursor: pointer; align-items: center; justify-content: center; gap: 0.4rem;
-      transition: all 0.25s var(--easing);
+      /* ── Peek header: drag handle + compact prompt + Proceed, always on top ── */
+      .sheet-peek { display: block; padding: 1.1rem 1.4rem 1.5rem; }
+      .sheet-handle {
+        width: 40px; height: 4px; border-radius: 4px; margin: 0 auto 1.1rem;
+        background: rgba(255,255,255,0.25); cursor: grab; touch-action: none;
+      }
+      .sheet-peek-body { display: flex; align-items: center; justify-content: space-between; gap: 1rem; cursor: pointer; }
+      .sheet-peek-text { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+      .sheet-peek-text strong { font-family: var(--font-head); font-weight: 600; font-size: 1rem; line-height: 1.35; color: var(--text-white); }
+      .sheet-peek-text span { font-size: 0.78rem; line-height: 1.4; color: rgba(255,255,255,0.5); }
+      .sheet-peek-btn {
+        flex-shrink: 0; background: var(--accent-gold); color: #192030; border: none; border-radius: 2px;
+        padding: 0.62rem 1.25rem; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 0.66rem;
+        letter-spacing: 0.09em; text-transform: uppercase; cursor: pointer;
+      }
+      .auth-panel.open .sheet-peek-body { display: none; }
     }
-    .mobile-signin-fab:hover, .mobile-signin-fab:active {
-      background: rgba(194,165,109,0.2); box-shadow: 0 10px 30px rgba(194,165,109,0.25);
-    }
-    @media (max-width: 899px) { .mobile-signin-fab { display: inline-flex; } }
 
     footer { text-align: center; padding: 2rem; font-size: 0.8rem; color: rgba(255,255,255,0.2); letter-spacing: 0.08em; }
 
-    @media (max-width: 600px) { .form-card { padding: 1.9rem 1.4rem; } }
-    /* room at the bottom of the page so content isn't hidden behind the FAB */
-    @media (max-width: 899px) { .shell { padding-bottom: 6rem; } }
+    /* room at the bottom of the page so content isn't hidden behind the peek card */
+    @media (max-width: 899px) { .shell { padding-bottom: 11rem; } }
   </style>
 </head>
 <body>
@@ -283,45 +305,76 @@
 
   <div class="layout">
     <div class="layout-main about">
-      <h2>About the Geoeconomic Strategy Unit</h2>
-      <p class="lead">
-        GSU is a research-led strategic advisory firm helping businesses, investors, and
-        institutions assess how geopolitical and economic developments affect trade,
-        investment, supply chains, regulation, and markets — turning complexity into
-        decision-ready intelligence that lets leadership teams compare markets, anticipate
-        disruption, and act with greater confidence.
-      </p>
 
-      <ul class="about-points">
-        <li><strong>Market Entry &amp; Risk</strong>Market attractiveness, regulatory and stakeholder constraints, and supply-chain / trade-corridor exposure — supporting decisions on sequencing, sourcing, and partnerships.</li>
-        <li><strong>Continuous Monitoring</strong>Tariffs, sanctions, export controls, policy shifts, supply-chain disruption, and political instability — flagged as early warning before they bite.</li>
-        <li><strong>Integrated Intelligence</strong>Proprietary research databases and quantitative indices behind every recommendation, not one-off judgment calls.</li>
-      </ul>
+      <!-- Desktop / tablet: full write-up -->
+      <div class="about-full">
+        <h2>About the Geoeconomic Strategy Unit</h2>
+        <p class="lead">
+          GSU is a research-led strategic advisory firm helping businesses, investors, and
+          institutions assess how geopolitical and economic developments affect trade,
+          investment, supply chains, regulation, and markets — turning complexity into
+          decision-ready intelligence that lets leadership teams compare markets, anticipate
+          disruption, and act with greater confidence.
+        </p>
 
-      <div class="stat-row">
-        <div class="stat"><span class="stat-num">28</span><span class="stat-label">Indicators</span></div>
-        <div class="stat"><span class="stat-num">162</span><span class="stat-label">Countries</span></div>
+        <ul class="about-points">
+          <li><strong>Market Entry &amp; Risk</strong>Market attractiveness, regulatory and stakeholder constraints, and supply-chain / trade-corridor exposure — supporting decisions on sequencing, sourcing, and partnerships.</li>
+          <li><strong>Continuous Monitoring</strong>Tariffs, sanctions, export controls, policy shifts, supply-chain disruption, and political instability — flagged as early warning before they bite.</li>
+          <li><strong>Integrated Intelligence</strong>Proprietary research databases and quantitative indices behind every recommendation, not one-off judgment calls.</li>
+        </ul>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat-num">28</span><span class="stat-label">Indicators</span></div>
+          <div class="stat"><span class="stat-num">162</span><span class="stat-label">Countries</span></div>
+        </div>
+
+        <p class="about-extra">
+          Our principal differentiator is the integration of research, data, and advisory.
+          Structured, repeatable benchmarks — including the Risk-Adjusted Opportunity Index
+          and the Geoeconomic Risk Barometer — replace one-off judgment calls with a
+          consistent way to compare markets and track regional risk, trade corridors, and
+          early-warning signals over time.
+        </p>
+
+        <p class="about-closing">
+          Our in-house platforms adapt to each client's geography, sector, exposure, and
+          strategic priorities — bespoke research frameworks, market-comparison models, risk
+          dashboards, and monitoring systems that connect global developments directly to
+          specific investments and operations.
+        </p>
       </div>
 
-      <p class="about-extra">
-        Our principal differentiator is the integration of research, data, and advisory.
-        Structured, repeatable benchmarks — including the Risk-Adjusted Opportunity Index
-        and the Geoeconomic Risk Barometer — replace one-off judgment calls with a
-        consistent way to compare markets and track regional risk, trade corridors, and
-        early-warning signals over time.
-      </p>
+      <!-- Phones: condensed to a couple of lines each -->
+      <div class="about-compact">
+        <h2>About GSU</h2>
+        <p>
+          GSU is a research-led strategic advisory firm helping investors and institutions
+          assess how geopolitical and economic shifts affect trade, investment, and markets —
+          turning complexity into decision-ready intelligence.
+        </p>
+        <h3>The RAO Dashboard</h3>
+        <p>
+          Our Risk-Adjusted Opportunity Index scores 162 countries across 28 indicators,
+          benchmarking market opportunity against political and economic risk — updated
+          quarterly, with early warning on tariffs, sanctions, and instability.
+        </p>
+      </div>
 
-      <p class="about-closing">
-        Our in-house platforms adapt to each client's geography, sector, exposure, and
-        strategic priorities — bespoke research frameworks, market-comparison models, risk
-        dashboards, and monitoring systems that connect global developments directly to
-        specific investments and operations.
-      </p>
     </div>
 
     <aside class="layout-aside">
       <div class="auth-panel" id="auth-panel">
-        <button type="button" class="modal-close" onclick="closeModal()" aria-label="Close">&times;</button>
+        <div class="sheet-peek" id="sheet-peek">
+          <div class="sheet-handle" id="sheet-handle"></div>
+          <div class="sheet-peek-body" onclick="expandSheet()">
+            <div class="sheet-peek-text">
+              <strong id="sheet-peek-title">Sign in to unlock the RAO Dashboard</strong>
+              <span>14 days of full access — every BRICS market</span>
+            </div>
+            <button type="button" class="sheet-peek-btn" id="sheet-peek-btn" onclick="event.stopPropagation(); expandSheet();">Proceed</button>
+          </div>
+        </div>
+        <button type="button" class="modal-close" onclick="collapseSheet()" aria-label="Close">&times;</button>
         <div class="form-card">
 
           <!-- Checking whether the campaign is currently open -->
@@ -342,6 +395,10 @@
           <form class="state" id="state-form" novalidate>
             <p class="modal-title">Create Your Account</p>
             <div class="form-group">
+              <label for="f-email">Email Address</label>
+              <input type="email" id="f-email" placeholder="jane@company.com" autocomplete="email" onfocus="expandSheet()">
+            </div>
+            <div class="form-group">
               <label for="f-name">Full Name</label>
               <input type="text" id="f-name" placeholder="Jane Smith" autocomplete="name">
             </div>
@@ -352,10 +409,6 @@
             <div class="form-group">
               <label for="f-designation">Designation</label>
               <input type="text" id="f-designation" placeholder="e.g. Director of Strategy" autocomplete="organization-title">
-            </div>
-            <div class="form-group">
-              <label for="f-email">Email Address</label>
-              <input type="email" id="f-email" placeholder="jane@company.com" autocomplete="email">
             </div>
             <div class="form-group">
               <label for="f-password">Password</label>
@@ -486,8 +539,7 @@
 
 <footer>geoecon.solutions &nbsp;&middot;&nbsp; The Sixteenth Council &nbsp;&middot;&nbsp; London</footer>
 
-<div class="auth-backdrop" id="auth-backdrop" onclick="closeModal()"></div>
-<button type="button" class="mobile-signin-fab" id="mobile-signin-fab" onclick="openModal()">Sign In</button>
+<div class="auth-backdrop" id="auth-backdrop" onclick="collapseSheet()"></div>
 
 <script src="firebase-config.js"></script>
 <script>
@@ -528,21 +580,76 @@
       return map[code] || `Something went wrong (${code || 'unknown error'}). Please try again.`;
   }
 
-  // ── Mobile bottom-sheet open/close (no-op visually on desktop, where the
-  // panel is always shown via CSS) ───────────────────────────────────────────
-  function openModal() {
-      document.getElementById('auth-panel').classList.add('open');
-      document.getElementById('auth-backdrop').classList.add('open');
-      document.body.style.overflow = 'hidden';
+  // ── Mobile half-card / bottom-sheet (no-op visually on desktop, where the
+  // panel is always shown in full via CSS) ────────────────────────────────
+  function setSheetOpen(isOpen) {
+      document.getElementById('auth-panel').classList.toggle('open', isOpen);
+      document.getElementById('auth-backdrop').classList.toggle('open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
   }
-  function closeModal() {
-      document.getElementById('auth-panel').classList.remove('open');
-      document.getElementById('auth-backdrop').classList.remove('open');
-      document.body.style.overflow = '';
-  }
+  function expandSheet() { setSheetOpen(true); }
+  function collapseSheet() { setSheetOpen(false); }
+
   document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && document.getElementById('auth-panel').classList.contains('open')) closeModal();
+      if (e.key === 'Escape' && document.getElementById('auth-panel').classList.contains('open')) collapseSheet();
   });
+
+  // Drag-to-swipe on the handle only — the rest of the peek row stays a
+  // simple tap target (onclick) so it never fights with the drag gesture.
+  // --peek-h can be px or vh, so the collapsed offset is resolved fresh each
+  // drag (via a hidden probe element) rather than assumed as a fixed number.
+  (function initSheetDrag() {
+      const handle = document.getElementById('sheet-handle');
+      const panel = document.getElementById('auth-panel');
+      if (!handle || !panel) return;
+      let dragging = false, startY = 0, collapsedOffset = 0;
+
+      function pointY(e) { return e.touches ? e.touches[0].clientY : e.clientY; }
+
+      function resolveCSSLength(value) {
+          const probe = document.createElement('div');
+          probe.style.cssText = 'position:absolute; visibility:hidden; width:0; height:' + value + ';';
+          panel.appendChild(probe);
+          const px = probe.offsetHeight;
+          probe.remove();
+          return px;
+      }
+      function getCollapsedOffset() {
+          const peekHVal = getComputedStyle(panel).getPropertyValue('--peek-h').trim() || '128px';
+          return panel.offsetHeight - resolveCSSLength(peekHVal);
+      }
+
+      function onDown(e) {
+          dragging = true;
+          startY = pointY(e);
+          collapsedOffset = getCollapsedOffset();
+          panel.style.transition = 'none';
+      }
+      function onMove(e) {
+          if (!dragging) return;
+          const delta = pointY(e) - startY;
+          const expanded = panel.classList.contains('open');
+          const base = expanded ? 0 : collapsedOffset;
+          const offset = Math.max(0, Math.min(collapsedOffset, base + delta));
+          panel.style.transform = `translateY(${offset}px)`;
+      }
+      function onUp(e) {
+          if (!dragging) return;
+          dragging = false;
+          panel.style.transition = '';
+          panel.style.transform = '';
+          const delta = (e.changedTouches ? e.changedTouches[0].clientY : e.clientY) - startY;
+          const expanded = panel.classList.contains('open');
+          setSheetOpen(expanded ? delta < 70 : delta < -50);
+      }
+
+      handle.addEventListener('touchstart', onDown, { passive: true });
+      handle.addEventListener('touchmove', onMove, { passive: true });
+      handle.addEventListener('touchend', onUp);
+      handle.addEventListener('mousedown', onDown);
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+  })();
 
   function switchToSignIn() {
       const prefill = document.getElementById('f-email').value.trim() ||
@@ -694,7 +801,7 @@
           Analytics.signUp('google');
           showState('state-finishing');
           await _waitForUserDoc(cred.user.uid);
-          closeModal();
+          collapseSheet();
       } catch (e) {
           clearPlanIntent();
           setError(await describeAuthError(e));
@@ -717,7 +824,7 @@
           Analytics.signUp('microsoft');
           showState('state-finishing');
           await _waitForUserDoc(cred.user.uid);
-          closeModal();
+          collapseSheet();
       } catch (e) {
           clearPlanIntent();
           setError(await describeAuthError(e));
@@ -747,9 +854,22 @@
   campaignCheckPromise.then(() => { if (lastAuthUser === undefined || !lastAuthUser) applyAuthState(); });
 
   let lastAuthUser; // undefined = auth not yet resolved once
-  function updateFab(label) {
-      const fab = document.getElementById('mobile-signin-fab');
-      if (fab) fab.textContent = label;
+
+  // Keeps the peek card's headline/button in sync with auth state.
+  function updateSheetPeek(kind) {
+      const title = document.getElementById('sheet-peek-title');
+      const btn   = document.getElementById('sheet-peek-btn');
+      if (!title) return;
+      if (kind === 'signedin') {
+          title.textContent = "You're all set — tap to continue";
+          if (btn) btn.textContent = 'Continue';
+      } else if (kind === 'verify') {
+          title.textContent = 'Verify your email to continue';
+          if (btn) btn.textContent = 'Continue';
+      } else {
+          title.textContent = 'Sign in to unlock the RAO Dashboard';
+          if (btn) btn.textContent = 'Proceed';
+      }
   }
 
   function applyAuthState() {
@@ -763,16 +883,16 @@
           const shown = document.getElementById('verify-email-shown');
           if (shown) shown.textContent = user.email || '';
           showState('state-verify');
-          updateFab('Verify Email');
+          updateSheetPeek('verify');
           return;
       }
       if (isSignedIn) {
           showState('state-signedin');
-          updateFab('Continue');
+          updateSheetPeek('signedin');
           return;
       }
 
-      updateFab('Sign In');
+      updateSheetPeek('default');
       const current = document.querySelector('.state.active')?.id;
       if (!SIGNED_OUT_OWNED_STATES.includes(current)) showCampaignDefaultState();
   }
