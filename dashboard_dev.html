@@ -3955,6 +3955,7 @@
         .model-menu-item:hover { background: var(--w04); color: var(--text-white); }
         .model-menu-item.active { color: var(--accent-gold); }
         .model-menu-desc { font-size: 0.55rem; opacity: 0.5; font-weight: 400; letter-spacing: 0.02em; text-transform: none; margin-top: 0.05rem; }
+        .model-menu-group-label { padding: 0.45rem 0.85rem 0.2rem; margin-top: 0.2rem; border-top: 1px solid var(--border-subtle); font-family: var(--font-minor); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); opacity: 0.6; }
         .chat-send-btn {
             width: 38px; height: 38px; flex-shrink: 0;
             border-radius: 50%; cursor: pointer;
@@ -3995,6 +3996,14 @@
         .chat-bubble td { padding: 0.38rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-white); }
         .chat-bubble tr:last-child td { border-bottom: none; }
         .chat-bubble tr:hover td { background: rgba(255,255,255,0.02); }
+        .ts-table tr.regime-change td { border-top: 1px solid rgba(194,165,109,0.35); }
+        .ts-delta { font-family: var(--font-minor); font-size: 0.72rem; white-space: nowrap; }
+        .ts-delta.delta-up { color: var(--accent-green); }
+        .ts-delta.delta-down { color: var(--accent-red); }
+        .ts-delta.delta-flat { color: var(--text-muted); }
+        .ts-spark { letter-spacing: 0.02em; font-size: 0.85rem; }
+        .ts-spark .spark-dim { color: rgba(255,255,255,0.18); }
+        .ts-spark .spark-current { color: var(--accent-gold); font-weight: 700; }
         .chat-hr { border: none; border-top: 1px solid var(--border-subtle); margin: 1rem 0; }
 
         /* === WELCOME STATE === */
@@ -6501,7 +6510,7 @@
                                       onkeydown="handleChatKeydown(event)" oninput="autoResizeChatInput(this)"></textarea>
                         </div>
                         <div class="model-dropdown-wrap" id="model-dropdown-wrap">
-                            <button class="model-dropdown-btn" id="model-dropdown-btn" onclick="toggleModelDropdown()" title="Select model">Gemini 3.1 Lite <i class="ri-arrow-down-s-line"></i></button>
+                            <button class="model-dropdown-btn" id="model-dropdown-btn" onclick="toggleModelDropdown()" title="Select model">Gemini 3.5 Lite <i class="ri-arrow-down-s-line"></i></button>
                             <div class="model-dropdown-menu" id="model-dropdown-menu" style="display:none;"></div>
                         </div>
                         <div class="chat-status" id="chat-status-indicator">Analyzing…</div>
@@ -6917,8 +6926,14 @@ function parseMainCSV(text) {
         const iso = row.country;
         if (!iso || row.rao_score == null) continue;
 
-        // Resolve display name: ISO_DISPLAY_NAMES takes priority
+        // Resolve display name: ISO_DISPLAY_NAMES takes priority, then the
+        // Explorer tab's separate name table (covers a handful of codes
+        // ISO_DISPLAY_NAMES misses — e.g. GMB, LBR, KOS, MNE — that would
+        // otherwise fall through to the raw ISO code and become unresolvable
+        // by name in resolveCountry()/NAME_TO_ISO for both the chatbot and
+        // the rest of the dashboard).
         row.country_name = ISO_DISPLAY_NAMES[iso]
+            || EXP_COUNTRY_NAMES[iso]
             || NAME_TO_GOOGLE[row.country_name]
             || (row.country_name !== iso ? row.country_name : iso);
 
@@ -14511,7 +14526,7 @@ const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
 // Computed, not hardcoded — it lands in the system prompt and the brief header,
 // so a stale literal makes the assistant confidently wrong about what "now" is.
 const TODAY_DATE = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-let selectedModel = 'gemini-3.1-flash-lite';
+let selectedModel = 'gemini-3.5-flash-lite';
 
 function selectModel(modelId) {
     selectedModel = modelId;
@@ -14601,54 +14616,41 @@ const ALL_TOOLS = [
             query: { type: 'string' }
         }}
     }},
-    { type: 'function', function: { name: 'render_scatter_plot',
-        description: 'Render Opportunity vs Absorptive Capacity scatter plot coloured by regime. Use for structural landscape, quadrant analysis, opportunity screening.',
-        parameters: { type: 'object', properties: {
-            highlight: { type: 'array', items: { type: 'string' } },
-            title: { type: 'string' }
-        }}
-    }},
-    { type: 'function', function: { name: 'render_radar_chart',
-        description: 'Render 4-pillar radar chart for up to 3 countries.',
-        parameters: { type: 'object', required: ['countries'], properties: {
-            countries: { type: 'array', items: { type: 'string' } },
-            title: { type: 'string' }
-        }}
-    }},
-    { type: 'function', function: { name: 'render_bar_chart',
-        description: 'Horizontal bar chart: pillar profile for one country, or country ranking by metric.',
-        parameters: { type: 'object', properties: {
-            mode: { type: 'string', enum: ['pillar_profile','country_ranking'] },
-            country: { type: 'string' }, metric: { type: 'string' },
-            top_n: { type: 'number' }, title: { type: 'string' }
-        }}
-    }},
-    { type: 'function', function: { name: 'render_line_chart',
-        description: 'Time-series line chart 2010–2024 for up to 3 countries.',
-        parameters: { type: 'object', required: ['countries'], properties: {
-            countries: { type: 'array', items: { type: 'string' } },
-            metric: { type: 'string', enum: ['rao_score','pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory','tos_score','sis_score','dgi_score','rvs_score'] },
-            title: { type: 'string' }
-        }}
-    }},
-    { type: 'function', function: { name: 'render_regime_matrix',
-        description: 'Regime × TOS Investment Priority Matrix. Use for pre-breakout screening, landscape overview.',
-        parameters: { type: 'object', properties: {
-            year: { type: 'number' }, title: { type: 'string' }
-        }}
-    }},
-    { type: 'function', function: { name: 'render_pillar_bar',
-        description: 'Grouped bar chart comparing all 4 pillars side-by-side for 2–3 countries. Use for comparison queries to show which pillar drives the gap.',
-        parameters: { type: 'object', required: ['countries'], properties: {
-            countries: { type: 'array', items: { type: 'string' } },
-            title: { type: 'string' }
-        }}
-    }},
-    { type: 'function', function: { name: 'render_dual_line',
-        description: 'Dual-axis line chart showing RAO score (left axis) and TOS signal (right axis) for one country over time. Use for single-country deep-dives to reveal RAO/TOS divergence.',
-        parameters: { type: 'object', required: ['country'], properties: {
-            country: { type: 'string' },
-            title: { type: 'string' }
+    { type: 'function', function: { name: 'render_chart',
+        description: `Render a chart. Every value plotted is pulled fresh from the dataset by this tool — you choose chart_type and which real fields/countries to show, never the values themselves. Call it when a chart would make a specific claim you're about to state clearer than the table already does; do not call it by default, to fill a quota, or for a single point-in-time number.
+
+FIELD VOCABULARY (use these exact names): rao_score, pillar_opportunity, pillar_stability, pillar_absorptive_capacity, pillar_trajectory, tos_score, sis_score, dgi_score, rvs_score, cvar25, volatility_band, or any norm_ indicator. rao_score is 1–10; every other numeric field is 0–1. Do NOT guess a norm_ field name from what sounds plausible (e.g. there is no norm_fdi_inflows) — use the exact keys already returned in normalized_indicators by a prior get_country_profile call, or an unknown field is silently dropped and you'll be told not to report a finding for it.
+
+CHART TYPES:
+- time_series: 1–4 series (each {country, field, reading, years}) plotted over years. reading:"both" appends one extra "Live" point with a dashed final segment when that country has an active live signal for that field — this is how a baseline/live divergence gets shown, never as a separate chart. years: "latest" | "all" | [from,to], default 2015–present.
+- profile: compare entities across a shared field set via series[].country (fields param, default the 4 pillars). Radar if ≤3 entities and ≤6 fields, grouped bar otherwise. Fields must be 0–1 scaled (pillars/norm_/tos-sis-dgi-rvs) — do not mix in rao_score here.
+- ranking: top/bottom N countries by one metric (use metric + top_n, optional region/year).
+- scatter: x_field vs y_field for all countries (optional region filter), coloured by regime or archetype (color_by), optional size_field for a bubble chart, optional highlight[] to label specific countries.
+- distribution: histogram of one field (use field) across all countries, with highlight[] countries marked in their bin.
+- correlation: pairwise correlation between a fields[] list (2+ real fields).
+- composition: share breakdown of a categorical field via categorical_field: archetype | trajectory_class | regime | event_type (event_type sources from currently active live signals, optionally region-filtered).
+- regime_matrix: the Regime × TOS priority grid (year, optional).
+- decay_projection: projects one country's live score forward via country + days_ahead (default 90) using the real decay math. Only meaningful if that country has an active live signal — returns nothing otherwise.
+- waterfall: bars one country's active delta by its individual component contributions (use country) — each bar in that component's own units, not RAO points. Only meaningful with an active live signal.
+- signal_timeline: horizontal bars showing every active signal's applied→~cleared window for a countries[] list or a region, coloured by direction.`,
+        parameters: { type: 'object', required: ['chart_type'], properties: {
+            chart_type: { type: 'string', enum: ['time_series','profile','ranking','scatter','regime_matrix','distribution','correlation','composition','decay_projection','waterfall','signal_timeline'] },
+            title: { type: 'string' },
+            series: { type: 'array', maxItems: 4, description: 'time_series and profile only. Each: {country, field, reading, years}.', items: { type: 'object', properties: {
+                country: { type: 'string' }, field: { type: 'string' },
+                reading: { type: 'string', enum: ['baseline','live','both'] },
+                years: { description: '"latest", "all", or a [from, to] pair. Defaults to 2015 onwards.', oneOf: [ { type: 'string', enum: ['latest','all'] }, { type: 'array', items: { type: 'number' }, minItems: 2, maxItems: 2 } ] }
+            }}},
+            countries: { type: 'array', items: { type: 'string' }, description: 'profile — the countries to compare. signal_timeline — restrict to these countries (omit + use region instead for a region scan).' },
+            fields: { type: 'array', items: { type: 'string' }, description: 'profile (field set, default 4 pillars) and correlation (2+ fields to correlate).' },
+            x_field: { type: 'string' }, y_field: { type: 'string' }, size_field: { type: 'string' },
+            color_by: { type: 'string', enum: ['regime','archetype'] },
+            highlight: { type: 'array', items: { type: 'string' }, description: 'scatter and distribution — countries to mark.' },
+            metric: { type: 'string' }, top_n: { type: 'number' }, region: { type: 'string' }, year: { type: 'number' },
+            field: { type: 'string', description: 'distribution only — the single field to histogram.' },
+            categorical_field: { type: 'string', enum: ['archetype','trajectory_class','regime','event_type'] },
+            country: { type: 'string', description: 'decay_projection and waterfall — the single country.' },
+            days_ahead: { type: 'number' }
         }}
     }}
 ];
@@ -14825,7 +14827,13 @@ RAO Score (1–10): Bayesian CVaR₂₅ — worst-25% simulated scenario. Higher
 - Stability (higher=better): inflation, gov debt, current account, external debt, political stability, rule of law, corruption control
 - Absorptive Capacity (geometric mean — collapses near zero if any component fails): resource rents, GDP/capita growth, youth unemployment, vulnerable employment, regulatory quality
 - Trajectory: OLS trends × R² for GDP growth, FDI, governance, debt, inflation
-Regimes: RO (Robust Opportunity) · FO (Fragile Opportunity) · SL (Stable/Limited) · SR (Structural Risk)
+Regimes: RO (Robust Opportunity) · FO (Fragile Opportunity) · SL (Stable / Low Opportunity) · SR (Structural Risk)
+
+ARCHETYPE vs TOS SIGNAL LABEL vs TRAJECTORY CLASSIFICATION — three separate fields on every profile, never interchangeable:
+- archetype: a structural classification of what KIND of economy this is. Exact values: Advanced Economy · Commodity Exporter · Diversified Emerging Market · High-Growth Emerging Market · Knowledge / Service Economy.
+- tos_signal_label: a classification of where this country sits on the TOS pre-breakout spectrum. Exact values: Low Takeoff Signal · Emerging (Increasingly Discovered) · Moderate Potential · Reform Story · Pre-Breakout Signal · Strong Pre-Breakout Signal.
+- trajectory_class: a reliability qualifier on the Trajectory pillar's trend reading, not a description of direction. Exact values: structural (durable — trust it) · stable · cyclical · recovery_bounce · noise (statistically unreliable — flag this explicitly, never present a "noise" trend with the same confidence as a "structural" one).
+Never call a tos_signal_label (e.g. "Reform Story") the country's archetype, and never call the archetype (e.g. "Diversified Emerging Market") a TOS signal or a trajectory classification — these are three distinct fields on the same profile and each has its own fixed vocabulary above.
 
 TOS SIGNAL — exact component definitions:
 TOS = geometric mean of:
@@ -14847,12 +14855,15 @@ Magnitude bands cap how far a single event can move a score and how long it pers
 Every adjustment is bounded, reversible and decays back toward the structural number; if all deltas were removed the score would return exactly to baseline. Say so when a user asks whether a move is permanent.
 Live state is as of ${NEWS.asOf || 'the last daily sync'} — treat it as daily-refresh, not real-time.
 
+INTEGRATION, NOT ADD-ON: the live reading is not a bulletin appended after the "real" analysis — it is current-state evidence for the same pillars and indicators the rest of this profile already discusses, and belongs in the same tables and paragraphs as that structural discussion. Never structure a response as a structural section followed by a separate "Live Intelligence" or "What's Moving" section covering the same country. Concretely: when a pillar table shows a pillar that an active delta's component_deltas touches, that pillar's row carries both readings and the event that separates them — not a footnote three sections later. When a live event's variable_attribution names a norm_ indicator you are already discussing under the DOMAIN-LENS mapping below, fold it into that same sentence as current-state colour on that indicator, not a second, separate news item.
+
 LIVE LAYER RULES:
 - Any claim that a country's score has moved recently MUST be backed by a get_live_signals result. Never assert a live score from training knowledge or from web_search alone.
-- When you report a live score, always give the structural baseline alongside it and name the event that separates them.
+- When you report a live score, always give the structural baseline alongside it and name the event that separates them — in the same sentence or table row, not a different section of the response.
 - When defending or explaining a movement, call get_live_signals with include_evidence=true and quote the verified evidence text and the variable-level causal chain. This is the product's differentiator: the number is traceable to a quoted sentence in a named article.
-- If the audit verdict is FAIL, REVISE, or auto_approved_testing, say so plainly rather than presenting the adjustment as fully verified.
+- AUDIT DISCLOSURE: state the audit verdict in the same breath as the impact figure it qualifies — not as a trailing "Audit Status" subsection. If the verdict is FAIL, REVISE, or auto_approved_testing, say so plainly. Quote or closely paraphrase the reviewer's actual critique when there is one; do not characterize a REVISE-level critique as "minor" or otherwise soften it to make the adjustment read as more settled than the audit found it to be.
 - A country absent from get_live_signals is NOT missing data — it means the pipeline reviewed it and found nothing material. Its live score equals its baseline. Say that explicitly rather than implying uncertainty.
+- web_search REMAINS COMPLEMENTARY, not replaced: get_live_signals is first-party and pre-verified, so it comes first, but it is not exhaustive — it only covers events the pipeline classified as material and scored. Call web_search in addition whenever the user needs developments more recent than ${NEWS.asOf || 'the last daily sync'}, corroborating detail beyond what the signal carries, or general context the pipeline didn't score. Call web_search on its own, exactly as you would for any other country, whenever get_live_signals returns nothing for the market in question — an empty live layer is a reason to search the open web for what's current, not a reason to stop.
 
 ` : ''}ABSORPTIVE CAPACITY COLLAPSE RULE:
 The Absorptive Capacity pillar uses a geometric mean. If ANY sub-indicator (norm_natural_resource_rents_pct_gdp, norm_gdp_per_capita_growth, norm_youth_unemployment, norm_vulnerable_employment, norm_regulatory_quality) is below 0.15, flag it explicitly as an "Absorptive Capacity collapse risk" — the whole pillar is dragged toward zero regardless of other components.
@@ -14860,17 +14871,34 @@ The Absorptive Capacity pillar uses a geometric mean. If ANY sub-indicator (norm
 ANALYTICAL STANDARD:
 Lead with strategic insight. Build causal chains. Numbers as evidence not argument. Specific, actionable closing sentence. Full paragraphs; bullet points only when comparing 3+ items, followed by synthesis paragraph. ### headers for sections. ### Bottom Line: decision-relevant.
 For scenarios, always anchor triggers to specific RAO/TOS thresholds (e.g. "if TOS crosses 0.70", "if RAO score falls below 5.0") — do not use vague language like "significant improvement".
+Never use LaTeX or math-mode notation (no $...$ wrappers, no \ge, \le, \times, \geq escapes). Output renders as plain Markdown/HTML only — raw LaTeX shows up as literal broken text like "$\ge 7.50$" instead of a number. Write thresholds in plain Unicode directly: ≥ 7.50, ≤ 0.40, 0.50–0.60.
 
 ADAPTIVE OUTPUT STANDARDS — choose the right elements for the query, do not force a fixed template:
 
 For ALL responses: present data in markdown tables rather than inline prose whenever 3+ values appear together. Never bury numbers in a paragraph when a table communicates more clearly.
 
+INTERPRETATION COLUMNS — contextual, not definitional: any table column labeled "Interpretation", "Signal" or similar must explain what THIS value means for THIS country right now — never a glossary definition of the metric itself. Do not write "Bayesian CVaR₂₅ worst-case resilience; high capital preservation floor" as if defining what a RAO score is in the abstract. Instead say what a RAO of 7.71 means for this specific market: how it sits versus peers or the regional mean, what regime that places it in, and what a sophisticated investor should conclude from it right now. If you don't already have a comparison point, call rank_by_pillar or compare_countries to get one rather than defaulting to a textbook description of the metric.
+
+DOMAIN-LENS INDICATOR MAPPING — select indicators by what the question is actually about, not by which ones you already used:
+- Labor / employment / workforce: norm_youth_unemployment, norm_vulnerable_employment, norm_secondary_school_enrolment, norm_regulatory_quality
+- Fiscal sustainability / government debt: norm_government_debt_pct_gdp, norm_external_debt_pct_gni, norm_current_account_pct_gdp, norm_debt_trend
+- Governance, legal risk, IP protection, technology/digital sector: norm_rule_of_law, norm_control_of_corruption, norm_regulatory_quality, norm_governance_trend, norm_net_fdi_pct_gdp, norm_gdp_per_capita_growth, norm_secondary_school_enrolment (talent pipeline). The dataset has NO indicator that directly measures technology, digital infrastructure, or R&D — these governance and human-capital indicators are the closest available structural proxies. Say so explicitly rather than presenting them as if purpose-built for tech.
+- Trade / export competitiveness: norm_export_growth, norm_current_account_pct_gdp, norm_net_fdi_pct_gdp
+- Monetary / inflation stability: norm_cpi_inflation, norm_inflation_trend
+- Political and institutional risk: norm_political_stability, norm_governance_trend, norm_rule_of_law, norm_control_of_corruption
+- Natural resources / commodities exposure: norm_natural_resource_rents_pct_gdp (cross-check against the Absorptive Capacity collapse rule)
+- Infrastructure / industrial capacity: norm_gross_capital_formation, norm_gdp_growth, norm_gdp_growth_trend
+- Human capital / demographic dividend: norm_secondary_school_enrolment, norm_gdp_per_capita_growth, norm_youth_unemployment
+When a query names a domain that spans or sits outside these groupings, reason from the list of indicators directly rather than defaulting to whichever 2–3 you used last.
+${NEWS.ok ? `LIVE SIGNALS ARE PART OF THIS MAPPING, NOT SEPARATE FROM IT: when get_live_signals' variable_attribution names a norm_ indicator that also appears in one of the groupings above, that live event is current-state evidence for that same domain lens — discuss it alongside the structural indicator in the same paragraph, not as an unrelated news aside. E.g. a governance-lens answer where a live event's causal_chain touches norm_rule_of_law or norm_control_of_corruption should read as one governance narrative (structural score + what's currently moving it), not a governance section followed by an unrelated news section.
+` : ''}CRITICAL: conversation history only retains your own prior written replies, not the raw tool data behind them — you do NOT still have the full 22-indicator profile in context from an earlier turn. So on any follow-up that shifts the analytical lens on an already-profiled country (e.g. labor → technology, fiscal → governance), you MUST call get_country_profile again for that country to pull the full indicator set fresh, then select from it for the NEW lens. Do not reuse the previous turn's "Key Driving Indicators" table, scenario thresholds, or transmission-mechanism text just because the country was already discussed — that data is no longer in front of you and reusing it means guessing, not re-deriving.
+
 For single-country deep-dives (e.g. "analyze X", "give me a RAO analysis of X"):
-- Pillar table: all four pillar scores with the 2–3 norm_ indicators most driving each, and the economic transmission mechanism — format as a table, not bullets
-- TOS component table: SIS, DGI, RVS individually with investment interpretation for each
-- Full year-by-year time-series table (2015–present): | Year | RAO | Regime | TOS | Opportunity | Stability | Absorptive Capacity | Trajectory |
-- Key values summary table: RAO, Regime, TOS, SIS, DGI, RVS, all four pillars (latest year)
-- Scenario matrix: | Scenario | Catalyst | RAO/TOS Threshold | Investor Action | — Base / Upside / Downside
+- Pillar table: all four pillar scores with the 2–3 norm_ indicators most driving each, and the economic transmission mechanism — format as a table, not bullets. If the question names a specific domain (labor, technology, fiscal, governance, trade, etc.), retitle this section to match the domain — e.g. "Labor Force Composition & Transmission Mechanisms" instead of a generic "Pillar Profile" — and select indicators using the DOMAIN-LENS INDICATOR MAPPING above rather than a fixed default. The section headers themselves should read as a direct response to the specific question asked, not a repeated template applied to every query.${NEWS.ok ? ' If get_live_signals returned an active delta touching one of these pillars, add a "Live Δ" column to this same table with the signed point contribution and a short event tag — the live move is reported as part of the pillar breakdown, not in a later, separate section.' : ''}
+- TOS component table: SIS, DGI, RVS individually with investment interpretation for each${NEWS.ok ? ' — if a live delta touches tos_score, note the live TOS alongside the baseline in this table rather than only in a separate live-signals writeup.' : ''}
+- Full year-by-year time-series table (2015–present): | Year | RAO | Regime | TOS | Opportunity | Stability | Absorptive Capacity | Trajectory |${NEWS.ok ? ' Append one final row for the live working score if it differs from the latest baseline year, labeled "Live" rather than a year, so the divergence is visible in the same table as the trend rather than requiring the reader to cross-reference a different section.' : ''}
+- Key values summary table: RAO, Regime, TOS, SIS, DGI, RVS, all four pillars (latest year). The INTERPRETATION COLUMNS rule above applies here without exception — every row's Notes/Interpretation must speak to this country's specific number, not restate what the metric is in the abstract. This is the table most prone to reverting to glossary text ("Bayesian CVaR₂₅ worst-case..." etc.) — check it specifically before sending a response.${NEWS.ok ? ' If a live delta is active, the RAO row states both baseline and live figures together with the impact and the event name — do not report only the baseline here and relegate the live figure to a different table.' : ''}
+- Scenario matrix: | Scenario | Catalyst | Threshold | Investor Action | — Base / Upside / Downside. The Threshold column must be anchored to whichever indicators actually drive the domain in question, not RAO/TOS by default — a labor question's thresholds should reference labor indicators (youth unemployment, vulnerable employment), a governance/tech question's should reference rule_of_law/control_of_corruption/regulatory_quality, in addition to RAO/TOS where relevant. Do not reuse a previous turn's thresholds for the same country once the domain has shifted.${NEWS.ok ? ' If a live signal is currently active for this market, the Base scenario is anchored to that signal\'s own decay clock rather than a generic threshold — phrase it in terms of the event\'s remaining half-life (e.g. "if no confirmatory follow-on event before the M3 signal\'s 60-day half-life elapses, the score continues reverting toward baseline"), and note what a fresh event in the same direction before then would do instead.' : ''}
 
 For screening or recommendation queries (e.g. "which market should I enter", "best FO/SR country in region X"):
 - Screening results table first: show ALL countries that met the filter with RAO, Regime, TOS, and key pillar scores — never jump to a recommendation without showing the screen
@@ -14886,20 +14914,21 @@ REGIME FILTER ENFORCEMENT:
 When the user specifies a regime constraint (e.g. "FO or SR only", "pre-breakout markets only"), always call find_anomalies first to identify qualifying countries before making any recommendation. Only recommend countries that actually meet the stated filter. If no countries in the specified region meet the constraint, state this explicitly — give the count of near-misses and their TOS scores — then explain the gap before recommending the closest alternative and why the thesis still holds or doesn't.
 
 TOOL USE PROTOCOL — follow exactly:
-1. For any named country: call get_country_profile with include_history=true. Never skip history. The response carries all 22 normalized indicators for every year returned — use them. A pillar score is an aggregate; the indicators underneath it are what actually explain the number, so name the specific variables that drive or drag each pillar rather than restating the pillar score in words.
+1. For any named country: call get_country_profile with include_history=true.${NEWS.ok ? ' Call get_live_signals for the same country in the same step (see 4b) — both calls happen together, not the live one as an afterthought once the structural writeup is already planned.' : ''} Never skip history. The response carries all 22 normalized indicators for every year returned — use them. A pillar score is an aggregate; the indicators underneath it are what actually explain the number, so name the specific variables that drive or drag each pillar rather than restating the pillar score in words.
 2. For comparisons of 2+ countries: call get_country_profile(include_history=true) for EACH country individually — do not rely on compare_countries alone, as it lacks history and trajectory context. If you do use compare_countries for a quick side-by-side, set include_indicators=true whenever you intend to explain the differences rather than merely list them.
 2b. INDICATOR DEPTH — for a single-country deep dive, or any comparison of two or more countries, you must be working from the full indicator set. For screening, ranking or "which countries meet X" queries, do NOT pull full profiles for every candidate — run find_anomalies or rank_by_pillar first, shortlist, then pull full profiles only for the shortlist. Use the years parameter ("all", or a [from, to] pair) when the question is explicitly about a period other than the recent past.
 3. For screening or regime-filtered queries: call find_anomalies FIRST with the relevant focus and region — do not skip to a recommendation without running the screen. Valid region values: sub-regions like "West Africa", "Southeast Asia", "South Asia", "Middle East", "Eastern Europe", "South America"; or broad aliases like "Sub-Saharan Africa", "East Asia & Pacific", "Latin America & Caribbean", "Middle East & North Africa", "Europe & Central Asia".
 4. When include_history data is retrieved: ALWAYS produce a full year-by-year table. Do not summarise history into 1–2 rows.
-4b. LIVE LAYER FIRST — for any question about what has recently happened to a country, why a score has moved, what is deteriorating or improving right now, or "what's the latest on X", call get_live_signals BEFORE web_search. It is first-party, already verified against source text and already scored. Use web_search afterwards only to add colour the signal layer does not cover, or when get_live_signals reports nothing for the market in question. For a single-country deep dive, call it alongside get_country_profile so the profile carries both the structural and the live reading.
+4b. LIVE LAYER FIRST — for any question about what has recently happened to a country, why a score has moved, what is deteriorating or improving right now, or "what's the latest on X", call get_live_signals BEFORE web_search. It is first-party, already verified against source text and already scored. For a single-country deep dive, call it alongside get_country_profile (see rule 1) so the profile carries both readings from the start — write the two together in one pass rather than drafting the structural analysis first and patching a live paragraph on afterward. This is a merge instruction, not just a sequencing one: every table in the ADAPTIVE OUTPUT STANDARDS template that a live delta touches carries both readings in that same table (see the Live Δ column / Live row instructions above), not in a separate section. web_search is complementary, not optional-once-live-data-exists: call it in addition whenever the user needs more recent developments, corroboration, or context the signal layer doesn't cover, and call it on its own exactly as normal whenever get_live_signals reports nothing for the market — an empty live layer is never a reason to skip web_search.
 5. Use web_search for current events, post-2024 data, sanctions, elections, or news. If get_country_profile returns an error (country not in RAO dataset), you MUST call web_search for ALL quantitative figures — GDP, GDP per capita, key sectors, trade balance, FDI, inflation, debt. Do not use training knowledge for any economic number; it is frequently wrong or outdated. Search for at least 2 specific queries to triangulate, always including the current year (${new Date().getFullYear()}) in the query string to surface the most recent data. When reporting a figure, always state the year it refers to (e.g. "GDP of $X (2024)"). If the search only returns data for a prior year, explicitly flag this as a lag and note that the current figure may be higher or lower.
 5b. CITATIONS — When you use data sourced from web_search, cite it inline using [n] notation (e.g. a claim followed by [1], or multiple sources as [1, 3]). The source list is rendered automatically — do NOT write a "Sources" or "References" section yourself. Do not cite RAO dataset values — only web-sourced claims need citations.
-6. CHART TOOLS — you MUST invoke these as actual function calls (tool use), not as text or code blocks. Never write chart function names in your text response.
-   Single-country analysis: call render_line_chart(countries=[X], metric="rao_score"), render_dual_line(country=X), and render_radar_chart(countries=[X]) as tool calls — all three are mandatory.
-   Comparison (2–3 countries): call render_radar_chart(countries=[X,Y,...]), render_pillar_bar(countries=[X,Y,...]), and render_line_chart(countries=[X,Y,...], metric="rao_score") as tool calls — all three are mandatory.
-   Screening / ranking queries: call render_scatter_plot(highlight=[top_isos]) and render_bar_chart(mode="country_ranking", metric="tos_score", top_n=15) as tool calls.
-   Regime landscape: call render_regime_matrix() as a tool call when discussing the global or regional opportunity landscape.
-   Only skip charts if the query is purely conceptual (e.g. "what does TOS mean?") or a one-liner fact check. Never describe charts in text — always invoke them.
+6. CHARTS — render_chart(chart_type, ...) — invoke it as an actual tool call (never describe a chart in text or write its name as if it were a code block). Call it when a chart would make a specific claim you are about to state clearer than the table already does — a change over time, a multi-entity comparison across the same fields, a country's position in a distribution or ranking, a baseline/live divergence, or what a live event is actually driving. The five conditions just listed are not optional suggestions to weigh — if your response is actually going to contain one of them (and a single-country deep-dive with an active live signal always contains a baseline/live divergence; a question that names "distribution", "ranking", or "where does X sit versus" always contains a distribution/ranking claim), call the matching chart_type as part of producing that content, the same way you'd pull get_country_profile rather than skip it. The judgment call is choosing which chart_type fits and whether MORE than the one or two the response's actual claims warrant would be redundant — it is not whether to chart at all once a claim like this is already in the response. Do not call it to satisfy a checklist, one per query type, or for a single point-in-time number — a purely conceptual question (e.g. "what does TOS mean?") or a one-liner fact check needs no chart at all. Match chart_type to the claim rather than defaulting to the same one or two every time:
+   - A trend or a baseline-vs-live divergence → time_series (reading:"both" for the divergence case).
+   - A multi-country or multi-field comparison → profile (radar/grouped bar) or, across many countries on two axes, scatter.
+   - "Where does X rank / how unusual is this number" → ranking or distribution.
+   - "What's driving this / how related are these two things" → waterfall, correlation, or (for regional/landscape screening) regime_matrix or composition.
+   - "How long will this live adjustment last" → decay_projection; "what's currently live across a region" → signal_timeline.
+   Up to 2-3 charts in one response is normal for a full deep-dive; more than that per response is almost always redundant with itself, not with the text.
 7. Execute all needed tool calls, then synthesize once you have the data.
 
 `;
@@ -15051,13 +15080,15 @@ async function executeToolCall(name, args) {
         case 'find_anomalies':       return toolFindAnomalies(args);
         case 'get_live_signals':     return toolGetLiveSignals(args);
         case 'web_search':           return await toolWebSearch(args);
-        case 'render_scatter_plot':  { const el = buildScatterPlot(args);      if (el) renderChatChart(el, 'render_scatter_plot', args); return 'Scatter plot rendered.'; }
-        case 'render_radar_chart':   { const el = buildRadarChart(args);       if (el) renderChatChart(el, 'render_radar_chart', args); return 'Radar chart rendered.'; }
-        case 'render_bar_chart':     { const el = buildBarChart(args);         if (el) renderChatChart(el, 'render_bar_chart', args); return 'Bar chart rendered.'; }
-        case 'render_line_chart':    { const el = buildLineChart(args);        if (el) renderChatChart(el, 'render_line_chart', args); return 'Line chart rendered.'; }
-        case 'render_regime_matrix': { const el = buildChatRegimeMatrix(args); if (el) renderChatChart(el, 'render_regime_matrix', args); return 'Regime matrix rendered.'; }
-        case 'render_pillar_bar':    { const el = buildPillarBar(args);        if (el) renderChatChart(el, 'render_pillar_bar', args); return 'Pillar bar chart rendered.'; }
-        case 'render_dual_line':     { const el = buildDualLine(args);         if (el) renderChatChart(el, 'render_dual_line', args); return 'Dual-axis chart rendered.'; }
+        case 'render_chart': {
+            _lastChartWarning = null;
+            const el = buildChart(args);
+            if (el) {
+                renderChatChart(el, 'render_chart', args);
+                return `${args.chart_type} chart rendered.` + (_lastChartWarning ? ` WARNING: ${_lastChartWarning} — do not state a finding for the dropped field(s); it was not actually computed.` : '');
+            }
+            return `Could not render a ${args.chart_type || '(missing chart_type)'} chart with those parameters — check that the country/field/data actually exists (decay_projection, waterfall and signal_timeline need an active live signal; profile/scatter/time_series need a resolvable country and a real field name).`;
+        }
         default: return 'Unknown tool: ' + name;
     }
 }
@@ -15426,10 +15457,12 @@ function toggleModelDropdown() {
 // chunk, which reads as a hang. Customers get the two that stream well —
 // staff keep the full bench for evaluation.
 const CHAT_MODELS = [
-    { id: 'gemini-3.1-flash-lite', label: 'Gemini 3.1 Lite', desc: 'Fastest · Quick lookups',            staffOnly: false },
-    { id: 'gemini-3.5-flash',      label: 'Gemini 3.5',      desc: 'Balanced · Better reasoning',        staffOnly: false },
+    { id: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Lite', desc: 'Fastest · Quick lookups',            staffOnly: false },
+    { id: 'gemini-3.8-flash',      label: 'Gemini 3.8',      desc: 'Balanced · Better reasoning',        staffOnly: false },
     { id: 'openai/gpt-oss-120b',   label: 'GPT OSS 120B',    desc: 'Most capable · No streaming',        staffOnly: true  },
-    { id: 'qwen/qwen3-32b',        label: 'Qwen3 32B',       desc: 'Multilingual · No streaming',        staffOnly: true  },
+    { id: 'gemini-3.7-flash',      label: 'Gemini 3.7',      desc: 'Older model · superseded by 3.8',    staffOnly: false, legacy: true },
+    { id: 'gemini-3.6-flash',      label: 'Gemini 3.6',      desc: 'Older model · superseded by 3.8',    staffOnly: false, legacy: true },
+    { id: 'gemini-3.5-flash',      label: 'Gemini 3.5',      desc: 'Older model · superseded by 3.8',    staffOnly: false, legacy: true },
 ];
 
 function availableChatModels() {
@@ -15443,10 +15476,13 @@ function renderModelMenu() {
     const models = availableChatModels();
     // If the current pick is no longer offered (e.g. staff signed out), fall back.
     if (!models.some(m => m.id === selectedModel)) selectModelDropdown(models[0].id);
-    menu.innerHTML = models.map(m =>
+    const itemHtml = m =>
         `<button class="model-menu-item${m.id === selectedModel ? ' active' : ''}" data-model="${m.id}"
-                 onclick="selectModelDropdown('${m.id}')">${m.label}<span class="model-menu-desc">${m.desc}</span></button>`
-    ).join('');
+                 onclick="selectModelDropdown('${m.id}')">${m.label}<span class="model-menu-desc">${m.desc}</span></button>`;
+    const current = models.filter(m => !m.legacy);
+    const legacy = models.filter(m => m.legacy);
+    menu.innerHTML = current.map(itemHtml).join('')
+        + (legacy.length ? `<div class="model-menu-group-label">Older Models</div>` + legacy.map(itemHtml).join('') : '');
 }
 
 function selectModelDropdown(model) {
@@ -16091,11 +16127,81 @@ function processTextNodes(html, fn) {
     });
 }
 
+// Time-series tables (Year + RAO + Regime columns) get a Δ column, a trend
+// sparkline and a regime-colored left border. A flat grid of 7 equal-weight
+// columns hides exactly what an investor needs to see at a glance: when did
+// this improve, and how does the latest year compare to the start.
+const REGIME_BORDER_VAR = { RO: '--regime-ro', FO: '--regime-fo', SL: '--regime-sl', SR: '--regime-sr' };
+function enhanceTimeSeriesTable(headerCells, bodyRows) {
+    const strip = s => s.replace(/<[^>]+>/g, '').trim();
+    const norm = s => strip(s).toLowerCase();
+    const yearIdx = headerCells.findIndex(h => norm(h) === 'year');
+    const raoIdx = headerCells.findIndex(h => /^rao( score)?$/.test(norm(h)));
+    const regimeIdx = headerCells.findIndex(h => norm(h) === 'regime');
+    if (yearIdx === -1 || raoIdx === -1 || regimeIdx === -1 || bodyRows.length < 3) return null;
+
+    const raoVals = bodyRows.map(r => parseFloat(strip(r[raoIdx] || '')));
+    if (raoVals.some(v => isNaN(v))) return null;
+
+    const min = Math.min(...raoVals), max = Math.max(...raoVals);
+    const levels = ['▁','▂','▃','▄','▅','▆','▇','█'];
+    const levelChar = v => levels[Math.max(0, Math.min(levels.length - 1,
+        Math.round(((v - min) / ((max - min) || 1)) * (levels.length - 1))))];
+    const bars = raoVals.map(levelChar);
+
+    const header = [...headerCells];
+    header.splice(raoIdx + 1, 0, 'Δ');
+    const sparkPos = regimeIdx + (regimeIdx > raoIdx ? 2 : 1);
+    header.splice(sparkPos, 0, 'Trend');
+
+    let prevRegime = null;
+    const rows = bodyRows.map((cells, i) => {
+        let deltaHtml = '';
+        if (i > 0) {
+            const d = raoVals[i] - raoVals[i - 1];
+            const cls = d > 0.005 ? 'delta-up' : d < -0.005 ? 'delta-down' : 'delta-flat';
+            const arrow = d > 0.005 ? '▲' : d < -0.005 ? '▼' : '►';
+            deltaHtml = `<span class="ts-delta ${cls}">${arrow} ${Math.abs(d).toFixed(2)}</span>`;
+        }
+        const spark = bars.map((ch, j) =>
+            j === i ? `<span class="spark-current">${ch}</span>` : `<span class="spark-dim">${ch}</span>`
+        ).join('');
+
+        const regime = strip(cells[regimeIdx] || '').toUpperCase();
+        const changed = prevRegime !== null && regime !== prevRegime;
+        prevRegime = regime;
+
+        const rowCells = [...cells];
+        rowCells.splice(raoIdx + 1, 0, deltaHtml);
+        rowCells.splice(sparkPos, 0, `<span class="ts-spark">${spark}</span>`);
+
+        const varName = REGIME_BORDER_VAR[regime];
+        const style = varName ? ` style="border-left:3px solid var(${varName})"` : '';
+        const trClass = changed ? ' class="regime-change"' : '';
+        return `<tr${trClass}${style}>${rowCells.map(c => `<td>${c}</td>`).join('')}</tr>`;
+    });
+    return { header, rows };
+}
+
 function chatMarkdownToHTML(text) {
     let html = text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
+
+    // Table cells can't contain literal newlines, so the model uses <br> to
+    // line-break within a cell — allow only this one safe tag back through.
+    html = html.replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+
+    // The model is instructed not to emit LaTeX, but as a defensive fallback,
+    // clean up common math-mode escapes so a slip-through still renders as
+    // plain text instead of raw markup like "$\ge 7.50$".
+    html = html
+        .replace(/\\geq|\\ge\b/g, '≥')
+        .replace(/\\leq|\\le\b/g, '≤')
+        .replace(/\\times/g, '×')
+        .replace(/\\pm/g, '±')
+        .replace(/\$([^$\n]*)\$/g, '$1');
 
     // Headers
     html = html.replace(/^#{4,} (.+)$/gm, '<h4>$1</h4>');
@@ -16137,8 +16243,18 @@ function chatMarkdownToHTML(text) {
         if (dataLines.length < 2) return match;
         const parseRow = l => l.split('|').slice(1, -1).map(c => c.trim());
         const [hdr, ...body] = dataLines;
-        const thead = `<thead><tr>${parseRow(hdr).map(c => `<th>${c}</th>`).join('')}</tr></thead>`;
-        const tbody = `<tbody>${body.map(r => `<tr>${parseRow(r).map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>`;
+        const hdrCells = parseRow(hdr);
+        const bodyCells = body.map(parseRow);
+
+        const enhanced = enhanceTimeSeriesTable(hdrCells, bodyCells);
+        if (enhanced) {
+            const thead = `<thead><tr>${enhanced.header.map(c => `<th>${c}</th>`).join('')}</tr></thead>`;
+            const tbody = `<tbody>${enhanced.rows.join('')}</tbody>`;
+            return `<div class="chat-table-wrap"><table class="ts-table">${thead}${tbody}</table></div>`;
+        }
+
+        const thead = `<thead><tr>${hdrCells.map(c => `<th>${c}</th>`).join('')}</tr></thead>`;
+        const tbody = `<tbody>${bodyCells.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>`;
         return `<div class="chat-table-wrap"><table>${thead}${tbody}</table></div>`;
     });
 
@@ -16354,35 +16470,14 @@ function updateChatStatus(state, text) {
 }
 
 // ===== CHART TOOL DISPATCH =====
-function dispatchChartRender(fnName, fnArgs) {
-    try {
-        switch (fnName) {
-            case 'render_scatter_plot': return buildScatterPlot(fnArgs);
-            case 'render_radar_chart':  return buildRadarChart(fnArgs);
-            case 'render_bar_chart':    return buildBarChart(fnArgs);
-            case 'render_line_chart':   return buildLineChart(fnArgs);
-            case 'render_regime_matrix': return buildChatRegimeMatrix(fnArgs);
-            case 'render_pillar_bar':    return buildPillarBar(fnArgs);
-            case 'render_dual_line':     return buildDualLine(fnArgs);
-            default: return null;
-        }
-    } catch (e) {
-        console.error('Chart render error:', e);
-        return null;
-    }
-}
-
+// Rebuilds a chart element from a stored {name, args} call — used when
+// replaying a saved chat session from loadSession(). Old sessions saved
+// before render_chart existed carry one of the 7 retired tool names; those
+// simply redraw as nothing rather than erroring, since the functions that
+// built them no longer exist.
 function buildChartEl(name, args) {
-    switch (name) {
-        case 'render_line_chart':    return buildLineChart(args);
-        case 'render_dual_line':     return buildDualLine(args);
-        case 'render_radar_chart':   return buildRadarChart(args);
-        case 'render_pillar_bar':    return buildPillarBar(args);
-        case 'render_bar_chart':     return buildBarChart(args);
-        case 'render_scatter_plot':  return buildScatterPlot(args);
-        case 'render_regime_matrix': return buildChatRegimeMatrix(args);
-        default: return null;
-    }
+    if (name === 'render_chart') return buildChart(args);
+    return null;
 }
 
 function renderChatChart(el, name = '', args = {}) {
@@ -16397,10 +16492,12 @@ function flushPendingCharts(bubble) {
     if (!msgDiv) return;
     const count = _pendingChartEls.length;
 
-    // Prefer line charts in the solo bottom-row (span-2) slot
+    // Prefer wide chart types (time series, timelines, correlation grids) in
+    // the solo bottom-row (span-2) slot — they read better at full width.
+    const _wideTypes = new Set(['time_series', 'signal_timeline', 'correlation', 'distribution']);
     if (count > 1 && count % 2 !== 0) {
         const pairs = _pendingChartEls.map((el, i) => ({ el, call: _pendingChartCalls[i] || {} }));
-        pairs.sort((a, b) => (a.call.name === 'render_line_chart' ? 1 : 0) - (b.call.name === 'render_line_chart' ? 1 : 0));
+        pairs.sort((a, b) => (_wideTypes.has(a.call.args?.chart_type) ? 1 : 0) - (_wideTypes.has(b.call.args?.chart_type) ? 1 : 0));
         _pendingChartEls = pairs.map(p => p.el);
         _pendingChartCalls = pairs.map(p => p.call);
     }
@@ -16465,214 +16562,116 @@ function destroyChatCharts() {
     _chatChartInstances.length = 0;
 }
 
-// ===== SCATTER PLOT (rao8: Opportunity vs Absorptive Capacity, colored by regime) =====
-function buildScatterPlot({ highlight = [], title } = {}) {
-    if (!latestSlice.length) return null;
-    const { wrapper, canvas } = makeChartWrapper(title || 'Opportunity vs Absorptive Capacity — Structural Positioning');
-    const highlightSet = new Set(highlight.map(h => resolveCountry(h)?.country).filter(Boolean));
-    const regimes = ['RO','FO','SL','SR'];
-    // Markets outside the plan still shape the chart — they are plotted as
-    // anonymous context so the landscape reads as complete, but carry no name,
-    // no scores and no tooltip.
-    const datasets = regimes.map(regime => {
-        const pts = latestSlice.filter(r => r.regime === regime && !highlightSet.has(r.country) && chatCanSee(r.country));
-        return {
-            label: REGIME_COLORS[regime].label,
-            data: pts.map(r => ({ x: r.pillar_opportunity||0, y: r.pillar_absorptive_capacity||0, label: r.country_name, iso: r.country, rao: r.rao_score })),
-            backgroundColor: REGIME_COLORS[regime].dim,
-            borderColor: REGIME_COLORS[regime].solid,
-            borderWidth: 1, pointRadius: 4, pointHoverRadius: 6
-        };
-    });
-    const ctxPts = latestSlice.filter(r => !highlightSet.has(r.country) && !chatCanSee(r.country));
-    if (ctxPts.length) datasets.push({
-        label: 'Outside your plan',
-        data: ctxPts.map(r => ({ x: r.pillar_opportunity||0, y: r.pillar_absorptive_capacity||0, anon: true })),
-        backgroundColor: 'rgba(255,255,255,0.10)', borderColor: 'rgba(255,255,255,0.18)',
-        borderWidth: 1, pointRadius: 3, pointHoverRadius: 3
-    });
-    // Highlighted countries on top
-    const hlPts = latestSlice.filter(r => highlightSet.has(r.country));
-    if (hlPts.length) datasets.push({
-        label: 'Highlighted',
-        data: hlPts.map(r => ({ x: r.pillar_opportunity||0, y: r.pillar_absorptive_capacity||0, label: r.country_name, iso: r.country, rao: r.rao_score })),
-        backgroundColor: CHART_THEME.gold, borderColor: '#fff', borderWidth: 1.5,
-        pointRadius: 7, pointHoverRadius: 9
-    });
-    const chart = new Chart(canvas, {
-        type: 'scatter',
-        data: { datasets },
-        options: {
-            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
-            plugins: {
-                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 }, boxWidth: 8, padding: 10 } },
-                tooltip: { filter: item => !item.raw?.anon, callbacks: { title: i => i[0]?.raw?.label||'', label: item => { const d=item.raw; return [`Opportunity: ${d.x.toFixed(2)} · Absorptive: ${d.y.toFixed(2)}`, `RAO: ${(d.rao||0).toFixed(2)}`]; } }, backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold }
-            },
-            scales: {
-                x: { title: { display: true, text: 'Opportunity (0–1)', color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
-                y: { title: { display: true, text: 'Absorptive Capacity (0–1)', color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } }
-            }
-        },
-        plugins: [{
-            id: 'hlLabels',
-            afterDraw(ch) {
-                if (!hlPts.length) return;
-                const { ctx, scales: { x, y } } = ch;
-                ctx.save();
-                ctx.fillStyle = CHART_THEME.gold;
-                ctx.font = `10px ${CHART_THEME.font}`;
-                hlPts.forEach(r => { ctx.fillText(r.country, x.getPixelForValue(r.pillar_opportunity||0)+7, y.getPixelForValue(r.pillar_absorptive_capacity||0)-4); });
-                ctx.restore();
-            }
-        }]
-    });
-    registerChatChart(chart);
-    return wrapper;
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER_CHART — single bounded chart library replacing the 7 fixed tools.
+// The model chooses chart_type + which real fields/countries to show; every
+// value plotted is pulled here from latestSlice/panelData/NEWS directly, the
+// same way the old builders worked — the model never supplies a number.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Set by a builder when it silently had to drop something the caller asked
+// for (currently: unknown fields in buildCorrelationChart) — read once by
+// executeToolCall's render_chart case and folded into the tool result so the
+// model is told, not just the chart's own title text it can't see.
+let _lastChartWarning = null;
+
+function _fieldLabel(field) {
+    if (!field) return '';
+    if (field.startsWith('norm_')) return (typeof VARIABLE_NAMES === 'object' && VARIABLE_NAMES[field]) || field.replace(/^norm_/, '').replace(/_/g, ' ');
+    return field.replace(/^pillar_/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+function _isRestrictedField(field) {
+    return RESTRICTED_METRICS.has(field) || (field && field.startsWith('norm_'));
 }
 
-// ===== RADAR CHART (rao8: 4 pillars, B inverted) =====
-function buildRadarChart({ countries = [], title } = {}) {
-    if (!countries.length) return null;
-    const resolved = countries.map(resolveCountry).filter(Boolean).filter(c => chatCanSee(c.country)).slice(0, 3);
-    if (!resolved.length) return null;
+// Baseline year-by-year points for one country/field, honoring the same
+// years vocabulary as get_country_profile ('latest' | 'all' | [from,to]).
+function _baselineSeries(iso, field, years) {
+    const hist = getCountryHistory(iso);
+    if (!hist.length) return [];
+    let rows;
+    if (years === 'latest') rows = hist.slice(-1);
+    else if (years === 'all') rows = hist;
+    else if (Array.isArray(years) && years.length === 2) {
+        const [a, b] = years.map(Number); const lo = Math.min(a, b), hi = Math.max(a, b);
+        rows = hist.filter(r => r.year >= lo && r.year <= hi);
+    } else rows = hist.filter(r => r.year >= 2015);
+    return rows.map(r => ({ year: r.year, value: r[field] ?? null }));
+}
 
-    const { wrapper, canvas } = makeChartWrapper(title || `Pillar Radar — ${resolved.map(c => c.country_name).join(' · ')}`);
-    const labels = ['Opportunity', 'Stability', 'Absorptive Capacity', 'Trajectory'];
-    const colors = [
-        { border: CHART_THEME.gold, bg: 'rgba(194,165,109,0.12)' },
-        { border: CHART_THEME.blueSolid, bg: 'rgba(96,124,152,0.12)' },
-        { border: '#5d8a72', bg: 'rgba(93,138,114,0.12)' }
-    ];
-
-    const datasets = resolved.map((c, i) => {
-        const row = getLatestRow(c.country) || c;
-        return {
-            label: c.country_name,
-            data: [
-                (row.pillar_opportunity || 0) * 10,
-                (row.pillar_stability || 0) * 10,
-                (row.pillar_absorptive_capacity || 0) * 10,
-                (row.pillar_trajectory || 0) * 10
-            ],
-            borderColor: colors[i].border,
-            backgroundColor: colors[i].bg,
-            pointBackgroundColor: colors[i].border,
-            pointRadius: 3, borderWidth: 2
-        };
-    });
-
-    const chart = new Chart(canvas, {
-        type: 'radar',
-        data: { labels, datasets },
-        options: {
-            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
-            scales: {
-                r: {
-                    min: 0, max: 10,
-                    ticks: { stepSize: 2, color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 9 }, backdropColor: 'transparent' },
-                    pointLabels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 9 } },
-                    grid: { color: CHART_THEME.gridColor },
-                    angleLines: { color: CHART_THEME.gridColor }
-                }
-            },
-            plugins: {
-                legend: { display: resolved.length > 1, labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 12 } },
-                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)' }
+// The single resolver every chart_type reads through. reading:'live'/'both'
+// only ever surfaces a live value for rao_score (computeLive's own output)
+// or a field named directly in the dominant delta's component_deltas — i.e.
+// baseline + the exact structural adjustment the pipeline computed, never an
+// invented number. Gated fields for markets outside the plan resolve to
+// {restricted:true} instead of values, matching every other tool.
+function resolveSeriesData({ country, field = 'rao_score', reading = 'baseline', years } = {}) {
+    const c = resolveCountry(country || '');
+    if (!c) return null;
+    if (_isRestrictedField(field) && !chatCanSee(c.country)) return { restricted: true, country: c.country_name, iso: c.country, field };
+    const points = _baselineSeries(c.country, field, years);
+    const out = { iso: c.country, country: c.country_name, field, label: `${c.country_name} · ${_fieldLabel(field)}`, points };
+    if ((reading === 'live' || reading === 'both') && NEWS.ok) {
+        const row = getLatestRow(c.country);
+        if (row?.news && !row.news.ineligible && row.news.delta) {
+            if (field === 'rao_score') {
+                out.liveValue = row.news.working;
+            } else if (row.news.delta.component_deltas && field in row.news.delta.component_deltas) {
+                const base = points.length ? points[points.length - 1].value : null;
+                if (base != null) out.liveValue = base + row.news.delta.component_deltas[field];
             }
+            if (out.liveValue != null) out.liveEvent = (row.news.event?.summary || row.news.eventType || 'active signal');
         }
-    });
-    registerChatChart(chart);
-    return wrapper;
-}
-
-// ===== BAR CHART (rao8 pillars) =====
-function buildBarChart({ mode, country, metric = 'rao_score', top_n = 15, title } = {}) {
-    if (!latestSlice.length) return null;
-    let labels, values, barColor, chartTitle, xMax = 1;
-
-    if (mode === 'pillar_profile') {
-        const c = resolveCountry(country || '');
-        if (!c || !chatCanSee(c.country)) return null;
-        const row = getLatestRow(c.country) || c;
-        const pillars = [
-            { name: 'Opportunity',        score: row.pillar_opportunity || 0,              color: PILLARS.opportunity.color },
-            { name: 'Stability',           score: row.pillar_stability || 0,                color: PILLARS.stability.color },
-            { name: 'Absorptive Capacity',score: row.pillar_absorptive_capacity || 0,      color: PILLARS.absorptive.color },
-            { name: 'Trajectory',         score: row.pillar_trajectory || 0,               color: PILLARS.trajectory.color }
-        ];
-        labels = pillars.map(p => p.name);
-        values = pillars.map(p => parseFloat(p.score.toFixed(3)));
-        barColor = pillars.map(p => p.color);
-        chartTitle = title || `Pillar Profile — ${c.country_name}`;
-    } else {
-        const scorer = r => r[metric] ?? 0;
-        const isRAO = metric === 'rao_score'; xMax = isRAO ? 10 : 1;
-        const sorted = [...latestSlice]
-            .map(r => ({ name: r.country_name, score: scorer(r) }))
-            .filter(r => !isNaN(r.score))
-            .sort((a, b) => b.score - a.score)
-            .slice(0, Math.min(top_n, 20));
-        labels = sorted.map(r => r.name);
-        values = sorted.map(r => parseFloat(r.score.toFixed(3)));
-        barColor = CHART_THEME.gold;
-        chartTitle = title || `Top ${sorted.length} — ${metric.replace(/_/g,' ')}`;
     }
-
-    const { wrapper, canvas } = makeChartWrapper(chartTitle);
-    const chart = new Chart(canvas, {
-        type: 'bar',
-        data: { labels, datasets: [{ data: values, backgroundColor: barColor, borderRadius: 3, borderSkipped: false }] },
-        options: {
-            indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
-            plugins: {
-                legend: { display: false },
-                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { label: ctx => ` ${ctx.raw.toFixed(3)}` } }
-            },
-            scales: {
-                x: { min: 0, max: xMax, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
-                y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.75)', font: { size: 10 } } }
-            }
-        }
-    });
-    canvas.style.height = `${Math.max(200, labels.length * 26 + 40)}px`;
-    registerChatChart(chart);
-    return wrapper;
+    return out;
 }
 
-// ===== LINE CHART (rao8 panel: time series) =====
-function buildLineChart({ countries = [], metric = 'rao_score', title } = {}) {
-    if (!countries.length || !panelData.length) return null;
-    // rao_score is the headline layer and stays plottable for any market; the
-    // pillar and sub-score series are gated.
-    const openMetric = !RESTRICTED_METRICS.has(metric);
-    const resolved = countries.map(resolveCountry).filter(Boolean).filter(c => openMetric || chatCanSee(c.country)).slice(0, 3);
-    if (!resolved.length) return null;
-    const years = Array.from({length:15}, (_, i) => 2010 + i);
-    const colors = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72'];
-    const datasets = resolved.map((c, i) => {
-        const hist = getCountryHistory(c.country);
-        const yearMap = new Map(hist.map(r => [r.year, r[metric]]));
+// ===== 1. TIME SERIES (replaces render_line_chart + render_dual_line) =====
+// Up to 4 series, each own country/field/years. A resolved live value appends
+// one extra "Live" point with a dashed final segment — the live reading rides
+// the same line instead of a separate chart or table.
+function buildTimeSeriesChart({ series = [], title } = {}) {
+    const resolved = series.slice(0, 4).map(resolveSeriesData).filter(Boolean);
+    const visible = resolved.filter(s => !s.restricted);
+    if (!visible.length) return null;
+
+    const hasLive = visible.some(s => s.liveValue != null);
+    const allYears = [...new Set(visible.flatMap(s => s.points.map(p => p.year)))].sort((a, b) => a - b);
+    const labels = hasLive ? [...allYears, 'Live'] : allYears;
+
+    const scaleOf = f => f === 'rao_score' ? 'rao' : 'unit';
+    const scalesUsed = new Set(visible.map(s => scaleOf(s.field)));
+    const dual = scalesUsed.size > 1;
+
+    const colors = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72', '#a96edb'];
+    const datasets = visible.map((s, i) => {
+        const yMap = new Map(s.points.map(p => [p.year, p.value]));
+        const data = allYears.map(y => yMap.get(y) ?? null);
+        if (hasLive) data.push(s.liveValue != null ? s.liveValue : (data.length ? data[data.length - 1] : null));
         return {
-            label: c.country_name,
-            data: years.map(y => yearMap.get(y) ?? null),
-            borderColor: colors[i], backgroundColor: 'transparent',
-            borderWidth: 2, tension: 0.3, spanGaps: true, pointRadius: 3, pointHoverRadius: 5
+            label: s.liveEvent ? `${s.label} (live: ${s.liveEvent.slice(0, 40)}${s.liveEvent.length > 40 ? '…' : ''})` : s.label,
+            data, borderColor: colors[i % colors.length], backgroundColor: 'transparent',
+            borderWidth: 2, tension: 0.3, spanGaps: true, pointRadius: 3, pointHoverRadius: 5,
+            segment: hasLive ? { borderDash: ctx => ctx.p1DataIndex === labels.length - 1 ? [4, 3] : undefined } : undefined,
+            yAxisID: dual ? (scaleOf(s.field) === 'rao' ? 'yRAO' : 'yUnit') : 'y'
         };
     });
 
-    const isRAO = metric === 'rao_score';
-    const { wrapper, canvas } = makeChartWrapper(title || `${metric.replace(/_/g,' ')} — ${resolved.map(c=>c.country_name).join(' · ')}`);
+    const { wrapper, canvas } = makeChartWrapper(title || `${visible.map(s => s.label).join(' · ')}`);
+    const scales = { x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } } };
+    if (dual) {
+        scales.yRAO = { type: 'linear', position: 'left', min: 1, max: 10, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.gold, font: { size: 10 } } };
+        scales.yUnit = { type: 'linear', position: 'right', min: 0, max: 1, grid: { drawOnChartArea: false }, ticks: { color: CHART_THEME.blueSolid, font: { size: 10 } } };
+    } else {
+        const isRAO = scalesUsed.has('rao');
+        scales.y = { min: isRAO ? 1 : 0, max: isRAO ? 10 : 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } };
+    }
     const chart = new Chart(canvas, {
-        type: 'line',
-        data: { labels: years, datasets },
+        type: 'line', data: { labels, datasets },
         options: {
-            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
-            scales: {
-                x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
-                y: { min: isRAO ? 1 : 0, max: isRAO ? 10 : 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } }
-            },
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 }, scales,
             plugins: {
-                legend: { display: resolved.length > 1, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 }, boxWidth: 10, padding: 12 } },
+                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 }, boxWidth: 10, padding: 12 } },
                 tooltip: { mode: 'index', intersect: false, backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold }
             }
         }
@@ -16681,7 +16680,128 @@ function buildLineChart({ countries = [], metric = 'rao_score', title } = {}) {
     return wrapper;
 }
 
-// ===== REGIME MATRIX (chatbot tool) =====
+// ===== 2. PROFILE (replaces render_radar_chart + render_pillar_bar + pillar_profile bar) =====
+// 1-4 countries across a shared field set (default: 4 pillars). Radar when
+// count<=3 and fields<=6, grouped bar otherwise — both share one 0-1 axis,
+// so mixing in rao_score (1-10) here is a caller error, not supported.
+// Param is named `countries` (not `entities`) to match every other tool's
+// convention — the model reaches for `countries` by default across the whole
+// toolset, and a differently-named param here was pure avoidable friction.
+function buildProfileChart({ countries = [], fields, title } = {}) {
+    const resolved = countries.map(resolveCountry).filter(Boolean).filter(c => chatCanSee(c.country)).slice(0, 4);
+    if (!resolved.length) return null;
+    const useFields = (fields && fields.length ? fields : ['pillar_opportunity', 'pillar_stability', 'pillar_absorptive_capacity', 'pillar_trajectory']).slice(0, 8);
+    const labels = useFields.map(_fieldLabel);
+    const colors = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72', '#a96edb'];
+    const asRadar = resolved.length <= 3 && useFields.length <= 6;
+
+    const datasets = resolved.map((c, i) => {
+        const row = getLatestRow(c.country) || c;
+        return {
+            label: c.country_name,
+            data: useFields.map(f => parseFloat((row[f] ?? 0).toFixed(3))),
+            borderColor: colors[i], backgroundColor: asRadar ? colors[i] + '20' : colors[i] + 'cc',
+            pointBackgroundColor: colors[i], pointRadius: 3, borderWidth: 2,
+            borderRadius: asRadar ? 0 : 3, borderSkipped: false
+        };
+    });
+    const { wrapper, canvas } = makeChartWrapper(title || `Profile — ${resolved.map(c => c.country_name).join(' · ')}`);
+    const chart = new Chart(canvas, {
+        type: asRadar ? 'radar' : 'bar',
+        data: { labels, datasets },
+        options: asRadar ? {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            scales: { r: { min: 0, max: 1, ticks: { stepSize: 0.2, color: CHART_THEME.tickColor, font: { family: CHART_THEME.font, size: 9 }, backdropColor: 'transparent' }, pointLabels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 9 } }, grid: { color: CHART_THEME.gridColor }, angleLines: { color: CHART_THEME.gridColor } } },
+            plugins: { legend: { display: resolved.length > 1, labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)' } }
+        } : {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: { legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 10, padding: 12 } }, tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toFixed(3)}` } } },
+            scales: { x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: 'rgba(255,255,255,0.75)', font: { family: CHART_THEME.font, size: 10 } } }, y: { min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 }, stepSize: 0.2 } } }
+        }
+    });
+    registerChatChart(chart);
+    return wrapper;
+}
+
+// ===== 3. RANKING (replaces render_bar_chart country_ranking mode) =====
+// Top/bottom N by any metric, optional region filter. Restricted-metric
+// points outside the plan are dropped rather than leaked (the old
+// country_ranking bar had no gating at all — fixed here).
+function buildRankingChart({ metric = 'rao_score', top_n = 15, region, year, title } = {}) {
+    let slice = year ? getSlice(year) : latestSlice;
+    if (region) slice = slice.filter(r => matchRegion(r.region, region));
+    if (_isRestrictedField(metric)) slice = slice.filter(r => chatCanSee(r.country));
+    const isRAO = metric === 'rao_score';
+    const sorted = [...slice].map(r => ({ name: r.country_name, score: r[metric] ?? NaN })).filter(r => !isNaN(r.score)).sort((a, b) => b.score - a.score).slice(0, Math.min(top_n || 15, 25));
+    if (!sorted.length) return null;
+    const { wrapper, canvas } = makeChartWrapper(title || `Top ${sorted.length} — ${_fieldLabel(metric)}${region ? ' · ' + region : ''}`);
+    const chart = new Chart(canvas, {
+        type: 'bar',
+        data: { labels: sorted.map(r => r.name), datasets: [{ data: sorted.map(r => parseFloat(r.score.toFixed(3))), backgroundColor: CHART_THEME.gold, borderRadius: 3, borderSkipped: false }] },
+        options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { label: ctx => ` ${ctx.raw.toFixed(3)}` } } },
+            scales: { x: { min: 0, max: isRAO ? 10 : 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } }, y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.75)', font: { size: 10 } } } }
+        }
+    });
+    canvas.style.height = `${Math.max(200, sorted.length * 26 + 40)}px`;
+    registerChatChart(chart);
+    return wrapper;
+}
+
+// ===== 4. SCATTER (replaces render_scatter_plot; generalized fields + bubble size) =====
+function buildScatterChart({ x_field = 'pillar_opportunity', y_field = 'pillar_absorptive_capacity', size_field, color_by = 'regime', region, highlight = [], title } = {}) {
+    let slice = latestSlice;
+    if (region) slice = slice.filter(r => matchRegion(r.region, region));
+    if (!slice.length) return null;
+    const highlightSet = new Set(highlight.map(h => resolveCountry(h)?.country).filter(Boolean));
+    const groupKey = color_by === 'archetype' ? 'archetype' : 'regime';
+    const groups = [...new Set(slice.map(r => r[groupKey]).filter(Boolean))];
+    const palette = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72', '#a96edb', '#e07a5f', '#81b29a', '#f2cc8f'];
+    const colorFor = g => groupKey === 'regime' ? (REGIME_COLORS[g]?.solid || CHART_THEME.gold) : palette[groups.indexOf(g) % palette.length];
+    const dimFor = g => groupKey === 'regime' ? (REGIME_COLORS[g]?.dim || 'rgba(203,168,78,0.15)') : colorFor(g) + '26';
+
+    const sizeVals = size_field ? slice.map(r => r[size_field]).filter(v => v != null) : [];
+    const sizeMax = sizeVals.length ? Math.max(...sizeVals, 1e-6) : 1;
+    const radiusFor = r => size_field && r[size_field] != null ? 4 + (Math.abs(r[size_field]) / sizeMax) * 12 : 4;
+
+    const datasets = groups.map(g => {
+        const pts = slice.filter(r => r[groupKey] === g && !highlightSet.has(r.country) && chatCanSee(r.country));
+        return {
+            label: `${groupKey === 'regime' ? REGIME_COLORS[g]?.label || g : g}`,
+            data: pts.map(r => ({ x: r[x_field] ?? 0, y: r[y_field] ?? 0, label: r.country_name, iso: r.country, rao: r.rao_score, r: radiusFor(r) })),
+            backgroundColor: dimFor(g), borderColor: colorFor(g), borderWidth: 1, pointHoverRadius: 8
+        };
+    });
+    const hlPts = slice.filter(r => highlightSet.has(r.country));
+    if (hlPts.length) datasets.push({
+        label: 'Highlighted',
+        data: hlPts.map(r => ({ x: r[x_field] ?? 0, y: r[y_field] ?? 0, label: r.country_name, iso: r.country, rao: r.rao_score, r: radiusFor(r) + 3 })),
+        backgroundColor: CHART_THEME.gold, borderColor: '#fff', borderWidth: 1.5, pointHoverRadius: 10
+    });
+
+    const { wrapper, canvas } = makeChartWrapper(title || `${_fieldLabel(x_field)} vs ${_fieldLabel(y_field)}`);
+    const maxOf = f => f === 'rao_score' ? 10 : (f && f.startsWith('norm_')) || (f && f.startsWith('pillar_')) || f === 'tos_score' ? 1 : undefined;
+    const chart = new Chart(canvas, {
+        type: size_field ? 'bubble' : 'scatter',
+        data: { datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: {
+                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 }, boxWidth: 8, padding: 10 } },
+                tooltip: { callbacks: { title: i => i[0]?.raw?.label || '', label: item => { const d = item.raw; return [`${_fieldLabel(x_field)}: ${(d.x ?? 0).toFixed(2)} · ${_fieldLabel(y_field)}: ${(d.y ?? 0).toFixed(2)}`, `RAO: ${(d.rao || 0).toFixed(2)}`]; } }, backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold }
+            },
+            scales: {
+                x: { title: { display: true, text: _fieldLabel(x_field), color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: maxOf(x_field), grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
+                y: { title: { display: true, text: _fieldLabel(y_field), color: CHART_THEME.tickColor, font: { size: 10 } }, min: 0, max: maxOf(y_field), grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } }
+            }
+        }
+    });
+    registerChatChart(chart);
+    return wrapper;
+}
+
+// ===== 5. REGIME MATRIX (unchanged) =====
 function buildChatRegimeMatrix({ year = 2025, title } = {}) {
     const ly = window.LATEST_YEAR || 2025;
     const slice = year === ly ? latestSlice : getSlice(year);
@@ -16721,117 +16841,267 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
     return wrapper;
 }
 
-// ===== PILLAR GROUPED BAR (2–3 countries, 4 pillars side-by-side) =====
-function buildPillarBar({ countries = [], title } = {}) {
-    if (!countries.length) return null;
-    const resolved = countries.map(resolveCountry).filter(Boolean).filter(c => chatCanSee(c.country)).slice(0, 3);
-    if (!resolved.length) return null;
-
-    const pillarKeys  = ['pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory'];
-    const pillarNames = ['Opportunity','Stability','Absorptive Capacity','Trajectory'];
-    const countryColors = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72'];
-
-    const datasets = resolved.map((c, i) => {
-        const row = getLatestRow(c.country) || c;
-        return {
-            label: c.country_name,
-            data: pillarKeys.map(k => parseFloat((row[k] || 0).toFixed(3))),
-            backgroundColor: countryColors[i] + 'cc',
-            borderColor: countryColors[i],
-            borderWidth: 1,
-            borderRadius: 3,
-            borderSkipped: false
-        };
+// ===== 6. DISTRIBUTION (new — Tier 1, adapted from drawRankDistributionHistogram) =====
+// Histogram of any field across all 162 countries, with specific countries
+// highlighted in their bin — "how unusual is this number" instead of a bare rank.
+function buildDistributionChart({ field = 'rao_score', highlight = [], year, title } = {}) {
+    const slice = year ? getSlice(year) : latestSlice;
+    const visible = _isRestrictedField(field) ? slice.filter(r => chatCanSee(r.country)) : slice;
+    const vals = visible.map(r => r[field]).filter(v => v != null && !isNaN(v));
+    if (vals.length < 5) return null;
+    const lo = field === 'rao_score' ? 0 : Math.min(0, ...vals);
+    const hi = field === 'rao_score' ? 10 : Math.max(1, ...vals);
+    const numBins = 16;
+    const binSize = (hi - lo) / numBins || 1;
+    const bins = Array.from({ length: numBins }, (_, i) => ({ lo: lo + i * binSize, count: 0 }));
+    visible.forEach(r => {
+        const v = r[field]; if (v == null || isNaN(v)) return;
+        bins[Math.min(Math.floor((v - lo) / binSize), numBins - 1)].count++;
     });
-
-    const chartTitle = title || `Pillar Comparison — ${resolved.map(c => c.country_name).join(' · ')}`;
-    const { wrapper, canvas } = makeChartWrapper(chartTitle);
+    const highlightSet = new Set(highlight.map(h => resolveCountry(h)?.country).filter(Boolean));
+    const hlBins = new Set();
+    visible.forEach(r => {
+        if (!highlightSet.has(r.country) || r[field] == null) return;
+        hlBins.add(Math.min(Math.floor((r[field] - lo) / binSize), numBins - 1));
+    });
+    const labels = bins.map(b => b.lo.toFixed(field === 'rao_score' ? 1 : 2));
+    const colors = bins.map((_, i) => hlBins.has(i) ? CHART_THEME.gold : 'rgba(194,165,109,0.35)');
+    const { wrapper, canvas } = makeChartWrapper(title || `Distribution — ${_fieldLabel(field)}${highlight.length ? ' · ' + highlight.join(', ') : ''}`);
     const chart = new Chart(canvas, {
         type: 'bar',
-        data: { labels: pillarNames, datasets },
+        data: { labels, datasets: [{ data: bins.map(b => b.count), backgroundColor: colors, borderRadius: 2, borderSkipped: false }] },
         options: {
             responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
-            plugins: {
-                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 10, padding: 12 } },
-                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toFixed(3)}` } }
-            },
-            scales: {
-                x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: 'rgba(255,255,255,0.75)', font: { family: CHART_THEME.font, size: 10 } } },
-                y: { min: 0, max: 1, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 }, stepSize: 0.2 } }
-            }
+            plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { title: items => `${_fieldLabel(field)} ≥ ${items[0].label}`, label: ctx => `${ctx.raw} countries` } } },
+            scales: { x: { grid: { display: false }, ticks: { color: CHART_THEME.tickColor, font: { size: 9 }, maxRotation: 0, autoSkip: true } }, y: { grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 }, precision: 0 } } }
         }
     });
     registerChatChart(chart);
     return wrapper;
 }
 
-// ===== DUAL-AXIS LINE CHART (RAO score + TOS signal, single country) =====
-function buildDualLine({ country, title } = {}) {
-    if (!country) return null;
-    const c = resolveCountry(country);
-    if (!c || !chatCanSee(c.country)) return null;
-    const hist = getCountryHistory(c.country).filter(r => r.year >= 2015);
-    if (!hist.length) return null;
+// ===== 7. CORRELATION (new — Tier 1, reuses calculateCorrelation()) =====
+// Pairwise Pearson correlation across any field list (default: the 4 pillars
+// + TOS). HTML card grid like the existing Analytics-tab heatmap, not canvas.
+function buildCorrelationChart({ fields, title } = {}) {
+    const requested = (fields && fields.length >= 2 ? fields : ['pillar_opportunity', 'pillar_stability', 'pillar_absorptive_capacity', 'pillar_trajectory', 'tos_score']).slice(0, 10);
+    // A field that doesn't exist on the dataset must not silently become a
+    // constant-zero array — Pearson correlation against a zero-variance
+    // series degenerates to a fake "0.00" that reads as a real null result
+    // instead of the caller's typo. Drop unknown fields and say so in the
+    // title rather than computing a number that misrepresents the data.
+    const sample = latestSlice[0] || {};
+    const useFields = requested.filter(f => f in sample);
+    const dropped = requested.filter(f => !(f in sample));
+    if (dropped.length) _lastChartWarning = `Unknown field${dropped.length > 1 ? 's' : ''} not in the dataset were dropped from the correlation: ${dropped.join(', ')}.`;
+    if (useFields.length < 2) return null;
+    const arrays = {};
+    useFields.forEach(f => { arrays[f] = latestSlice.map(r => r[f] == null ? 0 : r[f]); });
+    const pairs = [];
+    for (let i = 0; i < useFields.length; i++) {
+        for (let j = i + 1; j < useFields.length; j++) {
+            pairs.push({ a: useFields[i], b: useFields[j], corr: calculateCorrelation(arrays[useFields[i]], arrays[useFields[j]]) });
+        }
+    }
+    if (!pairs.length) return null;
+    pairs.sort((x, y) => Math.abs(y.corr) - Math.abs(x.corr));
+    const top = pairs.slice(0, 15);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'chat-chart-wrapper';
+    const h = document.createElement('div');
+    h.className = 'chat-chart-title';
+    h.textContent = (title || `Correlation — ${useFields.map(_fieldLabel).join(', ')}`) +
+        (dropped.length ? ` (unknown field${dropped.length > 1 ? 's' : ''} skipped: ${dropped.join(', ')})` : '');
+    wrapper.appendChild(h);
+    const div = document.createElement('div');
+    div.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px;margin-top:0.6rem;">${top.map(p => {
+        const color = p.corr > 0 ? '#5d8a72' : '#c06060';
+        const bg = `rgba(${p.corr > 0 ? '93,138,114' : '192,96,96'},${Math.min(Math.abs(p.corr) * 0.4, 0.35)})`;
+        return `<div style="background:${bg};border:1px solid ${color}55;border-top:2px solid ${color};border-radius:3px;padding:0.6rem;">
+            <div style="font-size:0.65rem;color:rgba(238,234,224,0.75);margin-bottom:4px;">${_fieldLabel(p.a)} ↔ ${_fieldLabel(p.b)}</div>
+            <div style="font-family:${CHART_THEME.font};font-size:1.05rem;font-weight:700;color:${color};">${p.corr > 0 ? '+' : ''}${p.corr.toFixed(2)}</div>
+        </div>`;
+    }).join('')}</div>`;
+    wrapper.appendChild(div);
+    return wrapper;
+}
 
-    const years   = hist.map(r => r.year);
-    const raoVals = hist.map(r => parseFloat((r.rao_score || 0).toFixed(2)));
-    const tosVals = hist.map(r => parseFloat((r.tos_score || 0).toFixed(3)));
-
-    const chartTitle = title || `RAO Score vs TOS Signal — ${c.country_name}`;
-    const { wrapper, canvas } = makeChartWrapper(chartTitle);
+// ===== 8. COMPOSITION (new — Tier 1, trivial value-counts doughnut) =====
+// Breakdown of a categorical field: archetype | trajectory_class | regime |
+// event_type (the last sourced from active NEWS deltas, not the panel).
+function buildCompositionChart({ categorical_field = 'archetype', region, year, title } = {}) {
+    const counts = {}; let total = 0;
+    if (categorical_field === 'event_type') {
+        if (!NEWS.ok) return null;
+        NEWS.deltas.forEach(d => {
+            const ev = NEWS.events[d.event_id]; if (!ev) return;
+            if (region) { const row = latestSlice.find(r => r.country === d.country); if (!row || !matchRegion(row.region, region)) return; }
+            const key = eventTypeMeta(ev.event_type)?.label || ev.event_type || 'Other';
+            counts[key] = (counts[key] || 0) + 1; total++;
+        });
+    } else {
+        let slice = year ? getSlice(year) : latestSlice;
+        if (region) slice = slice.filter(r => matchRegion(r.region, region));
+        slice.forEach(r => { const key = r[categorical_field] || 'Unknown'; counts[key] = (counts[key] || 0) + 1; total++; });
+    }
+    if (!total) return null;
+    const labels = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    const palette = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72', '#a96edb', '#e07a5f', '#81b29a', '#f2cc8f', '#c06060'];
+    const { wrapper, canvas } = makeChartWrapper(title || `${_fieldLabel(categorical_field)} Composition${region ? ' · ' + region : ''}`);
     const chart = new Chart(canvas, {
-        type: 'line',
-        data: {
-            labels: years,
-            datasets: [
-                {
-                    label: 'RAO Score',
-                    data: raoVals,
-                    borderColor: CHART_THEME.gold,
-                    backgroundColor: 'rgba(203,168,78,0.08)',
-                    fill: true,
-                    borderWidth: 2.5, tension: 0.3, pointRadius: 3, pointHoverRadius: 5,
-                    yAxisID: 'yRAO'
-                },
-                {
-                    label: 'TOS Signal',
-                    data: tosVals,
-                    borderColor: CHART_THEME.blueSolid,
-                    backgroundColor: 'transparent',
-                    borderWidth: 2, tension: 0.3, pointRadius: 3, pointHoverRadius: 5,
-                    borderDash: [4, 3],
-                    yAxisID: 'yTOS'
-                }
-            ]
-        },
+        type: 'doughnut',
+        data: { labels, datasets: [{ data: labels.map(l => counts[l]), backgroundColor: labels.map((_, i) => palette[i % palette.length]), borderColor: CHART_THEME.bg, borderWidth: 2 }] },
         options: {
             responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-                legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { family: CHART_THEME.font, size: 10 }, boxWidth: 10, padding: 12 } },
-                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)' }
-            },
-            scales: {
-                x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } },
-                yRAO: {
-                    type: 'linear', position: 'left',
-                    min: 0, max: 10,
-                    grid: { color: CHART_THEME.gridColor },
-                    ticks: { color: CHART_THEME.gold, font: { size: 10 } },
-                    title: { display: true, text: 'RAO Score', color: CHART_THEME.gold, font: { size: 9 } }
-                },
-                yTOS: {
-                    type: 'linear', position: 'right',
-                    min: 0, max: 1,
-                    grid: { drawOnChartArea: false },
-                    ticks: { color: CHART_THEME.blueSolid, font: { size: 10 } },
-                    title: { display: true, text: 'TOS', color: CHART_THEME.blueSolid, font: { size: 9 } }
-                }
-            }
+            plugins: { legend: { display: true, position: 'right', labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 }, boxWidth: 10, padding: 8 } }, tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} (${(ctx.raw / total * 100).toFixed(0)}%)` } } }
         }
     });
     registerChatChart(chart);
     return wrapper;
+}
+
+// ===== 9. DECAY PROJECTION (new — Tier 2, live-layer specific) =====
+// Projects one country's live score forward using the exact computeLive()
+// decay math — the chart form of "when does this revert to baseline."
+function buildDecayProjectionChart({ country, days_ahead = 90, title } = {}) {
+    if (!NEWS.ok || !country) return null;
+    const c = resolveCountry(country);
+    if (!c || !chatCanSee(c.country)) return null;
+    const row = getLatestRow(c.country);
+    if (!row?.news || row.news.ineligible || !row.news.delta) return null;
+
+    const now = Date.now();
+    const stepDays = Math.max(1, Math.round(days_ahead / 30));
+    const points = [];
+    for (let d = 0; d <= days_ahead; d += stepDays) {
+        const live = computeLive(c.country, now + d * 86400000);
+        points.push({ d, working: live ? live.working : row.rao_score });
+    }
+    const { wrapper, canvas } = makeChartWrapper(title || `Decay Projection — ${c.country_name} (next ${days_ahead}d)`);
+    const chart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: points.map(p => `+${p.d}d`),
+            datasets: [
+                { label: 'Projected live score', data: points.map(p => p.working), borderColor: CHART_THEME.gold, backgroundColor: 'rgba(203,168,78,0.08)', fill: true, borderWidth: 2, tension: 0.3, pointRadius: 0 },
+                { label: 'Structural baseline', data: points.map(() => row.rao_score), borderColor: 'rgba(255,255,255,0.35)', borderDash: [3, 3], borderWidth: 1.5, pointRadius: 0 }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: { legend: { display: true, position: 'top', labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 }, boxWidth: 10, padding: 12 } }, tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold } },
+            scales: { x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 9 }, maxTicksLimit: 8 } }, y: { min: 0, max: 10, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } } }
+        }
+    });
+    registerChatChart(chart);
+    return wrapper;
+}
+
+// ===== 10. COMPONENT ATTRIBUTION (new — Tier 2; tool name stays "waterfall") =====
+// Bars an active delta's component_deltas by field, each in that field's own
+// native units. Deliberately NOT a Baseline->Live waterfall that sums to the
+// RAO point change — component_deltas live on mismatched scales (pillar
+// points, cvar25 points, TOS points) and don't compose additively into the
+// RAO score the way headline_effect/mult_factor do, so chaining them into a
+// single RAO-denominated waterfall would assert a false decomposition.
+function buildWaterfallChart({ country, title } = {}) {
+    if (!NEWS.ok || !country) return null;
+    const c = resolveCountry(country);
+    if (!c || !chatCanSee(c.country)) return null;
+    const row = getLatestRow(c.country);
+    if (!row?.news || row.news.ineligible || !row.news.delta) return null;
+    const entries = Object.entries(row.news.delta.component_deltas || {}).filter(([, v]) => v).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+    if (!entries.length) return null;
+
+    const labels = entries.map(([field]) => _fieldLabel(field));
+    const values = entries.map(([, v]) => parseFloat(v.toFixed(4)));
+    const colors = values.map(v => v >= 0 ? '#5d8a72' : '#c06060');
+    const { wrapper, canvas } = makeChartWrapper(title || `Component Attribution — ${c.country_name} (${row.news.eventType || 'active signal'})`);
+    const chart = new Chart(canvas, {
+        type: 'bar',
+        data: { labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 3, borderSkipped: false }] },
+        options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { label: ctx => ` ${ctx.raw >= 0 ? '+' : ''}${ctx.raw} (this field's own units, not RAO points)` } } },
+            scales: { x: { grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 10 } } }, y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.75)', font: { size: 10 } } } }
+        }
+    });
+    canvas.style.height = `${Math.max(180, labels.length * 30 + 40)}px`;
+    registerChatChart(chart);
+    return wrapper;
+}
+
+// ===== 11. SIGNAL TIMELINE (new — Tier 2, live-layer specific) =====
+// Floating horizontal bars from "applied" to "~cleared" (2 half-lives) for
+// every active signal in a country set/region. X-axis is days-from-today, not
+// a Chart.js time scale — no date adapter is loaded anywhere in this file.
+function buildSignalTimelineChart({ countries, region, top_n = 12, title } = {}) {
+    if (!NEWS.ok) return null;
+    let rows = latestSlice.filter(r => r.news && !r.news.ineligible && !r.news.quiet && r.news.delta);
+    if (countries && countries.length) {
+        const want = new Set(countries.map(cc => resolveCountry(cc)?.country).filter(Boolean));
+        rows = rows.filter(r => want.has(r.country));
+    } else if (region) {
+        rows = rows.filter(r => matchRegion(r.region, region));
+    }
+    rows = rows.filter(r => chatCanSee(r.country));
+    if (!rows.length) return null;
+    rows = rows.slice().sort((a, b) => Math.abs(b.news.impact || 0) - Math.abs(a.news.impact || 0)).slice(0, top_n);
+
+    const labels = rows.map(r => r.country_name);
+    const bars = rows.map(r => {
+        const appliedDaysAgo = -(r.news.ageDays || 0);
+        return [appliedDaysAgo, appliedDaysAgo + (r.news.halfLifeDays || 0) * 2];
+    });
+    const colors = rows.map(r => (r.news.direction || 0) > 0 ? '#5d8a72' : '#c06060');
+
+    const { wrapper, canvas } = makeChartWrapper(title || `Active Signal Timeline (days from today)${region ? ' · ' + region : ''}`);
+    const chart = new Chart(canvas, {
+        type: 'bar',
+        data: { labels, datasets: [{ data: bars, backgroundColor: colors, borderRadius: 3, borderSkipped: false }] },
+        options: {
+            indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: '#1f283b', borderColor: CHART_THEME.gold, borderWidth: 1, titleColor: CHART_THEME.gold, bodyColor: 'rgba(255,255,255,0.8)', callbacks: { title: items => rows[items[0].dataIndex].news.eventType || '', label: ctx => { const [a, b] = ctx.raw; return [`Applied ${Math.abs(a).toFixed(0)}d ago`, `~Clears in ${b.toFixed(0)}d`]; } } }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Days from today', color: CHART_THEME.tickColor, font: { size: 9 } }, grid: { color: CHART_THEME.gridColor }, ticks: { color: CHART_THEME.tickColor, font: { size: 9 } } },
+                y: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.75)', font: { size: 10 } } }
+            }
+        },
+        plugins: [{
+            id: 'todayLine',
+            afterDraw(ch) {
+                const { ctx, scales: { x, y } } = ch;
+                const xPix = x.getPixelForValue(0);
+                ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.setLineDash([3, 3]);
+                ctx.beginPath(); ctx.moveTo(xPix, y.top); ctx.lineTo(xPix, y.bottom); ctx.stroke();
+                ctx.restore();
+            }
+        }]
+    });
+    canvas.style.height = `${Math.max(200, labels.length * 32 + 40)}px`;
+    registerChatChart(chart);
+    return wrapper;
+}
+
+// ===== DISPATCHER =====
+function buildChart(spec = {}) {
+    switch (spec.chart_type) {
+        case 'time_series':      return buildTimeSeriesChart(spec);
+        case 'profile':          return buildProfileChart(spec);
+        case 'ranking':          return buildRankingChart(spec);
+        case 'scatter':          return buildScatterChart(spec);
+        case 'regime_matrix':    return buildChatRegimeMatrix(spec);
+        case 'distribution':     return buildDistributionChart(spec);
+        case 'correlation':      return buildCorrelationChart(spec);
+        case 'composition':      return buildCompositionChart(spec);
+        case 'decay_projection': return buildDecayProjectionChart(spec);
+        case 'waterfall':        return buildWaterfallChart(spec);
+        case 'signal_timeline':  return buildSignalTimelineChart(spec);
+        default: return null;
+    }
 }
 
 /* ==== keys (12465-12494) ==== */
