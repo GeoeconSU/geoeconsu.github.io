@@ -419,11 +419,11 @@ function respond(body, status, headers) {
 
 // ── Gemini Chat (OpenAI-format ↔ Gemini API conversion) ──────────────────────
 
-const ALLOWED_GEMINI_MODELS = new Set(['gemini-3.1-flash-lite', 'gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-2.0-flash-lite']);
+const ALLOWED_GEMINI_MODELS = new Set(['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash']);
 
 async function handleGeminiChat(request, env, cors) {
   const { messages, tools, max_tokens, temperature, model } = await request.json();
-  const safeModel = ALLOWED_GEMINI_MODELS.has(model) ? model : 'gemini-3.1-flash-lite';
+  const safeModel = ALLOWED_GEMINI_MODELS.has(model) ? model : 'gemini-3.5-flash-lite';
   if (!messages || !Array.isArray(messages)) {
     return respond({ error: 'messages required.' }, 400, cors);
   }
@@ -538,7 +538,7 @@ async function handleGeminiChat(request, env, cors) {
 
 async function handleGeminiStream(request, env, cors) {
   const { messages, tools, max_tokens, temperature, model } = await request.json();
-  const safeModel = ALLOWED_GEMINI_MODELS.has(model) ? model : 'gemini-3.1-flash-lite';
+  const safeModel = ALLOWED_GEMINI_MODELS.has(model) ? model : 'gemini-3.5-flash-lite';
   if (!messages || !Array.isArray(messages)) return respond({ error: 'messages required.' }, 400, cors);
   if (!env.GEMINI_API_KEY) return respond({ error: 'Gemini not configured.' }, 503, cors);
 

@@ -12506,7 +12506,7 @@ const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
 // Computed, not hardcoded — it lands in the system prompt and the brief header,
 // so a stale literal makes the assistant confidently wrong about what "now" is.
 const TODAY_DATE = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-let selectedModel = 'gemini-3.1-flash-lite';
+let selectedModel = 'gemini-3.5-flash-lite';
 
 function selectModel(modelId) {
     selectedModel = modelId;
@@ -12810,7 +12810,13 @@ RAO Score (1–10): Bayesian CVaR₂₅ — worst-25% simulated scenario. Higher
 - Stability (higher=better): inflation, gov debt, current account, external debt, political stability, rule of law, corruption control
 - Absorptive Capacity (geometric mean — collapses near zero if any component fails): resource rents, GDP/capita growth, youth unemployment, vulnerable employment, regulatory quality
 - Trajectory: OLS trends × R² for GDP growth, FDI, governance, debt, inflation
-Regimes: RO (Robust Opportunity) · FO (Fragile Opportunity) · SL (Stable/Limited) · SR (Structural Risk)
+Regimes: RO (Robust Opportunity) · FO (Fragile Opportunity) · SL (Stable / Low Opportunity) · SR (Structural Risk)
+
+ARCHETYPE vs TOS SIGNAL LABEL vs TRAJECTORY CLASSIFICATION — three separate fields on every profile, never interchangeable:
+- archetype: a structural classification of what KIND of economy this is. Exact values: Advanced Economy · Commodity Exporter · Diversified Emerging Market · High-Growth Emerging Market · Knowledge / Service Economy.
+- tos_signal_label: a classification of where this country sits on the TOS pre-breakout spectrum. Exact values: Low Takeoff Signal · Emerging (Increasingly Discovered) · Moderate Potential · Reform Story · Pre-Breakout Signal · Strong Pre-Breakout Signal.
+- trajectory_class: a reliability qualifier on the Trajectory pillar's trend reading, not a description of direction. Exact values: structural (durable — trust it) · stable · cyclical · recovery_bounce · noise (statistically unreliable — flag this explicitly, never present a "noise" trend with the same confidence as a "structural" one).
+Never call a tos_signal_label (e.g. "Reform Story") the country's archetype, and never call the archetype (e.g. "Diversified Emerging Market") a TOS signal or a trajectory classification — these are three distinct fields on the same profile and each has its own fixed vocabulary above.
 
 TOS SIGNAL — exact component definitions:
 TOS = geometric mean of:
@@ -12829,17 +12835,32 @@ The Absorptive Capacity pillar uses a geometric mean. If ANY sub-indicator (norm
 ANALYTICAL STANDARD:
 Lead with strategic insight. Build causal chains. Numbers as evidence not argument. Specific, actionable closing sentence. Full paragraphs; bullet points only when comparing 3+ items, followed by synthesis paragraph. ### headers for sections. ### Bottom Line: decision-relevant.
 For scenarios, always anchor triggers to specific RAO/TOS thresholds (e.g. "if TOS crosses 0.70", "if RAO score falls below 5.0") — do not use vague language like "significant improvement".
+Never use LaTeX or math-mode notation (no $...$ wrappers, no \ge, \le, \times, \geq escapes). Output renders as plain Markdown/HTML only — raw LaTeX shows up as literal broken text like "$\ge 7.50$" instead of a number. Write thresholds in plain Unicode directly: ≥ 7.50, ≤ 0.40, 0.50–0.60.
 
 ADAPTIVE OUTPUT STANDARDS — choose the right elements for the query, do not force a fixed template:
 
 For ALL responses: present data in markdown tables rather than inline prose whenever 3+ values appear together. Never bury numbers in a paragraph when a table communicates more clearly.
 
+INTERPRETATION COLUMNS — contextual, not definitional: any table column labeled "Interpretation", "Signal" or similar must explain what THIS value means for THIS country right now — never a glossary definition of the metric itself. Do not write "Bayesian CVaR₂₅ worst-case resilience; high capital preservation floor" as if defining what a RAO score is in the abstract. Instead say what a RAO of 7.71 means for this specific market: how it sits versus peers or the regional mean, what regime that places it in, and what a sophisticated investor should conclude from it right now. If you don't already have a comparison point, call rank_by_pillar or compare_countries to get one rather than defaulting to a textbook description of the metric.
+
+DOMAIN-LENS INDICATOR MAPPING — select indicators by what the question is actually about, not by which ones you already used:
+- Labor / employment / workforce: norm_youth_unemployment, norm_vulnerable_employment, norm_secondary_school_enrolment, norm_regulatory_quality
+- Fiscal sustainability / government debt: norm_government_debt_pct_gdp, norm_external_debt_pct_gni, norm_current_account_pct_gdp, norm_debt_trend
+- Governance, legal risk, IP protection, technology/digital sector: norm_rule_of_law, norm_control_of_corruption, norm_regulatory_quality, norm_governance_trend, norm_net_fdi_pct_gdp, norm_gdp_per_capita_growth, norm_secondary_school_enrolment (talent pipeline). The dataset has NO indicator that directly measures technology, digital infrastructure, or R&D — these governance and human-capital indicators are the closest available structural proxies. Say so explicitly rather than presenting them as if purpose-built for tech.
+- Trade / export competitiveness: norm_export_growth, norm_current_account_pct_gdp, norm_net_fdi_pct_gdp
+- Monetary / inflation stability: norm_cpi_inflation, norm_inflation_trend
+- Political and institutional risk: norm_political_stability, norm_governance_trend, norm_rule_of_law, norm_control_of_corruption
+- Natural resources / commodities exposure: norm_natural_resource_rents_pct_gdp (cross-check against the Absorptive Capacity collapse rule)
+- Infrastructure / industrial capacity: norm_gross_capital_formation, norm_gdp_growth, norm_gdp_growth_trend
+- Human capital / demographic dividend: norm_secondary_school_enrolment, norm_gdp_per_capita_growth, norm_youth_unemployment
+When a query names a domain that spans or sits outside these groupings, reason from the list of indicators directly rather than defaulting to whichever 2–3 you used last. CRITICAL: conversation history only retains your own prior written replies, not the raw tool data behind them — you do NOT still have the full 22-indicator profile in context from an earlier turn. So on any follow-up that shifts the analytical lens on an already-profiled country (e.g. labor → technology, fiscal → governance), you MUST call get_country_profile again for that country to pull the full indicator set fresh, then select from it for the NEW lens. Do not reuse the previous turn's "Key Driving Indicators" table, scenario thresholds, or transmission-mechanism text just because the country was already discussed — that data is no longer in front of you and reusing it means guessing, not re-deriving.
+
 For single-country deep-dives (e.g. "analyze X", "give me a RAO analysis of X"):
-- Pillar table: all four pillar scores with the 2–3 norm_ indicators most driving each, and the economic transmission mechanism — format as a table, not bullets
+- Pillar table: all four pillar scores with the 2–3 norm_ indicators most driving each, and the economic transmission mechanism — format as a table, not bullets. If the question names a specific domain (labor, technology, fiscal, governance, trade, etc.), retitle this section to match the domain — e.g. "Labor Force Composition & Transmission Mechanisms" instead of a generic "Pillar Profile" — and select indicators using the DOMAIN-LENS INDICATOR MAPPING above rather than a fixed default. The section headers themselves should read as a direct response to the specific question asked, not a repeated template applied to every query.
 - TOS component table: SIS, DGI, RVS individually with investment interpretation for each
 - Full year-by-year time-series table (2015–present): | Year | RAO | Regime | TOS | Opportunity | Stability | Absorptive Capacity | Trajectory |
-- Key values summary table: RAO, Regime, TOS, SIS, DGI, RVS, all four pillars (latest year)
-- Scenario matrix: | Scenario | Catalyst | RAO/TOS Threshold | Investor Action | — Base / Upside / Downside
+- Key values summary table: RAO, Regime, TOS, SIS, DGI, RVS, all four pillars (latest year). The INTERPRETATION COLUMNS rule above applies here without exception — every row's Notes/Interpretation must speak to this country's specific number, not restate what the metric is in the abstract. This is the table most prone to reverting to glossary text ("Bayesian CVaR₂₅ worst-case..." etc.) — check it specifically before sending a response.
+- Scenario matrix: | Scenario | Catalyst | Threshold | Investor Action | — Base / Upside / Downside. The Threshold column must be anchored to whichever indicators actually drive the domain in question, not RAO/TOS by default — a labor question's thresholds should reference labor indicators (youth unemployment, vulnerable employment), a governance/tech question's should reference rule_of_law/control_of_corruption/regulatory_quality, in addition to RAO/TOS where relevant. Do not reuse a previous turn's thresholds for the same country once the domain has shifted.
 
 For screening or recommendation queries (e.g. "which market should I enter", "best FO/SR country in region X"):
 - Screening results table first: show ALL countries that met the filter with RAO, Regime, TOS, and key pillar scores — never jump to a recommendation without showing the screen
@@ -13298,10 +13319,9 @@ function toggleModelDropdown() {
 // chunk, which reads as a hang. Customers get the two that stream well —
 // staff keep the full bench for evaluation.
 const CHAT_MODELS = [
-    { id: 'gemini-3.1-flash-lite', label: 'Gemini 3.1 Lite', desc: 'Fastest · Quick lookups',            staffOnly: false },
-    { id: 'gemini-3.5-flash',      label: 'Gemini 3.5',      desc: 'Balanced · Better reasoning',        staffOnly: false },
+    { id: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Lite', desc: 'Fastest · Quick lookups',            staffOnly: false },
+    { id: 'gemini-3.8-flash',      label: 'Gemini 3.8',      desc: 'Balanced · Better reasoning',        staffOnly: false },
     { id: 'openai/gpt-oss-120b',   label: 'GPT OSS 120B',    desc: 'Most capable · No streaming',        staffOnly: true  },
-    { id: 'qwen/qwen3-32b',        label: 'Qwen3 32B',       desc: 'Multilingual · No streaming',        staffOnly: true  },
 ];
 
 function availableChatModels() {
@@ -13964,6 +13984,20 @@ function chatMarkdownToHTML(text) {
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
+
+    // Table cells can't contain literal newlines, so the model uses <br> to
+    // line-break within a cell — allow only this one safe tag back through.
+    html = html.replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+
+    // The model is instructed not to emit LaTeX, but as a defensive fallback,
+    // clean up common math-mode escapes so a slip-through still renders as
+    // plain text instead of raw markup like "$\ge 7.50$".
+    html = html
+        .replace(/\\geq|\\ge\b/g, '≥')
+        .replace(/\\leq|\\le\b/g, '≤')
+        .replace(/\\times/g, '×')
+        .replace(/\\pm/g, '±')
+        .replace(/\$([^$\n]*)\$/g, '$1');
 
     // Headers
     html = html.replace(/^#{4,} (.+)$/gm, '<h4>$1</h4>');
