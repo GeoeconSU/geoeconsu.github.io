@@ -52,6 +52,9 @@ export default {
       if (url.pathname === '/gemini-stream' && request.method === 'POST') {
         return await handleGeminiStream(request, env, cors);
       }
+      if (url.pathname === '/hku-chat' && request.method === 'POST') {
+        return await handleHkuChat(request, env, cors);
+      }
       if (url.pathname === '/get-leads' && request.method === 'GET') {
         return await handleGetLeads(request, env, cors);
       }
@@ -417,6 +420,41 @@ function respond(body, status, headers) {
   return new Response(JSON.stringify(body), { status, headers });
 }
 
+// Gemini occasionally returns a transient 503 "UNAVAILABLE" under demand
+// spikes (confirmed 2026-09-28 — retrying the identical request immediately
+// afterward succeeded). Retry once before giving up, and hand back the real
+// upstream error so the caller can surface an accurate message instead of a
+// generic "upstream failed" — used by both handleGeminiChat and
+// handleGeminiStream below.
+async function fetchGeminiWithRetry(url, body) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) return { res, errorInfo: null, rawText: null };
+
+    const rawText = await res.text();
+    let errorInfo = null;
+    try { errorInfo = JSON.parse(rawText)?.error || null; } catch {}
+    const overloaded = errorInfo?.status === 'UNAVAILABLE' || errorInfo?.code === 503;
+    if (overloaded && attempt === 0) {
+      await new Promise(r => setTimeout(r, 600));
+      continue;
+    }
+    return { res, errorInfo, rawText };
+  }
+}
+
+function geminiErrorMessage(errorInfo) {
+  if (errorInfo?.status === 'UNAVAILABLE' || errorInfo?.code === 503) {
+    return 'Gemini is temporarily overloaded — please try again in a moment.';
+  }
+  if (errorInfo?.message) return `Gemini error: ${errorInfo.message}`;
+  return 'Gemini upstream failed.';
+}
+
 // ── Gemini Chat (OpenAI-format ↔ Gemini API conversion) ──────────────────────
 
 const ALLOWED_GEMINI_MODELS = new Set(['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash']);
@@ -490,15 +528,11 @@ async function handleGeminiChat(request, env, cors) {
   if (geminiTools) body.tools = geminiTools;
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${safeModel}:generateContent?key=${env.GEMINI_API_KEY}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+  const { res, errorInfo, rawText } = await fetchGeminiWithRetry(url, body);
 
   if (!res.ok) {
-    console.error('Gemini error:', await res.text());
-    return respond({ error: 'Gemini upstream failed.' }, 502, cors);
+    console.error('Gemini error:', rawText);
+    return respond({ error: geminiErrorMessage(errorInfo) }, 502, cors);
   }
 
   const data = await res.json();
@@ -588,11 +622,11 @@ async function handleGeminiStream(request, env, cors) {
   if (geminiTools) body.tools = geminiTools;
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${safeModel}:streamGenerateContent?alt=sse&key=${env.GEMINI_API_KEY}`;
-  const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const { res, errorInfo, rawText } = await fetchGeminiWithRetry(url, body);
 
   if (!res.ok) {
-    console.error('Gemini stream error:', await res.text());
-    return respond({ error: 'Gemini upstream failed.' }, 502, cors);
+    console.error('Gemini stream error:', rawText);
+    return respond({ error: geminiErrorMessage(errorInfo) }, 502, cors);
   }
 
   return new Response(res.body, {
@@ -605,6 +639,148 @@ async function handleGeminiStream(request, env, cors) {
       'X-Accel-Buffering': 'no',
     },
   });
+}
+
+// ── HKU ITS GenAI Gateway (Azure OpenAI + AWS Bedrock Claude, student sandbox) ──
+// See HKU_API_SETUP.md at the repo root for how these endpoints were found.
+// Only ever called as a final, no-more-tools answer step — the tool-calling
+// loop itself stays on Gemini/Groq, so neither branch here needs to translate
+// tool *definitions*, only past tool-call history already in the messages.
+
+const HKU_BASE = 'https://api.hku.hk';
+const HKU_GPT_MODELS = new Set(['gpt-5-mini', 'gpt-5.5']);
+const HKU_CLAUDE_MODELS = new Set(['claude-sonnet-5', 'claude-opus-4.6']);
+
+async function handleHkuChat(request, env, cors) {
+  const { messages, model, max_tokens, temperature } = await request.json();
+  if (!messages || !Array.isArray(messages)) {
+    return respond({ error: 'messages required.' }, 400, cors);
+  }
+  if (!env.HKU_API_KEY) {
+    return respond({ error: 'HKU API not configured on server.' }, 503, cors);
+  }
+
+  if (HKU_GPT_MODELS.has(model)) {
+    return await callHkuOpenAI(env, model, messages, max_tokens, cors);
+  }
+  if (HKU_CLAUDE_MODELS.has(model)) {
+    return await callHkuClaude(env, model, messages, max_tokens, temperature, cors);
+  }
+  return respond({ error: `Unsupported HKU model: ${model}` }, 400, cors);
+}
+
+// HKU's gateway is genuinely Azure OpenAI underneath, so the OpenAI-shaped
+// history the chatbot already built (system/user/assistant/tool roles,
+// assistant.tool_calls) passes straight through — only strip bookkeeping
+// fields (e.g. Gemini's _thought_signatures) the upstream API doesn't expect.
+//
+// gpt-5.x/o4-mini are reasoning-tier models, which on Azure OpenAI:
+// NOTE 1: reject `temperature` entirely — bare 500 if present at all, even
+// the default 1. Never forward it here regardless of what the caller passed.
+// NOTE 2: reject the (deprecated, for this model family) `max_tokens` field
+// with the same bare 500 — must be sent as `max_completion_tokens` instead.
+// Reasoning tokens are billed out of that same budget, so give it room:
+// too low a value burns the whole budget on reasoning and returns empty
+// content with finish_reason "length".
+// NOTE 3: without a `Cache-Control: no-cache` request header, this endpoint
+// can get stuck returning a bare 500 for a given deployment for an extended
+// period (looks like an APIM response-cache policy caching an error
+// response). Matches HKU's own portal-generated code sample, which always
+// sends it.
+// (All three confirmed by direct testing against gpt-5-mini/gpt-5.5, 2026-09-28.)
+async function callHkuOpenAI(env, model, messages, max_tokens, cors) {
+  const url = `${HKU_BASE}/openai/student/deployments/${model}/chat/completions?api-version=2025-04-01-preview`;
+  const body = {
+    messages: messages.map(({ _thought_signatures, ...rest }) => rest),
+    max_completion_tokens: Math.max(max_tokens ?? 2000, 2000),
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'api-key': env.HKU_API_KEY, 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    console.error('HKU OpenAI error:', await res.text());
+    return respond({ error: 'HKU OpenAI upstream failed.' }, 502, cors);
+  }
+  const data = await res.json();
+  return respond(data, 200, cors); // already {choices:[{message:{...}}], usage:{...}}
+}
+
+async function callHkuClaude(env, model, messages, max_tokens, temperature, cors) {
+  const url = `${HKU_BASE}/claude/student/model/${model}/converse`;
+  const { system, converseMessages } = toBedrockConverse(messages);
+  const body = {
+    messages: converseMessages,
+    max_tokens: max_tokens ?? 2000,
+    temperature: temperature ?? 0.3,
+  };
+  if (system) body.system = system;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'api-key': env.HKU_API_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    console.error('HKU Claude error:', await res.text());
+    return respond({ error: 'HKU Claude upstream failed.' }, 502, cors);
+  }
+  const data = await res.json();
+  const text = (data.output?.message?.content || []).map(c => c.text || '').join('');
+  return respond({
+    choices: [{ message: { role: 'assistant', content: text, tool_calls: null } }],
+    usage: {
+      prompt_tokens: data.usage?.inputTokens,
+      completion_tokens: data.usage?.outputTokens,
+      total_tokens: data.usage?.totalTokens,
+    },
+  }, 200, cors);
+}
+
+// Bedrock's Converse API requires strictly alternating user/assistant turns
+// and (for our purposes) text-only content blocks — this endpoint is only
+// ever asked for a final answer, never to make new tool calls itself, so
+// past tool_calls/tool-result history is flattened into plain text turns
+// rather than translated into Bedrock's native toolUse/toolResult blocks.
+function toBedrockConverse(messages) {
+  let system = null;
+  const flat = []; // { role: 'user'|'assistant', text }
+
+  for (const msg of messages) {
+    if (msg.role === 'system') {
+      system = system ? system + '\n\n' + msg.content : msg.content;
+    } else if (msg.role === 'user') {
+      flat.push({ role: 'user', text: msg.content || '' });
+    } else if (msg.role === 'assistant') {
+      let text = msg.content || '';
+      if (msg.tool_calls && msg.tool_calls.length) {
+        const calls = msg.tool_calls.map(tc => `${tc.function.name}(${tc.function.arguments})`).join(', ');
+        text += (text ? '\n' : '') + `[Called tool(s): ${calls}]`;
+      }
+      flat.push({ role: 'assistant', text: text || '(tool call)' });
+    } else if (msg.role === 'tool') {
+      flat.push({ role: 'user', text: `[Tool result]: ${msg.content || ''}` });
+    }
+  }
+
+  // Merge consecutive same-role turns into one (Converse requires strict
+  // user/assistant alternation; our tool-call/tool-result runs collapse to
+  // several consecutive 'user' turns otherwise).
+  const merged = [];
+  for (const turn of flat) {
+    const last = merged[merged.length - 1];
+    if (last && last.role === turn.role) last.text += '\n\n' + turn.text;
+    else merged.push({ ...turn });
+  }
+  // Converse also requires the conversation to start on a 'user' turn.
+  while (merged.length && merged[0].role !== 'user') merged.shift();
+
+  return {
+    system: system ? [{ text: system }] : null,
+    converseMessages: merged.map(t => ({ role: t.role, content: [{ text: t.text }] })),
+  };
 }
 
 // ── Tavily Web Search ─────────────────────────────────────────────────────────
