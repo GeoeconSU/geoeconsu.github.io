@@ -5360,6 +5360,405 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
  .observatory .main-container{padding-bottom:calc(90px + env(safe-area-inset-bottom,0px))!important}
 }
 </style>
+<style id="fieldnotes-auth-design">#app-gate{--bg:#192030;--panel:#1f283b;--ivory:#eeeae0;--muted:#b3b8c1;--gold:#c2a56d;--line:rgba(221,224,231,.15);--head:"Copernicus","EB Garamond",Georgia,serif;--body:"StyreneB","EB Garamond",Georgia,serif;--sans:"Montserrat",sans-serif;--mono:"JetBrains Mono",monospace}
+#app-gate *{box-sizing:border-box}
+#app-gate{margin:0;background:var(--bg);color:var(--ivory);font:17px/1.6 var(--body);min-height:100vh;-webkit-font-smoothing:antialiased}
+#app-gate::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 85% 15%,#34415a66,transparent 60%),radial-gradient(ellipse at 15% 90%,#c2a56d0b,transparent 55%)}
+#app-gate h1,#app-gate h2,#app-gate h3,#app-gate p{margin:0}
+#app-gate h1,#app-gate h2,#app-gate h3{font-family:var(--head);font-weight:400;line-height:1.1}
+#app-gate h1{font-size:clamp(42px,4.8vw,72px);letter-spacing:-.04em}
+#app-gate h2{font-size:38px;letter-spacing:-.025em}
+#app-gate h3{font-size:25px}
+#app-gate p{color:var(--muted)}
+#app-gate em{color:var(--gold)}
+#app-gate button,#app-gate input,#app-gate select{font:12px var(--sans)}
+#app-gate button,#app-gate a,#app-gate input,#app-gate select{ -webkit-tap-highlight-color:transparent}
+#app-gate button{cursor:pointer}
+#app-gate a{color:inherit;text-decoration:none}
+#app-gate button{color:inherit}
+#app-gate button:disabled{opacity:.4;cursor:not-allowed}
+#app-gate button:focus-visible,#app-gate a:focus-visible,#app-gate input:focus-visible,#app-gate select:focus-visible{outline:2px solid #e0c794;outline-offset:4px}
+#app-gate button svg{width:16px;height:16px;flex-shrink:0}
+#app-gate button{display:inline-flex;align-items:center;justify-content:center;gap:10px}
+#app-gate svg{vertical-align:middle}
+#app-gate input,#app-gate select{color:var(--ivory);background:#151e2c66;border:1px solid var(--line);border-radius:3px;width:100%;height:48px;padding:12px 14px;min-width:0}
+#app-gate input::placeholder{color:#858d9c}
+#app-gate input:focus{border-color:var(--gold)}
+#app-gate input[type=checkbox],#app-gate input[type=radio]{width:17px;height:17px;accent-color:var(--gold);flex-shrink:0}
+#app-gate select{background:#202b3f}
+#app-gate label{display:block;font:11px/1.6 var(--sans);color:#d5d7db;margin-bottom:8px}
+#app-gate .field{margin:0 0 18px}
+#app-gate .password{position:relative}
+#app-gate .password input{padding-right:65px}
+#app-gate .password button{position:absolute;right:5px;top:5px;height:38px;padding:0 10px;background:none;border:0;color:var(--muted);font-size:10px}
+#app-gate .hint{font:11px/1.65 var(--sans);color:var(--muted);margin-top:8px}
+#app-gate .eyebrow{font:10px/1.6 var(--mono);letter-spacing:.16em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:20px}
+#app-gate .btn{min-height:46px;padding:12px 22px;background:var(--gold);color:#192030;border:1px solid var(--gold);border-radius:3px;font-weight:500;transition:background .2s,transform .2s}
+#app-gate .btn:hover{background:#d4bb8b;transform:translateY(-1px)}
+#app-gate .btn.secondary{background:transparent;color:var(--ivory);border-color:var(--line)}
+#app-gate .btn.secondary:hover{background:#ffffff08;border-color:var(--gold)}
+#app-gate .btn.full{width:100%}
+#app-gate .text-button{border:0;background:transparent;padding:7px 0;color:var(--gold);font-size:11px}
+#app-gate .text-button:hover{text-decoration:underline}
+#app-gate .quiet{color:var(--muted)}
+#app-gate .row{display:flex;align-items:center;justify-content:space-between;gap:15px}
+#app-gate .actions{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:25px}
+#app-gate .actions>.btn:last-child{margin-left:auto}
+#app-gate .wide{width:100%}
+#app-gate .divider{display:flex;align-items:center;gap:15px;color:#929bab;font:10px var(--sans);margin:19px 0}
+#app-gate .divider::before,#app-gate .divider::after{content:"";height:1px;background:var(--line);flex:1}
+#app-gate .error{color:#efb2a2;font:12px/1.6 var(--sans);margin-top:15px}
+#app-gate .error:empty{display:none}
+#app-gate .terms{display:flex;align-items:flex-start;gap:10px;margin:20px 0;font:11px/1.7 var(--sans);color:var(--muted)}
+#app-gate .terms input{margin:2px 0}
+#app-gate .terms a{text-decoration:underline;text-underline-offset:3px;color:var(--ivory)}
+#app-gate .notice{padding:15px 18px;border-left:2px solid var(--gold);background:#c2a56d0b;font:12px/1.7 var(--sans);color:#cbd0d6;margin-top:20px}
+#app-gate .status-icon{display:grid;place-items:center;width:55px;height:55px;margin-bottom:25px;border:1px solid #c2a56d55;background:#c2a56d10;border-radius:50%;color:var(--gold);font-size:25px}
+#app-gate .success h2{margin-bottom:20px}
+#app-gate .success p{margin-bottom:18px}
+#app-gate .success .btn{margin-top:20px}
+#app-gate .site-header{height:104px;padding:0 5vw;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;z-index:2}
+#app-gate .brand{display:flex;align-items:center;gap:15px}
+#app-gate .brand img{width:38px;height:44px;object-fit:contain}
+#app-gate .brand .brand-fallback{font:30px var(--head);color:var(--ivory)}
+#app-gate .brand .brand-name{font:9px/1.7 var(--sans);letter-spacing:.16em;text-transform:uppercase}
+#app-gate .brand .brand-name span{display:block}
+#app-gate .header-right{display:flex;align-items:center;gap:22px;font:11px var(--sans)}
+#app-gate .header-right button{font-size:11px}
+#app-gate .site-footer{display:flex;justify-content:space-between;gap:20px;padding:28px 5vw 90px;color:#8d97a8;font:9px/1.7 var(--mono);letter-spacing:.04em}
+#app-gate .site-footer a{color:#bcc3ce}
+#app-gate .prototype-bar{position:fixed;z-index:20;bottom:0;left:0;right:0;min-height:47px;padding:10px 24px;background:#111a28f5;border-top:1px solid var(--line);display:flex;align-items:center;gap:18px;font:10px var(--sans);backdrop-filter:blur(15px)}
+#app-gate .prototype-bar>a{color:var(--gold)}
+#app-gate .prototype-bar .proto-title{color:#c5cad2}
+#app-gate .prototype-bar .proto-note{color:#8f99ab;margin-left:auto;font-size:9px}
+#app-gate .prototype-bar .preview-actions{display:flex;gap:14px}
+#app-gate .prototype-bar button{border:0;background:none;font:10px var(--sans);padding:3px;color:#b7c0cc}
+#app-gate .prototype-bar button:hover{color:var(--gold)}
+#app-gate .prototype-bar button[aria-pressed=true]{color:var(--gold)}
+#app-gate .auth-head{margin-bottom:27px}
+#app-gate .auth-head h2{margin-bottom:10px}
+#app-gate .auth-head p{font-size:16px;line-height:1.5}
+#app-gate .auth-tabs{display:flex;border-bottom:1px solid var(--line);gap:25px;margin:0 0 27px}
+#app-gate .auth-tabs button{background:none;border:0;padding:0 0 14px;color:#a6b0bf;position:relative}
+#app-gate .auth-tabs button[aria-pressed=true]{color:var(--ivory)}
+#app-gate .auth-tabs button[aria-pressed=true]::after{content:"";height:2px;position:absolute;bottom:-1px;left:0;right:0;background:var(--gold)}
+#app-gate .section-label{font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:26px 0 15px}
+#app-gate .plan-options{display:grid;gap:10px}
+#app-gate .plan{position:relative;display:flex;text-align:left;align-items:flex-start;justify-content:flex-start;gap:13px;padding:17px;border:1px solid var(--line);border-radius:4px;background:#ffffff02;width:100%;transition:border-color .2s,background .2s}
+#app-gate .plan:hover{border-color:#c2a56d77}
+#app-gate .plan[aria-pressed=true]{border-color:var(--gold);background:#c2a56d0c}
+#app-gate .radio-mark{height:15px;width:15px;border-radius:50%;border:1px solid #7f8999;flex-shrink:0;margin-top:3px}
+#app-gate .plan[aria-pressed=true] .radio-mark{border:4px solid var(--gold)}
+#app-gate .plan-copy{flex:1}
+#app-gate .plan-title{display:flex;justify-content:space-between;gap:15px;align-items:center;font:20px var(--head);margin-bottom:7px}
+#app-gate .tag{font:8px var(--mono);color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+#app-gate .plan-desc{display:block;font:11px/1.65 var(--sans);color:var(--muted)}
+#app-gate .stepper{display:flex;gap:25px;margin-bottom:35px;list-style:none;padding:0}
+#app-gate .stepper li{display:flex;gap:8px;align-items:center;font:10px var(--sans);color:#8f99ab}
+#app-gate .stepper li span{width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;font:9px var(--mono)}
+#app-gate .stepper li.current{color:var(--ivory)}
+#app-gate .stepper li.current span{border-color:var(--gold);color:var(--gold)}
+#app-gate .stepper li.done span{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+#app-gate .review-block{border-top:1px solid var(--line);padding:20px 0}
+#app-gate .review-block .eyebrow{margin:0 0 9px;font-size:9px}
+#app-gate .review-block p{font-size:18px;color:var(--ivory);overflow-wrap:anywhere}
+#app-gate .review-block .text-button{float:right}
+#app-gate .subtle-rule{height:1px;background:var(--line);margin:30px 0}
+#app-gate .market-toolbar{display:flex;gap:10px;margin:0 0 12px}
+#app-gate .market-toolbar .search-wrap{flex:1;position:relative}
+#app-gate .search-wrap svg{position:absolute;left:13px;top:16px;width:15px;height:15px;color:#aeb7c6}
+#app-gate .search-wrap input{padding-left:38px}
+#app-gate .market-toolbar select{width:135px}
+#app-gate .market-topline{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:0 0 12px;font:10px var(--mono);color:#adb6c3}
+#app-gate .market-topline button{font-size:10px;padding:3px}
+#app-gate .market-list{max-height:310px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#c2a56d55 transparent;border:1px solid var(--line);border-radius:4px;background:#111a262b}
+#app-gate .market-group{padding:9px 13px;font:9px var(--mono);letter-spacing:.09em;color:#adb7c6;text-transform:uppercase;position:sticky;top:0;background:#202b3c;z-index:1}
+#app-gate .market-option{display:flex;align-items:center;justify-content:flex-start;text-align:left;gap:12px;padding:12px 14px;min-height:46px;background:none;border:0;border-bottom:1px solid #ffffff05;width:100%;font-size:11px}
+#app-gate .market-option:hover{background:#ffffff07}
+#app-gate .market-option[aria-pressed=true]{background:#c2a56d12;color:#e3cfa9}
+#app-gate .check{display:grid;place-items:center;width:16px;height:16px;border:1px solid #ffffff35;border-radius:2px;flex-shrink:0;font:11px var(--sans)}
+#app-gate [aria-pressed=true]>.check{border-color:var(--gold);background:var(--gold);color:var(--bg)}
+#app-gate .iso{font:9px var(--mono);color:#919cac;margin-left:auto}
+#app-gate .market-option[aria-pressed=true] .iso{color:var(--gold)}
+#app-gate .empty{padding:35px 20px;font:12px/1.8 var(--sans);color:var(--muted);text-align:center}
+#app-gate .selected-tray{margin-top:17px}
+#app-gate .selected-heading{display:flex;justify-content:space-between;align-items:center;font:10px var(--sans);color:var(--muted);margin-bottom:12px}
+#app-gate .chips{display:flex;flex-wrap:wrap;gap:7px;max-height:145px;overflow:auto}
+#app-gate .chip{padding:6px 9px;min-height:30px;border:1px solid #c2a56d44;color:#dbc49b;background:#c2a56d0b;border-radius:3px;font:10px var(--sans)}
+#app-gate .chip span{color:var(--gold);font-size:15px}
+#app-gate .empty-selection{font:12px/1.7 var(--sans);color:#939fae}
+#app-gate .market-help{font:10px/1.7 var(--sans);color:var(--muted);margin-top:15px}
+#app-gate .map-frame{border:1px solid var(--line);position:relative;overflow:hidden;border-radius:6px;background:radial-gradient(ellipse at center,#34465d77,transparent 70%),#172131}
+#app-gate .world-map{display:block;width:100%;height:auto;aspect-ratio:2/1;overflow:visible}
+#app-gate .world-map path{fill:#53698155;stroke:#9eafc53b;stroke-width:.45;transition:fill .2s;vector-effect:non-scaling-stroke}
+#app-gate .world-map path.pickable{cursor:pointer}
+#app-gate .world-map path.pickable:hover{fill:#c2a56d80}
+#app-gate .world-map path.selected{fill:#c2a56da8;stroke:#e6d2ae}
+#app-gate .map-label{position:absolute;bottom:14px;left:19px;font:9px var(--mono);color:#9da9bb;pointer-events:none}
+#app-gate .map-tooltip{position:absolute;top:14px;left:19px;color:#e4d1af;font:10px var(--sans);pointer-events:none}
+#app-gate .map-surface{position:relative}
+#app-gate .map-caption{font:10px/1.8 var(--sans);color:var(--muted);margin-top:13px}
+#app-gate .map-catalog{min-width:0}
+#app-gate .search-clear{background:none;border:0;color:var(--gold);font-size:11px}
+#app-gate .variant-1 .layout{max-width:1120px;padding:60px 35px 65px;margin:auto;display:grid;grid-template-columns:1.1fr 1fr;gap:105px;align-items:start;min-height:calc(100vh - 240px)}
+#app-gate .variant-1 .story{padding-top:66px;position:sticky;top:50px}
+#app-gate .story h1{margin-bottom:25px}
+#app-gate .story>p{max-width:440px;font-size:19px}
+#app-gate .story-meta{display:flex;gap:40px;padding-top:33px;margin-top:35px;border-top:1px solid var(--line)}
+#app-gate .story-meta strong{display:block;font:32px var(--head);color:var(--gold)}
+#app-gate .story-meta span{font:9px var(--mono);color:#98a4b6;text-transform:uppercase;letter-spacing:.06em}
+#app-gate .variant-1 .surface{padding:30px;border:1px solid var(--line);border-radius:5px;background:#26324850}
+#app-gate .variant-1 h1{font-size:57px}
+#app-gate .variant-1 .auth-head h2{font-size:30px}
+#app-gate .variant-1 .market-toolbar{flex-wrap:wrap}
+#app-gate .variant-1 .market-toolbar select{width:100%}
+#app-gate .variant-1 .market-list{max-height:250px}
+#app-gate .variant-1 .market-standalone .surface{grid-column:2}
+#app-gate .variant-1 .inline-country{margin-top:25px;padding-top:4px;border-top:1px solid var(--line)}
+#app-gate.variant-2 .site-header{border-bottom:1px solid var(--line);margin:0 5vw;padding:0}
+#app-gate.variant-2 .layout{display:grid;grid-template-columns:1fr 1fr;max-width:1240px;gap:100px;padding:60px 40px 55px;margin:auto;min-height:calc(100vh - 240px)}
+#app-gate.variant-2 .story{display:flex;flex-direction:column;justify-content:center;padding-right:30px;border-right:1px solid var(--line);position:relative}
+#app-gate.variant-2 .story h1{font-size:clamp(45px,4.3vw,64px);max-width:460px}
+#app-gate .editorial-index{font:11px var(--mono);color:var(--gold);margin-bottom:42px;display:flex;align-items:center;gap:15px}
+#app-gate .editorial-index::after{content:"";width:65px;height:1px;background:var(--gold)}
+#app-gate .fieldnote{margin-top:50px;max-width:330px;padding-left:17px;border-left:1px solid #c2a56d66}
+#app-gate .fieldnote p{font-size:17px}
+#app-gate .fieldnote .eyebrow{font-size:8px;margin-bottom:10px}
+#app-gate.variant-2 .surface{max-width:470px;width:100%;align-self:center}
+#app-gate.variant-2 .auth-head h2{font-size:37px}
+#app-gate.variant-2 .plan{padding:22px}
+#app-gate.variant-2 .plan-title{font-size:24px}
+#app-gate.variant-2 .plan-desc{line-height:1.8}
+#app-gate.variant-2 .market-list{max-height:330px}
+#app-gate.variant-2 .stepper{gap:16px}
+#app-gate.variant-2 .stepper li{font-size:9px}
+#app-gate.variant-2 .surface:has(.success){align-self:start;padding-top:40px}
+#app-gate .variant-3 .site-header{height:90px}
+#app-gate .variant-3 .layout{max-width:1460px;padding:32px 5vw 55px;margin:auto;display:grid;grid-template-columns:1.4fr 1fr;gap:7vw;align-items:center;min-height:calc(100vh - 220px)}
+#app-gate .variant-3 .story h1{font-size:clamp(46px,4.6vw,68px);max-width:640px}
+#app-gate .variant-3 .surface{max-width:470px;padding:33px;border:1px solid #c2a56d30;background:linear-gradient(135deg,#35435c6b,#1b273acc);border-radius:10px;backdrop-filter:blur(24px)}
+#app-gate .variant-3 .story .map-frame{margin-top:40px;border:0;background:transparent}
+#app-gate .variant-3 .story .world-map{opacity:.85}
+#app-gate .variant-3 .story .map-label{bottom:0}
+#app-gate .variant-3 .layout.market-standalone{display:block;max-width:1500px;padding-top:23px}
+#app-gate .variant-3 .market-standalone>.story{display:none}
+#app-gate .variant-3 .market-standalone>.surface{max-width:none;padding:0;background:none;border:0;backdrop-filter:none}
+#app-gate .variant-3 .market-standalone .auth-head{max-width:730px;margin-bottom:28px}
+#app-gate .variant-3 .market-standalone .auth-head h2{font-size:47px}
+#app-gate .atlas-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(310px,1fr);gap:35px;align-items:start}
+#app-gate .atlas-map .map-frame{aspect-ratio:1.7;display:flex;align-items:center}
+#app-gate .atlas-map .selected-tray{padding:22px;border:1px solid var(--line);border-radius:5px;background:#26354b55}
+#app-gate .atlas-grid .market-list{max-height:367px}
+#app-gate .atlas-grid .market-toolbar{flex-wrap:wrap}
+#app-gate .atlas-grid .market-toolbar select{width:100%}
+#app-gate .variant-3 .market-standalone .actions{padding-top:24px;border-top:1px solid var(--line)}
+#app-gate .variant-3 .market-standalone .stepper{margin-bottom:25px}
+#app-gate .variant-3 .plan-title{font-size:23px}
+#app-gate .variant-4{background:#141d2d}
+#app-gate .variant-4::before{background:radial-gradient(ellipse at 30% 50%,#3a53694a,transparent 58%),radial-gradient(ellipse at 90% 10%,#c2a56d09,transparent 50%)}
+#app-gate .globe-scene{position:fixed;left:0;top:85px;width:62vw;height:calc(100vh - 150px);z-index:-1;opacity:.9;pointer-events:none}
+#app-gate .globe-scene canvas{width:100%;height:100%}
+#app-gate .scene-toggle{position:absolute;bottom:24px;left:8vw;pointer-events:auto;background:#1b293a99;border:1px solid var(--line);color:#bdc7d4;padding:8px 12px;border-radius:20px;font:9px var(--mono)}
+#app-gate .variant-4 .site-header{height:100px}
+#app-gate .variant-4 .layout{max-width:1460px;margin:auto;display:grid;grid-template-columns:1.3fr 1fr;gap:8vw;padding:40px 5vw 55px;min-height:calc(100vh - 230px);align-items:center}
+#app-gate .variant-4 .story{align-self:stretch;display:flex;flex-direction:column;justify-content:space-between;padding:10px 0 0;min-height:580px;pointer-events:none}
+#app-gate .variant-4 .story h1{font-size:clamp(46px,4.6vw,69px);max-width:600px;text-shadow:0 2px 20px #192030}
+#app-gate .variant-4 .story>p{max-width:350px;margin-top:18px}
+#app-gate .constellation-note{margin-top:auto;padding-top:250px;max-width:350px}
+#app-gate .constellation-note .eyebrow{font-size:9px;margin-bottom:12px}
+#app-gate .constellation-note p{font-size:16px}
+#app-gate .variant-4 .surface{border:1px solid #9cafc12b;padding:33px 35px;border-radius:12px;background:linear-gradient(135deg,#3b4c6359,#1c293cd9);backdrop-filter:blur(30px);box-shadow:0 25px 100px #070f2144;max-width:520px;width:100%;justify-self:end}
+#app-gate .variant-4 .surface .auth-head h2{font-size:36px}
+#app-gate .variant-4 .stepper{gap:14px}
+#app-gate .variant-4 .stepper li{font-size:9px}
+#app-gate .variant-4 .market-list{max-height:245px}
+#app-gate .variant-4 .market-toolbar{flex-wrap:wrap}
+#app-gate .variant-4 .market-toolbar select{width:100%}
+#app-gate .variant-4 .market-topline{font-size:9px}
+#app-gate .workspace-summary{padding:16px 19px;border:1px solid #c2a56d44;background:#c2a56d09;border-radius:6px;margin-bottom:24px;font:11px/1.7 var(--sans);color:#d2c5aa}
+#app-gate .workspace-summary strong{color:var(--gold);font-weight:500}
+#app-gate .variant-4 .auth-head p{font-size:15px}
+#app-gate .variant-4 .selected-tray .chips{max-height:77px}
+#app-gate .variant-4 .plan{padding:15px}
+#app-gate .variant-4 .site-footer{position:relative}
+#app-gate .surface{animation:fn-enter .4s ease both}
+@keyframes fn-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#app-gate [hidden]{display:none!important}
+#app-gate .sr-only{position:absolute;width:1px;height:1px;clip:rect(0,0,0,0);overflow:hidden}
+@media(min-width:1600px){#app-gate .variant-4 .globe-scene{left:4vw;width:55vw}
+#app-gate .variant-4 .layout{gap:130px}
+}
+@media(max-width:1100px){#app-gate .variant-1 .layout{gap:55px}
+#app-gate .variant-1 h1{font-size:49px}
+#app-gate.variant-2 .layout{gap:45px;padding:45px 5vw}
+#app-gate.variant-2 .story{padding-right:30px}
+#app-gate .variant-3 .layout{gap:40px}
+#app-gate .variant-4 .layout{gap:30px}
+#app-gate .variant-4 .surface{padding:27px}
+#app-gate .variant-4 .story h1{font-size:49px}
+#app-gate .stepper{flex-wrap:wrap;gap:14px}
+#app-gate .atlas-grid{gap:25px;grid-template-columns:minmax(0,1.25fr) minmax(290px,1fr)}
+#app-gate .prototype-bar .proto-note{display:none}
+}
+@media(max-width:760px){#app-gate .site-header,#app-gate.variant-2 .site-header{height:84px;padding:0 22px;margin:0}
+#app-gate .brand .brand-name{font-size:8px}
+#app-gate .brand img{width:30px;height:36px}
+#app-gate .header-right{gap:10px}
+#app-gate .header-right>.quiet{display:none}
+#app-gate .site-footer{padding:25px 22px 110px;flex-wrap:wrap;font-size:8px}
+#app-gate .prototype-bar{flex-wrap:wrap;gap:6px 15px;padding:10px 16px}
+#app-gate .prototype-bar .preview-actions{margin-left:auto}
+#app-gate .prototype-bar .proto-title{display:none}
+#app-gate .prototype-bar .proto-note{display:block;width:100%;margin:2px 0 0;font-size:8px}
+#app-gate .variant-1 .layout,#app-gate.variant-2 .layout,#app-gate .variant-3 .layout,#app-gate .variant-4 .layout{display:flex;flex-direction:column;gap:28px;padding:25px 22px 35px;min-height:0}
+#app-gate .variant-1 .story,#app-gate.variant-2 .story,#app-gate .variant-3 .story,#app-gate .variant-4 .story{position:static;padding:0;border:0;width:100%;min-height:0;display:block;max-width:520px}
+#app-gate .story .eyebrow{font-size:8px;margin-bottom:13px}
+#app-gate .variant-1 .story h1,#app-gate.variant-2 .story h1,#app-gate .variant-3 .story h1,#app-gate .variant-4 .story h1{font-size:40px;line-height:1.1;margin-bottom:15px}
+#app-gate .story>p{font-size:16px;max-width:400px}
+#app-gate .story-meta,#app-gate .fieldnote,#app-gate .editorial-index,#app-gate .constellation-note{display:none}
+#app-gate .variant-1 .surface,#app-gate.variant-2 .surface,#app-gate .variant-3 .surface,#app-gate .variant-4 .surface{padding:25px 22px;width:100%;max-width:520px;align-self:center;justify-self:center}
+#app-gate.variant-2 .surface{padding:10px 0}
+#app-gate .variant-3 .story .map-frame{display:none}
+#app-gate .variant-4 .globe-scene{top:80px;left:25%;width:75%;height:310px;opacity:.18}
+#app-gate .variant-4 .scene-toggle{display:none}
+#app-gate .variant-4 .surface{background:linear-gradient(130deg,#34445b99,#1b283bed)}
+#app-gate .variant-3 .layout.market-standalone{padding:20px 22px 35px}
+#app-gate .variant-3 .market-standalone>.surface{padding:0;max-width:none}
+#app-gate .variant-3 .market-standalone .auth-head h2{font-size:35px}
+#app-gate .atlas-grid{display:flex;flex-direction:column;gap:24px}
+#app-gate .atlas-map,#app-gate .map-catalog{width:100%}
+#app-gate .atlas-map .map-frame{aspect-ratio:1.8}
+#app-gate .atlas-map .selected-tray{padding:15px;margin-top:14px}
+#app-gate .map-label{font-size:8px;left:12px;bottom:9px}
+#app-gate .map-caption{font-size:9px}
+#app-gate .atlas-grid .market-list{max-height:280px}
+#app-gate .auth-head h2,#app-gate.variant-2 .auth-head h2,#app-gate .variant-4 .surface .auth-head h2{font-size:30px}
+#app-gate .auth-head p{font-size:15px}
+#app-gate .plan-title{font-size:21px}
+#app-gate .plan{padding:15px}
+#app-gate .plan-desc{font-size:10px}
+#app-gate .stepper{gap:13px;margin-bottom:26px}
+#app-gate .stepper li{font-size:9px}
+#app-gate .stepper li span{width:19px;height:19px}
+#app-gate .market-toolbar{flex-wrap:wrap}
+#app-gate .market-toolbar select{width:100%}
+#app-gate .actions .btn{padding:12px 16px;font-size:11px}
+#app-gate .prototype-bar a,#app-gate .prototype-bar button{min-height:25px}
+#app-gate .market-topline{font-size:9px}
+#app-gate .variant-4 .market-list{max-height:270px}
+#app-gate .brand-fallback{font-size:25px!important}
+#app-gate .header-right .text-button{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){#app-gate *,#app-gate *::before,#app-gate *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+@media(min-width:761px){#app-gate .atlas-map .map-frame{aspect-ratio:auto;height:clamp(270px,35vh,400px)}
+#app-gate .variant-3 .market-standalone .auth-head{margin-bottom:22px}
+#app-gate .variant-3 .market-standalone .stepper{margin-bottom:20px}
+#app-gate .variant-3 .market-standalone .actions{position:sticky;bottom:47px;z-index:3;background:#192333f5;backdrop-filter:blur(16px);padding:17px 20px;border:1px solid var(--line);border-radius:5px}
+#app-gate.variant-2 .market-list{max-height:280px}
+#app-gate .variant-4 .scene-toggle{bottom:55px}
+}
+#app-gate .atlas-map .world-map{height:100%;width:100%;aspect-ratio:auto}
+@media(max-width:760px){#app-gate.variant-2 .market-standalone>.story,#app-gate .variant-4 .market-standalone>.story{display:none}
+#app-gate .variant-4 .market-standalone>.surface{margin-top:0}
+}
+#app-gate.variant-2 .fieldnote{max-width:390px}
+#app-gate.variant-2 .fieldnote p{font-size:calc(17px - 1pt)}
+#app-gate.variant-2 .site-footer{justify-content:flex-end}
+@media(max-width:760px){#app-gate.variant-2 .fieldnote{display:block;margin-top:24px}
+#app-gate.variant-2 .fieldnote p{font-size:calc(16px - 1pt)}
+}
+
+.observatory #app-gate{display:block;isolation:isolate;position:fixed;inset:0;overflow:auto;background:#192030;z-index:5000;font:17px/1.6 var(--body);color:var(--ivory)}
+#app-gate p{opacity:1}#app-gate .btn{text-transform:none;letter-spacing:normal;box-shadow:none}#app-gate .layout{min-height:calc(100dvh - 190px)}#app-gate .site-footer{padding-bottom:32px}#app-gate .surface{overflow:visible;max-height:none}
+#app-gate .auth-tabs{display:none!important}#app-gate .auth-form{display:block;gap:0}#app-gate .auth-form input{font-size:12px}#app-gate .auth-form .auth-link{display:block;text-align:center;margin-top:16px;cursor:pointer;font:11px var(--sans);text-transform:none;letter-spacing:normal}
+#app-gate .auth-form .auth-btn{display:flex;align-items:center;justify-content:center;min-height:46px;font:12px var(--sans);letter-spacing:normal;text-transform:none}#app-gate .auth-error{font:12px/1.6 var(--sans);margin-top:15px;min-height:0;text-transform:none;letter-spacing:normal}#app-gate .auth-error:empty{display:none}#app-gate .country-picker{padding:0;border:0;background:none;margin:0}#app-gate .country-list{max-height:280px;margin:0;border:1px solid var(--line)}#app-gate .country-list-group{position:sticky;top:0;z-index:1;background:#202b3c;font:9px var(--mono);letter-spacing:.09em;padding:9px 13px}#app-gate .country-list-item{width:100%;min-height:46px;border:0;border-bottom:1px solid #ffffff05;display:flex;gap:12px;align-items:center;text-align:left;padding:12px 14px;background:none;font:11px var(--sans);color:var(--ivory)}#app-gate .country-list-item:hover{background:#ffffff07}#app-gate .country-list-item.checked{background:#c2a56d12;color:#e3cfa9}#app-gate .country-chips{display:flex;flex-wrap:wrap;gap:7px;margin:0;max-height:145px;overflow:auto}#app-gate .country-chip{display:inline-flex;align-items:center;gap:9px;min-height:30px;padding:6px 9px;border:1px solid #c2a56d44;color:#dbc49b;background:#c2a56d0b;border-radius:3px;font:10px var(--sans)}#app-gate .country-picker-hint{margin:0;font:10px var(--sans);text-transform:none;letter-spacing:normal;color:var(--muted)}#app-gate .plan-picker{margin:0;padding:0;border:0}#app-gate .plan-option{margin:0}#app-gate .terms{border:0;background:none;padding:0;text-transform:none;letter-spacing:normal}#app-gate input[type=checkbox]{width:17px;min-height:17px;height:17px;padding:0;appearance:auto}#app-gate .auth-btn-primary{background:var(--gold);color:var(--bg)}#app-gate #auth-verify-form .text-button{display:flex;width:100%;margin-top:14px}#app-gate .fn-status{padding:15px 18px;border-left:2px solid var(--gold);background:#c2a56d0b;margin-top:18px;color:var(--muted);font:12px/1.7 var(--sans)}#app-gate .brand-fallback{font:30px var(--head)}#app-gate [aria-busy=true]{cursor:wait}
+@media(max-width:760px){#app-gate .layout{min-height:0}#app-gate .site-footer{padding-bottom:30px}#app-gate[data-step=markets] .story{display:none}}
+</style>
+<style id="horizon-workbench-design">
+/* Horizon Workbench: styles stay inside Insights and its figure dialog. */
+.observatory #tab-insights.active{position:fixed!important;inset:var(--obs-top,68px) 0 0;height:auto!important;min-height:0!important;padding:0 0 0 var(--obs-rail,88px);margin:0;z-index:40;display:flex;flex-direction:column;overflow:hidden;animation:none!important;transform:none!important;background:radial-gradient(ellipse at 78% 26%,#607c982e,transparent 60%),radial-gradient(ellipse at 30% 90%,#c2a56d07,transparent 50%),#192030}
+#tab-insights{--hw-line:#c9d7e526;--hw-muted:#aebaca;--hw-quiet:#93a3b8;--hw-gold:#c2a56d}
+#tab-insights [hidden],#hw-figure-dialog [hidden]{display:none!important}
+#tab-insights button,#tab-insights summary{cursor:pointer}
+#tab-insights :is(button,input,select,summary,a):focus-visible,#hw-figure-dialog :is(button,select):focus-visible{outline:2px solid #d9bc83;outline-offset:3px}
+.hw-toolbar{height:65px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 30px;border-bottom:1px solid #ffffff08}
+.hw-session-heading{display:flex;align-items:center;gap:18px;min-width:0}.hw-eyebrow{font:8px/1.8 var(--font-mono);letter-spacing:.13em;color:var(--hw-gold)}#hw-session-title{font:10px var(--font-minor);color:var(--hw-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:340px}
+.hw-toolbar-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}.hw-btn,.hw-icon,.hw-text-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:none;border:1px solid #c9d7e526;color:#c4cedb;font:10px var(--font-minor);border-radius:4px;padding:10px 14px;line-height:1.5}.hw-icon{width:35px;height:35px;padding:0;border:0;font-size:17px;flex-shrink:0}.hw-btn:hover,.hw-icon:hover,.hw-text-button:hover{color:#dbc18b;border-color:#c2a56d66;background:#ffffff04}.hw-btn[aria-expanded=true]{border-color:#c2a56d77;color:#d9bc83}.hw-text-button{border:0;border-radius:0;font-size:10px;padding:9px 0}.hw-text-button i{font-size:16px}
+.hw-export{position:relative}.hw-export summary{list-style:none}.hw-export summary::-webkit-details-marker{display:none}.hw-export-menu{position:absolute;right:0;top:calc(100% + 10px);z-index:25;width:220px;border:1px solid #c9d7e52d;border-radius:6px;padding:8px;background:#223047f7;box-shadow:0 15px 45px #07122577}.hw-export-menu button{display:block;width:100%;text-align:left;background:none;border:0;color:#c4cedb;font:11px/1.7 var(--font-minor);padding:11px}.hw-export-menu button:hover{color:#dbc18b;background:#ffffff06}
+.observatory #tab-insights .insights-workspace{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 0;transition:grid-template-columns .3s cubic-bezier(.2,.7,.3,1);height:auto;flex:1;min-height:0;margin:0;border:0;border-radius:0;background:none;overflow:hidden}
+.observatory #tab-insights .insights-workspace.hw-research-open{grid-template-columns:minmax(0,1fr) minmax(400px,44%)}
+.observatory #tab-insights .iw-main{grid-column:1;grid-row:1;display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden;background:none}
+.observatory #tab-insights .coverage-bar{min-height:0;max-height:84px;overflow:auto;flex-shrink:0;padding:10px 30px;background:none;border:0;gap:8px;font-size:8px}
+#tab-insights .coverage-bar:has(#coverage-sources:empty){display:none}.hw-source-link{margin-left:auto;white-space:nowrap;border:0;background:none;color:var(--hw-quiet);font:9px var(--font-minor);padding:4px}
+.observatory #tab-insights .chat-messages{display:flex;flex-direction:column;gap:30px;flex:1;min-height:0;overflow:auto;padding:28px max(34px,calc((100% - 800px)/2));background:none;scrollbar-width:thin;scrollbar-color:#c2a56d44 transparent;scroll-behavior:smooth;overscroll-behavior:contain}
+#tab-insights .chat-message{flex-shrink:0;position:relative;min-width:0;display:block;margin:0;animation:none}
+#tab-insights .chat-message.user{display:flex;justify-content:flex-end;flex-direction:row;margin-bottom:10px}
+#tab-insights .chat-message.user .chat-bubble{max-width:85%;border:1px solid var(--hw-line);border-radius:6px;background:#ffffff05;padding:12px 19px;text-align:left;font:15px/1.7 var(--font-body);color:#deddd9}
+#tab-insights .chat-message.assistant{padding-top:33px}
+#tab-insights .chat-message.assistant::before{content:'✧  RAO ASSISTANT';position:absolute;top:0;left:0;color:var(--hw-gold);font:9px var(--font-mono);letter-spacing:.1em}
+#tab-insights .chat-message.assistant .chat-bubble{border:0;padding:0;max-width:100%;font:16px/1.9 var(--font-body);color:#cbd2db;overflow-wrap:anywhere}
+#tab-insights .chat-bubble h1{font:34px/1.2 var(--font-head);margin:0 0 22px;color:#eeeae0}
+#tab-insights .chat-bubble h2{font:27px/1.3 var(--font-head);text-transform:none;letter-spacing:0;border:0;padding:0;margin:25px 0 14px;color:#eeeae0;opacity:1}
+#tab-insights .chat-bubble h2:first-child{margin-top:0}#tab-insights .chat-bubble h3{font:21px/1.4 var(--font-head);margin:24px 0 10px}#tab-insights .chat-bubble p{margin:10px 0}#tab-insights .msg-time{font-size:8px;opacity:.5;margin-top:9px}
+#tab-insights :is(.chat-pin-btn,.chat-copy-btn,.chat-regen-btn){opacity:.7;top:-6px;width:28px;height:28px;font-size:14px}#tab-insights .chat-pin-btn{right:64px}#tab-insights .chat-regen-btn{right:32px}#tab-insights :is(.chat-pin-btn,.chat-copy-btn,.chat-regen-btn):hover{opacity:1}
+#tab-insights :is(.topic-menu,.drill-down-bar,.followup-pills){padding:0;flex-shrink:0}#tab-insights .drill-down-bar{padding-top:15px;background:none}#tab-insights .topic-query-input{min-width:0}
+#tab-insights .chat-footnote-link{flex-wrap:wrap;font-size:12px;line-height:1.7}#tab-insights .fn-title{white-space:normal;min-width:120px}#tab-insights .fn-domain{font-size:8px}
+.hw-composer-zone{padding:18px max(30px,calc((100% - 850px)/2)) 18px;flex-shrink:0;position:relative;z-index:5;background:linear-gradient(transparent,#19223388 25%)}
+.observatory #tab-insights .chat-input-area{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:14px 15px 11px;min-width:0;border:1px solid #bdcbd433;border-radius:11px;background:linear-gradient(135deg,#42556b65,#28384da8);box-shadow:0 15px 45px #08142633;backdrop-filter:blur(20px)}
+#tab-insights .chat-input-area:focus-within{border-color:#c2a56d77}
+.observatory #tab-insights .chat-input-wrapper{grid-column:1/-1;grid-row:1;display:block;padding:0;border:0;border-radius:0;background:none;box-shadow:none;min-width:0}
+.observatory #tab-insights .chat-input{display:block;resize:none;width:100%;height:auto;min-height:43px;max-height:140px;padding:2px 4px 10px;color:#eeeae0;font:16px/1.6 var(--font-body);background:none;border:0;border-radius:0;outline:none}
+#tab-insights .chat-input::placeholder{color:#99a7bb}.hw-composer-tools{grid-column:1;grid-row:2;display:flex;align-items:center;gap:13px;min-width:0}.observatory #tab-insights .model-dropdown-wrap{grid-area:auto}.observatory #tab-insights .model-dropdown-btn{font-size:10px;color:#b8c3d1;background:none;border:0;padding:5px;white-space:nowrap}.observatory #tab-insights .tpl-icon-btn{width:29px;height:29px;font-size:17px;color:#b8c3d1;border:0;background:none}
+.observatory #tab-insights .chat-send-btn{grid-column:2;grid-row:2;width:34px;height:34px;background:#c2a56d;color:#192030;border-radius:5px;border:0;font-size:17px}
+.observatory #tab-insights .chat-status{grid-column:1/-1;grid-row:3;position:static;margin:0;padding:2px 4px;font:9px var(--font-minor);height:auto;min-height:0;color:#d9bc83;pointer-events:none}.observatory #tab-insights .chat-status.ready{display:none}
+.observatory #tab-insights .chat-disclaimer{opacity:1;color:#8797ad;font:8px/1.6 var(--font-minor);margin:9px auto 0;padding:0;text-align:center;max-width:750px}
+#tab-insights :is(.tpl-dropdown-menu,.model-dropdown-menu){background:#223047f7;border-color:#91a5bb40;box-shadow:0 15px 55px #07122499;backdrop-filter:blur(20px);z-index:30;max-height:min(420px,55dvh);overflow-y:auto;bottom:calc(100% + 12px)}
+#tab-insights .model-dropdown-menu{min-width:235px}#tab-insights .model-menu-item{font-size:11px;padding:12px}#tab-insights .model-menu-desc{font-size:9px}
+#tab-insights .chat-welcome{position:relative;isolation:isolate;flex:1 0 auto;min-height:100%;max-width:930px;width:100%;margin:auto;align-items:flex-start;text-align:left;gap:0;padding:24px 0 32px}
+#tab-insights .hw-welcome-eyebrow{font:9px/1.7 var(--font-mono);letter-spacing:.13em;color:#c2a56d;margin-bottom:24px}
+#tab-insights .chat-welcome-title{font:clamp(44px,5.4vw,78px)/1.08 var(--font-head);letter-spacing:-.025em;max-width:750px;margin:0 0 27px;color:#eeeae0}#tab-insights .chat-welcome-title em{color:#c2a56d}
+#tab-insights .chat-welcome-sub{font:18px/1.8 var(--font-body);max-width:440px;color:#afbacb;margin:0}
+#tab-insights .chat-welcome-pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px;width:100%;max-width:760px;margin:36px 0 0}
+#tab-insights .chat-welcome-pill{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:0;border:0;border-top:1px solid #c2a56d44;border-radius:0;background:none;text-align:left;padding:19px 0;font:11px/1.8 var(--font-minor);color:#c4cdda}
+#tab-insights .chat-welcome-pill:hover{color:#dbc18b;background:#ffffff03}#tab-insights .chat-welcome-pill i{color:#c2a56d;flex-shrink:0;font-size:17px}.hw-welcome-links{display:flex;gap:25px;margin-top:17px}.hw-welcome-links button{border:0;padding:5px 0;background:none;font:10px var(--font-minor);color:#a6b4c7}
+.hw-horizon-art{position:absolute;right:-20px;top:14%;width:430px;max-width:65%;pointer-events:none;z-index:-1;opacity:.32;mask-image:linear-gradient(90deg,transparent,#000 45%);animation:hw-drift 14s ease-in-out infinite alternate}@keyframes hw-drift{to{transform:translateY(12px) rotate(4deg)}}
+.observatory #tab-insights .iw-rail{position:absolute;inset:12px auto 12px 15px;width:290px;max-width:calc(100% - 30px);z-index:22;transform:translateX(-110%);visibility:hidden;transition:transform .25s,visibility .25s;border:1px solid #c2a56d38;border-radius:9px;background:#223047f7;box-shadow:0 25px 80px #0005;backdrop-filter:blur(25px)}
+.observatory #tab-insights .iw-rail.hw-history-open{transform:none;visibility:visible}.hw-rail-heading{display:flex;align-items:center;justify-content:space-between;padding:17px 20px;border-bottom:1px solid var(--hw-line)}.hw-rail-heading h2{font:14px var(--font-minor);margin:0;color:#deddd9}#tab-insights .iw-new-btn{font-size:10px;padding:12px;letter-spacing:.025em}#tab-insights .sessions-search{font-size:12px}#tab-insights .session-name{font-size:12px;line-height:1.7}#tab-insights .session-time{font-size:9px}#tab-insights .session-item{padding-top:15px;padding-bottom:15px}#tab-insights .session-del{display:flex;opacity:.7}#tab-insights .sessions-export-btn{font-size:10px;min-height:35px}
+.hw-scrim{position:absolute;inset:0;z-index:20;border:0;background:#09142666;backdrop-filter:blur(2px)}
+.hw-research{grid-column:2;grid-row:1;display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden;border-left:1px solid #c2a56d35;background:linear-gradient(145deg,#34465c64,#1c293e82);backdrop-filter:blur(24px);visibility:hidden;opacity:0;transition:opacity .25s,visibility .25s}
+.hw-research-open .hw-research{visibility:visible;opacity:1}.hw-pane-header{display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:57px;padding:12px 25px;border-bottom:1px solid var(--hw-line);flex-shrink:0}.hw-pane-header h2{font:12px var(--font-minor);margin:0;color:#deddd9;white-space:nowrap}
+.hw-pane-tabs{display:flex;gap:23px;padding:0 25px;border-bottom:1px solid var(--hw-line);flex-shrink:0}.hw-pane-tabs button{background:none;border:0;border-bottom:1px solid transparent;padding:15px 0;color:#9baabd;font:10px var(--font-minor)}.hw-pane-tabs button[aria-selected=true]{color:#c2a56d;border-bottom-color:#c2a56d}
+.hw-pane-view{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0}.hw-pane-scroll{overflow:auto;padding:27px 25px;scrollbar-width:thin;scrollbar-color:#c2a56d44 transparent;min-height:0;overscroll-behavior:contain}
+.hw-figure-picker{padding:16px 25px;border-bottom:1px solid var(--hw-line);flex-shrink:0}.hw-figure-picker label{display:block;font:8px var(--font-mono);letter-spacing:.1em;color:#aab9ca;margin-bottom:9px}.hw-figure-picker select{font:11px var(--font-minor);color:#d6dde5;background:#202e42;border:1px solid var(--hw-line);border-radius:4px;width:100%;padding:10px;min-width:0}
+.hw-empty{padding:45px 10px;text-align:center;color:#a6b6ca}.hw-empty>i{display:block;font-size:36px;color:#c2a56d88;margin-bottom:25px}.hw-empty h3{font:28px var(--font-head);color:#eeeae0;margin:0 0 20px}.hw-empty p{font:15px/1.85 var(--font-body);max-width:340px;margin:auto}.hw-empty em{color:#c2a56d;font-style:normal}
+.observatory #tab-insights #canvas-panel{position:static!important;inset:auto;transform:none!important;display:flex;flex-direction:column;width:100%;flex:1;min-height:0;border:0;border-radius:0;background:none;visibility:visible;box-shadow:none;overflow:hidden}
+#tab-insights .canvas-items{padding:26px 25px;gap:20px}#tab-insights .canvas-empty{font:16px/1.9 var(--font-body);padding:40px 12px;color:#a6b6ca}#tab-insights .canvas-item{padding:0 25px 24px 0;border:0;border-bottom:1px solid var(--hw-line);background:none;border-radius:0}#tab-insights .canvas-item-time{font-size:8px;color:#c2a56d;opacity:1;margin-bottom:15px}#tab-insights .canvas-item-body{font-size:15px;line-height:1.85;max-height:none}#tab-insights .canvas-item-body::after{display:none}#tab-insights .canvas-item-del{opacity:.7;font-size:16px}.hw-canvas-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 25px;border-top:1px solid var(--hw-line)}
+#tab-insights #entity-panel{display:block!important;background:none;padding:0;border:0}#tab-insights .entity-panel-hdr{font:9px var(--font-mono);color:#c2a56d;margin-bottom:20px}#tab-insights .entity-list{display:flex;flex-wrap:wrap;gap:10px}#tab-insights .entity-chip{font:11px/1.6 var(--font-minor);padding:10px 12px}#tab-insights .entity-empty{font:15px/1.8 var(--font-body);color:#a6b6ca}
+.hw-source-group{margin-bottom:28px}.hw-source-group h3{font:23px var(--font-head);color:#eeeae0;margin:0 0 16px}.hw-source-group p{font:14px/1.85 var(--font-body);color:#a6b6ca}.hw-source-group .cov-label{display:none}.hw-source-group .cov-chip{display:flex;width:fit-content;margin:10px 0;font-size:10px}.hw-source-group a{display:flex;gap:11px;color:#c9d1dd;text-decoration:none;padding:14px 0;border-bottom:1px solid var(--hw-line);font:13px/1.8 var(--font-body)}.hw-source-group a span{color:#c2a56d;font:9px/2 var(--font-mono)}.hw-source-caption{font:9px/1.8 var(--font-mono);color:#95a7be;margin-top:25px}
+#tab-insights .chat-chart-panel.hw-preview-panel{display:flex;flex-direction:column;gap:13px;padding:0;margin:0;flex-shrink:0;border:0;background:none}
+.hw-chart-preview{display:flex;align-items:center;gap:24px;width:100%;min-height:116px;border:1px solid #c2a56d38;border-radius:6px;background:#ffffff03;padding:21px 25px;text-align:left;color:#eeeae0}
+.hw-chart-preview:hover,.hw-chart-preview[aria-expanded=true]{border-color:#c2a56d88;background:#c2a56d09}.hw-chart-thumb{display:flex;align-items:center;justify-content:center;width:130px;flex-shrink:0;color:#c2a56d;font-size:34px}.hw-chart-thumb img{width:100%;height:76px;object-fit:contain;opacity:.9}.hw-chart-copy{min-width:0}.hw-chart-copy strong{display:block;font:21px/1.4 var(--font-head);font-weight:400;color:#eeeae0}.hw-chart-copy small{display:block;font:8px/1.8 var(--font-mono);color:#97a8bd;margin:8px 0 15px;text-transform:uppercase;letter-spacing:.05em}.hw-chart-copy>span{font:9px var(--font-minor);color:#c2a56d}.hw-chart-copy>span i{margin-left:10px;font-size:15px}
+#hw-figure-store{position:absolute;left:-9999px;top:0;width:700px;visibility:hidden;pointer-events:none}
+#tab-insights .chat-chart-wrapper,#hw-figure-dialog .chat-chart-wrapper{margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;max-width:none;min-width:0;width:100%}
+#tab-insights .chat-chart-title,#hw-figure-dialog .chat-chart-title{font:27px/1.3 var(--font-head);text-transform:none;letter-spacing:0;color:#eeeae0;margin:0 0 25px;padding:0;border:0}
+.hw-chart-canvas-host{position:relative;width:100%;height:340px;min-height:260px}
+#tab-insights .hw-chart-canvas-host canvas,#hw-figure-dialog .hw-chart-canvas-host canvas{display:block;width:100%!important;height:100%!important;max-height:none}
+.hw-html-figure{overflow-x:auto;padding-bottom:10px}.hw-html-figure>div{min-width:460px}
+.hw-figure-actions{display:flex;justify-content:space-between;gap:18px;border-top:1px solid #c9d7e526;margin-top:22px;padding-top:8px}.hw-figure-note{font:10px/1.9 var(--font-minor);color:#95a7be;margin-top:23px;padding-top:19px;border-top:1px solid #c9d7e526}
+#hw-figure-data{overflow:auto;margin-top:18px;max-height:380px}#hw-figure-data table{border-collapse:collapse;width:100%;min-width:300px;font:11px/1.8 var(--font-minor);color:#c3cedd}#hw-figure-data th{font-weight:400;text-align:left;color:#d4ba84;background:#ffffff04}#hw-figure-data th,#hw-figure-data td{padding:12px;border-bottom:1px solid #c9d7e526;text-align:left;white-space:nowrap}#hw-figure-data caption{font:9px var(--font-mono);padding:10px 0;text-align:left;color:#a4b1c3}
+.hw-figure-dialog{position:fixed;inset:0;border:0;margin:0;width:100vw;max-width:none;height:100dvh;max-height:none;padding:0;color:#eeeae0;background:radial-gradient(ellipse at 80% 10%,#33435977,transparent 60%),#192030;overflow:auto}.hw-figure-dialog::backdrop{background:#101a2b}.hw-dialog-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 32px;border-bottom:1px solid #c9d7e526;font:12px var(--font-minor)}#hw-dialog-host{max-width:1100px;margin:40px auto;padding:0 30px 40px}.hw-figure-dialog .hw-chart-canvas-host{height:clamp(340px,55vh,650px)}.hw-figure-dialog .hw-figure-actions button:last-child{display:none}
+@media(min-width:901px){#tab-insights .hw-research-open .chat-messages{padding:28px 30px}#tab-insights .hw-research-open .hw-composer-zone{padding:18px 25px}#tab-insights .hw-research-open .chat-welcome-title{font-size:clamp(38px,3.4vw,56px)}#tab-insights .hw-research-open .chat-welcome-pills{grid-template-columns:1fr;gap:0}#tab-insights .hw-research-open .chat-welcome-pill{padding:15px 0}#tab-insights .hw-research-open .hw-chart-preview{padding:18px;gap:18px}#tab-insights .hw-research-open .hw-chart-thumb{width:100px}#tab-insights .hw-research-open .hw-chart-copy strong{font-size:19px}#tab-insights .hw-research-open .chat-welcome-sub{font-size:16px}}
+@media(max-width:1150px){.hw-session-heading>.hw-eyebrow{display:none}.hw-toolbar{padding:0 23px}.hw-toolbar-actions{gap:6px}.hw-research .hw-pane-scroll{padding:25px 20px}.hw-research .hw-pane-tabs{gap:17px;padding:0 20px}#tab-insights .chat-messages{padding-left:28px;padding-right:28px}#tab-insights .hw-composer-zone{padding-left:25px;padding-right:25px}}
+@media(max-width:900px){.observatory #tab-insights .insights-workspace.hw-research-open{grid-template-columns:minmax(0,1fr) 0}.hw-research{position:absolute;inset:0 0 0 auto;width:min(650px,100%);z-index:22;background:#1d2b40fa;transform:translateX(100%);transition:transform .3s,visibility .3s,opacity .25s;box-shadow:-20px 0 65px #06122655}.hw-research-open .hw-research{transform:none}.hw-pane-header{padding:12px 20px}.hw-chart-canvas-host{height:330px}#tab-insights .hw-chart-thumb{width:115px}}
+@media(max-width:700px){.observatory #tab-insights.active{padding:0;bottom:calc(63px + env(safe-area-inset-bottom,0px));height:auto!important}.hw-toolbar{height:55px;padding:0 13px;gap:8px}.hw-toolbar-actions{gap:3px}.hw-toolbar-actions .hw-btn{font-size:0;gap:0;width:34px;height:34px;padding:0}.hw-toolbar-actions .hw-btn i{font-size:17px}.hw-toolbar-actions .hw-btn span{display:none}#hw-session-title{font-size:9px;max-width:165px}.hw-toolbar .hw-icon{width:31px;height:34px;font-size:17px}.observatory #tab-insights .chat-messages{padding:22px 20px;gap:26px}.observatory #tab-insights .hw-composer-zone{padding:10px 13px 12px}.observatory #tab-insights .chat-input-area{padding:12px 11px 9px;border-radius:9px}.observatory #tab-insights .chat-input{font-size:16px;max-height:100px;min-height:40px}.hw-composer-tools{gap:8px}.observatory #tab-insights .model-dropdown-btn{font-size:9px}.observatory #tab-insights .chat-disclaimer{font-size:7px;line-height:1.55;margin-top:7px}.hw-canvas-shortcut{display:none}.observatory #tab-insights .chat-welcome{padding:10px 0 24px;min-height:100%}#tab-insights .chat-welcome-title{font-size:42px;margin-bottom:22px}#tab-insights .hw-welcome-eyebrow{font-size:8px;margin-bottom:19px}#tab-insights .chat-welcome-sub{font-size:16px}#tab-insights .chat-welcome-pills{grid-template-columns:1fr;gap:0;margin-top:25px}#tab-insights .chat-welcome-pill{padding:14px 0;font-size:10px}.hw-welcome-links{gap:18px;margin-top:15px}.hw-welcome-links button{font-size:9px}.hw-horizon-art{width:260px;top:10%;opacity:.22}#tab-insights .chat-message.user .chat-bubble{max-width:95%;padding:11px 14px;font-size:14px}#tab-insights .chat-bubble h2{font-size:26px}#tab-insights .chat-bubble h1{font-size:29px}#tab-insights .chat-message.assistant .chat-bubble{font-size:16px}.hw-chart-preview{gap:15px;padding:17px}#tab-insights .hw-chart-thumb{width:82px}.hw-chart-thumb img{height:67px}.hw-chart-copy strong{font-size:18px}.hw-chart-copy small{font-size:7px;margin-bottom:11px}.hw-chart-copy>span{font-size:9px}.hw-research{width:100%;border:0}.hw-pane-tabs{padding:0 20px;gap:25px}.hw-figure-picker{padding:14px 20px}.hw-pane-scroll{padding:25px 20px}.hw-figure-dialog .hw-dialog-header{padding:15px;font-size:11px}.hw-dialog-header .hw-btn{padding:9px;font-size:9px}#hw-dialog-host{padding:0 18px 30px;margin:26px auto}.hw-figure-dialog .hw-chart-canvas-host{height:55dvh;min-height:300px}.hw-export-menu{right:0}.observatory #tab-insights .coverage-bar{padding:8px 20px;font-size:7px}}
+@media(prefers-reduced-motion:reduce){#tab-insights *,#hw-figure-dialog *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print{.observatory #tab-insights.active{position:static!important;height:auto!important;padding:0;background:white;color:#192030;overflow:visible}.observatory #tab-insights :is(.hw-toolbar,.hw-composer-zone,.iw-rail,.hw-research,.hw-scrim){display:none!important}.observatory #tab-insights .insights-workspace{display:block;height:auto;overflow:visible}.observatory #tab-insights .iw-main,.observatory #tab-insights .chat-messages{height:auto;overflow:visible;display:block;padding:0}.hw-chart-preview{break-inside:avoid;color:#192030}.hw-chart-copy strong{color:#192030}}
+
+@media print{#tab-insights .hw-chart-preview{display:none!important}#tab-insights .chat-chart-panel .chat-chart-wrapper{display:block!important;break-inside:avoid;margin:20px 0!important}#tab-insights .chat-chart-title{color:#192030}#tab-insights .chat-message{break-inside:auto}#tab-insights .chat-message.assistant .chat-bubble{color:#192030}}
+@media(max-width:900px){.hw-research{grid-area:auto}}
+
+</style>
 </head>
 <!-- Scroll is locked until the gate resolves, so the dashboard behind it is never
      reachable in the moment before Firebase reports the auth state. -->
@@ -5377,8 +5776,8 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 <button aria-label="Insights" class="nav-item obs-nav-link" onclick="switchTab('insights')" type="button"><i aria-hidden="true" class="ri-sparkling-line"></i><span>Insights</span></button>
 </nav></aside><header class="header glass-panel"><div class="obs-brand"><div class="logo">
 <img alt="GSU" class="logo-icon" src="assets/GSU_Transparent.png"/>
-<span>RAO INSIGHTS</span>
-</div></div><div class="obs-rail-bottom"><button aria-label="Pause motion" title="Pause motion" aria-pressed="false" class="obs-motion" id="obs-motion" type="button"><i aria-hidden="true" class="ri-pause-mini-line"></i><span>Pause motion</span></button><a href="methodology.html" aria-label="Methodology" title="Methodology"><i aria-hidden="true" class="ri-book-open-line"></i></a></div><div class="obs-breadcrumb"><span>RAO Observatory</span><i aria-hidden="true" class="ri-arrow-right-s-line"></i><strong id="obs-current-tab">Global overview</strong></div>
+<span>Geoeconomic Strategy Unit</span>
+</div></div><div class="obs-breadcrumb"><span>RAO Observatory</span><i aria-hidden="true" class="ri-arrow-right-s-line"></i><strong id="obs-current-tab">Global overview</strong></div>
 
 
 <select class="mobile-tab-select" id="mobile-tab-select" onchange="switchTab(this.value)">
@@ -5446,7 +5845,7 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 </div>
 </div>
 </div>
-<button aria-label="Pause motion" aria-pressed="false" class="obs-motion-mobile" id="obs-motion-mobile" onclick="OBS.motionToggle()" type="button"><i class="ri-pause-mini-line"></i></button><button aria-label="Search for a country" class="obs-search-trigger" onclick="OBS.search()" type="button"><i aria-hidden="true" class="ri-search-line"></i><span>Find a market</span><kbd>/</kbd></button></header>
+</header>
 <!-- Enhancement #51: Loading Overlay -->
 <!-- Enhancement #59: Tooltip Container -->
 <div class="tooltip" id="global-tooltip"></div>
@@ -5462,7 +5861,7 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 <!-- Map view controls — sits above the map section -->
 
 <!-- Map Section -->
-<div aria-label="Global summary" class="obs-overview-kpis" id="obs-overview-kpis"></div><div class="obs-map-card" id="obs-map-card"><div class="obs-map-heading"><div><span class="obs-eyebrow">GLOBAL OPPORTUNITY ATLAS</span><h2>One world. Multiple readings.</h2></div><div aria-label="Map presentation" class="obs-view-switch" role="group"><button aria-pressed="true" class="active" data-map-mode="map" onclick="OBS.mapMode('map')" type="button"><i class="ri-map-2-line"></i> Heatmap</button><button aria-pressed="false" data-map-mode="globe" onclick="OBS.mapMode('globe')" type="button"><i class="ri-globe-line"></i> Globe</button></div></div><div class="map-controls" id="landscape-controls">
+<div class="obs-map-card" id="obs-map-card"><div class="obs-map-heading"><div><span class="obs-eyebrow">GLOBAL OPPORTUNITY ATLAS</span><h2>One world. Multiple readings.</h2></div><div aria-label="Map presentation" class="obs-view-switch" role="group"><button aria-pressed="true" class="active" data-map-mode="map" onclick="OBS.mapMode('map')" type="button"><i class="ri-map-2-line"></i> Heatmap</button><button aria-pressed="false" data-map-mode="globe" onclick="OBS.mapMode('globe')" type="button"><i class="ri-globe-line"></i> Globe</button></div></div><div class="map-controls" id="landscape-controls">
 <button class="map-control-btn active" id="view-rao" onclick="setMapView('rao')">RAO Score</button>
 <button class="map-control-btn" id="view-news" onclick="setMapView('news')" style="display:none;">News Impact</button>
 <button class="map-control-btn" id="view-pillar_a" onclick="setMapView('pillar_a')">Opportunity</button>
@@ -6450,19 +6849,21 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 <div id="pulse-coverage"></div>
 </div>
 </div>
-<!-- TAB 7: INSIGHTS -->
-<div class="tab-content obs-research-studio" id="tab-insights"><div class="obs-page-heading"><div><div class="obs-eyebrow">07 / RESEARCH STUDIO</div><h1>A question. <em>A clearer picture.</em></h1><p>Work with the RAO panel, live signals, and cited research in one place.</p></div><div aria-hidden="true" class="obs-heading-model model-slot" data-model="prism"><span class="model-fallback"><i class="ri-focus-3-line"></i></span></div></div>
-<div class="insights-workspace" id="insights-workspace">
-<!-- ── Left rail: sessions & entities ────────────────────── -->
-<aside class="iw-rail" id="iw-rail">
-<div class="iw-rail-tabs">
-<button class="iw-rail-tab active" id="iw-tab-sessions" onclick="switchRailPanel('sessions')">
-<i class="ri-chat-history-line"></i> Sessions
-                        </button>
-<button class="iw-rail-tab" id="iw-tab-entities" onclick="switchRailPanel('entities')">
-<i class="ri-price-tag-3-line"></i> Entities
-                        </button>
-</div>
+<!-- TAB 7: INSIGHTS — Horizon Workbench -->
+<div class="tab-content obs-research-studio" id="tab-insights">
+ <div class="hw-toolbar">
+  <div class="hw-session-heading"><span class="hw-eyebrow">INTELLIGENCE WORKSPACE</span><span id="hw-session-title">New conversation</span></div>
+  <div class="hw-toolbar-actions">
+   <button type="button" class="hw-icon" onclick="toggleInsightsRail()" aria-label="Conversation history" title="Conversation history" aria-controls="iw-rail" aria-expanded="false" data-hw-history><i class="ri-chat-history-line"></i></button>
+   <button type="button" class="hw-btn" onclick="newSession()" aria-label="New conversation"><i class="ri-add-line"></i><span>New conversation</span></button>
+   <button type="button" class="hw-btn" onclick="Horizon.open('figures')" aria-label="Open research pane" aria-controls="hw-research" aria-expanded="false" data-hw-open><i class="ri-bar-chart-grouped-line"></i><span>Research</span></button>
+   <details class="hw-export"><summary class="hw-icon" aria-label="Export conversation" title="Export conversation"><i class="ri-download-line"></i></summary><div class="hw-export-menu"><button type="button" onclick="exportToMarkdown()">Download Markdown</button><button type="button" onclick="exportToPDF()">Print / Save as PDF</button><button type="button" onclick="copySessionToClipboard()">Copy conversation</button></div></details>
+  </div>
+ </div>
+ <div class="insights-workspace rail-collapsed" id="insights-workspace">
+  <button type="button" class="hw-scrim" id="hw-scrim" aria-label="Close open panels" hidden onclick="Horizon.closeDrawers()"></button>
+  <aside aria-hidden="true" aria-label="Conversation history" class="iw-rail" id="iw-rail" inert="">
+<div class="hw-rail-heading"><h2>Your research</h2><button aria-label="Close conversation history" class="hw-icon" onclick="toggleInsightsRail()" type="button"><i class="ri-close-line"></i></button></div>
 <div class="iw-rail-body">
 <div class="iw-panel active" id="iw-panel-sessions">
 <button class="iw-new-btn" onclick="newSession()"><i class="ri-add-line"></i> New conversation</button>
@@ -6476,25 +6877,16 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 <button class="sessions-export-btn copy-session-btn" onclick="copySessionToClipboard()" title="Copy to clipboard"><i class="ri-clipboard-line"></i> Copy</button>
 </div>
 </div>
-<div class="iw-panel" id="iw-panel-entities">
-<div class="entity-panel" id="entity-panel">
-<div class="entity-panel-hdr">Mentioned in this answer</div>
-<div class="entity-list" id="entity-list"></div>
-</div>
-</div>
+
 </div>
 </aside>
-<!-- ── Centre: the conversation ──────────────────────────── -->
-<section class="iw-main">
-<div class="coverage-bar" id="coverage-bar">
-<button class="iw-rail-toggle" onclick="toggleInsightsRail()" title="Toggle sidebar"><i class="ri-side-bar-line"></i></button>
-<span id="coverage-sources" style="display:contents;"></span>
-</div>
-<div class="chat-messages" id="chat-messages-container"></div>
-<div class="chat-input-area">
-<div class="chat-input-wrapper">
-<div class="tpl-dropdown-wrap" id="tpl-dropdown-wrap">
-<button class="tpl-icon-btn" onclick="toggleTplDropdown()" title="Templates &amp; actions"><i class="ri-quill-pen-line"></i></button>
+  <section class="iw-main" aria-label="Intelligence conversation">
+   <div class="coverage-bar" id="coverage-bar"><span id="coverage-sources" style="display:contents;"></span><button type="button" class="hw-source-link" onclick="Horizon.open('sources')">Sources <i class="ri-book-open-line"></i></button></div>
+   <div class="chat-messages" id="chat-messages-container" tabindex="0" aria-label="Conversation"></div>
+   <div class="hw-composer-zone"><div class="chat-input-area">
+    <div class="chat-input-wrapper"><textarea aria-label="Ask the RAO assistant" class="chat-input" id="chat-input" oninput="autoResizeChatInput(this)" onkeydown="handleChatKeydown(event)" placeholder="Ask about any market, region or investment theme…" rows="1"></textarea></div>
+    <div class="hw-composer-tools"><div class="tpl-dropdown-wrap" id="tpl-dropdown-wrap">
+<button aria-label="Research templates and actions" class="tpl-icon-btn" onclick="toggleTplDropdown()" title="Templates &amp; actions"><i class="ri-quill-pen-line"></i></button>
 <div class="tpl-dropdown-menu" id="tpl-dropdown-menu" style="display:none;">
 <button class="tpl-menu-item" onclick="applyTemplate('risk-brief');toggleTplDropdown()"><i class="ri-file-shield-2-line"></i> Risk Brief</button>
 <button class="tpl-menu-item" onclick="applyTemplate('country-note');toggleTplDropdown()"><i class="ri-map-pin-line"></i> Country Note</button>
@@ -6505,40 +6897,37 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 <div class="tpl-menu-sep"></div>
 <button class="tpl-menu-item danger" onclick="clearChatHistory();toggleTplDropdown()"><i class="ri-delete-bin-line"></i> Clear chat</button>
 </div>
-</div>
-<textarea class="chat-input" id="chat-input" oninput="autoResizeChatInput(this)" onkeydown="handleChatKeydown(event)" placeholder="Ask about any market, region or investment theme…" rows="1"></textarea>
-</div>
-<div class="model-dropdown-wrap" id="model-dropdown-wrap">
+</div><div class="model-dropdown-wrap" id="model-dropdown-wrap">
 <button class="model-dropdown-btn" id="model-dropdown-btn" onclick="toggleModelDropdown()" title="Select model">Gemini 3.5 Lite <i class="ri-arrow-down-s-line"></i></button>
 <div class="model-dropdown-menu" id="model-dropdown-menu" style="display:none;"></div>
-</div>
-<div class="chat-status" id="chat-status-indicator">Analyzing…</div>
-<button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="Send (Enter)">
+</div><button type="button" class="hw-icon hw-canvas-shortcut" onclick="toggleCanvas()" aria-label="Open research canvas" title="Research canvas"><i class="ri-pushpin-line"></i></button></div>
+    <button aria-label="Send message" class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="Send (Enter)">
 <i class="ri-send-plane-fill"></i>
 </button>
-<div class="chat-disclaimer">The RAO assistant can make mistakes and does not provide investment advice. Verify critical figures before acting on them.</div>
-</div>
-</section>
-<!-- ── Right: research canvas ────────────────────────────── -->
-<aside class="iw-canvas" id="canvas-panel">
-<div class="canvas-hdr">
-<span class="canvas-hdr-title"><i class="ri-pushpin-line"></i> Research Canvas</span>
-<div style="display:flex;gap:0.35rem;">
-<button class="canvas-hdr-btn" onclick="exportCanvas()" title="Export canvas"><i class="ri-download-line"></i></button>
-<button class="canvas-hdr-btn" onclick="toggleCanvas()" title="Close"><i class="ri-close-line"></i></button>
-</div>
-</div>
-<div class="canvas-items" id="canvas-items">
-<div class="canvas-empty">Pin responses to build your research document.</div>
-</div>
-</aside>
-</div>
-<!-- Mobile drawer scrim + FABs -->
-<div class="mobile-drawer-overlay" id="mobile-overlay" onclick="closeMobileDrawers()"></div>
-<div class="mobile-fab-row">
-<button class="mobile-fab" onclick="toggleInsightsRail()" title="Sessions"><i class="ri-sidebar-fold-line"></i></button>
-<button class="mobile-fab" onclick="toggleCanvas()" title="Canvas"><i class="ri-pushpin-line"></i></button>
-</div>
+    <div class="chat-status ready" id="chat-status-indicator" role="status" aria-live="polite">Ready</div>
+   </div><div class="chat-disclaimer">The RAO assistant can make mistakes and does not provide investment advice. Verify critical figures before acting on them.</div></div>
+  </section>
+  <aside class="hw-research" id="hw-research" aria-label="Research and evidence" inert aria-hidden="true">
+   <div class="hw-pane-header"><h2>Research &amp; evidence</h2><button type="button" class="hw-icon" onclick="Horizon.close()" aria-label="Close research pane" title="Close research pane"><i class="ri-close-line"></i></button></div>
+   <div class="hw-pane-tabs" role="tablist" aria-label="Research views"><button type="button" role="tab" id="hw-tab-figures" aria-controls="hw-view-figures" aria-selected="true" tabindex="0" onclick="Horizon.open('figures')">Figures</button><button type="button" role="tab" id="hw-tab-canvas" aria-controls="hw-view-canvas" aria-selected="false" tabindex="-1" onclick="Horizon.open('canvas')">Canvas</button><button type="button" role="tab" id="hw-tab-entities" aria-controls="hw-view-entities" aria-selected="false" tabindex="-1" onclick="Horizon.open('entities')">Entities</button><button type="button" role="tab" id="hw-tab-sources" aria-controls="hw-view-sources" aria-selected="false" tabindex="-1" onclick="Horizon.open('sources')">Sources</button></div>
+   <section class="hw-pane-view" id="hw-view-figures" role="tabpanel" aria-labelledby="hw-tab-figures">
+    <div class="hw-figure-picker" id="hw-figure-picker" hidden><label for="hw-figure-select">CONVERSATION FIGURES</label><select id="hw-figure-select" onchange="Horizon.explore(this.value)"></select></div>
+    <div class="hw-pane-scroll" id="hw-figure-home"><div id="hw-figure-body">
+     <div id="hw-figure-empty" class="hw-empty"><i class="ri-line-chart-line"></i><h3>Give the evidence room.</h3><p>Charts from your conversation appear here. Choose <em>Explore figure</em> on any chart preview to examine it alongside the answer.</p></div>
+     <div id="hw-figure-stage"></div>
+     <div class="hw-figure-actions" id="hw-figure-actions" hidden><button type="button" class="hw-text-button" id="hw-data-toggle" onclick="Horizon.toggleData()" aria-expanded="false" aria-controls="hw-figure-data"><i class="ri-table-line"></i> View data</button><button type="button" class="hw-text-button" onclick="Horizon.expand()"><i class="ri-fullscreen-line"></i> Expand figure</button></div>
+     <div id="hw-figure-data" hidden></div><p id="hw-figure-note" class="hw-figure-note" hidden></p>
+    </div></div>
+   </section>
+   <section class="hw-pane-view" id="hw-view-canvas" role="tabpanel" aria-labelledby="hw-tab-canvas" hidden><div class="iw-canvas" id="canvas-panel"><div class="canvas-items" id="canvas-items"><div class="canvas-empty">Pin responses to build your research document.</div></div><div class="hw-canvas-footer"><button type="button" class="hw-btn" onclick="generateBrief()"><i class="ri-file-text-line"></i> Create intelligence brief</button><button type="button" class="hw-icon" onclick="exportCanvas()" aria-label="Export research canvas" title="Export canvas"><i class="ri-download-line"></i></button></div></div></section>
+   <section class="hw-pane-view hw-pane-scroll" id="hw-view-entities" role="tabpanel" aria-labelledby="hw-tab-entities" hidden><div class="entity-panel" id="entity-panel">
+<div class="entity-panel-hdr">Mentioned in this answer</div>
+<div class="entity-list" id="entity-list"></div>
+</div></section>
+   <section class="hw-pane-view hw-pane-scroll" id="hw-view-sources" role="tabpanel" aria-labelledby="hw-tab-sources" hidden><div id="hw-source-content"></div></section>
+  </aside>
+  <div id="hw-figure-store" aria-hidden="true" inert></div>
+ </div>
 </div>
 <!-- Cross-session search (⌘F inside Insights) -->
 <div class="session-search-modal" id="session-search-modal" onclick="closeSessionSearchModal(event)" style="display:none;">
@@ -18694,125 +19083,33 @@ function toggleAnalyticsReadonly() {
 <!-- Firebase config & auth helpers -->
 <script src="firebase-config.js"></script>
 <!-- ══ APP GATE — the product is sign-in-first ═══════════════════════════════ -->
-<div id="app-gate">
-<div class="gate-bg"></div>
-<div class="gate-scrim"></div>
-<div class="gate-inner">
-<div class="gate-pitch">
-<div class="gate-brand">
-<img alt="GSU" src="assets/GSU_Transparent.png"/>
-<span>Geoeconomic Strategy Unit</span>
-</div>
-<h1>Where capital <em>should</em> go next.</h1>
-<p>
-                The Risk-Adjusted Opportunity framework scores 162 countries across structural
-                opportunity, macroeconomic stability, absorptive capacity and momentum — surfacing
-                markets where fundamentals are strengthening before capital has followed.
-            </p>
-<div class="gate-points">
-<div class="gate-point"><i class="ri-global-line"></i><span>162 markets · 2010 to present</span></div>
-<div class="gate-point"><i class="ri-stack-line"></i><span>Four-pillar decomposition &amp; regime classification</span></div>
-<div class="gate-point"><i class="ri-line-chart-line"></i><span>Trajectory signals, not lagging headline risk</span></div>
-</div>
-<div aria-hidden="true" class="obs-gate-instrument model-slot" data-model="orrery"><span class="model-fallback"><i class="ri-globe-line"></i></span></div></div>
-<div class="gate-card" id="gate-card">
-<div class="gate-card-mobile-brand">
-<img alt="GSU" src="assets/GSU_Transparent.png"/>
-</div>
-<div class="auth-modal-logo">
-<h2>RAO <em>Insights</em></h2>
-<p id="auth-modal-subtitle">Sign in to continue</p>
-</div>
-<div class="auth-tabs">
-<button class="auth-tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">Sign In</button>
-<button class="auth-tab-btn" id="tab-register-btn" onclick="switchAuthTab('register')">Register</button>
-</div>
-<div id="auth-login-form">
-<div class="auth-form">
-<input autocomplete="email" id="login-email" onkeydown="handleAuthKeydown(event)" placeholder="Email address" type="email"/>
-<input autocomplete="current-password" id="login-password" onkeydown="handleAuthKeydown(event)" placeholder="Password" type="password"/>
-<div class="auth-error" id="login-error"></div>
-<button class="auth-btn auth-btn-primary" onclick="handleEmailLogin()">Sign In</button>
-<div class="auth-divider">or</div>
-<button class="auth-btn auth-btn-google" onclick="handleGoogleLogin()">
-<svg height="18" viewbox="0 0 48 48" width="18">
+<div id="app-gate" class="variant-2" data-step="login" role="region" aria-label="RAO Observatory account access">
+<header class="site-header"><a class="brand" href="index.html" aria-label="Geoeconomic Strategy Unit"><img src="assets/GSU_Transparent.png" alt="GSU"><span class="brand-fallback" hidden>GSU</span><span class="brand-name">Geoeconomic<span>Strategy Unit</span></span></a><div class="header-right"><span class="quiet">RAO Observatory</span><button type="button" class="text-button" id="fn-header-access" onclick="switchAuthTab('register')">Create an account</button></div></header>
+<div class="layout"><section class="story" aria-label="About RAO Observatory"><h1>Researching <em>risk.</em><br>Mapping <em>markets.</em></h1><p>Independent perspective for a world that rarely stands still.</p><div class="fieldnote"><span class="eyebrow">Risk-Adjusted Opportunity Score</span><p>The RAO Score brings together a market’s economic potential, stability, capacity to absorb investment and momentum, helping you compare countries and identify where fundamentals are improving.</p></div></section>
+<section class="surface" id="gate-card" aria-labelledby="fn-title"><div class="auth-tabs" hidden><button id="tab-login-btn" onclick="switchAuthTab('login')">Sign in</button><button id="tab-register-btn" onclick="switchAuthTab('register')">Register</button></div>
+<ol class="stepper" id="fn-progress" aria-label="Registration progress" hidden></ol><div class="auth-head"><span class="eyebrow" id="fn-product">RAO Observatory</span><h2 id="fn-title" tabindex="-1">Welcome back.</h2><p id="auth-modal-subtitle">Sign in to your RAO Observatory workspace.</p></div>
+<div id="auth-login-form"><form onsubmit="event.preventDefault();Fieldnotes.login()"><div class="field"><label for="login-email">Email address</label><input id="login-email" type="email" autocomplete="email" required></div><div class="field"><label for="login-password">Password</label><div class="password"><input id="login-password" type="password" autocomplete="current-password" required><button type="button" aria-label="Show password" aria-pressed="false" onclick="Fieldnotes.password(this,'login-password')">Show</button></div></div><div class="row" style="justify-content:flex-end;margin:-10px 0 17px"><button type="button" class="text-button" onclick="switchAuthTab('reset')">Forgot password?</button></div><button type="submit" class="btn full">Sign in →</button><div id="login-error" class="error" role="alert"></div></form><div class="divider">or</div><button type="button" class="btn secondary full" onclick="Fieldnotes.googleLogin()"><svg height="18" viewBox="0 0 48 48" width="18">
 <path d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z" fill="#FFC107"></path>
 <path d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z" fill="#FF3D00"></path>
 <path d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z" fill="#4CAF50"></path>
 <path d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z" fill="#1976D2"></path>
-</svg>
-                    Continue with Google
-                </button>
-<div class="auth-link" onclick="switchAuthTab('reset')">Forgot password?</div>
-</div>
-</div>
-<div id="auth-register-form" style="display:none;">
-<div class="auth-form">
-<input autocomplete="name" id="reg-name" onkeydown="handleAuthKeydown(event)" placeholder="Full name" type="text"/>
-<input autocomplete="email" id="reg-email" onkeydown="handleAuthKeydown(event)" placeholder="Email address" type="email"/>
-<input autocomplete="new-password" id="reg-password" onkeydown="handleAuthKeydown(event)" placeholder="Password (min 6 characters)" type="password"/>
-<div class="plan-picker" id="reg-plan-picker">
-<div class="plan-picker-label">Choose your plan</div>
-<div class="plan-option selected" id="plan-opt-free" onclick="selectRegPlan('free')">
-<div class="plan-option-mark"></div>
-<div class="plan-option-body">
-<div class="plan-option-name">Free <span class="plan-option-tag">Instant</span></div>
-<div class="plan-option-desc">The global picture — world map, rankings snapshot and regional trends.</div>
-</div>
-</div>
-<div class="plan-option" id="plan-opt-personal" onclick="selectRegPlan('personal')">
-<div class="plan-option-mark"></div>
-<div class="plan-option-body">
-<div class="plan-option-name">Personal <span class="plan-option-tag">By approval</span></div>
-<div class="plan-option-desc">Full depth on the markets you choose — analysis, comparison and rankings.</div>
-</div>
-</div>
-<div class="plan-option" id="plan-opt-enterprise" onclick="selectRegPlan('enterprise')">
-<div class="plan-option-mark"></div>
-<div class="plan-option-body">
-<div class="plan-option-name">Enterprise <span class="plan-option-tag">By approval</span></div>
-<div class="plan-option-desc">Unrestricted access to all 162 markets and the full analytics suite.</div>
-</div>
-</div>
-</div>
-<div class="country-picker" id="reg-country-picker" style="display:none;">
-<div class="country-picker-hint" id="reg-country-count">Select the markets you want covered</div>
-<div class="country-chips" id="reg-country-chips"></div>
-<input autocomplete="off" id="reg-country-search" oninput="setPickerTarget('reg'); renderCountryPickerList(this.value)" placeholder="Search countries…" type="search"/>
-<div class="country-list" id="reg-country-list"></div>
-</div>
-<div class="auth-terms" id="reg-terms" onclick="toggleRegTerms()">
-<div class="cl-box"><i class="ri-check-line"></i></div>
-<div>I agree to the <a href="terms.html" onclick="event.stopPropagation()" rel="noopener" target="_blank">Terms of Service</a>
-                        and <a href="privacy.html" onclick="event.stopPropagation()" rel="noopener" target="_blank">Privacy Policy</a>.</div>
-</div>
-<div class="auth-error" id="register-error"></div>
-<button class="auth-btn auth-btn-primary" id="reg-submit-btn" onclick="handleEmailRegister()">Create Account</button>
-<div class="auth-divider">or</div>
-<button class="auth-btn auth-btn-google" onclick="handleGoogleLogin()">
-<svg height="18" viewbox="0 0 48 48" width="18">
+</svg> Continue with Google</button><p class="hint" style="text-align:center;margin-top:22px">New to RAO Observatory? <button type="button" class="text-button" onclick="switchAuthTab('register')">Create an account</button></p></div>
+<div id="auth-register-form" style="display:none">
+<div data-fn-step="account"><form onsubmit="event.preventDefault();Fieldnotes.next()"><div class="field"><label for="reg-name">Full name</label><input id="reg-name" type="text" autocomplete="name" required></div><div class="field"><label for="reg-email">Email address</label><input id="reg-email" type="email" autocomplete="email" required></div><div class="field"><label for="reg-password">Password</label><div class="password"><input id="reg-password" type="password" autocomplete="new-password" required minlength="6"><button type="button" aria-label="Show password" aria-pressed="false" onclick="Fieldnotes.password(this,'reg-password')">Show</button></div><div class="hint">Use at least 6 characters.</div></div><div class="actions"><button type="button" class="text-button" onclick="switchAuthTab('login')">← Back</button><button type="submit" class="btn">Continue →</button></div></form><div class="divider">or</div><button type="button" class="btn secondary full" onclick="Fieldnotes.chooseGoogle()"><svg height="18" viewBox="0 0 48 48" width="18">
 <path d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z" fill="#FFC107"></path>
 <path d="M6.3 14.7l6.6 4.8C14.7 16 19.1 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.6 29.3 4 24 4c-7.7 0-14.4 4.4-17.7 10.7z" fill="#FF3D00"></path>
 <path d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.3 0-9.7-3.3-11.3-8H6.2C9.6 36.9 16.3 44 24 44z" fill="#4CAF50"></path>
 <path d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.3 35.2 44 30 44 24c0-1.3-.1-2.6-.4-3.9z" fill="#1976D2"></path>
-</svg>
-                    Continue with Google
-                </button>
-</div>
-</div>
-<div id="auth-reset-form" style="display:none;">
-<div class="auth-form">
-<p style="color:var(--text-muted); font-family:var(--font-minor); font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; line-height:1.6;">Enter your email and we'll send a reset link.</p>
-<input id="reset-email" onkeydown="handleAuthKeydown(event)" placeholder="Email address" type="email"/>
-<div class="auth-error" id="reset-error"></div>
-<button class="auth-btn auth-btn-primary" onclick="handlePasswordReset()">Send Reset Link</button>
-<div class="auth-link" onclick="switchAuthTab('login')">Back to Sign In</div>
-</div>
-</div>
+</svg> Continue with Google</button></div>
+<div data-fn-step="plan" hidden><div class="plan-options plan-picker" id="reg-plan-picker" aria-label="Choose your plan"><button type="button" class="plan plan-option" id="plan-opt-free" aria-pressed="true" onclick="selectRegPlan('free')"><span class="radio-mark" aria-hidden="true"></span><span class="plan-copy"><span class="plan-title">Free<span class="tag">Instant after verification</span></span><span class="plan-desc">The global picture: world map, rankings snapshot and regional trends.</span></span></button><button type="button" class="plan plan-option" id="plan-opt-personal" aria-pressed="false" onclick="selectRegPlan('personal')"><span class="radio-mark" aria-hidden="true"></span><span class="plan-copy"><span class="plan-title">Personal<span class="tag">By approval</span></span><span class="plan-desc">Full depth on your chosen markets: country analysis, comparison and rankings.</span></span></button><button type="button" class="plan plan-option" id="plan-opt-enterprise" aria-pressed="false" onclick="selectRegPlan('enterprise')"><span class="radio-mark" aria-hidden="true"></span><span class="plan-copy"><span class="plan-title">Enterprise<span class="tag">By approval</span></span><span class="plan-desc">All 162 markets, the complete history and the full analytics suite.</span></span></button></div><p class="hint" style="margin-top:20px">Personal and Enterprise access is arranged with our team. No payment is taken here.</p></div>
+<div data-fn-step="markets" hidden><div class="country-picker" id="reg-country-picker"><div class="market-toolbar"><div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><label class="sr-only" for="reg-country-search">Search countries by name or ISO code</label><input type="search" id="reg-country-search" placeholder="Search countries or ISO codes" autocomplete="off" oninput="setPickerTarget('reg');renderCountryPickerList(this.value)"></div><label class="sr-only" for="fn-region">Filter by region</label><select id="fn-region" onchange="Fieldnotes.filter()"><option>All regions</option></select></div><div class="market-topline"><span id="fn-result-count" aria-live="polite"></span><button type="button" class="text-button" id="fn-selected-only" aria-pressed="false" onclick="Fieldnotes.onlySelected()">Selected only</button></div><div class="country-list" id="reg-country-list"></div><div class="selected-tray"><div class="selected-heading"><span class="country-picker-hint" id="reg-country-count" aria-live="polite"></span><button type="button" class="text-button" onclick="Fieldnotes.clearMarkets()">Clear selection</button></div><div class="country-chips" id="reg-country-chips"></div></div><p class="market-help">Select at least one market. Our team will confirm your allowance and access.</p></div></div>
+<div data-fn-step="review" hidden><div id="fn-review"></div><label class="terms" id="reg-terms"><input type="checkbox" id="fn-terms" onchange="Fieldnotes.terms(this.checked)"><span>I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span></label><div class="notice" id="fn-access-note"></div></div>
+<div class="actions" id="fn-step-actions" hidden><button type="button" class="text-button" onclick="Fieldnotes.back()">← Back</button><button type="button" class="btn" id="fn-next" onclick="Fieldnotes.next()">Continue →</button><button type="button" class="btn" id="reg-submit-btn" onclick="Fieldnotes.submit()" hidden>Create account</button></div><div id="register-error" class="error" role="alert"></div></div>
+<div id="auth-reset-form" style="display:none"><form onsubmit="event.preventDefault();Fieldnotes.reset()"><div class="field"><label for="reset-email">Email address</label><input id="reset-email" type="email" autocomplete="email" required></div><button type="submit" class="btn full">Send reset link →</button><div id="reset-error" class="error" role="status"></div></form><button type="button" class="text-button" onclick="switchAuthTab('login')">← Back to sign in</button></div>
 <div id="auth-verify-form" style="display:none;">
 <div class="auth-form" style="text-align:center;">
-<div style="font-size:2.5rem; margin-bottom:0.75rem;">✉</div>
-<p style="color:var(--text-primary); font-size:1rem; font-weight:500; margin-bottom:0.5rem;">Check your inbox</p>
+
+
 <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1.25rem;">A verification link has been sent to <strong id="verify-email-shown"></strong>. Click it to activate your account, then sign in.</p>
 <div id="verify-plan-note" style="display:none; text-align:left; background:rgba(194,165,109,0.06); border:1px solid rgba(194,165,109,0.25); border-radius:3px; padding:0.8rem 0.9rem; margin-bottom:1.25rem;">
 <div style="font-family:var(--font-minor); font-size:0.56rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--accent-gold); margin-bottom:0.4rem;">
@@ -18822,13 +19119,10 @@ function toggleAnalyticsReadonly() {
 </div>
 <div class="auth-error" id="verify-error"></div>
 <button class="auth-btn auth-btn-primary" onclick="handleResendVerification()">Resend Email</button>
-<div class="auth-link" onclick="handleTryDifferentEmail()">Wrong email? Try a different one</div>
-<div class="auth-link" onclick="switchAuthTab('login')" style="margin-top:0.25rem;">Back to Sign In</div>
+<button class="text-button" onclick="handleTryDifferentEmail()" type="button">Wrong email? Try a different one</button>
+<button class="text-button" onclick="switchAuthTab('login')" type="button">Back to Sign In</button>
 </div>
-</div>
-</div><!-- /.gate-card -->
-</div><!-- /.gate-inner -->
-</div><!-- /#app-gate -->
+</div></section></div><footer class="site-footer"><a href="methodology.html">Explore the methodology ↗</a></footer></div>
 <!-- ══ UPGRADE MODAL — shown to signed-in users who hit a locked surface ═════ -->
 <div class="auth-overlay" id="auth-overlay" onclick="handleOverlayClick(event)">
 <div class="auth-modal" style="position:relative; width:560px;">
@@ -18983,71 +19277,71 @@ function toggleAnalyticsReadonly() {
     function _pickerEl(suffix) { return document.getElementById(_pickerTarget + '-country-' + suffix); }
     function _pickerSelection() { return _pickerTarget === 'reg' ? _regCountries : _upgradeCountries; }
 
-    function countryUniverseReady() {
-        return typeof ISO_TO_NAME === 'object' && Object.keys(ISO_TO_NAME).length > 0;
+    // Before verification only public reference names are available. Never fetch
+    // the protected RAO dataset for registration; prefer its canonical list once loaded.
+    function pickerNames() {
+        if (Object.keys(ISO_TO_NAME).length) return ISO_TO_NAME;
+        const names = { ...EXP_COUNTRY_NAMES };
+        if (names.KOS && names.UVK) delete names.UVK;
+        return names;
     }
-
-    function ensureCountryPickerData() {
-        if (countryUniverseReady()) { renderCountryPickerChips(); renderCountryPickerList(); return; }
-        const list = _pickerEl('list');
-        if (list) list.innerHTML = '<div class="country-list-empty">Loading markets…</div>';
-        if (_pickerRetry) return;
-        _pickerRetry = setInterval(() => {
-            if (!countryUniverseReady()) return;
-            clearInterval(_pickerRetry); _pickerRetry = null;
-            renderCountryPickerChips(); renderCountryPickerList();
-        }, 300);
+    function pickerGroups() {
+        if (Object.keys(ISO_TO_NAME).length && Object.keys(CONTINENTS).length) return CONTINENTS;
+        const groups = {};
+        Object.keys(pickerNames()).forEach(iso => {
+            const region = EXP_CONTINENTS[(EXP_ISO_GEO[iso] || 'eu|oth').split('|')[0]] || 'Other';
+            (groups[region] ||= []).push(iso);
+        });
+        return groups;
     }
-
+    function pickerEscape(value) { return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function countryUniverseReady() { return Object.keys(pickerNames()).length > 0; }
+    function ensureCountryPickerData() { renderCountryPickerChips(); renderCountryPickerList(_pickerEl('search')?.value || ''); }
     function renderCountryPickerList(query) {
-        const list = _pickerEl('list');
-        if (!list) return;
-        if (!countryUniverseReady()) { ensureCountryPickerData(); return; }
-        const q = (query || '').trim().toLowerCase();
-        const selected = _pickerSelection();
-        // Group by continent so a 162-row list stays navigable.
-        const groups = Object.keys(CONTINENTS).length
-            ? CONTINENTS
-            : { 'All markets': Object.keys(ISO_TO_NAME) };
-        let html = '';
-        Object.keys(groups).sort().forEach(continent => {
-            const rows = (groups[continent] || [])
-                .filter(iso => ISO_TO_NAME[iso])
-                .filter(iso => !q || ISO_TO_NAME[iso].toLowerCase().includes(q) || iso.toLowerCase().includes(q))
-                .sort((a, b) => ISO_TO_NAME[a].localeCompare(ISO_TO_NAME[b]));
+        const list = _pickerEl('list'); if (!list) return;
+        const names = pickerNames(), groups = pickerGroups(), selected = _pickerSelection();
+        const isReg = _pickerTarget === 'reg', regionEl = document.getElementById('fn-region');
+        if (isReg && regionEl) {
+            const region = regionEl.value;
+            const available = Object.keys(groups).sort();
+            regionEl.innerHTML = '<option>All regions</option>' + available.map(g => `<option>${pickerEscape(g)}</option>`).join('');
+            regionEl.value = available.includes(region) ? region : 'All regions';
+        }
+        const region = isReg ? regionEl?.value : 'All regions';
+        const only = isReg && document.getElementById('fn-selected-only')?.getAttribute('aria-pressed') === 'true';
+        const q = (query || '').trim().toLowerCase(); let count = 0, html = '';
+        Object.keys(groups).sort().forEach(group => {
+            if (region && region !== 'All regions' && group !== region) return;
+            const rows = groups[group].filter(iso => names[iso])
+                .filter(iso => !only || selected.includes(iso))
+                .filter(iso => !q || (names[iso]+' '+iso+(iso==='ARE'?' United Arab Emirates':'')).toLowerCase().includes(q))
+                .sort((a,b) => names[a].localeCompare(names[b]));
             if (!rows.length) return;
-            html += `<div class="country-list-group">${continent}</div>`;
+            html += `<div class="country-list-group">${pickerEscape(group)}</div>`;
             rows.forEach(iso => {
-                const on = selected.includes(iso);
-                html += `<div class="country-list-item${on ? ' checked' : ''}" onclick="togglePickerCountry('${iso}')">
-                    <div class="cl-box"><i class="ri-check-line"></i></div>
-                    <div>${ISO_TO_NAME[iso]}</div>
-                </div>`;
+                const on = selected.includes(iso); count++;
+                html += `<button type="button" class="country-list-item${on?' checked':''}" data-picker-country="${pickerEscape(iso)}" aria-pressed="${on}" onclick="togglePickerCountry('${iso}')"><span class="cl-box" aria-hidden="true"><i class="ri-check-line"></i></span><span>${pickerEscape(names[iso])}</span><span class="iso">${pickerEscape(iso)}</span></button>`;
             });
         });
-        list.innerHTML = html || '<div class="country-list-empty">No markets match that search</div>';
+        list.innerHTML = html || '<div class="country-list-empty">No markets match these filters.</div>';
+        if (isReg) document.getElementById('fn-result-count').textContent = count+' countr'+(count===1?'y':'ies')+' found';
     }
-
     function renderCountryPickerChips() {
-        const chips = _pickerEl('chips');
-        const count = _pickerEl('count');
-        if (!chips) return;
-        const selected = _pickerSelection();
-        chips.innerHTML = selected.map(iso => `<span class="country-chip">${(typeof ISO_TO_NAME === 'object' && ISO_TO_NAME[iso]) || iso}<i class="ri-close-line" onclick="togglePickerCountry('${iso}')"></i></span>`).join('');
-        if (count) {
-            count.textContent = selected.length
-                ? `${selected.length} market${selected.length === 1 ? '' : 's'} selected — our team will confirm your allowance`
-                : 'Select the markets you want covered';
-        }
+        const chips = _pickerEl('chips'), count = _pickerEl('count'); if (!chips) return;
+        const selected = _pickerSelection(), names = pickerNames();
+        chips.innerHTML = selected.map(iso => `<button type="button" class="country-chip" data-picker-remove="${pickerEscape(iso)}" aria-label="Remove ${pickerEscape(names[iso]||iso)}" onclick="togglePickerCountry('${iso}')">${pickerEscape(names[iso]||iso)} <span aria-hidden="true">×</span></button>`).join('');
+        if (count) count.textContent = selected.length ? `${selected.length} market${selected.length===1?'':'s'} selected` : 'Your chosen markets will appear here';
     }
-
     function togglePickerCountry(iso) {
-        const selected = _pickerSelection();
-        const i = selected.indexOf(iso);
-        if (i === -1) selected.push(iso); else selected.splice(i, 1);
-        renderCountryPickerChips();
-        const search = _pickerEl('search');
-        renderCountryPickerList(search ? search.value : '');
+        if (!Object.hasOwn(pickerNames(), iso) && !_pickerSelection().includes(iso)) return;
+        const active = document.activeElement, remove = active?.hasAttribute('data-picker-remove');
+        const focused = active?.hasAttribute('data-picker-country') || remove;
+        const scroll = _pickerEl('list')?.scrollTop || 0;
+        const selected = _pickerSelection(), at = selected.indexOf(iso);
+        if (at < 0) selected.push(iso); else selected.splice(at,1);
+        renderCountryPickerChips(); renderCountryPickerList(_pickerEl('search')?.value || '');
+        _pickerEl('list').scrollTop = scroll;
+        if (focused) (_pickerEl(remove?'chips':'list').querySelector(`[data-picker-${remove?'remove':'country'}="${iso}"]`) || _pickerEl('search'))?.focus({preventScroll:true});
     }
     function setAuthError(formId, msg) {
         document.getElementById(formId + '-error').textContent = msg;
@@ -19915,9 +20209,7 @@ const OBS=window.OBS={mapRegion:'world',mode:'map',motion:!reduced.matches,model
  schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;OBS.refresh();});},
  refresh(){
   if(!latestSlice.length)return;
-  ready=true;const year=_landscapeYear||window.LATEST_YEAR,rows=getLensSlice(year),scores=rows.map(raoOf).filter(Number.isFinite),mean=scores.length?scores.reduce((a,b)=>a+b,0)/scores.length:0;
-  const signals=rows.filter(r=>Math.abs(newsImpactOf(r))>.0005).length;
-  $('obs-overview-kpis').innerHTML=[['Markets scored',String(rows.length),`Structural vintage · ${year}`],['Global mean RAO',mean.toFixed(2),isLive()?'Live reading · 0–10':'Structural reading · 1–10'],['Leading market',rows[0]?escape(rows[0].country_name):'—',rows[0]?`${raoOf(rows[0]).toFixed(2)} RAO · ${escape(rows[0].country)}`:'Awaiting data'],['Active signals',NEWS.ok?String(signals):'—',NEWS.ok?`News layer · ${escape(NEWS.asOf||'latest')}`:'Structural baseline only']].map((m,i)=>`<div class="obs-metric"><span class="obs-metric-label">${m[0]}</span><strong class="obs-metric-value"${i===2?' style="font-size:25px;line-height:1.9"':''}>${m[1]}</strong><span class="obs-metric-foot">${m[2]}</span></div>`).join('');
+  ready=true;const year=_landscapeYear||window.LATEST_YEAR,rows=getLensSlice(year);
   $('obs-map-reading').textContent=`${year} vintage · ${isLive()?'Live, news-adjusted':'Structural baseline'} · ${rows.length} markets`;
   const dl=$('obs-country-options');if(dl.options.length!==latestSlice.length)dl.innerHTML=latestSlice.map(r=>`<option value="${escape(r.country_name)}">${escape(r.country)}</option>`).join('');
   if(previewISO)this.preview(previewISO);
@@ -19949,7 +20241,7 @@ const OBS=window.OBS={mapRegion:'world',mode:'map',motion:!reduced.matches,model
  score:row=>raoOf(row),
  toggleFilters(){const el=document.querySelector('.obs-screening-filters'),collapsed=el.classList.toggle('filters-collapsed'),b=$('obs-filter-toggle');b.setAttribute('aria-expanded',String(!collapsed));b.textContent=collapsed?'Show filters':'Hide filters';},
  getGeoChart(){return mapChart||(mapChart=new google.visualization.GeoChart($('regions_div')));},
- motionToggle(){this.motion=!this.motion;const b=$('obs-motion');b.setAttribute('aria-pressed',String(!this.motion));b.innerHTML=`<i class="ri-${this.motion?'pause':'play'}-mini-line" aria-hidden="true"></i><span>${this.motion?'Pause':'Resume'} motion</span>`;const mobile=$('obs-motion-mobile');mobile.setAttribute('aria-pressed',String(!this.motion));mobile.setAttribute('aria-label',this.motion?'Pause motion':'Resume motion');mobile.innerHTML=`<i class="ri-${this.motion?'pause':'play'}-mini-line"></i>`;this.models?.wake();}
+ motionToggle(){this.motion=!this.motion;this.models?.wake();}
 };
 // Canvas does not resolve CSS custom properties in colour strings.
 Chart.register({id:'obs-resolve-colours',beforeUpdate(chart){for(const ds of chart.data.datasets){for(const key of ['borderColor','backgroundColor','pointBackgroundColor','pointBorderColor']){const resolve=value=>typeof value==='string'&&value.startsWith('var(')?getComputedStyle(document.documentElement).getPropertyValue(value.slice(4,-1)).trim()||'#C2A56D':value;ds[key]=Array.isArray(ds[key])?ds[key].map(resolve):resolve(ds[key]);}}}});
@@ -19976,14 +20268,11 @@ map.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x
 map.addEventListener('pointerup',()=>{if(drag?.moved){const suppress=e=>{e.stopImmediatePropagation();map.removeEventListener('click',suppress,true)};map.addEventListener('click',suppress,true);setTimeout(()=>map.removeEventListener('click',suppress,true),100);}drag=null;});map.addEventListener('pointercancel',()=>drag=null);
 map.addEventListener('keydown',e=>{if(e.key==='+'||e.key==='='){e.preventDefault();OBS.zoom(1);}else if(e.key==='-'){e.preventDefault();OBS.zoom(-1);}else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)&&mapState.scale>1){e.preventDefault();mapState.x+=e.key==='ArrowLeft'?30:e.key==='ArrowRight'?-30:0;mapState.y+=e.key==='ArrowUp'?30:e.key==='ArrowDown'?-30:0;OBS.applyTransform();}});
 if(innerWidth<=700)OBS.toggleFilters();
-$('obs-motion').addEventListener('click',()=>OBS.motionToggle());reduced.addEventListener('change',()=>{OBS.motion=!reduced.matches;OBS.models?.wake();});
+reduced.addEventListener('change',()=>{OBS.motion=!reduced.matches;OBS.models?.wake();});
 document.addEventListener('keydown',e=>{if(e.key==='Tab'&&$('obs-map-card').classList.contains('is-expanded')){const controls=[...$('obs-map-card').querySelectorAll('button,input,select,[tabindex="0"]')].filter(el=>!el.disabled&&el.getClientRects().length);if(e.shiftKey&&document.activeElement===controls[0]){e.preventDefault();controls.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===controls.at(-1)){e.preventDefault();controls[0].focus();}}if(e.key==='Escape'&&$('obs-map-card').classList.contains('is-expanded'))OBS.fullscreen();if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)&&!document.body.classList.contains('gate-locked')){e.preventDefault();OBS.search();}});
 window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{if(ready&&currentTab==='overview')drawMap();OBS.applyTransform();},180);},{passive:true});
 // Add keyboard access to the existing interactive div controls, without changing their handlers.
 document.querySelectorAll('div[onclick],span[onclick]').forEach(el=>{if(el.querySelector('button,input,select,a'))return;if(!el.hasAttribute('tabindex'))el.tabIndex=0;if(!el.hasAttribute('role'))el.setAttribute('role','button');el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}});});
-$('obs-overview-kpis').innerHTML=['Markets scored','Global mean RAO','Leading market','Active signals'].map(label=>`<div class="obs-metric"><span class="obs-metric-label">${label}</span><strong class="obs-metric-value">—</strong><span class="obs-metric-foot">Awaiting authenticated data</span></div>`).join('');
-$('obs-motion').setAttribute('aria-pressed',String(!OBS.motion));
-if(reduced.matches)$('obs-motion').innerHTML='<i class="ri-play-mini-line"></i><span>Resume motion</span>';
 // Decorative images degrade gracefully when this standalone copy is outside its asset directory.
 document.querySelectorAll('img').forEach(img=>{const fallback=()=>{img.style.display='none';if(img.closest('.obs-brand')&&!img.parentElement.querySelector('.obs-logo-fallback')){const span=document.createElement('strong');span.className='obs-logo-fallback';span.textContent=img.alt||'GSU';img.after(span);}};img.addEventListener('error',fallback);if(img.complete&&!img.naturalWidth)fallback();});
 })();
@@ -20081,10 +20370,243 @@ if(renderer){
   link.addEventListener('pointerenter',()=>link.classList.remove('dock-label-dismissed'));
   link.addEventListener('focus',()=>link.classList.remove('dock-label-dismissed'));
  });
- const motion=document.getElementById('obs-motion');
- const labelMotion=()=>{const label=motion.textContent.trim();motion.setAttribute('aria-label',label);motion.title=label;};
- new MutationObserver(labelMotion).observe(motion,{childList:true,subtree:true});labelMotion();
 })();
+</script>
+<script id="fieldnotes-auth-controller">/* Fieldnotes is a presentation controller. Firebase, plan intent, verification,
+   upgrade requests and entitlement checks remain in the existing auth handlers. */
+(()=>{
+ const el=id=>document.getElementById(id), gate=el('app-gate');
+ const native={switchTab:window.switchAuthTab,selectPlan:window.selectRegPlan,emailRegister:window.handleEmailRegister,emailLogin:window.handleEmailLogin,googleLogin:window.handleGoogleLogin,reset:window.handlePasswordReset,show:window.showAppGate,hide:window.hideAppGate};
+ const copy={
+  login:['Welcome back.','Sign in to your RAO Observatory workspace.'],
+  account:['A home for your <em>research.</em>','Create your account to save your workspace.'],
+  plan:['Choose your <em>perspective.</em>','Start with the global picture, or go deeper into the markets that matter.'],
+  markets:['Make the world <em>relevant.</em>','Choose the markets you want to understand in depth.'],
+  review:['Your workspace,<br><em>ready for review.</em>','Check your details before creating your account.'],
+  reset:['A fresh start.','Enter your email address to reset your password.'],
+  verify:['One last step.<br><em>Verify your email.</em>','Activate your RAO Observatory account.']
+ };
+ const fn=window.Fieldnotes={step:'login',method:'email',busy:false,
+  sync(tab,focus=true){
+   this.step=tab==='register'?'account':tab;
+   if(tab==='register')this.method='email';
+   this.paint(focus);
+  },
+  paint(focus=true){
+   const s=this.step,register=['account','plan','markets','review'].includes(s);
+   gate.dataset.step=s;
+   el('fn-title').innerHTML=copy[s][0];el('auth-modal-subtitle').textContent=copy[s][1];
+   el('fn-product').hidden=register||s==='reset'||s==='verify';
+   el('fn-header-access').textContent=s==='login'?'Create an account':'Sign in';
+   el('fn-header-access').onclick=()=>window.switchAuthTab(s==='login'?'register':'login');
+   el('fn-progress').hidden=!register;
+   const steps=['account','plan',...(_regPlan==='personal'?['markets']:[]),'review'];
+   el('fn-progress').innerHTML=steps.map((step,i)=>`<li class="${step===s?'current':i<steps.indexOf(s)?'done':''}" ${step===s?'aria-current="step"':''}><span>${i<steps.indexOf(s)?'✓':String(i+1).padStart(2,'0')}</span>${({account:'Account',plan:'Access',markets:'Markets',review:'Review'})[step]}</li>`).join('');
+   gate.querySelectorAll('[data-fn-step]').forEach(p=>p.hidden=p.dataset.fnStep!==s);
+   el('fn-step-actions').hidden=!register||s==='account';el('fn-next').hidden=s==='review';el('reg-submit-btn').hidden=s!=='review';
+   el('reg-submit-btn').textContent=this.method==='google'?'Continue with Google':_regPlan==='free'?'Create account':'Create & request access';
+   ['free','personal','enterprise'].forEach(p=>el('plan-opt-'+p).setAttribute('aria-pressed',String(_regPlan===p)));
+   if(s==='markets'){setPickerTarget('reg');el('reg-country-picker').style.display='';ensureCountryPickerData();}
+   if(s==='review')this.review();
+   if(focus){el('fn-title').focus({preventScroll:true});gate.scrollTop=0;}
+  },
+  move(step){el('register-error').textContent='';this.step=step;this.paint();},
+  accountValid(){
+   if(this.method==='google')return true;
+   for(const id of ['reg-name','reg-email','reg-password']){const input=el(id);if(!input.value.trim()||!input.checkValidity()||(id==='reg-password'&&input.value.length<6)){if(this.step==='account'){input.reportValidity();input.focus();}return false;}}
+   return true;
+  },
+  marketsValid(){if(_regPlan==='personal'&&!_regCountries.length){setAuthError('register','Choose at least one market for your Personal plan.');return false;}return true;},
+  next(){if(this.busy)return;if(this.step==='account'){if(!this.accountValid())return;this.move('plan');}else if(this.step==='plan')this.move(_regPlan==='personal'?'markets':'review');else if(this.step==='markets'&&this.marketsValid())this.move('review');},
+  back(){if(this.busy)return;this.move(this.step==='plan'?'account':this.step==='markets'?'plan':_regPlan==='personal'?'markets':'plan');if(this.step==='account')this.method='email';},
+  edit(step){if(this.busy)return;if(step==='account')this.method='email';this.move(step);},
+  chooseGoogle(){if(this.busy)return;this.method='google';this.move('plan');},
+  terms(checked){_regTermsAccepted=checked;el('reg-terms').classList.toggle('checked',checked);el('fn-terms').checked=checked;},
+  password(button,id){const input=el(id),show=input.type==='password';input.type=show?'text':'password';button.textContent=show?'Hide':'Show';button.setAttribute('aria-label',show?'Hide password':'Show password');button.setAttribute('aria-pressed',String(show));},
+  filter(){setPickerTarget('reg');renderCountryPickerList(el('reg-country-search').value);},
+  onlySelected(){const b=el('fn-selected-only'),on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));b.textContent=on?'Show all':'Selected only';this.filter();},
+  clearMarkets(){_regCountries=[];setPickerTarget('reg');ensureCountryPickerData();},
+  review(){
+   const row=(label,text,step)=>`<div class="review-block"><button type="button" class="text-button" onclick="Fieldnotes.edit('${step}')">Edit</button><span class="eyebrow">${label}</span><p>${text}</p></div>`;
+   el('fn-review').innerHTML=row('Account',this.method==='google'?'Google account<br><span class="hint">Choose your Google account after confirming below.</span>':pickerEscape(el('reg-name').value)+'<br><span class="hint">'+pickerEscape(el('reg-email').value)+'</span>','account')+row('Access',({free:'Free',personal:'Personal',enterprise:'Enterprise'})[_regPlan],'plan')+(_regPlan==='personal'?row('Your markets · '+_regCountries.length,_regCountries.map(iso=>pickerEscape(pickerNames()[iso]||iso)).join(', '),'markets'):'');
+   el('fn-access-note').textContent=_regPlan==='free'?(this.method==='google'?'Continue with your Google account to activate Free access.':'Verify your email to activate Free access.'):(this.method==='google'?'Start with Free access while the GSU team reviews your request.':'Verify your email to start with Free access while the GSU team reviews your request.')+' No payment is taken now.';
+  },
+  async run(task){
+   if(this.busy)return;this.busy=true;gate.setAttribute('aria-busy','true');
+   const controls=[...gate.querySelectorAll('button,input,select')].filter(n=>!n.disabled);controls.forEach(n=>n.disabled=true);
+   try{await task();}finally{controls.forEach(n=>n.disabled=false);this.busy=false;gate.removeAttribute('aria-busy');}
+  },
+  async submit(){
+   if(this.busy||this.step!=='review')return;
+   if(!this.accountValid()){this.move('account');this.accountValid();return;}
+   if(!this.marketsValid()){this.move('markets');this.marketsValid();return;}
+   if(!_regTermsAccepted){setAuthError('register','Please accept the Terms of Service and Privacy Policy.');el('fn-terms').focus();return;}
+   el('register-error').textContent='';await this.run(()=>this.method==='google'?native.googleLogin():native.emailRegister());
+  },
+  async login(){if(!el('login-email').reportValidity()||!el('login-password').reportValidity())return;el('login-error').textContent='';await this.run(()=>native.emailLogin());},
+  async googleLogin(){el('login-error').textContent='';await this.run(()=>native.googleLogin());},
+  async reset(){if(!el('reset-email').reportValidity())return;el('reset-error').textContent='';el('reset-error').style.color='';await this.run(()=>native.reset());},
+  background(locked){document.querySelectorAll('.main-container,.obs-sidebar,body>header').forEach(node=>{node.inert=locked;});}
+ };
+ window.switchAuthTab=function(tab){if(fn.busy&&tab!=='verify')return;if(tab==='login'||tab==='register')el('verify-plan-note').style.display='none';native.switchTab(tab);fn.sync(tab);};
+ window.selectRegPlan=function(plan){if(fn.busy)return;native.selectPlan(plan);fn.paint(false);};
+ window.toggleRegTerms=function(){fn.terms(!_regTermsAccepted);};
+ window.handleAuthKeydown=function(event){if(event.key!=='Enter')return;event.preventDefault();if(fn.step==='login')fn.login();else if(fn.step==='reset')fn.reset();else if(fn.step==='review')fn.submit();else fn.next();};
+ window.showAppGate=function(tab){const wasHidden=gate.classList.contains('gate-hidden');native.show(tab);if(wasHidden&&!tab)window.switchAuthTab('login');fn.background(true);};
+ window.hideAppGate=function(){native.hide();fn.background(false);el('login-password').value='';el('reg-password').value='';};
+ gate.addEventListener('keydown',event=>{
+  // Dashboard shortcuts do not act on a signed-out account form.
+  event.stopPropagation();if(event.key!=='Tab')return;
+  const nodes=[...gate.querySelectorAll('a[href],button,input,select,[tabindex="0"]')].filter(n=>!n.disabled&&n.getClientRects().length&&getComputedStyle(n).visibility!=='hidden');
+  const first=nodes[0],last=nodes.at(-1);if(!first)return;
+  if(event.shiftKey&&(document.activeElement===first||document.activeElement===el('fn-title'))){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+ });
+ const logo=gate.querySelector('.brand img'),fallback=()=>{logo.hidden=true;logo.nextElementSibling.hidden=false;};logo.addEventListener('error',fallback);if(logo.complete&&!logo.naturalWidth)fallback();
+ const locked=!gate.classList.contains('gate-hidden');fn.background(locked);
+ fn.sync(el('auth-verify-form').style.display!=='none'?'verify':el('auth-register-form').style.display!=='none'?'register':'login',false);
+ if(locked)document.body.classList.add('gate-locked');
+})();
+</script>
+<dialog id="hw-figure-dialog" class="hw-figure-dialog" aria-label="Expanded research figure"><div class="hw-dialog-header"><span>Figure explorer</span><button type="button" class="hw-btn" onclick="Horizon.collapse()"><i class="ri-close-line"></i> Back to research</button></div><div id="hw-dialog-host"></div></dialog>
+<script id="horizon-workbench-controller">
+/* Presentation adapter: the existing agent, tool builders, auth checks and storage remain authoritative. */
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),ws=$('insights-workspace');
+if(!ws)return;
+const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const native={flush:window.flushPendingCharts,destroy:window.destroyChatCharts,welcome:window.showWelcomeState,newSession:window.newSession,loadSession:window.loadSession,clear:window.clearChatHistory,renderSessions:window.renderSessionsSidebar,coverage:window.renderCoverage,footnotes:window.appendWebFootnotes,entities:window.renderEntityPanel,pin:window.pinMessage,switchTab:window.switchTab};
+const state={open:false,view:'figures',history:false,figures:[],selected:null,next:0,returnFocus:null,data:false};
+const mobile=()=>matchMedia('(max-width:900px)').matches;
+function chartOf(entry){return entry?.el.querySelector('canvas')&&Chart.getChart(entry.el.querySelector('canvas'));}
+function resizeChart(entry){const chart=chartOf(entry);if(chart&&chart.canvas?.isConnected){chart.resize();chart.update('none');}}
+function sync(){
+ ws.classList.toggle('hw-research-open',state.open);
+ $('hw-research').inert=!state.open;$('hw-research').setAttribute('aria-hidden',String(!state.open));
+ $('iw-rail').classList.toggle('hw-history-open',state.history);$('iw-rail').inert=!state.history;$('iw-rail').setAttribute('aria-hidden',String(!state.history));
+ $('hw-scrim').hidden=!(state.history||(state.open&&mobile()));
+ document.querySelectorAll('[data-hw-open]').forEach(b=>b.setAttribute('aria-expanded',String(state.open)));
+ document.querySelectorAll('[data-hw-history]').forEach(b=>b.setAttribute('aria-expanded',String(state.history)));
+ for(const name of ['figures','canvas','entities','sources']){const active=state.view===name;$('hw-view-'+name).hidden=!active;$('hw-tab-'+name).setAttribute('aria-selected',String(active));$('hw-tab-'+name).tabIndex=active?0:-1;}
+ _canvasOpen=state.open&&state.view==='canvas';
+ document.querySelectorAll('.hw-chart-preview').forEach(b=>b.setAttribute('aria-expanded',String(state.open&&state.view==='figures'&&b.dataset.figure===state.selected)));
+ // Overlay drawers cover only the conversation; keep the global navigation available.
+ document.querySelector('#tab-insights .iw-main').inert=state.history||(state.open&&mobile());
+ $('hw-research').inert=!state.open||state.history;
+ requestAnimationFrame(()=>resizeChart(selected()));
+}
+function selected(){return state.figures.find(e=>e.id===state.selected);}
+function title(){const entry=listSessions().find(s=>s.id===currentSessionId),first=chatHistory.find(m=>m.role==='user');$('hw-session-title').textContent=entry?.name||first?.content?.slice(0,55)||'New conversation';}
+function restoreFocus(){const target=state.returnFocus?.isConnected?state.returnFocus:$('chat-input');if(!target.closest('[inert]'))target.focus({preventScroll:true});}
+function selectionOptions(){const select=$('hw-figure-select');select.replaceChildren();state.figures.forEach((e,i)=>{const option=document.createElement('option');option.value=e.id;option.textContent=String(i+1).padStart(2,'0')+' / '+e.title;select.appendChild(option);});select.value=state.selected||'';$('hw-figure-picker').hidden=!state.figures.length;}
+function park(entry){if(entry?.el.isConnected)$('hw-figure-store').appendChild(entry.el);}
+function prepare(entry){const canvas=entry.el.querySelector('canvas');if(canvas){const host=document.createElement('div');host.className='hw-chart-canvas-host';const size=Number.parseFloat(canvas.style.height);if(size>340&&size<1200)host.style.height=size+'px';canvas.before(host);host.appendChild(canvas);canvas.setAttribute('role','img');canvas.setAttribute('aria-label',entry.title+'. Open View data for plotted values.');}else{entry.el.classList.add('hw-html-figure');}}
+function thumbnail(entry){if(!entry.el.isConnected)return;const chart=chartOf(entry);if(!chart)return;try{chart.stop();resizeChart(entry);chart.draw();const img=document.createElement('img');img.alt='';img.src=chart.canvas.toDataURL('image/png');entry.button.querySelector('.hw-chart-thumb').replaceChildren(img);}catch{/* The labeled preview remains available if the browser cannot snapshot a canvas. */}}
+function dataTable(entry){const chart=chartOf(entry);if(!chart)return '';
+ const rows=[];const pointValue=v=>v===null||v===undefined?'—':typeof v==='number'?Number(v.toFixed(4)):String(v);
+ chart.data.datasets.forEach((ds,di)=>{(ds.data||[]).forEach((v,i)=>{if(Array.isArray(v)){rows.push([ds.label||'Series '+(di+1),chart.data.labels?.[i]??i+1,v.map(pointValue).join(' → ')]);}else if(v&&typeof v==='object'){rows.push([ds.label||'Series '+(di+1),v.label||chart.data.labels?.[i]||i+1,Object.entries(v).filter(([key,val])=>!['label','iso'].includes(key)&&typeof val!=='object').map(([key,val])=>key+': '+pointValue(val)).join(' · ')]);}else rows.push([ds.label||'Series '+(di+1),chart.data.labels?.[i]??i+1,pointValue(v)]);});});
+ return '<table><caption>Plotted values · '+esc(entry.title)+'</caption><thead><tr><th scope="col">Series</th><th scope="col">Observation</th><th scope="col">Value</th></tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map((v,i)=>i===1?'<th scope="row">'+esc(v)+'</th>':'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+}
+function showFigure(entry){
+ if(!entry)return;const old=selected();if(old&&old!==entry)park(old);state.selected=entry.id;
+ $('hw-figure-stage').replaceChildren(entry.el);$('hw-figure-empty').hidden=true;$('hw-figure-actions').hidden=false;$('hw-figure-note').hidden=false;
+ $('hw-figure-note').textContent='Read the axes and legend for units and coverage. Open Sources to review the evidence available for this conversation.';
+ state.data=false;$('hw-figure-data').hidden=true;$('hw-figure-data').replaceChildren();$('hw-data-toggle').hidden=!chartOf(entry);$('hw-data-toggle').setAttribute('aria-expanded','false');$('hw-data-toggle').innerHTML='<i class="ri-table-line"></i> View data';selectionOptions();
+ requestAnimationFrame(()=>resizeChart(entry));
+}
+function refreshSources(){
+ const dest=$('hw-source-content');dest.replaceChildren();const section=document.createElement('div');section.className='hw-source-group';const heading=document.createElement('h3');heading.textContent='Evidence behind the answer';section.appendChild(heading);
+ const current=selected();const context=(state.view==='sources'&&current?.message.isConnected)?current.message:null;
+ const messages=[...$('chat-messages-container').querySelectorAll('.chat-message.assistant')];const message=context||messages.at(-1);
+ const links=[...(message?.querySelectorAll('.chat-footnotes a')||[])];
+ // Coverage chips describe the latest response only, not an earlier selected figure.
+ if(!context||context===messages.at(-1)){const coverage=$('coverage-sources');if(coverage.childNodes.length){const chips=document.createElement('div');chips.innerHTML=coverage.innerHTML;section.appendChild(chips);}}
+ if(links.length){links.forEach((link,i)=>{try{const url=new URL(link.href);if(!['https:','http:'].includes(url.protocol))return;const a=document.createElement('a');a.href=url.href;a.target='_blank';a.rel='noopener noreferrer';const n=document.createElement('span');n.textContent='['+(i+1)+']';a.append(n,document.createTextNode(link.querySelector('.fn-title')?.textContent||link.textContent));section.appendChild(a);}catch{}});}else{const p=document.createElement('p');p.textContent=message?'This response has no linked web citations. Refer to the answer and figure labels for its dataset references.':'Dataset references and web citations appear here as your research develops.';section.appendChild(p);}
+ dest.appendChild(section);const note=document.createElement('p');note.className='hw-source-caption';note.textContent=context?'Evidence for the response associated with the selected figure.':'Evidence available for the latest response.';dest.appendChild(note);
+}
+function cleanup(){
+ if($('hw-figure-dialog').open)$('hw-figure-dialog').close();
+ state.figures=[];state.selected=null;state.data=false;
+ $('hw-figure-store').replaceChildren();$('hw-figure-stage').replaceChildren();$('hw-figure-data').replaceChildren();$('hw-figure-data').hidden=true;$('hw-figure-actions').hidden=true;$('hw-figure-note').hidden=true;$('hw-figure-empty').hidden=false;selectionOptions();
+}
+window.Horizon={
+ open(view='figures'){if(!['figures','canvas','entities','sources'].includes(view))return;const opening=!state.open;state.returnFocus=document.activeElement;state.open=true;state.history=false;state.view=view;if(view==='figures'&&!selected()&&state.figures.length)showFigure(state.figures.at(-1));if(view==='sources')refreshSources();sync();if(opening)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(state.open&&!state.history)$('hw-tab-'+state.view).focus({preventScroll:true});}));},
+ close(){if($('hw-figure-dialog').open)this.collapse();state.open=false;sync();restoreFocus();},
+ history(){state.returnFocus=document.activeElement;state.history=!state.history;if(state.history&&mobile())state.open=false;sync();if(state.history)requestAnimationFrame(()=>requestAnimationFrame(()=>{if(state.history)$('sessions-search').focus({preventScroll:true});}));else restoreFocus();},
+ closeDrawers(){if($('hw-figure-dialog').open)return;state.history=false;state.open=false;sync();restoreFocus();},
+ explore(id){const entry=state.figures.find(e=>e.id===String(id));if(!entry)return;showFigure(entry);this.open('figures');},
+ toggleData(){const entry=selected();if(!entry)return;state.data=!state.data;$('hw-figure-data').hidden=!state.data;if(state.data)$('hw-figure-data').innerHTML=dataTable(entry);$('hw-data-toggle').setAttribute('aria-expanded',String(state.data));$('hw-data-toggle').innerHTML='<i class="ri-table-line"></i> '+(state.data?'Hide data':'View data');},
+ expand(){if(!selected())return;const dlg=$('hw-figure-dialog');$('hw-dialog-host').appendChild($('hw-figure-body'));dlg.showModal();requestAnimationFrame(()=>resizeChart(selected()));},
+ collapse(){$('hw-figure-dialog').close();},
+ sources:refreshSources,
+ resize(){sync();},
+ reset:cleanup
+};
+$('hw-figure-dialog').addEventListener('close',()=>{$('hw-figure-home').appendChild($('hw-figure-body'));requestAnimationFrame(()=>resizeChart(selected()));});
+// Escape closes only the figure explorer while the native dialog is on top.
+$('hw-figure-dialog').addEventListener('keydown',e=>{if(e.key==='Escape')e.stopPropagation();});
+window.toggleInsightsRail=()=>Horizon.history();
+window.closeMobileDrawers=()=>{if(insightsTabIsActive())Horizon.closeDrawers();};
+window.toggleCanvas=()=>{if(state.open&&state.view==='canvas')Horizon.close();else Horizon.open('canvas');};
+window.switchRailPanel=panel=>panel==='entities'?Horizon.open('entities'):Horizon.history();
+window.pinMessage=function(btn){native.pin(btn);Horizon.open('canvas');};
+window.renderEntityPanel=function(text){native.entities(text);$('entity-panel').style.display='block';document.querySelectorAll('#entity-list .entity-chip.country').forEach(el=>{el.tabIndex=0;el.setAttribute('role','button');el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}};});};
+window.renderCoverage=function(...args){const result=native.coverage.apply(this,args);if(state.view==='sources')refreshSources();return result;};
+window.appendWebFootnotes=function(...args){const result=native.footnotes.apply(this,args);if(state.view==='sources')refreshSources();return result;};
+window.renderSessionsSidebar=function(...args){const result=native.renderSessions.apply(this,args);title();document.querySelectorAll('#sessions-list .session-item').forEach(el=>{el.tabIndex=0;el.setAttribute('role','button');el.onkeydown=e=>{if(e.target===el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();el.click();}};});return result;};
+window.destroyChatCharts=function(){native.destroy();cleanup();};
+window.flushPendingCharts=function(bubble){
+ if(!_pendingChartEls.length||!bubble?.closest('.chat-message'))return native.flush(bubble);
+ native.flush(bubble);const message=bubble.closest('.chat-message'),panel=message.nextElementSibling;
+ if(!panel?.classList.contains('chat-chart-panel'))return;
+ const elements=[...panel.querySelectorAll('.chat-chart-wrapper')],calls=[..._lastRenderedChartCalls];panel.classList.add('hw-preview-panel');
+ const previews=elements.map((el,i)=>{
+  const call=calls[i]||{},type=call.args?.chart_type||'research figure';
+  const entry={id:'hw-figure-'+(++state.next),el,call,message,title:el.querySelector('.chat-chart-title')?.textContent||type.replace(/_/g,' ')};
+  prepare(entry);$('hw-figure-store').appendChild(el);
+  const button=document.createElement('button');entry.button=button;button.type='button';button.className='hw-chart-preview';button.dataset.figure=entry.id;button.setAttribute('aria-controls','hw-research');button.setAttribute('aria-expanded','false');button.setAttribute('aria-label','Explore figure: '+entry.title);
+  button.innerHTML='<span class="hw-chart-thumb" aria-hidden="true"><i class="ri-'+(el.querySelector('canvas')?'bar-chart-grouped':'layout-grid')+'-line"></i></span><span class="hw-chart-copy"><strong>'+esc(entry.title)+'</strong><small>'+esc(type.replace(/_/g,' '))+'</small><span>Explore figure <i class="ri-arrow-right-line"></i></span></span>';
+  button.onclick=()=>Horizon.explore(entry.id);state.figures.push(entry);requestAnimationFrame(()=>requestAnimationFrame(()=>thumbnail(entry)));return button;
+ });panel.replaceChildren(...previews);selectionOptions();
+ // Keep a previously selected figure in place when a new response arrives.
+ if(state.open&&state.view==='figures'&&!selected())showFigure(state.figures.at(-1));
+};
+const art=`<svg class="hw-horizon-art" viewBox="0 0 480 420" fill="none" aria-hidden="true"><g stroke="#a4b4c9" stroke-opacity=".45"><ellipse cx="254" cy="240" rx="191" ry="83" transform="rotate(-25 254 240)"/><ellipse cx="254" cy="240" rx="210" ry="100" transform="rotate(-25 254 240)"/><path fill="#8da8bc12" d="m145 177 144-81 94 66-145 89Z"/><path d="m145 177 0 103 93 65 145-88V162M238 251v94M145 202l93 66 145-89M145 228l93 66 145-89M145 255l93 66 145-89"/><path stroke="#c2a56d" stroke-opacity=".8" d="m170 136 122-68 96 66-123 77Z"/><path d="M292 68v29m-27 114v102"/></g><g fill="#c2a56d"><circle cx="170" cy="136" r="3"/><circle cx="383" cy="257" r="3"/><circle cx="145" cy="280" r="2"/></g></svg>`;
+window.showWelcomeState=function(){
+ if(state.figures.length){native.destroy();cleanup();}
+ const prompts=[['Compare India and Brazil across all pillars','Compare India & Brazil','bar-chart-grouped'],['Analyse Singapore’s RAO trajectory from 2020 to 2025','Follow a market’s trajectory','line-chart'],['Screen markets by opportunity and stability, and explain the trade-offs.','Screen opportunity & stability','global']];
+ $('chat-messages-container').innerHTML='<div class="chat-welcome" id="chat-welcome">'+art+'<div class="hw-welcome-eyebrow">RAO INTELLIGENCE ASSISTANT</div><h1 class="chat-welcome-title">The world is complex.<br><em>Start a conversation.</em></h1><p class="chat-welcome-sub">Explore a market. Compare its fundamentals. Follow the evidence wherever your research leads.</p><div class="chat-welcome-pills"></div><div class="hw-welcome-links"><button type="button" onclick="toggleTplDropdown()">Use a research template</button><button type="button" onclick="toggleInsightsRail()">Your conversations</button></div></div>';
+ const list=document.querySelector('#chat-welcome .chat-welcome-pills');prompts.forEach(([query,label,icon])=>{const b=document.createElement('button');b.type='button';b.className='chat-welcome-pill';b.innerHTML='<i class="ri-'+icon+'-line"></i><span>'+label+'</span><span aria-hidden="true">↗</span>';b.onclick=()=>sendWelcomeQuery(query);list.appendChild(b);});const illustration=ws.querySelector('.hw-horizon-art');if(illustration&&window.OBS?.motion===false)illustration.style.animationPlayState='paused';title();
+};
+for(const [name,original] of [['newSession',native.newSession],['clearChatHistory',native.clear],['loadSession',native.loadSession]])window[name]=function(...args){const result=original.apply(this,args);state.history=false;state.open=false;sync();title();refreshSources();const entityText=name==='loadSession'?([...chatHistory].reverse().find(m=>m.role==='assistant')?.content||''):'';renderEntityPanel(entityText);return result;};
+window.switchTab=function(...args){const result=native.switchTab.apply(this,args);if(args[0]!=='insights'&&$('hw-figure-dialog').open)Horizon.collapse();if(args[0]==='insights')requestAnimationFrame(()=>{sync();viewport();});return result;};
+// Keep layout changes local, including browser zoom, panel transitions and mobile keyboards.
+if(typeof ResizeObserver!=='undefined')new ResizeObserver(()=>requestAnimationFrame(()=>resizeChart(selected()))).observe($('hw-figure-stage'));
+ws.addEventListener('transitionend',e=>{if(e.propertyName==='grid-template-columns')resizeChart(selected());});
+window.addEventListener('resize',()=>sync());
+function viewport(){if(!insightsTabIsActive())return;const v=window.visualViewport;if(v&&innerHeight-v.height>150&&document.activeElement===$('chat-input')){$('tab-insights').style.bottom=Math.max(0,innerHeight-v.height-v.offsetTop)+'px';}else $('tab-insights').style.removeProperty('bottom');}
+window.visualViewport?.addEventListener('resize',viewport);$('chat-input').addEventListener('blur',viewport);
+// Drawer focus trap and keyboard navigation of the four research views.
+ws.addEventListener('keydown',e=>{const tab=e.target.closest('[role=tab]');if(tab&&['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){const tabs=[...ws.querySelectorAll('.hw-pane-tabs [role=tab]')],i=tabs.indexOf(tab),next=e.key==='Home'?0:e.key==='End'?3:(i+(e.key==='ArrowRight'?1:3))%4;e.preventDefault();tabs[next].click();tabs[next].focus();}
+ if(e.key==='Tab'&&(state.history||(state.open&&mobile()))){const panel=state.history?$('iw-rail'):$('hw-research');const nodes=[...panel.querySelectorAll('button,input,select,a[href],[tabindex="0"]')].filter(n=>!n.disabled&&n.getClientRects().length&&!n.closest('[hidden]'));if(!nodes.length)return;const first=nodes[0],last=nodes.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
+});
+document.addEventListener('click',e=>{const details=document.querySelector('.hw-export');if(!details.contains(e.target)||e.target.closest('.hw-export-menu button'))details.open=false;});
+// Keep PDF export equivalent to the existing full-figure conversation export.
+let printLocations=[];
+window.addEventListener('beforeprint',()=>{
+ if(!insightsTabIsActive())return;
+ printLocations=state.figures.filter(e=>e.button.isConnected).map(entry=>({entry,parent:entry.el.parentNode,next:entry.el.nextSibling}));
+ for(const {entry} of printLocations){entry.button.after(entry.el);resizeChart(entry);}
+});
+window.addEventListener('afterprint',()=>{
+ for(const {entry,parent,next} of printLocations){if(parent?.isConnected){parent.insertBefore(entry.el,next?.parentNode===parent?next:null);resizeChart(entry);}}
+ printLocations=[];
+});
+new MutationObserver(()=>{$('chat-send-btn').setAttribute('aria-label',$('chat-send-btn').querySelector('.ri-stop-fill')?'Stop generation':'Send message');}).observe($('chat-send-btn'),{childList:true,subtree:true});
+new MutationObserver(()=>{if(document.body.classList.contains('gate-locked')){if($('hw-figure-dialog').open)Horizon.collapse();state.history=false;state.open=false;sync();}}).observe(document.body,{attributes:true,attributeFilter:['class']});
+sync();refreshSources();
+})();
+
 </script>
 </body>
 </html>
