@@ -14521,6 +14521,7 @@ function closeNewsMethodology() {
 /* ==== config (4291-4306) ==== */
 // ===== AGENT CONFIG =====
 const GEMINI_STREAM_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-stream';
+const HKU_CHAT_URL = 'https://gsu-gate.guduruadip.workers.dev/hku-chat';
 const SEARCH_WORKER_URL = 'https://gsu-gate.guduruadip.workers.dev';
 // Computed, not hardcoded — it lands in the system prompt and the brief header,
 // so a stale literal makes the assistant confidently wrong about what "now" is.
@@ -14951,11 +14952,17 @@ async function runAgentLoop(userText, onTextChunk = null) {
         ...recentHistory
     ];
 
+    // Hybrid models ("hku-*"): tool-calling always runs on Gemini — the HKU
+    // gateway's models are only ever asked for a final, no-tools answer once
+    // the loop below has finished gathering data (see callHkuFinalAnswer).
+    const hkuFinalModel = selectedModel.startsWith('hku-') ? selectedModel.slice(4) : null;
+    const toolModel = hkuFinalModel ? 'gemini-3.8-flash' : selectedModel;
+
     for (let step = 0; step < MAX_AGENT_STEPS; step++) {
         // Step 0 is kept short to push the model straight into tool calls, but
         // not so short that a multi-country retrieval plan gets truncated.
         const maxTok = step === 0 ? 1500 : 8000;
-        const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok, onTextChunk);
+        const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok, onTextChunk, toolModel);
 
         if (response.tool_calls && response.tool_calls.length > 0) {
             const toolResults = [];
@@ -14984,23 +14991,28 @@ async function runAgentLoop(userText, onTextChunk = null) {
             messages = [...messages, response, ...toolResults];
             updateChatStatus('thinking', 'Synthesizing…');
         } else {
-            const reply = response.content || 'No response received.';
+            const reply = hkuFinalModel
+                ? (await callHkuFinalAnswer(messages, hkuFinalModel)).content || 'No response received.'
+                : (response.content || 'No response received.');
             addTraceStep('respond', reply.slice(0, 100) + (reply.length > 100 ? '…' : ''), reply);
             return reply;
         }
     }
     // Fallback final call if loop exhausted without direct response
     addTraceStep('respond', 'Generating final response…');
-    const final = await callGroqAPIAgent(messages, null, 8000, onTextChunk);
+    const final = hkuFinalModel
+        ? await callHkuFinalAnswer(messages, hkuFinalModel)
+        : await callGroqAPIAgent(messages, null, 8000, onTextChunk, toolModel);
     return final.content || 'Analysis complete.';
 }
 
-async function callGroqAPIAgent(messages, tools = null, maxTokens = 8000, onTextChunk = null) {
-    const isGemini = selectedModel.startsWith('gemini-');
-    if (isGemini) return callGeminiStreaming(messages, tools, maxTokens, onTextChunk);
+async function callGroqAPIAgent(messages, tools = null, maxTokens = 8000, onTextChunk = null, modelOverride = null) {
+    const model = modelOverride || selectedModel;
+    const isGemini = model.startsWith('gemini-');
+    if (isGemini) return callGeminiStreaming(messages, tools, maxTokens, onTextChunk, model);
 
     // Groq / non-Gemini path (unchanged)
-    const body = { model: selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
+    const body = { model, messages, temperature: 0.2, max_tokens: maxTokens };
     if (tools && tools.length) { body.tools = tools; body.tool_choice = 'auto'; }
     const response = await fetch(WORKER_URL, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
@@ -15016,8 +15028,31 @@ async function callGroqAPIAgent(messages, tools = null, maxTokens = 8000, onText
     return msg;
 }
 
-async function callGeminiStreaming(messages, tools, maxTokens, onTextChunk) {
-    const body = { model: selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
+// Final-answer-only call to an HKU-gated model (gpt-5-mini via Azure OpenAI,
+// or claude-sonnet-5 via Bedrock Converse — see gsu-gate's /hku-chat route).
+// Never passed `tools` — the tool-calling loop that produced `messages` up to
+// this point always runs on Gemini; this call only synthesizes the reply the
+// user reads from what's already been gathered.
+async function callHkuFinalAnswer(messages, hkuModel) {
+    const finalMessages = [
+        ...messages,
+        { role: 'system', content: 'All research and tool calls needed for this turn are already complete and appear above. Do not call or describe calling any tool. Using only the information already gathered above, write the final answer to the user\'s most recent question now, following the formatting and analytical standards given in the earlier system instructions.' }
+    ];
+    const body = { model: hkuModel, messages: finalMessages, max_tokens: 4000, temperature: 0.3 };
+    const response = await fetch(HKU_CHAT_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        signal: _abortController ? _abortController.signal : undefined
+    });
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    return data.choices?.[0]?.message || { content: 'No response.' };
+}
+
+async function callGeminiStreaming(messages, tools, maxTokens, onTextChunk, modelOverride = null) {
+    const body = { model: modelOverride || selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
     if (tools && tools.length) body.tools = tools;
     const response = await fetch(GEMINI_STREAM_URL, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
@@ -15459,6 +15494,10 @@ const CHAT_MODELS = [
     { id: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Lite', desc: 'Fastest · Quick lookups',            staffOnly: false },
     { id: 'gemini-3.8-flash',      label: 'Gemini 3.8',      desc: 'Balanced · Better reasoning',        staffOnly: false },
     { id: 'openai/gpt-oss-120b',   label: 'GPT OSS 120B',    desc: 'Most capable · No streaming',        staffOnly: true  },
+    { id: 'hku-gpt-5-mini',       label: 'GPT-5 mini (HKU)', desc: 'Hybrid · Gemini tools, GPT-5 mini answer · No streaming', staffOnly: true, directorOnly: true },
+    { id: 'hku-gpt-5.5',          label: 'GPT-5.5 (HKU)',   desc: 'Hybrid · Gemini tools, GPT-5.5 answer · 3 req/min cap · No streaming', staffOnly: true, directorOnly: true },
+    { id: 'hku-claude-sonnet-5', label: 'Claude Sonnet 5 (HKU)', desc: 'Hybrid · Gemini tools, Claude answer · 3 req/min cap · No streaming', staffOnly: true, directorOnly: true },
+    { id: 'hku-claude-opus-4.6', label: 'Claude Opus 4.6 (HKU)', desc: 'Hybrid · Gemini tools, Opus answer · 3 req/min cap · No streaming', staffOnly: true, directorOnly: true },
     { id: 'gemini-3.7-flash',      label: 'Gemini 3.7',      desc: 'Older model · superseded by 3.8',    staffOnly: false, legacy: true },
     { id: 'gemini-3.6-flash',      label: 'Gemini 3.6',      desc: 'Older model · superseded by 3.8',    staffOnly: false, legacy: true },
     { id: 'gemini-3.5-flash',      label: 'Gemini 3.5',      desc: 'Older model · superseded by 3.8',    staffOnly: false, legacy: true },
@@ -15466,7 +15505,8 @@ const CHAT_MODELS = [
 
 function availableChatModels() {
     const staff = typeof isEmployee === 'function' && isEmployee();
-    return CHAT_MODELS.filter(m => staff || !m.staffOnly);
+    const director = typeof isDirector === 'function' && isDirector();
+    return CHAT_MODELS.filter(m => (!m.directorOnly || director) && (staff || !m.staffOnly));
 }
 
 function renderModelMenu() {
