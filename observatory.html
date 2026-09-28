@@ -5759,6 +5759,27 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 @media(max-width:900px){.hw-research{grid-area:auto}}
 
 </style>
+<style id="editorial-charts-design">
+/* Editorial figures. The geographic heatmap and its controls are deliberately excluded. */
+.observatory .ed-figure,.observatory #obs-league .bento-cell,.observatory .obs-extra-grid .bento-cell,.observatory .obs-regional>.bento-cell,.observatory #analysis-content>.analysis-card,.observatory #obs-analysis-relative-position>.analysis-card,.observatory :is(.waterfall-panel,.differential-panel,.pillar-comparison){border-width:1px 0 0;border-radius:0;background:linear-gradient(135deg,#2a354122,transparent);box-shadow:none;backdrop-filter:none;overflow:visible}
+.observatory .ed-figure:before{display:none}.observatory .ed-figure:hover{box-shadow:none;transform:none}
+.observatory :is(.ed-figure,#obs-league .bento-cell,.obs-extra-grid .bento-cell,.obs-regional>.bento-cell)>:is(.bento-label,.card-title),.ed-figure>.chat-chart-title{font:400 clamp(22px,2vw,29px)/1.3 var(--font-head);letter-spacing:-.025em;text-transform:none;color:#eeeae0;padding:24px 20px 16px;border:0;margin:0}
+.observatory .obs-overview-grid{gap:34px!important}.observatory #obs-trends{grid-template-columns:1fr!important}.observatory #obs-trends .bento-cell>div{height:330px!important;min-height:300px}.observatory .obs-frontier-chart{height:300px;padding-top:12px}.observatory .rao-timeseries-wrap{height:330px!important}.observatory #obs-analysis-relative-position{gap:30px!important;margin-top:16px}.observatory .analysis-split-row{gap:28px!important}.ed-chart-caption{font:10px/1.8 var(--font-minor);color:#a9b5c6;margin:16px 20px 22px;padding-top:14px;border-top:1px solid #b4c5d822}
+.observatory #obs-league .rank-item{position:relative;padding:15px 18px;background:none!important;gap:13px}.observatory #obs-league .rank-country{font-size:12px;min-width:90px}.observatory #obs-league .rank-number{font-size:10px;width:22px;color:#a9b5c6}.observatory #obs-league .rank-score{font-size:12px}.ed-rank-stem{height:3px;flex:1;max-width:30%;min-width:25px;background:#afc4db12;position:relative}.ed-rank-stem:before{content:'';display:block;width:var(--score);height:100%;background:#c2a56d99}.ed-rank-stem:after{content:'';position:absolute;left:var(--score);top:50%;width:6px;height:6px;background:#c2a56d;border-radius:50%;transform:translate(-50%,-50%)}
+.re-card-left{padding:24px!important;gap:12px!important}.re-card-bar-ctr{height:36px;background:none;overflow:visible}.re-card-bar-fill{height:3px!important;top:auto!important;bottom:0;border-radius:0}.re-card-bar-fill:after,.obs-regime-track>span:after{content:'';position:absolute;right:0;top:-2px;width:7px;height:7px;border-radius:50%;background:inherit}.re-card-bar-text{padding:0 0 10px}.re-card-bar-range{margin-top:6px;font-size:9px}.obs-regime-track>span{position:relative}.obs-regime-row{padding:20px 0}.re-sub-card{background:none}
+#country-norm-vars-table td{padding-top:10px!important;padding-bottom:10px!important}#country-norm-vars-table td:nth-child(2)>div{height:3px!important;overflow:visible!important;position:relative}#country-norm-vars-table td:nth-child(2)>div>div{border-radius:0!important;position:relative}.ed-reference-tick{position:absolute;top:-5px;height:13px;width:1px;background:#d6dfe5;pointer-events:none}
+.ed-gauge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 18px;padding:15px 20px}.ed-gauge{min-width:0;text-align:center}.ed-gauge-plot{position:relative;height:115px}.ed-gauge h4{font:10px/1.5 var(--font-minor);font-weight:400;color:#c8d1dc;margin:8px 0}.ed-gauge-plot canvas{max-width:100%}.ed-decomp-plot{position:relative;height:240px;margin:0 20px 10px}.ed-tdm-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:23px}.ed-tdm-gauge svg{width:100%;height:94px;display:block}.ed-tdm-gauge{text-align:center}.ed-tdm-gauge strong{display:block;font:10px/1.5 var(--font-minor);color:#cbd3df}.ed-tdm-gauge p{font:9px/1.6 var(--font-minor);color:#a9b5c6;margin:8px 0 0}
+#tab-insights .chat-chart-wrapper.ed-figure,.hw-figure-dialog .chat-chart-wrapper.ed-figure{background:none;border:0;box-shadow:none;padding:0}.hw-chart-preview{border-radius:0!important;border-width:1px 0!important;background:linear-gradient(135deg,#2a354133,transparent)!important;box-shadow:none!important}.hw-chart-copy strong{font-size:23px!important}.hw-chart-canvas-host{min-width:0}.ed-gauge .hw-chart-canvas-host{height:130px!important;min-height:0!important}.hw-figure-dialog .ed-gauge-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.hw-figure-dialog .ed-gauge .hw-chart-canvas-host{height:180px!important}.ed-library-link{margin:12px 20px;font:10px var(--font-minor);color:#cfb785;background:none;border:0;border-bottom:1px solid #c2a56d55;padding:9px 0;cursor:pointer}
+#ed-library{color:#eeeae0;background:#192333;border:1px solid #c2a56d55;border-radius:4px;padding:0;width:min(1060px,calc(100vw - 30px));max-height:90dvh;box-shadow:0 25px 100px #0008}#ed-library::backdrop{background:#080f1ace}#ed-library[open]{display:flex;flex-direction:column}.ed-library-head{display:flex;justify-content:space-between;align-items:start;padding:26px 30px;border-bottom:1px solid #adc1d822;gap:20px}.ed-library-head h2{font:32px/1.2 var(--font-head);margin:6px 0 10px}.ed-library-head p{font:11px/1.8 var(--font-minor);color:#a9b5c6;margin:0;max-width:650px}.ed-library-head small{color:#c2a56d;font:9px var(--font-mono);letter-spacing:.14em}.ed-library-body{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:0;overflow:auto}.ed-library-list{border-right:1px solid #adc1d822;padding:20px 16px;overflow:auto;max-height:62dvh}.ed-library-list h3{font:9px var(--font-mono);text-transform:uppercase;letter-spacing:.13em;color:#a9b5c6;margin:18px 10px 10px}.ed-library-list button{width:100%;text-align:left;font:11px/1.5 var(--font-minor);background:none;border:0;border-left:2px solid transparent;color:#cbd4de;padding:11px 10px;cursor:pointer}.ed-library-list button[aria-pressed=true]{border-left-color:#c2a56d;background:#c2a56d11;color:#e1c994}.ed-library-detail{padding:24px 30px;overflow:auto;min-width:0;max-height:62dvh}.ed-library-detail h3{font:27px/1.25 var(--font-head);margin:0 0 10px}.ed-library-detail p{font:11px/1.8 var(--font-minor);color:#a9b5c6}.ed-library-fields{display:flex;gap:13px;flex-wrap:wrap;margin:22px 0}.ed-library-fields label{font:9px var(--font-minor);color:#a9b5c6;flex:1;min-width:130px}.ed-library-fields select{display:block;width:100%;margin-top:8px;color:#eeeae0;background:#233049;border:1px solid #adc1d833;padding:10px;font:11px var(--font-minor);min-height:42px;border-radius:2px}.ed-library-fields label[hidden]{display:none}.ed-library-actions{display:flex;gap:12px;margin:18px 0;flex-wrap:wrap}#ed-add{background:#c2a56d;color:#18212d;border-color:#c2a56d}#ed-add:disabled{opacity:.4;cursor:not-allowed}#ed-library-status{min-height:20px;color:#d3bb8e;font:11px/1.8 var(--font-minor)}#ed-preview{min-width:0}#ed-preview .chat-chart-title{display:none}.ed-preview-plot{position:relative;height:320px;min-width:0}.ed-figure canvas{display:block}.ed-library-close{background:none;color:#cad2dd;border:1px solid #adc1d833;min-height:38px;min-width:38px;font:22px var(--font-body);cursor:pointer}
+@media(max-width:700px){.observatory .obs-overview-grid{gap:24px!important}.observatory #obs-trends .bento-cell>div{height:290px!important}.observatory .ed-figure canvas{height:100%!important}.observatory .ed-figure>.card-title,.observatory .ed-figure>.bento-label{padding:21px 14px 16px;font-size:23px}.observatory .ed-rank-stem{max-width:20%;min-width:20px}.observatory #obs-league .rank-item{padding:14px 10px;gap:9px}.ed-chart-caption{margin:15px 14px;font-size:9px}.ed-tdm-grid{padding:16px;gap:18px}.ed-library-head{padding:22px 19px}.ed-library-head h2{font-size:28px}.ed-library-body{display:block}.ed-library-list{max-height:155px;border:0;border-bottom:1px solid #adc1d822;display:grid;grid-template-columns:1fr 1fr;padding:10px}.ed-library-list h3{grid-column:1/-1}.ed-library-list button{font-size:10px;padding:9px}.ed-library-detail{max-height:none;overflow:visible;padding:22px 19px}.ed-library-fields{gap:10px}.hw-figure-dialog .ed-gauge-grid{grid-template-columns:1fr 1fr}.hw-figure-dialog .ed-gauge .hw-chart-canvas-host{height:130px!important}.ed-preview-plot{height:290px}}
+/* HTML/SVG figures use the same open plates and thin, directly labelled marks. */
+#ed-library{margin:auto}.ed-gauge-plot:has(.hw-chart-canvas-host){height:auto}.re-card-bar-ctr>.score-bar-animated:not(.re-card-bar-fill){display:none}
+.observatory :is(.pillar-scorecard,.gap-analysis,.all-variables-comparison,.rank-distribution-histogram){border-radius:0;border-width:1px 0 0;background:linear-gradient(135deg,#2a354122,transparent);box-shadow:none;padding-top:24px}
+.observatory #waterfall-panel>div>div{border:0!important;border-top:1px solid #afc4db33!important;border-radius:0!important;background:transparent!important;padding:22px 12px!important}.observatory #waterfall-panel .waterfall-step{background:none!important;border-radius:0!important}.observatory #waterfall-panel .waterfall-title{font:25px var(--font-head)}.observatory #waterfall-panel .waterfall-value{font-weight:400}.observatory :is(.scorecard-country,.pillar-winner-item,.gap-item,.differential-item){background:none;border-radius:0;border-width:0 0 1px;box-shadow:none}.observatory .scorecard-medal{font-size:16px;color:#a9b5c6}.observatory .scorecard-wins{font:38px var(--font-head);color:#c2a56d}.observatory .scorecard-country.leading{border-color:#c2a56d66}.observatory .pillar-value-bar{height:3px;border-radius:0;opacity:.6!important}.observatory .regional-bar-container{height:34px;background:none;overflow:visible}.observatory .regional-bar{height:3px!important;top:auto!important;bottom:0;border-radius:0}.observatory .regional-bar-text{padding-bottom:9px}.observatory .regional-bar-container>div:last-child:not(.regional-bar-text):not(.regional-bar){display:none}.observatory .score-mini-bar{height:2px;opacity:.4}.observatory .histogram-bar{border-radius:0;background:#c2a56d99}.observatory #archetype-peers .peer-row-grid{padding-top:13px!important;padding-bottom:13px!important;background:none!important}.observatory #country-pillar-strip>div{background:transparent!important;border-width:1px 0!important}.observatory #country-pillar-strip>div>div{background:none!important;padding:20px!important}.observatory :is(#strengths-weaknesses-content,#global-benchmark,#peer-comparison,#regional-context-content) [style*="height:6px"],.observatory :is(#strengths-weaknesses-content,#global-benchmark,#peer-comparison,#regional-context-content) [style*="height: 6px"]{height:3px!important;border-radius:0!important}
+@media(prefers-reduced-motion:reduce){.ed-figure *,.re-card-bar-fill,.ed-rank-stem{transition:none!important;animation:none!important}}
+.observatory #country-norm-vars-table td:nth-child(2)>div>div:after{content:'';position:absolute;right:-2px;top:-2px;width:7px;height:7px;background:inherit;border-radius:50%}.ed-peer-stem{display:block;position:relative;height:3px;width:min(100%,180px);background:#aec1d811;margin-top:11px}.ed-peer-stem:before{content:'';display:block;width:var(--score);height:3px;background:#c2a56d99}.ed-peer-stem:after{content:'';position:absolute;left:var(--score);top:-2px;width:7px;height:7px;border-radius:50%;background:#c2a56d;transform:translateX(-50%)}
+
+</style>
 </head>
 <!-- Scroll is locked until the gate resolves, so the dashboard behind it is never
      reachable in the moment before Firebase reports the auth state. -->
@@ -5973,7 +5994,7 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 <div class="card-title">RAO Score Trajectory (2010–2025)</div>
 <div class="rao-timeseries-wrap" style="padding:0.5rem 1.2rem 1rem;position:relative;height:220px;">
 <canvas id="country-rao-timeseries"></canvas>
-</div>
+</div><p class="ed-chart-caption">RAO score · 1–10. Shading allocates the score in proportion to the four pillars; it is not a causal attribution. Dashed live readings are separate from annual observations.</p>
 </div>
 <!-- ── ROW 5: Regime History (full width) ── -->
 <div class="analysis-card" style="margin-bottom:12px;">
@@ -6855,6 +6876,7 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
   <div class="hw-session-heading"><span class="hw-eyebrow">INTELLIGENCE WORKSPACE</span><span id="hw-session-title">New conversation</span></div>
   <div class="hw-toolbar-actions">
    <button type="button" class="hw-icon" onclick="toggleInsightsRail()" aria-label="Conversation history" title="Conversation history" aria-controls="iw-rail" aria-expanded="false" data-hw-history><i class="ri-chat-history-line"></i></button>
+   <button type="button" class="hw-btn" onclick="EditorialLibrary.open()" aria-label="Chart library" title="Chart library"><i class="ri-bar-chart-box-line"></i><span>Chart library</span></button>
    <button type="button" class="hw-btn" onclick="newSession()" aria-label="New conversation"><i class="ri-add-line"></i><span>New conversation</span></button>
    <button type="button" class="hw-btn" onclick="Horizon.open('figures')" aria-label="Open research pane" aria-controls="hw-research" aria-expanded="false" data-hw-open><i class="ri-bar-chart-grouped-line"></i><span>Research</span></button>
    <details class="hw-export"><summary class="hw-icon" aria-label="Export conversation" title="Export conversation"><i class="ri-download-line"></i></summary><div class="hw-export-menu"><button type="button" onclick="exportToMarkdown()">Download Markdown</button><button type="button" onclick="exportToPDF()">Print / Save as PDF</button><button type="button" onclick="copySessionToClipboard()">Copy conversation</button></div></details>
@@ -6911,6 +6933,7 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
    <div class="hw-pane-header"><h2>Research &amp; evidence</h2><button type="button" class="hw-icon" onclick="Horizon.close()" aria-label="Close research pane" title="Close research pane"><i class="ri-close-line"></i></button></div>
    <div class="hw-pane-tabs" role="tablist" aria-label="Research views"><button type="button" role="tab" id="hw-tab-figures" aria-controls="hw-view-figures" aria-selected="true" tabindex="0" onclick="Horizon.open('figures')">Figures</button><button type="button" role="tab" id="hw-tab-canvas" aria-controls="hw-view-canvas" aria-selected="false" tabindex="-1" onclick="Horizon.open('canvas')">Canvas</button><button type="button" role="tab" id="hw-tab-entities" aria-controls="hw-view-entities" aria-selected="false" tabindex="-1" onclick="Horizon.open('entities')">Entities</button><button type="button" role="tab" id="hw-tab-sources" aria-controls="hw-view-sources" aria-selected="false" tabindex="-1" onclick="Horizon.open('sources')">Sources</button></div>
    <section class="hw-pane-view" id="hw-view-figures" role="tabpanel" aria-labelledby="hw-tab-figures">
+    <button type="button" class="ed-library-link" onclick="EditorialLibrary.open()">Choose from the chart library <i class="ri-arrow-right-line"></i></button>
     <div class="hw-figure-picker" id="hw-figure-picker" hidden><label for="hw-figure-select">CONVERSATION FIGURES</label><select id="hw-figure-select" onchange="Horizon.explore(this.value)"></select></div>
     <div class="hw-pane-scroll" id="hw-figure-home"><div id="hw-figure-body">
      <div id="hw-figure-empty" class="hw-empty"><i class="ri-line-chart-line"></i><h3>Give the evidence room.</h3><p>Charts from your conversation appear here. Choose <em>Explore figure</em> on any chart preview to examine it alongside the answer.</p></div>
@@ -7805,13 +7828,81 @@ window.addEventListener('resize', () => {
 const CHART_THEME = {
     bg: '#192030',
     gridColor: 'rgba(255,255,255,0.06)',
-    tickColor: 'rgba(255,255,255,0.5)',
-    gold: '#cba84e',
+    tickColor: '#a9b5c6',
+    gold: '#c2a56d',
     goldDim: 'rgba(203,168,78,0.18)',
     blue: 'rgba(93,140,168,0.7)',
     blueSolid: '#5d8ca8',
     font: "'JetBrains Mono', monospace"
 };
+
+/* Editorial chart language. Geometry/data, interactions and semantic regime colours remain authoritative. */
+const EDITORIAL = { gold:'#c2a56d', blue:'#7a9fbb', green:'#84a88c', rose:'#ba8386', ink:'#eeeae0', muted:'#a9b5c6', grid:'rgba(176,197,219,.07)', mono:"'JetBrains Mono', monospace" };
+function editorialChartSetup(chart) {
+    const config=chart.config, o=config.options, type=config.type;
+    if (!['line','bar','radar','scatter','bubble','doughnut','pie'].includes(type)) return;
+    chart.$editorial=true;
+    o.animation=matchMedia('(prefers-reduced-motion: reduce)').matches?false:{...(typeof o.animation==='object'?o.animation:{}),duration:380};
+    o.plugins ||= {}; if(o.plugins.legend!==false){
+        const l=o.plugins.legend ||= {}; l.labels ||= {};
+        Object.assign(l.labels,{color:EDITORIAL.muted,font:{family:EDITORIAL.mono,size:10},boxWidth:16,boxHeight:2,padding:17});
+    }
+    if(o.plugins.tooltip!==false){
+        const t=o.plugins.tooltip ||= {};
+        Object.assign(t,{backgroundColor:'#182332f5',titleColor:EDITORIAL.ink,bodyColor:'#ccd5df',borderColor:'#c2a56d55',borderWidth:1,cornerRadius:3,padding:12,titleFont:{family:EDITORIAL.mono,size:11,weight:'normal'},bodyFont:{family:EDITORIAL.mono,size:10},boxWidth:8,boxHeight:8});
+    }
+    Object.entries(o.scales||{}).forEach(([key,s])=>{
+        s.grid ||= {}; s.grid.color=EDITORIAL.grid; s.grid.drawTicks=false;
+        s.border={...(s.border||{}),display:false}; s.ticks ||= {};
+        Object.assign(s.ticks,{color:EDITORIAL.muted,font:{family:EDITORIAL.mono,size:10},padding:9});
+        if(s.title)Object.assign(s.title,{color:EDITORIAL.muted,font:{family:EDITORIAL.mono,size:10,weight:'normal'}});
+        if(key==='r'){
+            s.angleLines={...(s.angleLines||{}),color:EDITORIAL.grid};s.pointLabels ||= {};
+            Object.assign(s.pointLabels,{color:'#d0d6df',font:{family:EDITORIAL.mono,size:10},padding:12});
+            s.ticks.backdropColor='transparent';s.ticks.callback=v=>Number(v).toFixed(2);
+        } else if(s.type==='category'||(key==='x'&&['bar','line'].includes(type)&&o.indexAxis!=='y')||(key==='y'&&o.indexAxis==='y')) s.grid.display=false;
+    });
+    const sets=config.data.datasets;
+    const singleStem=type==='bar'&&o.indexAxis==='y'&&sets.length===1&&sets[0].data.every(v=>v==null||typeof v==='number')&&!Object.values(o.scales||{}).some(s=>s.stacked);
+    chart.$editorialStems=singleStem;
+    sets.forEach((d,i)=>{
+        const dt=d.type||type;
+        if(dt==='line'){
+            // Preserve area stacks, live diamonds, uncertainty boundaries and reference dashes.
+            if(d.borderWidth!==0)d.borderWidth=d.borderDash?1.35:(i===0||/rao|score/i.test(d.label||'')?2.4:1.7);
+            if(!/live/i.test(d.label||'')&&typeof d.pointRadius!=='function'&&!Array.isArray(d.pointRadius))d.pointRadius=0;
+            d.pointHoverRadius=5;d.pointHitRadius=9; if(d.tension!==0)d.tension=.18;
+        }
+        if(dt==='radar'){
+            d.borderWidth=i===0?2:1.5;d.pointRadius=0;d.pointHoverRadius=5;d.pointHitRadius=9;
+            if(i>0&&!d.borderDash)d.borderDash=[4,4];
+            if(typeof d.borderColor==='string'&&/^#[0-9a-f]{6}$/i.test(d.borderColor))d.backgroundColor=d.borderColor+(i===0?'19':'08');
+        }
+        if(dt==='bar'){
+            d.borderRadius=0;d.borderSkipped=false;
+            if(singleStem){d.barThickness=3;d.borderWidth=0;}
+            else if(!Object.values(o.scales||{}).some(s=>s.stacked)&&!d.data.some(Array.isArray)){d.maxBarThickness=24;d.categoryPercentage=.72;d.barPercentage=.7;}
+        }
+        if(dt==='doughnut'){d.borderWidth=2;d.borderColor='#192333';d.hoverOffset=4;if(!o.cutout)o.cutout='78%';}
+    });
+    if(singleStem){o.interaction={...(o.interaction||{}),mode:'nearest',axis:'y',intersect:false};if(o.plugins.tooltip){o.plugins.tooltip.mode='nearest';o.plugins.tooltip.axis='y';o.plugins.tooltip.intersect=false;}}
+    const lines=sets.filter(d=>(d.type||type)==='line'&&d.borderWidth!==0&&!/live/i.test(d.label||''));
+    chart.$editorialEnds=type==='line'&&lines.length<=4&&lines.length>0;
+    if(chart.$editorialEnds||singleStem){const p=o.layout?.padding;o.layout ||= {};o.layout.padding=typeof p==='number'?{top:p,bottom:p,left:p,right:Math.max(p,45)}:{...(p||{}),right:Math.max(p?.right||0,45)};}
+    const canvas=chart.canvas;canvas.setAttribute('role','img');
+    const card=canvas.closest('.bento-cell,.analysis-card,.chart-container,.chat-chart-wrapper,.waterfall-panel');
+    if(card&&!card.closest('#obs-map-card')){card.classList.add('ed-figure');const heading=card.querySelector('.card-title,.bento-label,.chat-chart-title');if(!canvas.hasAttribute('aria-label'))canvas.setAttribute('aria-label',(heading?.textContent||'Research chart')+'. Hover for exact values.');}
+}
+Chart.register({id:'gsuEditorial',beforeInit:editorialChartSetup,afterDatasetsDraw(c){
+    if(!c.$editorial||!c.chartArea||!Number.isFinite(c.chartArea.right))return;
+    const {ctx,chartArea:a}=c;ctx.save();ctx.font='10px '+EDITORIAL.mono;ctx.textBaseline='middle';
+    if(c.$editorialStems){const d=c.data.datasets[0];c.getDatasetMeta(0).data.forEach((p,i)=>{const v=d.data[i];if(!Number.isFinite(v)||!Number.isFinite(p.x))return;ctx.fillStyle=typeof p.options.backgroundColor==='string'?p.options.backgroundColor:EDITORIAL.gold;ctx.beginPath();ctx.arc(p.x,p.y,3.4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#d4dce5';const txt=v.toFixed(2);ctx.textAlign=v<0?'right':'left';let x=p.x+(v<0?-9:9);if(v<0&&x-ctx.measureText(txt).width<a.left){x=p.x+9;ctx.textAlign='left';}ctx.fillText(txt,Math.min(c.width-ctx.measureText(txt).width-2,x),p.y);});}
+    if(c.$editorialEnds){const ends=[];c.data.datasets.forEach((d,i)=>{if(!c.isDatasetVisible(i)||d.borderWidth===0||/live/i.test(d.label||''))return;let n=d.data.findLastIndex(v=>Number.isFinite(v));if(n<0)return;const p=c.getDatasetMeta(i).data[n];if(p&&!p.skip&&Number.isFinite(p.y))ends.push({p,value:d.data[n],color:typeof d.borderColor==='string'?d.borderColor:EDITORIAL.ink});});ends.sort((x,y)=>x.p.y-y.p.y);ends.forEach((e,i)=>e.y=Math.max(a.top+5,e.p.y,i?ends[i-1].y+14:0));if(ends.length&&ends.at(-1).y>a.bottom)for(let i=ends.length-1;i>=0;i--)ends[i].y=Math.min(ends[i].y,a.bottom-(ends.length-1-i)*14);ends.forEach(e=>{ctx.fillStyle=e.color;ctx.textAlign='left';ctx.fillText(e.value.toFixed(2),Math.min(c.width-37,e.p.x+8),e.y);});}
+    const opt=c.options.plugins.editorialMark;
+    if(opt?.waterfall){const bars=c.getDatasetMeta(0).data,x=c.scales.x,y=c.scales.y;bars.forEach((p,i)=>{const values=opt.values;ctx.fillStyle=EDITORIAL.ink;ctx.textAlign='center';ctx.fillText((i===1||i===2?values[i]>=0?'+':'':'')+Number(values[i]).toFixed(2),p.x,Math.min(y.getPixelForValue(c.data.datasets[0].data[i][0]),p.y)-11);if(i<2&&bars[i+1]){ctx.setLineDash([3,4]);ctx.strokeStyle='#b7c7dd66';ctx.beginPath();ctx.moveTo(p.x+p.width/2,y.getPixelForValue(opt.ends[i]));ctx.lineTo(bars[i+1].x-bars[i+1].width/2,y.getPixelForValue(opt.ends[i]));ctx.stroke();ctx.setLineDash([]);}});}
+    if(opt?.gauge!=null){const p=c.getDatasetMeta(0).data[0];if(p){ctx.textAlign='center';ctx.font='29px Georgia';ctx.fillStyle=EDITORIAL.gold;ctx.fillText(Number(opt.gauge).toFixed(2),p.x,p.y-6);}}
+    ctx.restore();
+}});
 
 // Pre-computed regional means keyed by [region][year][field]
 let _regionalMeans = {};
@@ -7820,7 +7911,7 @@ let _regionalMeans = {};
 let _reOpenContinents = new Set();
 let _reOpenSubRegions = new Set();
 let _reChartInstances = {};
-const _RE_COLORS = { Africa:'#E8943A', Americas:'#2DC87A', Asia:'#4B96E8', Europe:'#E05B7A', Oceania:'#A96EDB' };
+const _RE_COLORS = { Africa:'#ba8386', Americas:'#84a88c', Asia:'#c19672', Europe:'#7a9fbb', Oceania:'#a294bd' };
 function precomputeRegionalMeans() {
     const fields = ['rao_score','pillar_opportunity','pillar_stability',
                     'pillar_absorptive_capacity','pillar_trajectory','tos_score'];
@@ -8057,9 +8148,10 @@ function _renderTop10Bottom10() {
         const mark = Math.abs(imp) > 0.0005
             ? `<span style="font-family:var(--font-mono);font-size:0.6rem;color:${impactColor(imp)};" title="News-driven move from a structural ${c.rao_score.toFixed(2)}">${impactArrow(imp)}${Math.abs(imp).toFixed(2)}</span>`
             : '';
-        return `<div class="rank-item" onclick="openCountryAnalysis('${c.country}')" style="${extraStyle || ''}">
+        return `<div class="rank-item" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openCountryAnalysis('${c.country}');}" onclick="openCountryAnalysis('${c.country}')" style="${extraStyle || ''}">
             <div class="rank-number">${numberLabel}</div>
             <div class="rank-country">${c.country_name}</div>
+            <span class="ed-rank-stem" style="--score:${Math.max(0,Math.min(100,score*10))}%" aria-hidden="true"></span>
             <div style="display:flex;align-items:center;gap:0.5rem;">
                 ${mark}
                 ${lockMark(c)}
@@ -8226,11 +8318,11 @@ function renderGlobalTimeseries() {
     if (!canvas) return;
     const years = [...new Set(panelData.map(r => r.year))].sort((a,b)=>a-b);
     const REGION_COLORS = {
-        'Africa':   '#E8943A',
-        'Americas': '#2DC87A',
-        'Asia':     '#4B96E8',
-        'Europe':   '#E05B7A',
-        'Oceania':  '#A96EDB'
+        'Africa':   '#ba8386',
+        'Americas': '#84a88c',
+        'Asia':     '#c19672',
+        'Europe':   '#7a9fbb',
+        'Oceania':  '#a294bd'
     };
 
     const globalMeans = years.map(y => {
@@ -8820,8 +8912,8 @@ function _renderRegionTimeseries(region, continent) {
             labels: years,
             datasets: [
                 { label: 'RAO Score',    data: years.map(y => _regionalMeans[region]?.[y]?.rao_score ?? null),            borderColor: color,        backgroundColor: color + '18', borderWidth: 2, tension: 0.35, spanGaps: true, pointRadius: 3, fill: true },
-                { label: 'Opportunity',  data: years.map(y => _regionalMeans[region]?.[y]?.pillar_opportunity ?? null),   borderColor: '#C2A56D',    backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [4,3], tension: 0.35, spanGaps: true, pointRadius: 0 },
-                { label: 'Stability',    data: years.map(y => _regionalMeans[region]?.[y]?.pillar_stability ?? null),     borderColor: '#607c98',    backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [4,3], tension: 0.35, spanGaps: true, pointRadius: 0 }
+                { yAxisID:'yUnit', label: 'Opportunity',  data: years.map(y => _regionalMeans[region]?.[y]?.pillar_opportunity ?? null),   borderColor: '#C2A56D',    backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [4,3], tension: 0.35, spanGaps: true, pointRadius: 0 },
+                { yAxisID:'yUnit', label: 'Stability',    data: years.map(y => _regionalMeans[region]?.[y]?.pillar_stability ?? null),     borderColor: '#607c98',    backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [4,3], tension: 0.35, spanGaps: true, pointRadius: 0 }
             ]
         },
         options: {
@@ -8832,7 +8924,8 @@ function _renderRegionTimeseries(region, continent) {
             },
             scales: {
                 x: { ticks: { color:'rgba(238,234,224,0.3)', font:{ size:10 } }, grid: { color:'rgba(255,255,255,0.04)' } },
-                y: { min:0, max:10, ticks: { color:'rgba(238,234,224,0.3)', font:{ size:10 }, stepSize:2 }, grid: { color:'rgba(255,255,255,0.04)' } }
+                yUnit: { min:0,max:1,position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Pillars · 0–1'} },
+                y: { title:{display:true,text:'RAO · 1–10'}, min:0, max:10, ticks: { color:'rgba(238,234,224,0.3)', font:{ size:10 }, stepSize:2 }, grid: { color:'rgba(255,255,255,0.04)' } }
             }
         }
     });
@@ -9414,6 +9507,8 @@ function renderScoreDecompCard(iso, year) {
             <div class="sdp-label">${label}</div>
         </div>`;
 
+    el.querySelectorAll('canvas').forEach(c=>Chart.getChart(c)?.destroy());
+    el.classList.add('ed-figure');
     el.innerHTML = `<div style="padding:0.9rem 1.4rem 1rem;">
         <div style="font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent-gold);margin-bottom:0.75rem;">Score Decomposition</div>
         <div class="score-decomp-row">
@@ -9435,6 +9530,9 @@ function renderScoreDecompCard(iso, year) {
             </div>
         </div>
     </div>`;
+    const config=editorialDecompositionConfig(row);
+    if(config){const host=document.createElement('div');host.className='ed-decomp-plot';const canvas=document.createElement('canvas');host.appendChild(canvas);el.appendChild(host);config.options={...config.options,responsive:true,maintainAspectRatio:false};registerChart(new Chart(canvas,config));}
+
 }
 
 // ── RAO v8: RAO Time Series ──────────────────────────────────────────────
@@ -9476,28 +9574,28 @@ function renderRAOTimeSeries(iso) {
                     data: pad(pillarFills.map(p => p.a)),
                     borderWidth: 0, pointRadius: 0, tension: 0.3,
                     fill: 'origin',
-                    backgroundColor: 'rgba(232,148,58,0.18)'
+                    backgroundColor: 'rgba(194,165,109,0.16)'
                 },
                 {
-                    label: 'Fragility',
+                    label: 'Stability',
                     data: pad(pillarFills.map(p => p.a + p.b)),
                     borderWidth: 0, pointRadius: 0, tension: 0.3,
                     fill: '-1',
-                    backgroundColor: 'rgba(75,150,232,0.18)'
+                    backgroundColor: 'rgba(122,159,187,0.16)'
                 },
                 {
                     label: 'Absorptive Capacity',
                     data: pad(pillarFills.map(p => p.a + p.b + p.c)),
                     borderWidth: 0, pointRadius: 0, tension: 0.3,
                     fill: '-1',
-                    backgroundColor: 'rgba(169,110,219,0.18)'
+                    backgroundColor: 'rgba(162,148,189,0.14)'
                 },
                 {
                     label: 'Trajectory',
                     data: pad(pillarFills.map(p => p.a + p.b + p.c + p.d)),
                     borderWidth: 0, pointRadius: 0, tension: 0.3,
                     fill: '-1',
-                    backgroundColor: 'rgba(45,200,122,0.18)'
+                    backgroundColor: 'rgba(132,168,140,0.14)'
                 },
                 // ── Reference lines (dotted, readable) ──
                 {
@@ -9538,12 +9636,12 @@ function renderRAOTimeSeries(iso) {
             responsive: true, maintainAspectRatio: false,
             plugins: {
                 legend: { display: true, position: 'bottom', labels: { color:'rgba(238,234,224,0.5)', font:{size:10}, boxWidth:10, padding:12,
-                    filter: item => !['Opportunity','Fragility','Absorptive Capacity','Trajectory'].includes(item.text)
+                    filter: item => !['Opportunity','Stability','Absorptive Capacity','Trajectory'].includes(item.text)
                 } },
                 tooltip: {
                     mode: 'index', intersect: false,
                     callbacks: { label: ctx => {
-                        if (['Opportunity','Fragility','Absorptive Capacity','Trajectory'].includes(ctx.dataset.label)) return null;
+                        if (['Opportunity','Stability','Absorptive Capacity','Trajectory'].includes(ctx.dataset.label)) return null;
                         return `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(2) ?? '—'}`;
                     }}
                 }
@@ -9636,55 +9734,10 @@ function renderPillarRadar(iso, year) {
 
 // ── RAO v8: TDM Panel ────────────────────────────────────────────────────
 function renderTDMPanel(iso, year) {
-    const row = getCountry(iso, year) || getLatestRow(iso);
-    if (!row) return;
-    const el = document.getElementById('tdm-panel');
-    if (!el) return;
-
-    const arc = (val, col, size=60) => {
-        const pct = Math.max(0, Math.min(1, val || 0));
-        return `<div style="position:relative;width:${size}px;height:${size}px;margin:0 auto;">
-            <svg viewBox="0 0 36 36" style="width:100%;height:100%;transform:rotate(-90deg);">
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2.5"/>
-                <circle cx="18" cy="18" r="15.9" fill="none" stroke="${col}" stroke-width="2.5"
-                    stroke-dasharray="${(pct*100).toFixed(1)} 100" stroke-linecap="round"/>
-            </svg>
-            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:${size>=70?'0.9':'0.72'}rem;color:${col};font-weight:600;">${pct.toFixed(2)}</div>
-        </div>`;
-    };
-
-    const tosScore = row.tos_score || 0;
-    const isPulse = tosScore >= 0.5;
-    const tosLabel = row.tos_signal_label || '';
-
-    const SUB_DESCS = {
-        sis: 'S-curve inflection proximity — structural acceleration signal',
-        dgi: 'Discovery gap — fundamentals vs external capital recognition',
-        rvs: 'Reform velocity — governance trend × GDELT event data'
-    };
-
-    const subCircle = (key, label, val, col) => `
-        <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;padding:0.35rem 0.5rem;flex:1;">
-            ${arc(val, col, 50)}
-            <div style="font-family:var(--font-minor);font-size:0.56rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:${col};text-align:center;">${label}</div>
-            <div style="font-family:var(--font-minor);font-size:0.5rem;color:var(--text-muted);text-align:center;line-height:1.2;">${SUB_DESCS[key].split(' — ')[0]}</div>
-        </div>`;
-
-    el.innerHTML = `<div style="display:flex;align-items:stretch;height:100%;padding:0.6rem 0.75rem;">
-        <div style="flex:0 0 46%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.45rem;padding:0.5rem 0.75rem 0.5rem 0.25rem;${isPulse?'border:1px solid rgba(194,165,109,0.28);border-radius:3px;background:rgba(194,165,109,0.05);box-shadow:0 0 14px rgba(194,165,109,0.1);':''}">
-            ${arc(tosScore, '#C2A56D', 90)}
-            <div style="font-family:var(--font-minor);font-size:0.55rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--accent-gold);text-align:center;margin-top:0.1rem;">TOS · Take-off Signal</div>
-            <div>${tosBadge(tosLabel)}</div>
-            <div style="font-family:var(--font-body);font-size:0.66rem;color:var(--text-muted);line-height:1.35;text-align:center;">Geometric mean of SIS, DGI, RVS. Scores ≥ 0.50 indicate pre-breakout status.</div>
-        </div>
-        <div style="flex:1;display:flex;flex-direction:column;justify-content:space-evenly;border-left:1px solid rgba(255,255,255,0.07);padding-left:0.6rem;gap:4px;">
-            ${subCircle('sis','SIS', row.sis_score, '#607c98')}
-            <div style="height:1px;background:rgba(255,255,255,0.05);margin:0 0.25rem;"></div>
-            ${subCircle('dgi','DGI', row.dgi_score, '#9b8fc0')}
-            <div style="height:1px;background:rgba(255,255,255,0.05);margin:0 0.25rem;"></div>
-            ${subCircle('rvs','RVS', row.rvs_score, '#5d8a72')}
-        </div>
-    </div>`;
+    const row=getCountry(iso,year)||getLatestRow(iso),el=document.getElementById('tdm-panel');if(!row||!el)return;
+    el.closest('.analysis-card')?.classList.add('ed-figure');
+    const items=[['tos_score','TOS · Take-off signal','Geometric mean of the three detection signals.'],['sis_score','SIS · Inflection','S-curve inflection proximity.'],['dgi_score','DGI · Discovery','Fundamentals vs external capital recognition.'],['rvs_score','RVS · Reform','Governance trend × GDELT event data.']];
+    el.innerHTML='<div class="ed-tdm-grid">'+items.map(([key,label,desc],i)=>{const val=row[key],ok=editorialFinite(val),n=ok?Math.max(0,Math.min(1,val)):0;return `<div class="ed-tdm-gauge"><svg viewBox="0 0 160 92" role="img" aria-label="${label}: ${ok?val.toFixed(3):'unavailable'}, 0 to 1"><path d="M 14 80 A 66 66 0 0 1 146 80" pathLength="100" fill="none" stroke="rgba(176,197,219,.09)" stroke-width="6"/><path d="M 14 80 A 66 66 0 0 1 146 80" pathLength="100" fill="none" stroke="${EDITORIAL_COLORS[i]}" stroke-width="6" stroke-dasharray="${n*100} 100"/><text x="80" y="77" text-anchor="middle" fill="${EDITORIAL_COLORS[i]}" font-family="Georgia,serif" font-size="29">${ok?val.toFixed(2):'—'}</text></svg><strong>${label}</strong><p>${desc}</p></div>`;}).join('')+'</div><p class="ed-chart-caption">Normalized scores · 0–1. TOS ≥ 0.50 indicates pre-breakout status. '+tosBadge(row.tos_signal_label||'')+'</p>';
 }
 
 // ── RAO v8: Norm Variable Breakdown (table style) ────────────────────────
@@ -9702,7 +9755,7 @@ function renderNormVarBreakdown(iso, year) {
 
     const globalMeans = {};
     PILLAR_GROUPS.forEach(g => g.vars.forEach(v => {
-        const vals = latestSlice.map(r => r[v]).filter(x => x != null && !isNaN(x));
+        const vals = getSlice(year).map(r => r[v]).filter(x => x != null && !isNaN(x));
         globalMeans[v] = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0.5;
     }));
 
@@ -9731,7 +9784,7 @@ function renderNormVarBreakdown(iso, year) {
             const lockIcon  = blurred ? ' <i class="ri-lock-2-line" style="font-size:0.58rem;color:var(--text-muted);margin-left:0.3rem;cursor:help;" title="Limited Preview: not included in BRICS Summit access. Available on Personal and Enterprise plans."></i>' : '';
             return `<tr style="border-bottom:1px solid rgba(255,255,255,0.03);" onmouseenter="this.style.background='rgba(255,255,255,0.02)'" onmouseleave="this.style.background=''">
                 <td style="padding:0.45rem 1rem 0.45rem 1.4rem;font-family:var(--font-minor);font-size:0.68rem;color:var(--w65);">${NORM_VAR_LABELS[v]||v}${lockIcon}</td>
-                <td style="padding:0.45rem 0.5rem;width:42%;"><div style="height:6px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;${barBlur}"><div style="width:${barW}%;height:100%;background:${barColor};border-radius:2px;transition:width 0.4s;"></div></div></td>
+                <td style="padding:0.45rem 0.5rem;width:42%;"><div style="height:6px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;${barBlur}"><div style="width:${barW}%;height:100%;background:${barColor};border-radius:2px;transition:width 0.4s;"></div>${blurred ? '' : `<span class="ed-reference-tick" style="left:${Math.max(0,Math.min(100,avg*100))}%" title="Global mean: ${avg.toFixed(3)}"></span>`}</div></td>
                 <td style="padding:0.45rem 0.75rem;font-family:var(--font-mono);font-size:0.68rem;color:${valColor};text-align:right;white-space:nowrap;">${valDisp}</td>
                 <td style="padding:0.45rem 1rem 0.45rem 0.25rem;font-family:var(--font-mono);font-size:0.65rem;color:${deltaCol};text-align:right;white-space:nowrap;">${deltaDisp}</td>
             </tr>`;
@@ -9743,7 +9796,7 @@ function renderNormVarBreakdown(iso, year) {
         </tr>${varRows}`;
     }).join('');
 
-    el.innerHTML = `<div style="overflow-x:auto;">
+    el.innerHTML = `<p class="ed-chart-caption">Normalized inputs · 0–1. Thin markers show global means for the selected year. Restricted inputs remain hidden.</p><div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;">
             <thead><tr style="border-bottom:1px solid var(--border-subtle);">
                 <th style="padding:0.5rem 1rem 0.5rem 1.4rem;font-family:var(--font-minor);font-size:0.55rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);text-align:left;font-weight:400;">Variable</th>
@@ -9771,7 +9824,7 @@ function renderArchetypePeers(iso, year) {
         const isThis = p.country === iso;
         return `<div class="peer-row-grid" style="display:grid;grid-template-columns:24px 1fr 60px 60px;align-items:center;gap:0.75rem;padding:0.5rem 1.2rem;border-bottom:1px solid var(--border-subtle);${isThis?'background:rgba(194,165,109,0.06);':''}" onclick="openCountryAnalysis('${p.country}')">
             <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${i+1}</span>
-            <span style="font-size:0.82rem;color:${isThis?'var(--accent-gold)':'var(--w65)'};">${p.country_name}${isThis?' ◀':''}</span>
+            <span style="font-size:0.82rem;color:${isThis?'var(--accent-gold)':'var(--w65)'};">${p.country_name}${isThis?' ◀':''}<span class="ed-peer-stem" style="--score:${Math.max(0,Math.min(100,p.rao_score*10))}%" aria-hidden="true"></span></span>
             <span style="font-family:var(--font-mono);font-size:0.82rem;color:var(--accent-gold);">${p.rao_score.toFixed(2)}</span>
             <span style="font-family:var(--font-mono);font-size:0.75rem;color:${delta>=0?'var(--accent-green)':'var(--accent-red)'};text-align:right;">${delta>=0?'+':''}${delta.toFixed(2)}</span>
         </div>`;
@@ -10948,7 +11001,7 @@ function _renderCompareTimeSeries(isos) {
     const histories = isos.map(iso => ({ iso, history: getCountryHistory(iso) })).filter(h => h.history.length);
     if (!histories.length) return;
 
-    const allYears = Array.from({length:15},(_,i)=>2010+i);
+    const allYears = [...new Set(isos.flatMap(iso=>getCountryHistory(iso).map(r=>r.year)))].sort((a,b)=>a-b);
     // Each series can carry a detached live end-point, so the overlay shows
     // whether the gap between two markets is structural or today's news.
     const anyNews = NEWS.ok && histories.some(h => Math.abs(newsImpactOf(h.history[h.history.length-1])) > 0.0005);
@@ -10993,7 +11046,7 @@ function _renderCompareTimeSeries(isos) {
 function _renderCompareRegimeHistory(isos) {
     const el = document.getElementById('compare-regime-history');
     if (!el) return;
-    const allYears = Array.from({length:15},(_,i)=>2010+i);
+    const allYears = [...new Set(isos.flatMap(iso=>getCountryHistory(iso).map(r=>r.year)))].sort((a,b)=>a-b);
 
     const bars = isos.map((iso, i) => {
         const history = getCountryHistory(iso);
@@ -15011,6 +15064,7 @@ const ALL_TOOLS = [
 FIELD VOCABULARY (use these exact names): rao_score, pillar_opportunity, pillar_stability, pillar_absorptive_capacity, pillar_trajectory, tos_score, sis_score, dgi_score, rvs_score, cvar25, volatility_band, or any norm_ indicator. rao_score is 1–10; every other numeric field is 0–1. Do NOT guess a norm_ field name from what sounds plausible (e.g. there is no norm_fdi_inflows) — use the exact keys already returned in normalized_indicators by a prior get_country_profile call, or an unknown field is silently dropped and you'll be told not to report a finding for it.
 
 CHART TYPES:
+- corpus: choose a reusable Editorial design via template. Landscape templates: global, frontier, leaders, laggards, distribution, regimes, range (regional opportunity ranges), regionalmix. One-country templates (country or countries): profile, pillar, decomposition (structural RAO waterfall), takeoff (TOS/SIS/DGI/RVS gauges), trajectory (proportional pillar layers; illustrative, not causal attribution), regimehistory, variables, peers, benchmark, decay. Comparison templates (countries, two or more): compareprofile, comparepillars, comparehistory, compareregimes, differences (first minus second), comparevariables. These use current structural data unless history or live is explicitly part of the template; do not claim arbitrary year/region filters on templates that do not support them.
 - time_series: 1–4 series (each {country, field, reading, years}) plotted over years. reading:"both" appends one extra "Live" point with a dashed final segment when that country has an active live signal for that field — this is how a baseline/live divergence gets shown, never as a separate chart. years: "latest" | "all" | [from,to], default 2015–present.
 - profile: compare entities across a shared field set via series[].country (fields param, default the 4 pillars). Radar if ≤3 entities and ≤6 fields, grouped bar otherwise. Fields must be 0–1 scaled (pillars/norm_/tos-sis-dgi-rvs) — do not mix in rao_score here.
 - ranking: top/bottom N countries by one metric (use metric + top_n, optional region/year).
@@ -15023,7 +15077,8 @@ CHART TYPES:
 - waterfall: bars one country's active delta by its individual component contributions (use country) — each bar in that component's own units, not RAO points. Only meaningful with an active live signal.
 - signal_timeline: horizontal bars showing every active signal's applied→~cleared window for a countries[] list or a region, coloured by direction.`,
         parameters: { type: 'object', required: ['chart_type'], properties: {
-            chart_type: { type: 'string', enum: ['time_series','profile','ranking','scatter','regime_matrix','distribution','correlation','composition','decay_projection','waterfall','signal_timeline'] },
+            template: { type: 'string', enum: ['global', 'frontier', 'leaders', 'laggards', 'distribution', 'regimes', 'range', 'regionalmix', 'profile', 'pillar', 'decomposition', 'takeoff', 'trajectory', 'regimehistory', 'variables', 'peers', 'benchmark', 'decay', 'compareprofile', 'comparepillars', 'comparehistory', 'compareregimes', 'differences', 'comparevariables'], description: 'Editorial corpus design, used only with chart_type: corpus. Use countries for market and comparison designs. All data is resolved from the authorized dataset, never supplied numbers.' },
+            chart_type: { type: 'string', enum: ['time_series','profile','ranking','scatter','regime_matrix','distribution','correlation','composition','decay_projection','waterfall','signal_timeline','corpus'] },
             title: { type: 'string' },
             series: { type: 'array', maxItems: 4, description: 'time_series and profile only. Each: {country, field, reading, years}.', items: { type: 'object', properties: {
                 country: { type: 'string' }, field: { type: 'string' },
@@ -15317,6 +15372,7 @@ TOOL USE PROTOCOL — follow exactly:
    - "Where does X rank / how unusual is this number" → ranking or distribution.
    - "What's driving this / how related are these two things" → waterfall, correlation, or (for regional/landscape screening) regime_matrix or composition.
    - "How long will this live adjustment last" → decay_projection; "what's currently live across a region" → signal_timeline.
+   - Prefer the Editorial corpus when it matches the claim: render_chart(chart_type:"corpus", template:"decomposition", country:"IND") for structural RAO components; template:"takeoff" for the four detection signals; "benchmark" for mean/median/leader gaps; "variables" for normalized indicators; "differences" with countries:[first,second] for pillar gaps; "compareregimes" for regime histories. See the tool schema for all templates. Every number must come from the dataset. Never reuse prototype/sample values, invent a chart option or interpret a missing/restricted value as zero. Live component deltas (waterfall) are in their own units and are distinct from the structural decomposition template.
    Up to 2-3 charts in one response is normal for a full deep-dive; more than that per response is almost always redundant with itself, not with the text.
 7. Execute all needed tool calls, then synthesize once you have the data.
 
@@ -17036,7 +17092,7 @@ function _baselineSeries(iso, field, years) {
 function resolveSeriesData({ country, field = 'rao_score', reading = 'baseline', years } = {}) {
     const c = resolveCountry(country || '');
     if (!c) return null;
-    if (_isRestrictedField(field) && !chatCanSee(c.country)) return { restricted: true, country: c.country_name, iso: c.country, field };
+    if (isBlurredVar(field) || (_isRestrictedField(field) && !chatCanSee(c.country))) return { restricted: true, country: c.country_name, iso: c.country, field };
     const points = _baselineSeries(c.country, field, years);
     const out = { iso: c.country, country: c.country_name, field, label: `${c.country_name} · ${_fieldLabel(field)}`, points };
     if ((reading === 'live' || reading === 'both') && NEWS.ok) {
@@ -17118,7 +17174,10 @@ function buildTimeSeriesChart({ series = [], title } = {}) {
 function buildProfileChart({ countries = [], fields, title } = {}) {
     const resolved = countries.map(resolveCountry).filter(Boolean).filter(c => chatCanSee(c.country)).slice(0, 4);
     if (!resolved.length) return null;
-    const useFields = (fields && fields.length ? fields : ['pillar_opportunity', 'pillar_stability', 'pillar_absorptive_capacity', 'pillar_trajectory']).slice(0, 8);
+    const requestedFields = (fields && fields.length ? fields : EDITORIAL_PILLARS).slice(0, 22);
+    const useFields = requestedFields.filter(f => f !== 'rao_score' && !isBlurredVar(f) && resolved.some(c => editorialFinite((getLatestRow(c.country)||c)[f])));
+    if (!useFields.length) return null;
+    if (useFields.length !== requestedFields.length) _lastChartWarning = 'Unavailable, restricted or incompatible fields were omitted.';
     const labels = useFields.map(_fieldLabel);
     const colors = [CHART_THEME.gold, CHART_THEME.blueSolid, '#5d8a72', '#a96edb'];
     const asRadar = resolved.length <= 3 && useFields.length <= 6;
@@ -17127,7 +17186,7 @@ function buildProfileChart({ countries = [], fields, title } = {}) {
         const row = getLatestRow(c.country) || c;
         return {
             label: c.country_name,
-            data: useFields.map(f => parseFloat((row[f] ?? 0).toFixed(3))),
+            data: useFields.map(f => editorialFinite(row[f]) ? row[f] : null),
             borderColor: colors[i], backgroundColor: asRadar ? colors[i] + '20' : colors[i] + 'cc',
             pointBackgroundColor: colors[i], pointRadius: 3, borderWidth: 2,
             borderRadius: asRadar ? 0 : 3, borderSkipped: false
@@ -17159,6 +17218,7 @@ function buildRankingChart({ metric = 'rao_score', top_n = 15, region, year, tit
     let slice = year ? getSlice(year) : latestSlice;
     if (region) slice = slice.filter(r => matchRegion(r.region, region));
     if (_isRestrictedField(metric)) slice = slice.filter(r => chatCanSee(r.country));
+    if (isBlurredVar(metric)) return null;
     const isRAO = metric === 'rao_score';
     const sorted = [...slice].map(r => ({ name: r.country_name, score: r[metric] ?? NaN })).filter(r => !isNaN(r.score)).sort((a, b) => b.score - a.score).slice(0, Math.min(top_n || 15, 25));
     if (!sorted.length) return null;
@@ -17181,6 +17241,9 @@ function buildRankingChart({ metric = 'rao_score', top_n = 15, region, year, tit
 function buildScatterChart({ x_field = 'pillar_opportunity', y_field = 'pillar_absorptive_capacity', size_field, color_by = 'regime', region, highlight = [], title } = {}) {
     let slice = latestSlice;
     if (region) slice = slice.filter(r => matchRegion(r.region, region));
+    const chartFields=[x_field,y_field,...(size_field?[size_field]:[])];
+    if (chartFields.some(isBlurredVar)) return null;
+    slice=slice.filter(r=>chatCanSee(r.country)&&chartFields.every(f=>editorialFinite(r[f])));
     if (!slice.length) return null;
     const highlightSet = new Set(highlight.map(h => resolveCountry(h)?.country).filter(Boolean));
     const groupKey = color_by === 'archetype' ? 'archetype' : 'regime';
@@ -17273,6 +17336,7 @@ function buildChatRegimeMatrix({ year = 2025, title } = {}) {
 // Histogram of any field across all 162 countries, with specific countries
 // highlighted in their bin — "how unusual is this number" instead of a bare rank.
 function buildDistributionChart({ field = 'rao_score', highlight = [], year, title } = {}) {
+    if (isBlurredVar(field)) return null;
     const slice = year ? getSlice(year) : latestSlice;
     const visible = _isRestrictedField(field) ? slice.filter(r => chatCanSee(r.country)) : slice;
     const vals = visible.map(r => r[field]).filter(v => v != null && !isNaN(v));
@@ -17319,12 +17383,14 @@ function buildCorrelationChart({ fields, title } = {}) {
     // instead of the caller's typo. Drop unknown fields and say so in the
     // title rather than computing a number that misrepresents the data.
     const sample = latestSlice[0] || {};
-    const useFields = requested.filter(f => f in sample);
+    const useFields = requested.filter(f => f in sample && !isBlurredVar(f));
     const dropped = requested.filter(f => !(f in sample));
     if (dropped.length) _lastChartWarning = `Unknown field${dropped.length > 1 ? 's' : ''} not in the dataset were dropped from the correlation: ${dropped.join(', ')}.`;
     if (useFields.length < 2) return null;
     const arrays = {};
-    useFields.forEach(f => { arrays[f] = latestSlice.map(r => r[f] == null ? 0 : r[f]); });
+    const completeRows=latestSlice.filter(r=>chatCanSee(r.country)&&useFields.every(f=>editorialFinite(r[f])));
+    if(completeRows.length<3)return null;
+    useFields.forEach(f => { arrays[f] = completeRows.map(r => r[f]); });
     const pairs = [];
     for (let i = 0; i < useFields.length; i++) {
         for (let j = i + 1; j < useFields.length; j++) {
@@ -17438,7 +17504,7 @@ function buildWaterfallChart({ country, title } = {}) {
     if (!c || !chatCanSee(c.country)) return null;
     const row = getLatestRow(c.country);
     if (!row?.news || row.news.ineligible || !row.news.delta) return null;
-    const entries = Object.entries(row.news.delta.component_deltas || {}).filter(([, v]) => v).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+    const entries = Object.entries(row.news.delta.component_deltas || {}).filter(([f, v]) => v && !isBlurredVar(f)).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
     if (!entries.length) return null;
 
     const labels = entries.map(([field]) => _fieldLabel(field));
@@ -17514,9 +17580,134 @@ function buildSignalTimelineChart({ countries, region, top_n = 12, title } = {})
     return wrapper;
 }
 
+// Editorial corpus: reusable designs, populated only from the signed-in dataset.
+// No fixture values from the design prototypes are shipped in this page.
+const EDITORIAL_PILLARS=['pillar_opportunity','pillar_stability','pillar_absorptive_capacity','pillar_trajectory'];
+const EDITORIAL_COLORS=['#c2a56d','#7a9fbb','#84a88c','#a294bd'];
+const EDITORIAL_CORPUS=[
+ ['global','Global trajectory','Landscape','Annual mean RAO, with regional reference lines.','none'],
+ ['frontier','Opportunity frontier','Landscape','RAO against take-off signals, coloured by regime.','none'],
+ ['leaders','Leading markets','Landscape','Ten highest structural scores, with direct value labels.','none'],
+ ['laggards','Lower-scoring markets','Landscape','Ten lowest structural scores on the same 0–10 scale.','none'],
+ ['distribution','Score distribution','Landscape','The distribution of structural RAO scores.','none'],
+ ['regimes','Regime landscape','Landscape','A count of markets in each investment regime.','none'],
+ ['range','Regional opportunity ranges','Landscape','Minimum, mean and maximum within each region.','none'],
+ ['regionalmix','Regional regime mix','Landscape','The investment-regime composition of each region.','none'],
+ ['profile','Four-pillar profile','Market','A restrained radar across the four normalized pillars.','one'],
+ ['pillar','Pillar comparison','Market','Four pillars with archetype-mean reference bars.','one'],
+ ['decomposition','Score decomposition','Market','Pre-overlay, signed adjustments and the final score.','one'],
+ ['takeoff','Take-off signals','Market','Four semicircular gauges: TOS, SIS, DGI and RVS.','one'],
+ ['trajectory','Score trajectory','Market','Annual structural score and proportional pillar layers.','one'],
+ ['regimehistory','Regime history','Market','The investment regime of each annual vintage.','one'],
+ ['variables','Normalized indicators','Market','All available inputs, grouped by pillar.','one'],
+ ['peers','Archetype peers','Market','Structural RAO rankings within the same archetype.','one'],
+ ['benchmark','Relative to benchmarks','Market','RAO gaps to the mean, median and leading ten.','one'],
+ ['decay','Live adjustment decay','Market','Conditional projection, using the active signal’s decay.','one'],
+ ['compareprofile','Compare profiles','Comparison','Overlay two or three four-pillar profiles.','many'],
+ ['comparepillars','Compare pillars','Comparison','Grouped bars on one common 0–1 scale.','many'],
+ ['comparehistory','Compare trajectories','Comparison','Country histories, with active live readings identified.','many'],
+ ['compareregimes','Compare regime histories','Comparison','Aligned annual regime timelines for selected markets.','many'],
+ ['differences','Pillar differences','Comparison','First market minus second, with a clear zero baseline.','two'],
+ ['comparevariables','Compare indicators','Comparison','Normalized inputs on a shared scale.','two']
+].map(([id,title,group,description,selection])=>({id,title,group,description,selection}));
+const editorialFinite=v=>typeof v==='number'&&Number.isFinite(v);
+const editorialMean=a=>{const v=a.filter(editorialFinite);return v.length?v.reduce((x,y)=>x+y,0)/v.length:null;};
+function editorialRows(year){return (year?getSlice(Number(year)):latestSlice)||[];}
+function editorialFields(){return Object.values(PILLARS).flatMap(p=>p.vars).filter(f=>!isBlurredVar(f));}
+function editorialCountries(spec,needsAccess=true){return [...new Set([...(spec.countries||[]),...(spec.country?[spec.country]:[])].map(c=>resolveCountry(c)?.country).filter(Boolean))].filter(iso=>!needsAccess||chatCanSee(iso)).slice(0,4).map(iso=>spec.year?getCountry(iso,Number(spec.year)):getLatestRow(iso)).filter(Boolean);}
+function editorialFigure(title,config,note){
+ const {wrapper,canvas}=makeChartWrapper(title);canvas.style.height=(config.$height||310)+'px';delete config.$height;
+ config.options={responsive:true,maintainAspectRatio:false,...config.options};
+ const c=new Chart(canvas,config);registerChatChart(c);
+ if(note){const p=document.createElement('p');p.className='ed-chart-caption';p.textContent=note;wrapper.appendChild(p);}return wrapper;
+}
+function editorialBars(title,labels,sets,{min=0,max=1,note='',height,mark}={}){
+ return editorialFigure(title,{type:'bar',data:{labels,datasets:sets},$height:height||Math.max(280,labels.length*29+65),options:{indexAxis:'y',scales:{x:{min,max,title:{display:true,text:max===1&&min===0?'Normalized score · 0–1':min<0?'Difference':'RAO score · 0–10'}},y:{ticks:{autoSkip:false}}},plugins:{legend:{display:sets.length>1},editorialMark:mark,tooltip:{callbacks:{label:c=>`${c.dataset.label||'Score'}: ${Array.isArray(c.raw)?c.raw.map(v=>v.toFixed(3)).join(' → '):editorialFinite(c.raw)?c.raw.toFixed(3):'Unavailable'}`}}}}},note);
+}
+function editorialDecompositionConfig(row){
+ const pre=row.rao_score_pre_overlay,ov=row.overlay_adjustment,bonus=row.market_size_bonus,final=row.rao_score;
+ if(![pre,ov,bonus,final].every(editorialFinite))return null;
+ const a=pre+ov,b=a+bonus,vals=[pre,ov,bonus,final];
+ return {type:'bar',data:{labels:['Pre-overlay','Overlay','Market bonus','Final RAO'],datasets:[{label:'RAO points',data:[[0,pre],[pre,a],[a,b],[0,final]],backgroundColor:[EDITORIAL.blue,ov<0?EDITORIAL.rose:EDITORIAL.green,bonus<0?EDITORIAL.rose:EDITORIAL.green,EDITORIAL.gold],barPercentage:.55}]},options:{layout:{padding:{top:24}},scales:{y:{min:Math.min(0,a,b),max:Math.max(10,pre,a,b,final),title:{display:true,text:'RAO points'}},x:{ticks:{autoSkip:false}}},plugins:{legend:{display:false},editorialMark:{waterfall:true,values:vals,ends:[pre,a,b]},tooltip:{callbacks:{label:c=>`${c.label}: ${vals[c.dataIndex].toFixed(3)} RAO points`}}}}};
+}
+function editorialGauge(wrapper,field,value,color){
+ const box=document.createElement('div');box.className='ed-gauge';const plot=document.createElement('div');plot.className='ed-gauge-plot';const canvas=document.createElement('canvas');plot.appendChild(canvas);box.appendChild(plot);
+ const label=document.createElement('h4');label.textContent=field;box.appendChild(label);wrapper.appendChild(box);
+ if(!editorialFinite(value)){const p=document.createElement('p');p.textContent='Unavailable';plot.replaceChildren(p);return;}
+ canvas.setAttribute('aria-label',field+': '+value.toFixed(3)+' on a 0–1 scale');
+ registerChatChart(new Chart(canvas,{type:'doughnut',data:{labels:[field,'Remaining scale'],datasets:[{label:field,data:[value,Math.max(0,1-value)],backgroundColor:[color,'rgba(176,197,219,.07)']}]},options:{responsive:true,maintainAspectRatio:false,cutout:'86%',rotation:-90,circumference:180,plugins:{legend:{display:false},editorialMark:{gauge:value},tooltip:{filter:i=>i.dataIndex===0,callbacks:{label:()=>field+': '+value.toFixed(3)}}}}}));
+}
+function buildEditorialCorpus(spec={}){
+ const entry=EDITORIAL_CORPUS.find(s=>s.id===spec.template);if(!entry)return null;
+ if(spec.year&&Number(spec.year)!==Number(window.LATEST_YEAR)&&['profile','compareprofile','global','frontier','distribution','trajectory','regimehistory','compareregimes','comparehistory','decay'].includes(entry.id)){_lastChartWarning='This template uses current data or full history. Use time_series for a custom historical interval.';return null;}
+ const rs=editorialCountries(spec).slice(0,entry.selection==='one'?1:entry.selection==='two'?2:4),r=rs[0],all=editorialRows(spec.year),allowed=all.filter(r=>chatCanSee(r.country));
+ if(entry.selection==='one'&&!r||entry.selection==='two'&&rs.length<2||entry.selection==='many'&&rs.length<2){_lastChartWarning='Choose the required markets included in your plan.';return null;}
+ const name=r?.country_name,title=spec.title||`${entry.title}${r?' · '+(entry.selection==='one'?name:rs.map(c=>c.country_name).join(' / ')):''}`;
+ const labels=EDITORIAL_PILLARS.map(_fieldLabel),gold=EDITORIAL.gold,blue=EDITORIAL.blue;
+ const set=(label,data,color=gold)=>({label,data,backgroundColor:color,borderColor:color});
+ const note=`Structural vintage ${spec.year||window.LATEST_YEAR||'latest'}. ${entry.selection==='none'?'Coverage follows the available data and your plan.':''}`;
+ switch(entry.id){
+ case 'frontier': return buildScatterChart({x_field:'rao_score',y_field:'tos_score',color_by:'regime',title});
+ case 'distribution':return buildDistributionChart({field:'rao_score',title});
+ case 'leaders':case 'laggards':case 'peers':{
+   const rows=(entry.id==='peers'?all.filter(c=>c.archetype===r.archetype):all).filter(c=>editorialFinite(c.rao_score)).sort((a,b)=>entry.id==='laggards'?a.rao_score-b.rao_score:b.rao_score-a.rao_score).slice(0,entry.id==='peers'?25:10);
+   if(!rows.length)return null;return editorialBars(title,rows.map(c=>c.country_name),[set('Structural RAO',rows.map(c=>c.rao_score))],{max:10,note});}
+ case 'profile':case 'compareprofile':return buildProfileChart({countries:rs.map(c=>c.country),fields:EDITORIAL_PILLARS,title});
+ case 'pillar':case 'comparepillars':{
+   const sets=rs.map((c,i)=>set(c.country_name,EDITORIAL_PILLARS.map(f=>c[f]??null),EDITORIAL_COLORS[i]));
+   if(entry.id==='pillar'){const peers=allowed.filter(c=>c.archetype===r.archetype);sets.push(set('Archetype mean',EDITORIAL_PILLARS.map(f=>editorialMean(peers.map(c=>c[f]))),blue));}
+   return editorialBars(title,labels,sets,{note});}
+ case 'variables':case 'comparevariables':{
+   const fields=editorialFields();if(!fields.length)return null;
+   return editorialBars(title,fields.map(f=>NORM_VAR_LABELS[f]||_fieldLabel(f)),rs.slice(0,entry.id==='variables'?1:2).map((c,i)=>set(c.country_name,fields.map(f=>c[f]??null),EDITORIAL_COLORS[i])),{height:Math.max(350,fields.length*(entry.id==='variables'?29:44)+70),note:note+' Unavailable values are left blank; restricted indicators are omitted.'});}
+ case 'decomposition':{
+   const config=editorialDecompositionConfig(r);if(!config)return null;
+   const residual=r.rao_score-(r.rao_score_pre_overlay+r.overlay_adjustment+r.market_size_bonus);
+   return editorialFigure(title,config,'RAO points. '+(Math.abs(residual)>.005?'The published final score includes a residual adjustment of '+residual.toFixed(3)+' points. ':'' )+note);}
+ case 'takeoff':{
+   const wrapper=document.createElement('div');wrapper.className='chat-chart-wrapper ed-figure';const h=document.createElement('div');h.className='chat-chart-title';h.textContent=title;wrapper.appendChild(h);
+   const grid=document.createElement('div');grid.className='ed-gauge-grid';wrapper.appendChild(grid);
+   ['tos_score','sis_score','dgi_score','rvs_score'].forEach((f,i)=>editorialGauge(grid,['TOS · Take-off','SIS · Inflection','DGI · Discovery','RVS · Reform'][i],r[f],EDITORIAL_COLORS[i]));
+   const p=document.createElement('p');p.className='ed-chart-caption';p.textContent='Normalized scores · 0–1. TOS is the geometric mean of SIS, DGI and RVS; ≥ 0.50 indicates pre-breakout status. '+note;wrapper.appendChild(p);return wrapper;}
+ case 'decay':return buildDecayProjectionChart({country:r.country,title});
+ case 'comparehistory':return buildTimeSeriesChart({series:rs.map(c=>({country:c.country,field:'rao_score',reading:'both',years:'all'})),title});
+ case 'differences':{
+   const ds=EDITORIAL_PILLARS.map(f=>editorialFinite(rs[0][f])&&editorialFinite(rs[1][f])?rs[0][f]-rs[1][f]:null),bound=Math.max(.2,...ds.filter(editorialFinite).map(Math.abs))*1.2;
+   return editorialBars(title,labels,[set(rs[0].country_name+' − '+rs[1].country_name,ds,ds.map(v=>v<0?blue:gold))],{min:-bound,max:bound,note:'Normalized pillar difference. Positive values favour '+rs[0].country_name+'; negative values favour '+rs[1].country_name+'.'});}
+ case 'benchmark':{
+   const scores=all.map(c=>c.rao_score).filter(editorialFinite).sort((a,b)=>a-b),n=scores.length;if(!n)return null;
+   const refs=[editorialMean(scores),(scores[Math.floor((n-1)/2)]+scores[Math.floor(n/2)])/2,editorialMean(scores.slice(-10))],ds=refs.map(v=>r.rao_score-v),bound=Math.max(1,...ds.map(Math.abs))*1.2;
+   return editorialBars(title,['Global mean','Global median','Top ten mean'],[set('RAO point difference',ds,ds.map(v=>v<0?EDITORIAL.rose:EDITORIAL.green))],{min:-bound,max:bound,note:'Country score minus each benchmark, in RAO points. '+note});}
+ case 'regimes':{
+   const keys=Object.keys(REGIME_COLORS),counts=keys.map(k=>all.filter(c=>c.regime===k).length);
+   const el=editorialBars(title,keys.map(k=>REGIME_COLORS[k].label),[set('Markets',counts,keys.map(k=>REGIME_COLORS[k].solid))],{max:Math.max(1,...counts)+1,note});const c=Chart.getChart(el.querySelector('canvas'));c.options.scales.x.title.text='Number of markets';c.options.scales.x.ticks.precision=0;c.update('none');return el;}
+ case 'regionalmix':{
+   const regions=Object.keys(CONTINENTS),keys=Object.keys(REGIME_COLORS),rows=regions.map(g=>all.filter(c=>CONTINENTS[g].includes(c.country)));
+   return editorialFigure(title,{type:'bar',data:{labels:regions,datasets:keys.map(k=>({...set(REGIME_COLORS[k].label,rows.map(rr=>rr.length?rr.filter(c=>c.regime===k).length/rr.length*100:null),REGIME_COLORS[k].solid),stack:'share'}))},options:{indexAxis:'y',scales:{x:{min:0,max:100,stacked:true,title:{display:true,text:'Share of scored markets · %'}},y:{stacked:true}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.raw.toFixed(1)+'%'}}}}},note);}
+ case 'range':{
+   const regions=Object.keys(CONTINENTS),key='pillar_opportunity',rows=regions.map(g=>allowed.filter(c=>CONTINENTS[g].includes(c.country))),valid=rows.map((rr,i)=>({name:regions[i],v:rr.map(c=>c[key]).filter(editorialFinite)})).filter(g=>g.v.length);if(!valid.length)return null;
+   return editorialFigure(title,{type:'bar',data:{labels:valid.map(g=>g.name),datasets:[{label:'Opportunity · min to max',data:valid.map(g=>[Math.min(...g.v),Math.max(...g.v)]),backgroundColor:blue+'88',barThickness:3},{type:'scatter',label:'Mean',data:valid.map(g=>({x:editorialMean(g.v),y:g.name})),pointRadius:5,backgroundColor:gold}]},options:{indexAxis:'y',scales:{x:{min:0,max:1,title:{display:true,text:'Opportunity · 0–1'}},y:{type:'category'}}}},'Ranges and mean use markets accessible in your plan; they are not global estimates. '+note);}
+ case 'global':{
+   const years=[...new Set(panelData.map(c=>c.year))].sort((a,b)=>a-b),regions=Object.keys(CONTINENTS);
+   const groups=[{label:'Global mean',codes:null},...regions.map(label=>({label,codes:CONTINENTS[label]}))];
+   return editorialFigure(title,{type:'line',data:{labels:years,datasets:groups.map((g,i)=>({label:g.label,data:years.map(y=>editorialMean(getSlice(y).filter(c=>!g.codes||g.codes.includes(c.country)).map(c=>c.rao_score))),borderColor:[gold,blue,EDITORIAL.green,'#a294bd','#ba8386','#93acb9'][i],backgroundColor:'transparent',borderDash:i?[4,4]:undefined}))},options:{scales:{y:{min:1,max:10,title:{display:true,text:'Mean structural RAO · 1–10'}}}}},'Annual arithmetic means across available markets. Live adjustments are not historical observations.');}
+ case 'trajectory':{
+   const history=getCountryHistory(r.country);if(!history.length)return null;
+   const layers=EDITORIAL_PILLARS.map((f,j)=>({label:_fieldLabel(f)+' · proportional layer',data:history.map(c=>{const vals=EDITORIAL_PILLARS.map(k=>c[k]);if(!vals.every(editorialFinite))return null;const sum=vals.reduce((a,b)=>a+b,0);return sum?vals.slice(0,j+1).reduce((a,b)=>a+b,0)/sum*c.rao_score:null;}),fill:j?'-1':'origin',borderWidth:0,backgroundColor:EDITORIAL_COLORS[j]+'22',pointRadius:0}));
+   layers.push({label:name+' · RAO',data:history.map(c=>c.rao_score),borderColor:gold,fill:false});
+   return editorialFigure(title,{type:'line',data:{labels:history.map(c=>c.year),datasets:layers},options:{scales:{y:{min:0,max:10,title:{display:true,text:'Structural RAO · 1–10'}}},plugins:{tooltip:{filter:i=>!i.dataset.label.includes('proportional')},legend:{labels:{filter:i=>!i.text.includes('proportional')}}}}},'Shaded layers allocate the score in proportion to pillar values; they are an illustration, not causal or additive model attributions.');}
+ case 'regimehistory':case 'compareregimes':{
+   const hist=rs.map(c=>getCountryHistory(c.country)),years=[...new Set(hist.flatMap(h=>h.map(c=>c.year)))].sort((a,b)=>a-b);if(!years.length)return null;
+   const datasets=Object.keys(REGIME_COLORS).map(k=>({label:REGIME_COLORS[k].label,data:hist.flatMap((hh,i)=>hh.filter(c=>c.regime===k).map(c=>({x:[c.year-.48,c.year+.48],y:rs[i].country_name,year:c.year}))),backgroundColor:REGIME_COLORS[k].solid,barThickness:19,grouped:false}));
+   return editorialFigure(title,{type:'bar',data:{labels:rs.map(c=>c.country_name),datasets},$height:Math.max(240,rs.length*65+100),options:{indexAxis:'y',interaction:{mode:'nearest',intersect:true},scales:{x:{type:'linear',min:years[0]-.5,max:years.at(-1)+.5,afterBuildTicks:s=>s.ticks=years.map(value=>({value})),ticks:{callback:v=>String(v),maxTicksLimit:8},title:{display:true,text:'Annual vintage'}},y:{type:'category'}},plugins:{tooltip:{callbacks:{title:items=>items[0]?.raw?.y||'',label:c=>c.raw.year+' · '+c.dataset.label}}}}},'Each segment is one published annual regime; unobserved years remain empty.');}
+ default:return null;
+ }
+}
+
 // ===== DISPATCHER =====
 function buildChart(spec = {}) {
     switch (spec.chart_type) {
+        case 'corpus':           return buildEditorialCorpus(spec);
         case 'time_series':      return buildTimeSeriesChart(spec);
         case 'profile':          return buildProfileChart(spec);
         case 'ranking':          return buildRankingChart(spec);
@@ -20478,8 +20669,9 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;
 const native={flush:window.flushPendingCharts,destroy:window.destroyChatCharts,welcome:window.showWelcomeState,newSession:window.newSession,loadSession:window.loadSession,clear:window.clearChatHistory,renderSessions:window.renderSessionsSidebar,coverage:window.renderCoverage,footnotes:window.appendWebFootnotes,entities:window.renderEntityPanel,pin:window.pinMessage,switchTab:window.switchTab};
 const state={open:false,view:'figures',history:false,figures:[],selected:null,next:0,returnFocus:null,data:false};
 const mobile=()=>matchMedia('(max-width:900px)').matches;
-function chartOf(entry){return entry?.el.querySelector('canvas')&&Chart.getChart(entry.el.querySelector('canvas'));}
-function resizeChart(entry){const chart=chartOf(entry);if(chart&&chart.canvas?.isConnected){chart.resize();chart.update('none');}}
+function chartsOf(entry){return [...(entry?.el.querySelectorAll('canvas')||[])].map(c=>Chart.getChart(c)).filter(Boolean);}
+function chartOf(entry){return chartsOf(entry)[0];}
+function resizeChart(entry){chartsOf(entry).forEach(chart=>{if(chart.canvas?.isConnected){chart.resize();chart.update('none');}});}
 function sync(){
  ws.classList.toggle('hw-research-open',state.open);
  $('hw-research').inert=!state.open;$('hw-research').setAttribute('aria-hidden',String(!state.open));
@@ -20500,11 +20692,11 @@ function title(){const entry=listSessions().find(s=>s.id===currentSessionId),fir
 function restoreFocus(){const target=state.returnFocus?.isConnected?state.returnFocus:$('chat-input');if(!target.closest('[inert]'))target.focus({preventScroll:true});}
 function selectionOptions(){const select=$('hw-figure-select');select.replaceChildren();state.figures.forEach((e,i)=>{const option=document.createElement('option');option.value=e.id;option.textContent=String(i+1).padStart(2,'0')+' / '+e.title;select.appendChild(option);});select.value=state.selected||'';$('hw-figure-picker').hidden=!state.figures.length;}
 function park(entry){if(entry?.el.isConnected)$('hw-figure-store').appendChild(entry.el);}
-function prepare(entry){const canvas=entry.el.querySelector('canvas');if(canvas){const host=document.createElement('div');host.className='hw-chart-canvas-host';const size=Number.parseFloat(canvas.style.height);if(size>340&&size<1200)host.style.height=size+'px';canvas.before(host);host.appendChild(canvas);canvas.setAttribute('role','img');canvas.setAttribute('aria-label',entry.title+'. Open View data for plotted values.');}else{entry.el.classList.add('hw-html-figure');}}
-function thumbnail(entry){if(!entry.el.isConnected)return;const chart=chartOf(entry);if(!chart)return;try{chart.stop();resizeChart(entry);chart.draw();const img=document.createElement('img');img.alt='';img.src=chart.canvas.toDataURL('image/png');entry.button.querySelector('.hw-chart-thumb').replaceChildren(img);}catch{/* The labeled preview remains available if the browser cannot snapshot a canvas. */}}
-function dataTable(entry){const chart=chartOf(entry);if(!chart)return '';
+function prepare(entry){const canvases=[...entry.el.querySelectorAll('canvas')];if(canvases.length){canvases.forEach(canvas=>{const host=document.createElement('div');host.className='hw-chart-canvas-host';const size=Number.parseFloat(canvas.style.height);if(size>340&&size<1200)host.style.height=size+'px';canvas.before(host);host.appendChild(canvas);canvas.setAttribute('role','img');if(!canvas.hasAttribute('aria-label'))canvas.setAttribute('aria-label',entry.title+'. Open View data for plotted values.');});}else{entry.el.classList.add('hw-html-figure');}}
+function thumbnail(entry){if(!entry.el.isConnected)return;const chart=chartOf(entry);if(!chart)return;try{chart.stop();resizeChart(entry);chart.draw();const img=document.createElement('img');img.alt='';const all=chartsOf(entry);if(all.length>1){const combined=document.createElement('canvas');combined.width=560;combined.height=280;const cx=combined.getContext('2d');all.forEach((ch,i)=>{ch.resize();ch.update('none');cx.drawImage(ch.canvas,(i%2)*280,Math.floor(i/2)*140,280,140);});img.src=combined.toDataURL('image/png');}else img.src=chart.canvas.toDataURL('image/png');entry.button.querySelector('.hw-chart-thumb').replaceChildren(img);}catch{/* The labeled preview remains available if the browser cannot snapshot a canvas. */}}
+function dataTable(entry){const charts=chartsOf(entry);if(!charts.length)return '';
  const rows=[];const pointValue=v=>v===null||v===undefined?'—':typeof v==='number'?Number(v.toFixed(4)):String(v);
- chart.data.datasets.forEach((ds,di)=>{(ds.data||[]).forEach((v,i)=>{if(Array.isArray(v)){rows.push([ds.label||'Series '+(di+1),chart.data.labels?.[i]??i+1,v.map(pointValue).join(' → ')]);}else if(v&&typeof v==='object'){rows.push([ds.label||'Series '+(di+1),v.label||chart.data.labels?.[i]||i+1,Object.entries(v).filter(([key,val])=>!['label','iso'].includes(key)&&typeof val!=='object').map(([key,val])=>key+': '+pointValue(val)).join(' · ')]);}else rows.push([ds.label||'Series '+(di+1),chart.data.labels?.[i]??i+1,pointValue(v)]);});});
+ charts.forEach(chart=>chart.data.datasets.forEach((ds,di)=>{(ds.data||[]).forEach((v,i)=>{if(Array.isArray(v)){rows.push([ds.label||'Series '+(di+1),chart.data.labels?.[i]??i+1,v.map(pointValue).join(' → ')]);}else if(v&&typeof v==='object'){rows.push([ds.label||'Series '+(di+1),v.label||chart.data.labels?.[i]||i+1,Object.entries(v).filter(([key,val])=>!['label','iso'].includes(key)&&typeof val!=='object').map(([key,val])=>key+': '+pointValue(val)).join(' · ')]);}else rows.push([ds.label||'Series '+(di+1),chart.data.labels?.[i]??i+1,pointValue(v)]);});}));
  return '<table><caption>Plotted values · '+esc(entry.title)+'</caption><thead><tr><th scope="col">Series</th><th scope="col">Observation</th><th scope="col">Value</th></tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map((v,i)=>i===1?'<th scope="row">'+esc(v)+'</th>':'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
 }
 function showFigure(entry){
@@ -20605,6 +20797,45 @@ window.addEventListener('afterprint',()=>{
 new MutationObserver(()=>{$('chat-send-btn').setAttribute('aria-label',$('chat-send-btn').querySelector('.ri-stop-fill')?'Stop generation':'Send message');}).observe($('chat-send-btn'),{childList:true,subtree:true});
 new MutationObserver(()=>{if(document.body.classList.contains('gate-locked')){if($('hw-figure-dialog').open)Horizon.collapse();state.history=false;state.open=false;sync();}}).observe(document.body,{attributes:true,attributeFilter:['class']});
 sync();refreshSources();
+})();
+
+</script>
+<dialog id="ed-library" aria-labelledby="ed-library-title"><div class="ed-library-head"><div><small>EDITORIAL / CHART LIBRARY</small><h2 id="ed-library-title">A clear view of the evidence.</h2><p>Choose a figure, select your markets and preview it with the Observatory’s data.</p></div><button type="button" class="ed-library-close" onclick="EditorialLibrary.close()" aria-label="Close chart library">×</button></div><div class="ed-library-body"><nav id="ed-template-list" class="ed-library-list" aria-label="Chart designs"></nav><div class="ed-library-detail"><h3 id="ed-template-title"></h3><p id="ed-description"></p><div class="ed-library-fields"><label>First market<select id="ed-country-1"></select></label><label>Second market<select id="ed-country-2"></select></label><label>Third market · optional<select id="ed-country-3"></select></label></div><div class="ed-library-actions"><button type="button" class="hw-btn" onclick="EditorialLibrary.preview()">Preview figure</button><button type="button" class="hw-btn" id="ed-add" onclick="EditorialLibrary.add()" disabled>Add to research</button></div><p id="ed-library-status" role="status" aria-live="polite"></p><div id="ed-preview"></div></div></div></dialog>
+<script id="editorial-library-controller">
+(function(){
+ ['regime-timeline-bar','country-norm-vars-table','archetype-peers','strengths-weaknesses-content','neighbors-content','similar-content','regional-context-content','global-benchmark-content','peer-comparison-content','compare-regime-history','compare-decomp-table'].forEach(id=>document.getElementById(id)?.closest('.analysis-card')?.classList.add('ed-figure'));
+ const $=id=>document.getElementById(id),dlg=$('ed-library');let selected='global',previewCharts=[],returnFocus=null;
+ function cleanup(){previewCharts.forEach(c=>{try{c.destroy();}catch{}for(const list of [_chatChartInstances,_chartInstances]){const n=list.indexOf(c);if(n>=0)list.splice(n,1);}});previewCharts=[];$('ed-preview').replaceChildren();$('ed-add').disabled=true;}
+ function currentSpec(){const entry=EDITORIAL_CORPUS.find(s=>s.id===selected),n=entry.selection==='none'?0:entry.selection==='one'?1:entry.selection==='two'?2:3;return {chart_type:'corpus',template:selected,countries:[1,2,3].slice(0,n).map(i=>$('ed-country-'+i).value).filter(Boolean)};}
+ function select(id){cleanup();selected=id;const entry=EDITORIAL_CORPUS.find(s=>s.id===id);$('ed-template-title').textContent=entry.title;$('ed-description').textContent=entry.description;
+  $('ed-library-status').textContent='';document.querySelectorAll('[data-ed-template]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.edTemplate===id)));
+  [1,2,3].forEach(i=>$('ed-country-'+i).parentElement.hidden=entry.selection==='none'||(i>1&&entry.selection==='one')||(i===3&&entry.selection==='two'));
+ }
+ window.EditorialLibrary={
+  open(){if(!requireFeature('personal','insights'))return;if(isChatLoading)return;returnFocus=document.activeElement;
+   const countries=latestSlice.filter(c=>chatCanSee(c.country)).sort((a,b)=>a.country_name.localeCompare(b.country_name));
+   [1,2,3].forEach(i=>{const el=$('ed-country-'+i),prev=el.value;el.replaceChildren();if(i===3){const op=document.createElement('option');op.value='';op.textContent='None';el.appendChild(op);}countries.forEach(c=>{const op=document.createElement('option');op.value=c.country;op.textContent=c.country_name;el.appendChild(op);});el.value=countries.some(c=>c.country===prev)?prev:(i===3?'':countries[i-1]?.country||'');});select(selected);dlg.showModal();
+  },close(){dlg.close();},
+  preview(){if(!requireFeature('personal','insights'))return;cleanup();_lastChartWarning=null;const before=new Set(_chatChartInstances);let el;
+   try{el=buildChart(currentSpec());}catch(e){$('ed-library-status').textContent='This figure could not be built from the available data.';console.error(e);}finally{previewCharts=_chatChartInstances.filter(c=>!before.has(c));}
+   if(!el){$('ed-library-status').textContent=_lastChartWarning||'No matching data. Choose different markets; live projections require an active signal.';return;}
+   $('ed-preview').appendChild(el);el.querySelectorAll('canvas').forEach(canvas=>{if(!canvas.closest('.ed-gauge')){const host=document.createElement('div');host.className='ed-preview-plot';host.style.height=Math.max(280,parseFloat(canvas.style.height)||310)+'px';canvas.before(host);host.appendChild(canvas);}});
+   requestAnimationFrame(()=>previewCharts.forEach(c=>{c.resize();c.update('none');}));$('ed-add').disabled=false;$('ed-library-status').textContent='Built from your Observatory dataset. Add this figure to save it with the conversation.';
+  },add(){if(isChatLoading||!requireFeature('personal','insights'))return;
+   const spec=currentSpec(),el=buildChart(spec);if(!el){$('ed-library-status').textContent='Data or access changed. Preview the figure again.';return;}
+   if(!currentSessionId)currentSessionId='sess_'+Date.now();
+   const title=el.querySelector('.chat-chart-title')?.textContent||'Research figure';
+   const userText='Create a chart: '+title+'.';renderChatMessage('user',userText,false,true);chatHistory.push({role:'user',content:userText});
+   renderChatChart(el,'render_chart',spec);const text='**'+title+'**\n\nBuilt from the available Observatory data. Explore the figure to inspect the values, units and coverage.';
+   renderChatMessage('assistant',text,false,true);chatHistory.push({role:'assistant',content:text},{role:'charts',calls:[..._lastRenderedChartCalls]});_lastRenderedChartCalls=[];autoSaveSession();dlg.close();
+   requestAnimationFrame(()=>{const button=document.querySelector('.hw-chart-preview:last-child');const buttons=document.querySelectorAll('.hw-chart-preview');if(buttons.length)Horizon.explore(buttons[buttons.length-1].dataset.figure);});
+  }
+ };
+ const list=$('ed-template-list');let group='';EDITORIAL_CORPUS.forEach(entry=>{if(entry.group!==group){group=entry.group;const h=document.createElement('h3');h.textContent=group;list.appendChild(h);}const b=document.createElement('button');b.type='button';b.dataset.edTemplate=entry.id;b.textContent=entry.title;b.setAttribute('aria-pressed','false');b.onclick=()=>select(entry.id);list.appendChild(b);});
+ [1,2,3].forEach(i=>$('ed-country-'+i).addEventListener('change',()=>{cleanup();$('ed-library-status').textContent='Selection changed. Preview the updated figure.';}));
+ dlg.addEventListener('close',()=>{if(dlg.open)return;cleanup();if(returnFocus?.isConnected)returnFocus.focus({preventScroll:true});});
+ new MutationObserver(()=>{if(document.body.classList.contains('gate-locked')&&dlg.open)dlg.close();}).observe(document.body,{attributes:true,attributeFilter:['class']});
+ dlg.addEventListener('keydown',e=>{if(e.key==='Escape')e.stopPropagation();});
 })();
 
 </script>
