@@ -5,6 +5,9 @@ compatibility_date = "2025-01-01"
 # Set secrets via CLI — never put them here:
 #   wrangler secret put RESEND_API_KEY
 #   wrangler secret put FIREBASE_DB_SECRET   ← Firebase Realtime DB legacy secret (for leads reads)
+#   wrangler secret put GEMINI_API_KEY
+#   wrangler secret put TAVILY_API_KEY
+#   wrangler secret put HKU_API_KEY          ← HKU ITS API portal key (see HKU_API_SETUP.md)
 #
 # Firebase Realtime DB URL (not secret, matches tracker.html)
 [vars]
