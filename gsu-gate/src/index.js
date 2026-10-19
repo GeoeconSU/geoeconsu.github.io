@@ -356,18 +356,26 @@ async function sendReportEmail(env, to, name, filename, pdfUrl) {
 
 // ── Leads Console ─────────────────────────────────────────────────────────────
 
-async function handleGetLeads(request, env, cors) {
+// Verifies the request carries a valid Firebase ID token for a real
+// gsu-members user (FIREBASE_API_KEY is that project's Web API key — same
+// one firebase-config.js embeds client-side, since this call is itself
+// public; the project's RTDB/Firestore rules are the real access boundary).
+// Returns the matching user record, or null if missing/invalid/expired.
+async function verifyFirebaseIdToken(request, env) {
   const idToken = (request.headers.get('Authorization') || '').replace('Bearer ', '').trim();
-  if (!idToken) return respond({ error: 'Unauthorized' }, 401, cors);
-
-  // Verify Firebase ID token
+  if (!idToken) return null;
   const verify = await fetch(
     `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${env.FIREBASE_API_KEY}`,
     { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) }
   );
-  if (!verify.ok) return respond({ error: 'Unauthorized' }, 401, cors);
+  if (!verify.ok) return null;
   const { users } = await verify.json();
-  if (!users || users.length === 0) return respond({ error: 'Unauthorized' }, 401, cors);
+  return (users && users.length) ? users[0] : null;
+}
+
+async function handleGetLeads(request, env, cors) {
+  const user = await verifyFirebaseIdToken(request, env);
+  if (!user) return respond({ error: 'Unauthorized' }, 401, cors);
 
   if (!env.FIREBASE_DB_SECRET) {
     return respond({ error: 'FIREBASE_DB_SECRET not configured on worker.' }, 503, cors);
@@ -460,6 +468,13 @@ function geminiErrorMessage(errorInfo) {
 const ALLOWED_GEMINI_MODELS = new Set(['gemini-3.5-flash-lite', 'gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-3.5-flash']);
 
 async function handleGeminiChat(request, env, cors) {
+  // Was unauthenticated — anyone with the URL could spend the Gemini quota
+  // (GSU-Web TODO.md item 1 / RAO-News reports/CLOUD_AUTOMATION_PLAN.md §6).
+  // Both real callers already hold a gsu-members ID token: a signed-in
+  // dashboard/observatory user, or the RAO-News pipeline's own sync account.
+  const user = await verifyFirebaseIdToken(request, env);
+  if (!user) return respond({ error: 'Unauthorized' }, 401, cors);
+
   const { messages, tools, max_tokens, temperature, model } = await request.json();
   const safeModel = ALLOWED_GEMINI_MODELS.has(model) ? model : 'gemini-3.5-flash-lite';
   if (!messages || !Array.isArray(messages)) {
@@ -571,6 +586,9 @@ async function handleGeminiChat(request, env, cors) {
 // ── Gemini Streaming (SSE passthrough) ───────────────────────────────────────
 
 async function handleGeminiStream(request, env, cors) {
+  const user = await verifyFirebaseIdToken(request, env);
+  if (!user) return respond({ error: 'Unauthorized' }, 401, cors);
+
   const { messages, tools, max_tokens, temperature, model } = await request.json();
   const safeModel = ALLOWED_GEMINI_MODELS.has(model) ? model : 'gemini-3.5-flash-lite';
   if (!messages || !Array.isArray(messages)) return respond({ error: 'messages required.' }, 400, cors);

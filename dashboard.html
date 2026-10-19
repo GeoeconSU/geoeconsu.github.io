@@ -13292,8 +13292,15 @@ async function callGroqAPIAgent(messages, tools = null, maxTokens = 8000, onText
 async function callGeminiStreaming(messages, tools, maxTokens, onTextChunk) {
     const body = { model: selectedModel, messages, temperature: 0.2, max_tokens: maxTokens };
     if (tools && tools.length) body.tools = tools;
+    // gsu-gate now requires a valid gsu-members ID token (it used to accept
+    // anyone) — the whole app is sign-in-first, so auth.currentUser is
+    // expected to exist by the time a user can reach the chatbot.
+    if (!auth.currentUser) throw new Error('Sign in required.');
+    const idToken = await auth.currentUser.getIdToken();
     const response = await fetch(GEMINI_STREAM_URL, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+        body: JSON.stringify(body),
         signal: _abortController ? _abortController.signal : undefined
     });
     if (!response.ok) {

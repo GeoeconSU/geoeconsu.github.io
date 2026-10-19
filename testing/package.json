@@ -1,0 +1,14 @@
+{
+  "name": "gsu-web-testing",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Playwright-based visual/responsive audit tooling for the RAO dashboard and observatory — not part of the deployed site.",
+  "scripts": {
+    "install-browser": "playwright install chromium",
+    "audit:mobile": "node audits/mobile-audit.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "playwright": "^1.48.0"
+  }
+}

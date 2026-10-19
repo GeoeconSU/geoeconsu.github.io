@@ -1,0 +1,11 @@
+# Credentials — never commit
+.env
+
+# Installed by `npm install` here, not checked in
+node_modules/
+
+# Audit output — screenshots can show real (proprietary) RAO9 panel data
+# rendered in the authenticated app. Never commit these to a public repo.
+screenshots/
+test-results/
+playwright-report/
