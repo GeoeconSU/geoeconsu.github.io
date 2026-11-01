@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geoeconomic Strategy Unit — Researching risk. Mapping markets.</title>
+<meta name="description" content="The Geoeconomic Strategy Unit is a research and advisory firm. It scores sovereign risk, publishes the quarterly Geoeconomic Risk Barometer and advises executives on where to deploy capital.">
+<link rel="icon" href="assets/gsu.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!--FONTS-->
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+:root{
+  --bg:#192030; --ink:#eeeae0; --muted:#b9b4a6; --accent:#C2A56D; --accent-ink:#192030;
+  --surface:rgba(238,234,224,.05); --raised:rgba(238,234,224,.10); --solid:#1f283b;
+  --font-display:'Playfair Display',Georgia,serif; --font-text:'EB Garamond',Georgia,serif;
+  --step-small:clamp(1rem,.95rem + .2vw,1.0625rem);
+  --step-body:clamp(1.125rem,1.05rem + .3vw,1.25rem);
+  --step-lead:clamp(1.375rem,1.15rem + .9vw,1.8rem);
+  --step-head:clamp(2.2rem,1.5rem + 2.8vw,3.8rem);
+  --step-display:clamp(2.6rem,1.4rem + 3.6vw,4.8rem);
+  --margin:clamp(1.25rem,4vw,4rem); --gutter:clamp(1rem,2.5vw,2.5rem);
+  --section:clamp(5rem,9vw,8rem); --radius:4px;
+  --ease-out:cubic-bezier(.22,1,.36,1); --ease-expo:cubic-bezier(.16,1,.3,1);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
+html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}.lenis.lenis-stopped{overflow:hidden}
+body{margin:0;color:var(--ink);font-family:var(--font-text);font-size:var(--step-body);line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;
+  background:radial-gradient(1100px 700px at 78% 8%,rgba(194,165,109,.13),transparent 62%),radial-gradient(900px 900px at 8% 100%,rgba(60,76,110,.55),transparent 60%),linear-gradient(180deg,#1b2338 0%,#192030 40%,#141a2a 100%);background-attachment:fixed}
+h1,h2,h3,h4,p,figure,blockquote,ul,ol,dl,dd{margin:0}
+ul[class],ol[class]{padding:0;list-style:none}
+img,video,svg,canvas{display:block;max-width:100%}
+img{height:auto}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;padding:0;cursor:pointer}
+a{color:inherit}
+::selection{background:var(--accent);color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3{font-family:var(--font-display);font-weight:500;text-wrap:balance;letter-spacing:-.015em}
+h2{font-size:var(--step-head);line-height:1.05}
+h3{font-size:var(--step-lead);line-height:1.2}
+p{text-wrap:pretty}
+em{font-style:italic;color:var(--accent)}
+.wrap{padding-inline:var(--margin);max-width:1520px;margin-inline:auto}
+.section{padding-block:calc(var(--section)/2)}
+.muted{color:var(--muted)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.button{display:inline-flex;align-items:center;gap:.5em;min-height:3.2rem;padding:0 1.5rem;background:var(--accent);color:var(--accent-ink);text-decoration:none;font-weight:500;border-radius:var(--radius);transition:transform 140ms var(--ease-out),background-color 180ms ease}
+.button:hover{background:#d4b97e}
+.button:active{transform:scale(.97)}
+.button.quiet{background:var(--raised);color:var(--ink)}
+.button.quiet:hover{background:rgba(238,234,224,.16)}
+.link{text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:.07em;text-decoration-color:var(--accent);transition:color 180ms ease}
+.link:hover{color:var(--accent)}
+.ph{color:var(--accent);outline:1.5px dashed var(--accent);outline-offset:3px;padding:0 .2em;font-style:italic}
+.lead{font-size:var(--step-lead);line-height:1.4;max-width:44ch}
+.sub{color:var(--muted);font-size:var(--step-lead);max-width:44ch}
+
+/* nav */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:.9rem var(--margin);background:transparent;transition:background-color 400ms ease,transform 300ms var(--ease-out)}
+.nav.solid{background:rgba(25,32,48,.78);backdrop-filter:blur(14px)}
+.nav.hide{transform:translateY(-100%)}
+.nav .brand{display:flex;align-items:center;gap:.8rem;text-decoration:none}
+.nav .brand img{height:44px;width:44px}
+.nav .brand span{font-family:var(--font-display);font-size:1.05rem;line-height:1.1}
+.nav-links{display:flex;gap:1.8rem;align-items:center}
+.nav-links a{text-decoration:none;font-size:var(--step-body);transition:color 180ms ease}
+.nav-links a:hover{color:var(--accent)}
+.nav-links .button{min-height:2.6rem;padding:0 1.1rem}
+.menu-btn{display:none;min-height:2.6rem;padding:0 .9rem;background:var(--raised);border-radius:var(--radius)}
+@media (max-width:900px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:flex-start;gap:0;background:var(--solid);padding:.5rem var(--margin) 1.2rem}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:.7rem 0;width:100%}
+  .menu-btn{display:inline-flex;align-items:center}
+}
+
+/* hero */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden;padding-top:72px}
+.hero::before{content:'';position:absolute;inset:-20% -10% auto auto;width:70vw;height:90vh;background:radial-gradient(closest-side,rgba(194,165,109,.16),rgba(194,165,109,.04) 55%,transparent 72%);pointer-events:none;z-index:0}
+#canvas-container{position:absolute;top:0;bottom:0;right:0;width:60vw;cursor:grab;touch-action:pan-y;z-index:1;will-change:transform}
+#canvas-container:active{cursor:grabbing}
+#canvas-container canvas{width:100%!important;height:100%!important}
+.hero-text{position:relative;z-index:2;padding:0 var(--margin);max-width:min(50vw,760px);pointer-events:none}
+.hero-text>*{pointer-events:auto}
+.hero h1{font-size:var(--step-display);line-height:1.02}
+.hero h1 .w{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.08em;margin-bottom:-.08em}
+.hero h1 .w>span{display:inline-block}
+.js .hero h1 .w>span{transform:translateY(110%)}
+.hero p{margin-top:1.4rem;max-width:40ch;font-size:var(--step-lead);line-height:1.4}
+.hero-actions{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:2rem}
+.js .hero [data-rise]{opacity:0}
+@media (max-width:900px){
+  .hero{flex-direction:column;align-items:stretch;justify-content:flex-end;padding-top:64px}
+  #canvas-container{position:relative;right:auto;width:100%;height:50svh;inset:auto;flex:none}
+  .hero-text{max-width:none;padding:1.5rem var(--margin) 3rem}
+}
+
+/* about */
+.about .two{display:grid;grid-template-columns:1fr 1fr;gap:var(--gutter)}
+.about h2{margin-bottom:1rem}
+.about p{font-size:var(--step-lead);line-height:1.4;max-width:34ch}
+@media (max-width:700px){.about .two{grid-template-columns:1fr;row-gap:3rem}}
+
+/* engagement */
+.engage{background:rgba(255,255,255,.025)}
+.engage h2{margin-bottom:.6rem}
+.engage .sub{margin-bottom:3rem}
+.models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gutter)}
+.model{display:flex;flex-direction:column;gap:1rem;padding:1.8rem;background:rgba(25,32,48,.6);border-radius:var(--radius);transition:background-color 220ms ease,transform 300ms var(--ease-out)}
+.model:hover{background:rgba(25,32,48,.9);transform:translateY(-4px)}
+.model h3{font-size:clamp(1.6rem,1.2rem + 1.4vw,2.3rem)}
+.model>p{color:var(--muted)}
+.model ul{display:flex;flex-direction:column;gap:.5rem;margin-top:.4rem;list-style:none;padding:0}
+.model li{padding-left:1.2em;position:relative}
+.model li::before{content:'';position:absolute;left:0;top:.6em;width:.55em;height:.55em;background:var(--accent);transform:rotate(45deg)}
+@media (max-width:900px){.models{grid-template-columns:1fr}}
+
+/* barometer: pinned flight of pages */
+.baro{position:relative}
+.baro-stage{position:relative;min-height:100svh;display:grid;grid-template-columns:5fr 7fr;align-items:center;gap:var(--gutter);padding:6rem var(--margin) 4rem;overflow:hidden}
+.baro-text{position:relative;z-index:2}
+.baro-text h2{margin-bottom:1rem}
+.baro-text .lead{margin-bottom:2rem;max-width:36ch}
+.editions{display:flex;flex-direction:column;max-width:480px}
+.editions button,.editions a{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:baseline;width:100%;text-align:left;min-height:56px;padding:.5em 1em;font-family:var(--font-display);font-size:clamp(1.3rem,1rem + 1.2vw,1.9rem);color:var(--muted);text-decoration:none;border-radius:var(--radius);transition:background-color 200ms ease,color 200ms ease}
+.editions small{font-family:var(--font-text);font-size:var(--step-body)}
+.editions .on{color:var(--ink);background:var(--surface)}
+.editions button:hover,.editions a:hover{color:var(--accent)}
+.baro-sky{position:relative;height:min(78svh,760px);perspective:1400px}
+.cover{position:absolute;left:50%;top:50%;width:min(300px,56%);transform:translate(-50%,-50%);border-radius:var(--radius);box-shadow:0 30px 80px rgba(0,0,0,.5);transform-style:preserve-3d;will-change:transform}
+.cover img{border-radius:var(--radius);width:100%}
+.page{position:absolute;left:50%;top:50%;width:min(220px,40%);margin:-150px 0 0 -110px;border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,.45);opacity:0;will-change:transform,opacity}
+.page img{border-radius:var(--radius);width:100%}
+.baro-hint{position:absolute;left:0;right:0;bottom:0;text-align:center;color:var(--muted);font-size:var(--step-small)}
+@media (max-width:900px){
+  .baro-stage{grid-template-columns:1fr;min-height:0;padding:4rem var(--margin) 3rem}
+  .baro-sky{height:62svh;order:-1}
+  .page,.baro-hint{display:none}
+}
+
+/* rao: a story in three beats */
+.rao{background:rgba(255,255,255,.025)}
+.rao-stage{position:relative;min-height:100svh;display:grid;grid-template-columns:5fr 7fr;gap:var(--gutter);align-items:center;padding:6rem var(--margin) 4rem;overflow:hidden}
+.rao-text h2{margin-bottom:1rem}
+.beats{position:relative;min-height:9em}
+.beat{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity 400ms ease,visibility 400ms}
+.beat h3{font-size:var(--step-lead);margin-bottom:.6rem;color:var(--accent)}
+.beat p{font-size:var(--step-body);max-width:38ch;color:var(--muted)}
+.beat.on{opacity:1;visibility:visible}
+.rao-board{position:relative;height:min(70svh,640px)}
+.pillar{position:absolute;left:50%;top:50%;width:clamp(120px,22%,190px);aspect-ratio:3/4;margin:0;background:var(--solid);border-radius:var(--radius);display:flex;align-items:flex-end;padding:1rem;font-family:var(--font-display);font-size:var(--step-lead);line-height:1.1;box-shadow:0 20px 50px rgba(0,0,0,.35);will-change:transform,opacity}
+.pillar::before{content:'';position:absolute;left:1rem;top:1rem;width:.8em;height:.8em;background:var(--accent);transform:rotate(45deg)}
+.core{position:absolute;left:50%;top:50%;width:clamp(150px,26%,220px);aspect-ratio:1;margin:0;border-radius:50%;border:2px solid var(--accent);background:radial-gradient(circle,rgba(194,165,109,.28),rgba(194,165,109,.04) 60%,transparent 70%);display:grid;place-items:center;text-align:center;font-family:var(--font-display);font-size:var(--step-lead);line-height:1.1;opacity:0;box-shadow:0 0 80px rgba(194,165,109,.25);will-change:transform,opacity}
+.core small{display:block;font-family:var(--font-text);font-size:var(--step-small);color:var(--muted)}
+.out{position:absolute;left:50%;top:50%;width:clamp(150px,30%,260px);padding:1rem 1.2rem;background:var(--solid);border-radius:var(--radius);font-family:var(--font-display);font-size:var(--step-body);opacity:0;box-shadow:0 20px 50px rgba(0,0,0,.35);will-change:transform,opacity;text-decoration:none}
+.out small{display:block;font-family:var(--font-text);color:var(--muted);font-size:var(--step-small);margin-top:.2rem}
+.process{padding:0 var(--margin) calc(var(--section)/2)}
+.process ol{list-style:none;padding:1.6rem 0 0;margin:0;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gutter);position:relative}
+.process ol::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:var(--raised)}
+.process li{position:relative}
+.process li::before{content:'';position:absolute;left:0;top:-1.6rem;width:12px;height:12px;margin-top:-5px;background:var(--accent);border-radius:50%}
+.process h3{font-size:var(--step-body);font-family:var(--font-text);font-weight:600;margin-bottom:.3rem}
+.process p{color:var(--muted);font-size:var(--step-small)}
+.process .fill{position:absolute;left:0;top:0;height:2px;width:0;background:var(--accent)}
+@media (max-width:900px){
+  .rao-stage{grid-template-columns:1fr;min-height:0;padding:4rem var(--margin) 2rem}
+  .rao-board{height:auto;order:1;display:grid;grid-template-columns:1fr 1fr;gap:.8rem;align-items:stretch}
+  .rao-board .pillar,.rao-board .core,.rao-board .out{position:static;transform:none!important;opacity:1!important;margin:0;width:auto}
+  .rao-board .pillar{aspect-ratio:auto;min-height:5.5rem;font-family:var(--font-text);font-size:var(--step-body);font-weight:600}
+  .rao-board .core{grid-column:1/-1;width:140px;aspect-ratio:1;justify-self:center;margin-block:.6rem}
+  .rao-board .out{grid-column:1/-1}
+  .beats{min-height:0}
+  .beat{position:static;opacity:1;visibility:visible;margin-bottom:1rem}
+  .process ol{grid-template-columns:1fr 1fr}
+}
+
+/* method */
+.method h2{margin-bottom:.6rem}
+.method .sub{margin-bottom:2.5rem}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gutter)}
+.step h3{margin-bottom:.5rem}
+.step p{color:var(--muted)}
+@media (max-width:900px){.steps{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.steps{grid-template-columns:1fr}}
+
+/* insights */
+.insights h2{margin-bottom:1.5rem}
+.insights h3.sub{margin:2.5rem 0 1rem;font-family:var(--font-display);color:var(--ink)}
+.briefs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gutter)}
+.brief{display:flex;flex-direction:column;gap:.6rem;text-decoration:none;background:var(--surface);padding:1.5rem;min-height:240px;border-radius:var(--radius);transition:background-color 200ms ease,transform 300ms var(--ease-out)}
+.brief:hover{background:var(--raised);transform:translateY(-4px)}
+.brief .cat{color:var(--accent);font-size:var(--step-small)}
+.brief h4{font-family:var(--font-display);font-size:var(--step-lead);font-weight:500;line-height:1.2}
+.brief p{color:var(--muted)}
+.brief .by{margin-top:auto;font-size:var(--step-small);color:var(--muted)}
+.videos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gutter)}
+.video{position:relative;display:block;aspect-ratio:16/9;background:var(--surface);overflow:hidden;border-radius:var(--radius)}
+.video img{width:100%;height:100%;object-fit:cover;transition:transform 600ms var(--ease-out)}
+.video:hover img{transform:scale(1.04)}
+.video .play{position:absolute;left:50%;top:50%;width:64px;height:64px;transform:translate(-50%,-50%);background:var(--accent);display:grid;place-items:center;border-radius:50%}
+.video .play svg{width:22px;height:22px;fill:var(--accent-ink);margin-left:3px}
+.video.more{display:grid;place-items:center;text-decoration:none;font-family:var(--font-display);font-size:var(--step-lead);transition:background-color 200ms ease}
+.video.more:hover{background:var(--raised)}
+@media (max-width:900px){.briefs,.videos{grid-template-columns:1fr}}
+
+/* team */
+.team{background:rgba(255,255,255,.025)}
+.team h2{margin-bottom:.6rem}
+.team .sub{margin-bottom:3rem;font-size:var(--step-body)}
+.people{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gutter);row-gap:3rem}
+.person{display:flex;flex-direction:column;gap:.8rem}
+.person .portrait{width:120px;height:120px;border-radius:50%;overflow:hidden;background:var(--raised);display:grid;place-items:center;font-family:var(--font-display);font-size:1.8rem;color:var(--accent)}
+.person .portrait img{width:100%;height:100%;object-fit:cover;transition:transform 500ms var(--ease-out)}
+.person:hover .portrait img{transform:scale(1.06)}
+.person .name{font-family:var(--font-display);font-size:var(--step-lead);line-height:1.2;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.person .name a{display:inline-grid;place-items:center;width:28px;height:28px;background:var(--raised);border-radius:var(--radius);transition:background-color 180ms ease}
+.person .name a:hover{background:var(--accent)}
+.person .name a svg{width:14px;height:14px;fill:var(--ink)}
+.person .name a:hover svg{fill:var(--accent-ink)}
+.person .role{color:var(--accent)}
+.person .bio{color:var(--muted);font-size:var(--step-small)}
+@media (max-width:1100px){.people{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:800px){.people{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.people{grid-template-columns:1fr}}
+
+/* partners + clients */
+.partners h2{margin-bottom:2rem}
+.partner-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--gutter)}
+.partner{min-width:0;background:var(--surface);padding:2rem;min-height:200px;display:flex;flex-direction:column;gap:.8rem;border-radius:var(--radius)}
+.partner .slot{height:64px;display:flex;align-items:center}
+.partner p{color:var(--muted)}
+.clients{padding-block:clamp(4rem,8vw,7rem);overflow:hidden}
+.clients .row{display:flex;align-items:center;gap:2rem}
+.clients p{flex:none;font-size:var(--step-lead);font-family:var(--font-display);padding-left:var(--margin)}
+.marquee{flex:1;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marquee .track{display:flex;gap:clamp(3rem,7vw,7rem);width:max-content;animation:marquee 38s linear infinite;align-items:center;padding-inline:3rem}
+.marquee:hover .track{animation-play-state:paused}
+.marquee a{display:block;height:48px}
+.marquee img{height:48px;width:auto;max-width:200px;object-fit:contain;filter:grayscale(1) brightness(1.6);opacity:.8;transition:filter 300ms ease,opacity 300ms ease}
+.marquee a:hover img{filter:none;opacity:1}
+@keyframes marquee{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.marquee .track{animation:none}}
+@media (max-width:600px){.partner-grid{grid-template-columns:1fr}}
+
+/* contact */
+.cta{background:var(--accent);color:var(--accent-ink);display:grid;grid-template-columns:1fr 1fr;gap:var(--gutter);align-items:center;padding:calc(var(--section)/1.4) var(--margin)}
+.cta h2{font-size:clamp(2.6rem,1.6rem + 4vw,5.5rem);line-height:.98}
+.cta .left p{margin-top:1.2rem;max-width:40ch;font-size:var(--step-lead);line-height:1.4}
+.cta-form{background:#192030;color:var(--ink);padding:1.8rem;width:min(100%,480px);justify-self:end;border-radius:var(--radius);box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.cta-form h3{margin-bottom:1rem}
+.cta-form .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--raised);padding:4px;margin-bottom:1rem;border-radius:var(--radius)}
+.cta-form .seg button{min-height:40px;border-radius:var(--radius);transition:background-color 180ms ease,color 180ms ease}
+.cta-form .seg button.on{background:var(--ink);color:var(--bg)}
+.cta-form label{display:block;font-size:var(--step-small);color:var(--muted);margin:.6rem 0 .25rem}
+.cta-form input,.cta-form textarea{width:100%;background:var(--surface);border:1px solid var(--raised);padding:.7rem .9rem;color:var(--ink);min-height:3rem;border-radius:var(--radius)}
+.cta-form textarea{min-height:5.5rem;resize:vertical}
+.cta-form input:focus,.cta-form textarea:focus{border-color:var(--accent);outline:none}
+.cta-form .button{width:100%;justify-content:center;margin-top:1.2rem}
+.cta-form .status{margin-top:.8rem;font-size:var(--step-small);color:var(--muted);min-height:1.3em}
+@media (max-width:900px){.cta{grid-template-columns:1fr;row-gap:2.5rem}.cta-form{justify-self:stretch;width:100%}}
+
+/* footer */
+.foot{padding:calc(var(--section)/2) var(--margin) 2rem}
+.foot .where{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gutter);margin-bottom:clamp(3rem,8vh,5rem)}
+.foot .where p{color:var(--muted)}
+.foot .where b{display:block;color:var(--ink);font-weight:600;font-size:var(--step-body);margin-bottom:.3rem}
+.foot .line{display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;font-size:var(--step-small);color:var(--muted)}
+.foot .line nav{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center}
+.foot .line a{text-decoration:none;color:var(--ink)}
+.foot .line a:hover{color:var(--accent)}
+.foot .line .r{text-align:right}
+@media (max-width:900px){.foot .where{grid-template-columns:1fr}.foot .line{grid-template-columns:1fr;gap:.5rem}.foot .line nav{justify-content:flex-start}.foot .line .r{text-align:left}}
+
+/* motion: content is visible without script; the script only moves it in */
+.js [data-anim]{opacity:0}
+.js .h2-split .w{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.1em;margin-bottom:-.1em}
+.js .h2-split .w>span{display:inline-block;transform:translateY(110%)}
+
+/* gate modal */
+.gate-overlay{position:fixed;inset:0;background:rgba(10,14,24,.85);display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem}
+.gate-overlay[hidden]{display:none}
+.gate-modal{position:relative;background:var(--solid);padding:2.2rem;width:min(100%,440px);border-radius:var(--radius);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.gate-close{position:absolute;top:.6rem;right:.8rem;font-size:1.6rem;color:var(--muted);min-width:44px;min-height:44px}
+.gate-ey{color:var(--accent);margin-bottom:.4rem}
+.gate-ttl{font-size:var(--step-head);margin-bottom:.6rem}
+.gate-sub{color:var(--muted);margin-bottom:1.4rem}
+.gate-input{display:block;width:100%;background:#192030;border:1px solid var(--raised);color:var(--ink);padding:.75rem 1rem;margin-bottom:.8rem;min-height:3rem;border-radius:var(--radius)}
+.gate-input:focus{border-color:var(--accent);outline:none}
+.gate-btn{display:block;width:100%;background:var(--accent);color:var(--accent-ink);min-height:3rem;font-weight:500;border-radius:var(--radius)}
+.gate-btn:hover{background:#d4b97e}
+.gate-err{color:#e8a0a0;margin-top:.8rem}
+/*THEME*/
+</style>
+</head>
+<body>
+<!--DECOR-->
+<nav class="nav" id="nav" aria-label="Main">
+  <a class="brand" href="#top"><img src="assets/gsu.png" alt="GSU"><span>Geoeconomic<br>Strategy Unit</span></a>
+  <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks">Menu</button>
+  <div class="nav-links" id="navLinks">
+    <a href="#about">About</a>
+    <a href="#engagement">Services</a>
+    <a href="#barometer">Barometer</a>
+    <a href="#rao">RAO</a>
+    <a href="#insights">Insights</a>
+    <a href="#team">Team</a>
+    <a class="button" href="#contact">Contact</a>
+  </div>
+</nav>
+
+<main id="top">
+
+<header class="hero" id="hero">
+  <div id="canvas-container" aria-label="Interactive globe. Drag to rotate." role="img"></div>
+  <div class="hero-text">
+    <h1><span class="line">Researching <em>risk</em>.</span><br><span class="line">Mapping <em>markets</em>.</span></h1>
+    <p data-rise>A practitioner-led intelligence and advisory firm helping executives navigate geopolitical risk, identify opportunities, and make confident decisions in an uncertain world.</p>
+    <div class="hero-actions" data-rise>
+      <a class="button" href="#barometer">View the Risk Barometer</a>
+      <a class="button quiet" href="dashboard.html">View RAO dashboard</a>
+    </div>
+  </div>
+</header>
+
+<section class="section about wrap" id="about" aria-label="About">
+  <div class="two">
+    <div data-anim="up"><h2>Who we are</h2><p>A practitioner-led, research-driven firm that translates the complexity of geopolitics and global economics into clear, actionable intelligence for business leaders.</p></div>
+    <div data-anim="up" data-delay=".12"><h2>Our mission</h2><p>To improve capital mobility and unlock cross-border growth by highlighting risks, aligning incentives, and sequencing action across high-growth trade corridors.</p></div>
+  </div>
+</section>
+
+<section class="section engage" id="engagement" aria-labelledby="eng-h">
+  <div class="wrap">
+    <h2 id="eng-h">How we work with you</h2>
+    <p class="sub" data-anim="up">Three ways to engage, from structured intelligence to bespoke research for a single decision.</p>
+    <div class="models">
+      <article class="model" data-anim="left"><h3>Insight Packages</h3><p>Structured intelligence to keep your leadership informed as conditions shift and opportunities open.</p><ul><li>Quarterly Risk Barometer</li><li>Country briefs</li><li>Corridor views and triggers to watch</li><li>Interim alerts on material changes</li></ul></article>
+      <article class="model" data-anim="up" data-delay=".1"><h3>Strategic Advisory</h3><p>Direct engagement with your leadership team to translate intelligence into concrete decisions and governance steps.</p><ul><li>C-suite and board briefings</li><li>Market entry and expansion playbooks</li><li>Scenario workshops and offsites</li><li>Risk-mitigation design</li></ul></article>
+      <article class="model" data-anim="right" data-delay=".2"><h3>Commissioned Research</h3><p>Bespoke deep-dives for specific deals, corridors, or investment decisions.</p><ul><li>Pre-deal market insights</li><li>Early-warning checks</li><li>Sequencing decisions and investments</li><li>Structural resilience planning</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section class="baro" id="barometer" aria-labelledby="baro-h">
+  <div class="baro-stage" id="baroStage">
+    <div class="baro-text">
+      <h2 id="baro-h">Geoeconomic Risk Barometer</h2>
+      <p class="lead" data-anim="up">Where execution is most feasible in the near and medium term, built on the Risk-Adjusted Opportunity score. Published quarterly, with interim updates when conditions materially shift.</p>
+      <div class="editions" id="editions" data-anim="up" data-delay=".1">
+        <button type="button" class="on" data-pdf="GRB Q3 2026.pdf">Q3 2026 edition <small>Latest · request the PDF</small></button>
+        <button type="button" data-pdf="GRB Q2 2026.pdf">Q2 2026 edition <small>Request the PDF</small></button>
+        <button type="button" data-pdf="GRB Q1 2026.pdf">Q1 2026 edition <small>Request the PDF</small></button>
+        <button type="button" data-pdf="GRB Q4 2025.pdf">Q4 2025 edition <small>Request the PDF</small></button>
+        <a href="docs/Decision-Grade Intelligence for a Fragmenting World Economy.pdf" target="_blank" rel="noopener">Whitepaper <small>Read the PDF</small></a>
+      </div>
+    </div>
+    <div class="baro-sky" id="sky" aria-hidden="true">
+      <div class="page"><img src="assets/barometer/q3-p02.jpg" alt="" loading="lazy" width="900" height="1275"></div>
+      <div class="page"><img src="assets/barometer/q3-p03.jpg" alt="" loading="lazy" width="900" height="1275"></div>
+      <div class="page"><img src="assets/barometer/q3-p04.jpg" alt="" loading="lazy" width="900" height="1275"></div>
+      <div class="page"><img src="assets/barometer/q3-p05.jpg" alt="" loading="lazy" width="900" height="1275"></div>
+      <div class="page"><img src="assets/barometer/q3-p06.jpg" alt="" loading="lazy" width="900" height="1275"></div>
+      <div class="page"><img src="assets/barometer/q3-p07.jpg" alt="" loading="lazy" width="900" height="1275"></div>
+      <div class="page"><img src="assets/barometer/q3-p08.jpg" alt="" loading="lazy" width="900" height="1275"></div>
+      <div class="page"><img src="assets/barometer/q3-p09.jpg" alt="" loading="lazy" width="900" height="1275"></div>
+      <div class="cover" id="cover"><img src="assets/barometer/q3-cover.jpg" alt="Geoeconomic Risk Barometer, Q3 2026 cover" width="600" height="850"></div>
+      <p class="baro-hint">Scroll to leaf through the Q3 2026 edition</p>
+    </div>
+  </div>
+</section>
+
+<section class="rao" id="rao" aria-labelledby="rao-h">
+  <div class="rao-stage" id="raoStage">
+    <div class="rao-text">
+      <h2 id="rao-h">The RAO framework</h2>
+      <div class="beats" id="beats" aria-live="polite">
+        <div class="beat on"><h3>Four pillars</h3><p>Every country is read on Opportunity, Stability, Capacity and Trajectory. Each pillar is scored on its own before anything is combined.</p></div>
+        <div class="beat"><h3>One score</h3><p>The four pillars combine into a single Risk-Adjusted Opportunity score, recalculated as conditions move.</p></div>
+        <div class="beat"><h3>Three outputs</h3><p>The score is what you read in the quarterly Barometer, explore in the RAO dashboard, and act on in every country brief.</p></div>
+      </div>
+    </div>
+    <div class="rao-board" id="board" aria-hidden="true">
+      <figure class="pillar">Opportunity</figure>
+      <figure class="pillar">Stability</figure>
+      <figure class="pillar">Capacity</figure>
+      <figure class="pillar">Trajectory</figure>
+      <div class="core" id="core">RAO<small>score</small></div>
+      <a class="out" href="#barometer">Geoeconomic Risk Barometer<small>Quarterly</small></a>
+      <a class="out" href="dashboard.html">RAO dashboard<small>On demand</small></a>
+      <a class="out" href="#insights">Country briefs<small>Continuous</small></a>
+    </div>
+  </div>
+  <div class="process wrap" id="process">
+    <ol>
+      <span class="fill" id="processFill" aria-hidden="true"></span>
+      <li data-anim="up"><h3>Data ingestion</h3><p>Continuous monitoring of World Bank data, central bank feeds and global news outlets.</p></li>
+      <li data-anim="up" data-delay=".1"><h3>Model analysis</h3><p>Large language models evaluate the signals against the four pillars to identify material changes.</p></li>
+      <li data-anim="up" data-delay=".2"><h3>Scoring</h3><p>Updated Risk-Adjusted Opportunity scores are calculated for each country as conditions move.</p></li>
+      <li data-anim="up" data-delay=".3"><h3>Analyst review</h3><p>Significant score movements trigger a mandatory review by our experts before anything is published.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section method wrap" id="method" aria-labelledby="method-h">
+  <h2 id="method-h">How we work</h2>
+  <p class="sub" data-anim="up">We start with analysis; we finish with decisions.</p>
+  <div class="steps">
+    <div class="step" data-anim="up"><h3>Field-informed analysis</h3><p>Signals from ministries, regulators, financiers, and our regional network across high-growth markets.</p></div>
+    <div class="step" data-anim="up" data-delay=".1"><h3>Quantitative assessment</h3><p>Risk-Adjusted Opportunity scores blend market opportunity with on-the-ground stability.</p></div>
+    <div class="step" data-anim="up" data-delay=".2"><h3>Scenario design</h3><p>Best, base and worst cases tied to concrete triggers such as elections and policy moves.</p></div>
+    <div class="step" data-anim="up" data-delay=".3"><h3>Decision support</h3><p>Clear strategies and governance steps, calibrated to your time horizon and risk appetite.</p></div>
+  </div>
+</section>
+
+<section class="section insights wrap" id="insights" aria-labelledby="ins-h">
+  <h2 id="ins-h">Latest insights</h2>
+  <h3 class="sub">Strategic briefs</h3>
+  <div class="briefs" id="briefs">
+    <a class="brief" data-anim="up" data-delay="0.0" href="insights/Trump–Saudi Nuclear Deal -  Contingency-Bound and in Limbo.pdf" target="_blank" rel="noopener"><span class="cat">Geopolitical Outlook</span><h4>Trump-Saudi Nuclear Deal</h4><p>A multibillion-dollar agreement for Saudi Arabia&#x27;s civilian nuclear program faces uncertainty due to new political conditions and regional tensions.</p><span class="by">By Shiva Dang</span></a>
+    <a class="brief" data-anim="up" data-delay="0.1" href="insights/2026 NATO Ankara Summit Defence Spending Surge.pdf" target="_blank" rel="noopener"><span class="cat">Defence Spending</span><h4>NATO Ankara Defence Surge</h4><p>NATO leaders gathered in Ankara to pledge increased defence spending, sparking market interest and new procurement contracts, though implementation varies among allies.</p><span class="by">By Indulekha A.</span></a>
+    <a class="brief" data-anim="up" data-delay="0.2" href="insights/Starmer’s Exit Deepens Uncertainty Over Labour’s Economic Direction.pdf" target="_blank" rel="noopener"><span class="cat">Political Transition</span><h4>Starmer Exit: Economic Direction</h4><p>The resignation of Sir Keir Starmer deepens uncertainty over Labour&#x27;s economic direction and future leadership challenges.</p><span class="by">By Shiva Dang</span></a>
+  </div>
+  <h3 class="sub">Video</h3>
+  <div class="videos" id="videos">
+    <a class="video" data-anim="up" data-delay="0.0" href="https://www.youtube.com/watch?v=HGa1Xbx7IjQ" target="_blank" rel="noopener" aria-label="Watch on YouTube"><img src="https://i.ytimg.com/vi/HGa1Xbx7IjQ/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></a>
+    <a class="video" data-anim="up" data-delay="0.1" href="https://www.youtube.com/watch?v=X2YzPP2MAt8" target="_blank" rel="noopener" aria-label="Watch on YouTube"><img src="https://i.ytimg.com/vi/X2YzPP2MAt8/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></a>
+    <a class="video more" data-anim="up" data-delay=".2" href="https://www.youtube.com/@GeoeconomicStrategyUnit" target="_blank" rel="noopener">Visit the channel</a>
+  </div>
+</section>
+
+<section class="section team" id="team" aria-labelledby="team-h">
+  <div class="wrap">
+    <h2 id="team-h">Our team</h2>
+    <p class="sub" data-anim="up">Roster under review: departures removed and incoming partners added once confirmed.</p>
+    <div class="people">
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/ishan.png" alt="Ishan Jasuja" loading="lazy" width="120" height="120"></div><div class="role">Director</div><div class="name">Ishan Jasuja<a href="https://www.linkedin.com/in/ishanjasuja/" target="_blank" rel="noopener" aria-label="Ishan Jasuja on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a></div><p class="bio">Holds a Master’s in International Political Economy from King’s College London. His experience spans financial services, strategic advisory, and diplomacy, informing the GSU’s institutional strategy and client engagements.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/adip.png" alt="Adip Krishna Guduru" loading="lazy" width="120" height="120"></div><div class="role">Chief Technology Officer</div><div class="name">Adip Krishna Guduru<a href="https://www.linkedin.com/in/adipkg/" target="_blank" rel="noopener" aria-label="Adip Krishna Guduru on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a></div><p class="bio">Holds a BTech in Computer Science Engineering with a specialisation in AI and Machine Learning from Woxsen University. At the GSU, he leads the unit’s technological infrastructure, digital strategy, and data-driven intelligence platforms.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/pranoy.png" alt="Pranoy Roy Choudhury" loading="lazy" width="120" height="120"></div><div class="role">Chief Data Officer</div><div class="name">Pranoy Roy Choudhury<a href="https://www.linkedin.com/in/pranoy-roy-choudhury/" target="_blank" rel="noopener" aria-label="Pranoy Roy Choudhury on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a></div><p class="bio">Pursuing an MA in International Political Economy at King’s College London, with interests in monetary systems, capital flows, and financial stability. As Chief Data Officer, he builds the quantitative frameworks and analytical systems that underpin the GSU’s country risk and opportunity assessments.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/bhuvanya.jpeg" alt="Bhuvanya Ranjan" loading="lazy" width="120" height="120"></div><div class="role">Operations Lead</div><div class="name">Bhuvanya Ranjan<a href="https://www.linkedin.com/in/bhuvanyaranjan" target="_blank" rel="noopener" aria-label="Bhuvanya Ranjan on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a></div><p class="bio">Holds an MSc in Politics and International Relations from SOAS University of London. As Operations Lead, she oversees the GSU’s day-to-day operations and organisational strategy, with research interests spanning South Asian politics, geoeconomics, and regional security.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/vrinda.png" alt="Vrinda Rastogi" loading="lazy" width="120" height="120"></div><div class="role">Marketing and Outreach Head</div><div class="name">Vrinda Rastogi</div><p class="bio">Pursuing an MSc in International Relations at the London School of Economics, with a focus on international development, geoeconomics, and conflict studies. As Marketing and Outreach Head, she leads the GSU’s brand identity and communications strategy across all outputs.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/nir.jpeg" alt="Nir Bhattacharjee" loading="lazy" width="120" height="120"></div><div class="role">Chief Strategy Officer</div><div class="name">Nir Bhattacharjee</div><p class="bio">As Chief Strategy Officer, he leads the GSU’s Strategic vertical with a focus on business development and market entry across high-growth markets. His work spans regulatory navigation and investment sequencing, with a geographic focus on India, the GCC, Sub-Saharan Africa, and Latin America.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/tansi.jpeg" alt="Tansi Rawat" loading="lazy" width="120" height="120"></div><div class="role">Research Head</div><div class="name">Tansi Rawat</div><p class="bio">Holds an MSc in International Public Policy from University College London and a BA in Economics. At the GSU, she leads the Research vertical, contributing to geopolitical research and strategic policy analysis, with interests in global governance and emerging markets.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/shubhangi.jpeg" alt="Shubhangi Sharma" loading="lazy" width="120" height="120"></div><div class="role">Analyst</div><div class="name">Shubhangi Sharma<a href="https://www.linkedin.com/in/shubhangi-sharma-72b22a28a" target="_blank" rel="noopener" aria-label="Shubhangi Sharma on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a></div><p class="bio">Studying International Relations and Economics at Ashoka University. She contributes to policy research and strategic market analysis at the GSU, with a focus on crafting clear, insight-driven narratives.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/shiva.png" alt="Shiva Dang" loading="lazy" width="120" height="120"></div><div class="role">Analyst</div><div class="name">Shiva Dang</div><p class="bio">Holds an MA in International Relations from King’s College London. His work focuses on public–private sector collaboration, policy engagement, and sustainability, examining how regulatory frameworks and political risk shape strategic decision-making.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/indulekha.jpeg" alt="Indulekha A" loading="lazy" width="120" height="120"></div><div class="role">Research Analyst</div><div class="name">Indulekha A</div><p class="bio">Holds an MSc in Financial Economics and brings two years of experience as an analyst at Goldman Sachs. At the GSU, she works as a Research Analyst with interests in geoeconomics and macroeconomic developments, with a particular focus on emerging markets.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/nicla.png" alt="Nicla Bussoli" loading="lazy" width="120" height="120"></div><div class="role">Analyst</div><div class="name">Nicla Bussoli</div><p class="bio">Holds a Master’s in International Relations and Global Security from Sapienza University of Rome. She specialises in geopolitical analysis, OSINT research, and international security, bringing a multidisciplinary perspective to the study of global risk and strategic dynamics.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/william.png" alt="William Finn" loading="lazy" width="120" height="120"></div><div class="role">Research Analyst</div><div class="name">William Finn</div><p class="bio">Holds a Master’s in Global Political Economy from Leiden University and a degree in Politics and Sociology from UCL. At the GSU, he is a Research Analyst and podcast co-host, with expertise in Pakistan’s political economy and prior experience at a UK think tank and in retail investment.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/nurein.png" alt="Nurein Akindele" loading="lazy" width="120" height="120"></div><div class="role">Regional Policy Fellow</div><div class="name">Nurein Akindele<a href="https://www.linkedin.com/in/nurein-akindele/" target="_blank" rel="noopener" aria-label="Nurein Akindele on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a></div><p class="bio">Contributes to policy briefs and geoeconomic trend analysis through the GSU’s Europe Programme. He brings extensive experience in international development and sustainability strategy.</p></div>
+      <div class="person" data-anim="up"><div class="portrait"><img src="team/ojaswin.jpeg" alt="Ojaswin" loading="lazy" width="120" height="120"></div><div class="role">AI Engineer</div><div class="name">Ojaswin</div><p class="bio">An AI engineer with expertise in building intelligent applications that address complex, real-world challenges. At the GSU, he contributes to the development of AI-driven tools and analytical systems.</p></div>
+      <div class="person" data-anim="up" data-placeholder><div class="portrait" aria-hidden="true">IP</div><div class="role"><span class="ph">[Role]</span></div><div class="name"><span class="ph">[Incoming partner]</span></div><p class="bio"><span class="ph">[Short biography to be supplied]</span></p></div>
+      <div class="person" data-anim="up" data-placeholder><div class="portrait" aria-hidden="true">IP</div><div class="role"><span class="ph">[Role]</span></div><div class="name"><span class="ph">[Incoming partner]</span></div><p class="bio"><span class="ph">[Short biography to be supplied]</span></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section partners wrap" id="partners" aria-labelledby="partners-h">
+  <h2 id="partners-h">Our partners</h2>
+  <div class="partner-grid">
+    <div class="partner" data-anim="left" data-placeholder><div class="slot"><span class="ph">[Partner logo]</span></div><h3><span class="ph">[Partner name]</span></h3><p><span class="ph">[One or two sentences on the partnership]</span></p></div>
+    <div class="partner" data-anim="right" data-placeholder><div class="slot"><span class="ph">[Partner logo]</span></div><h3><span class="ph">[Partner name]</span></h3><p><span class="ph">[One or two sentences on the partnership]</span></p></div>
+  </div>
+</section>
+
+<section class="clients" id="clients" aria-labelledby="clients-h">
+  <div class="row">
+    <p id="clients-h">Our clients</p>
+    <div class="marquee"><div class="track" id="logoTrack">
+      <a href="https://ksrmarine.com/" target="_blank" rel="noopener" aria-label="KSR Marine Services"><img src="logos/ksr-logo.svg" alt="KSR Marine Services" loading="lazy"></a>
+      <a href="https://tcaglobal.in/" target="_blank" rel="noopener" aria-label="Compounding Advantage India"><img src="logos/tca-logo.png" alt="Compounding Advantage India" loading="lazy"></a>
+      <a href="https://www.altmin.in/" target="_blank" rel="noopener" aria-label="Altmin"><img src="logos/altmin.avif" alt="Altmin" loading="lazy"></a>
+      <a href="https://gttcindia.com/" target="_blank" rel="noopener" aria-label="GTTCI"><img src="logos/GTTCI-LOGO.jpeg" alt="GTTCI" loading="lazy"></a>
+    </div></div>
+  </div>
+</section>
+
+<section class="cta" id="contact" aria-labelledby="cta-h">
+  <div class="left">
+    <h2 id="cta-h">Let’s talk.</h2>
+    <p data-anim="up">Interested in bespoke strategic advice? Tell us the markets and decisions you are weighing. We reply by email.</p>
+  </div>
+  <form class="cta-form" data-ui id="contactForm" novalidate data-anim="up" data-delay=".1">
+    <h3>Contact us</h3>
+    <div class="seg" role="radiogroup" aria-label="What would you like">
+      <button type="button" class="on" data-kind="advisory" role="radio" aria-checked="true">Advisory</button>
+      <button type="button" data-kind="subscribe" role="radio" aria-checked="false">Subscription</button>
+    </div>
+    <label for="cName">Full name</label><input id="cName" name="name" type="text" autocomplete="name" required>
+    <label for="cEmail">Work email</label><input id="cEmail" name="email" type="email" autocomplete="email" required>
+    <label for="cOrg">Organisation</label><input id="cOrg" name="organisation" type="text" autocomplete="organization">
+    <div id="msgWrap"><label for="cMsg">What are you deciding?</label><textarea id="cMsg" name="message"></textarea></div>
+    <button class="button" type="submit" id="cSubmit">Send</button>
+    <p class="status" id="cStatus" role="status"></p>
+  </form>
+</section>
+
+</main>
+
+<footer class="foot" id="footer">
+  <div class="where">
+    <div><b>Office</b><p><span class="ph" data-placeholder>[New office address]</span></p></div>
+    <div><b>Contact</b><p><span class="ph" data-placeholder>[Research email]</span><br><span class="ph" data-placeholder>[Phone]</span></p></div>
+    <div><b>Subscriptions</b><p><span class="ph" data-placeholder>[One line on what a subscription includes]</span></p></div>
+  </div>
+  <div class="line">
+    <span>Geoeconomic Strategy Unit</span>
+    <nav aria-label="Footer"><a href="#about">About</a><a href="#engagement">Services</a><a href="#barometer">Barometer</a><a href="#insights">Insights</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav>
+    <span class="r">© 2026 Geoeconomic Strategy Unit</span>
+  </div>
+</footer>
+
+<div class="gate-overlay" id="gateOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="gateTtl">
+  <div class="gate-modal">
+    <button class="gate-close" onclick="closeGate()" aria-label="Close">×</button>
+    <div id="gateForm">
+      <p class="gate-ey">Geoeconomic Risk Barometer</p>
+      <h2 class="gate-ttl" id="gateTtl">Get the report</h2>
+      <p class="gate-sub">Enter your details and we will send the report to your inbox.</p>
+      <form onsubmit="submitGate(event)">
+        <input class="gate-input" id="gateName" type="text" placeholder="Full name" autocomplete="name" aria-label="Full name" required>
+        <input class="gate-input" id="gateEmail" type="email" placeholder="Work email" autocomplete="email" aria-label="Work email" required>
+        <button class="gate-btn" id="gateSubmitBtn" type="submit">Send me the report</button>
+      </form>
+      <p class="gate-err" id="gateError" hidden role="alert"></p>
+    </div>
+    <div id="gateSuccess" hidden role="status">
+      <p class="gate-ey">Report sent</p>
+      <h2 class="gate-ttl">Check your inbox</h2>
+      <p class="gate-sub">The report is on its way to <strong id="gateEmailDisplay"></strong>.</p>
+    </div>
+  </div>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script src="vendor/OrbitControls.umd.js"></script>
+<script src="assets/globe.classic.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script>
+const GATE_WORKER = 'https://gsu-gate.guduruadip.workers.dev';
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wide = matchMedia('(min-width: 901px)').matches;
+const nav = document.getElementById('nav'), menuBtn = document.getElementById('menuBtn'), links = document.getElementById('navLinks');
+menuBtn.addEventListener('click', () => { const o = links.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', o); });
+links.addEventListener('click', e => { if (e.target.tagName === 'A') { links.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); } });
+
+(function motion() {
+  const show = () => { document.querySelectorAll('[data-anim],[data-rise]').forEach(e => e.style.opacity = 1); document.querySelectorAll('.hero h1 .w > span, .h2-split .w > span').forEach(e => e.style.transform = 'none'); document.querySelectorAll('.core,.out,.pillar').forEach(e => e.style.opacity = 1); };
+  if (!window.gsap || !window.ScrollTrigger || reduced) { show(); document.querySelectorAll('.beat').forEach(b => b.classList.add('on')); return; }
+  gsap.registerPlugin(ScrollTrigger);
+  /* smooth scroll */
+  let lenis = null;
+  if (window.Lenis) { lenis = new Lenis({ lerp: .09, smoothWheel: true, anchors: { offset: -72 } }); lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
+  /* nav */
+  let lastY = 0;
+  ScrollTrigger.create({ start: 0, end: 'max', onUpdate: s => { const y = s.scroll(); nav.classList.toggle('solid', y > 80); nav.classList.toggle('hide', y > lastY && y > 400 && !links.classList.contains('open')); lastY = y; } });
+  /* words */
+  const split = el => { el.innerHTML = el.innerHTML.split(/(\s+)/).map(p => /^\s+$/.test(p) ? ' ' : `<span class="w"><span>${p}</span></span>`).join(''); return el.querySelectorAll('.w > span'); };
+  const heroWords = [...document.querySelectorAll('.hero h1 .line')].flatMap(l => [...split(l)]);
+  gsap.timeline({ defaults: { ease: 'expo.out' } })
+    .to(heroWords, { y: 0, duration: 1.1, stagger: .09, delay: .15 })
+    .to('.hero [data-rise]', { opacity: 1, y: 0, duration: .9, stagger: .12, startAt: { y: 16 } }, '-=.8');
+  gsap.to('#canvas-container', { yPercent: 14, opacity: .25, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+  /* headings rise word by word */
+  document.querySelectorAll('main h2').forEach(h => { if (h.closest('.hero')) return; const ws = split(h); h.classList.add('h2-split'); gsap.to(ws, { y: 0, duration: 1, ease: 'expo.out', stagger: .06, scrollTrigger: { trigger: h, start: 'top 88%', once: true } }); });
+  /* section pieces: swipe up, or in from a side */
+  const reveal = el => { if (el.dataset.done) return; el.dataset.done = 1; const kind = el.dataset.anim, d = parseFloat(el.dataset.delay || 0);
+    const from = kind === 'left' ? { x: -60, opacity: 0 } : kind === 'right' ? { x: 60, opacity: 0 } : kind === 'fade' ? { opacity: 0 } : { y: 48, opacity: 0 };
+    gsap.fromTo(el, from, { x: 0, y: 0, opacity: 1, duration: 1.1, delay: d, ease: 'expo.out', clearProps: 'transform' }); };
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('[data-anim]').forEach(el => io.observe(el));
+  setTimeout(() => document.querySelectorAll('[data-anim]:not([data-done])').forEach(el => { el.dataset.done = 1; el.style.opacity = 1; }), 4000);
+  setTimeout(() => document.querySelectorAll('.h2-split .w > span').forEach(e => e.style.transform = 'none'), 4500);
+  /* barometer: the pages fly across the sky while the stage is pinned */
+  const sky = document.getElementById('sky'), pages = [...document.querySelectorAll('.page')], cover = document.getElementById('cover');
+  if (wide) {
+    const tl = gsap.timeline({ scrollTrigger: { trigger: '#baroStage', start: 'top top', end: '+=' + (pages.length * 420), pin: true, scrub: .8, anticipatePin: 1 } });
+    pages.forEach((p, i) => {
+      const dir = i % 2 ? -1 : 1, lift = (i % 3 - 1) * 90;
+      tl.fromTo(p, { x: () => sky.clientWidth * .75, y: 220 + lift, rotation: 18 * dir, rotateY: -30, scale: .72 },
+                   { x: () => -sky.clientWidth * .85, y: -260 + lift, rotation: -16 * dir, rotateY: 30, scale: 1, ease: 'none', duration: 1.6 }, i * .55)
+        .fromTo(p, { opacity: 0 }, { opacity: 1, duration: .25, ease: 'none' }, i * .55)
+        .to(p, { opacity: 0, duration: .25, ease: 'none' }, i * .55 + 1.35);
+    });
+    tl.to(cover, { rotateY: -14, rotateX: 6, ease: 'none', duration: pages.length * .55 + 1.6 }, 0);
+  } else pages.forEach(p => p.remove());
+  cover.addEventListener('pointermove', e => { const r = cover.getBoundingClientRect(); gsap.to(cover, { rotateY: ((e.clientX - r.left) / r.width - .5) * 22, rotateX: -((e.clientY - r.top) / r.height - .5) * 22, duration: .5, overwrite: 'auto' }); });
+  cover.addEventListener('pointerleave', () => gsap.to(cover, { rotateY: 0, rotateX: 0, duration: .8 }));
+  /* rao: three beats */
+  const board = document.getElementById('board'), pillars = [...board.querySelectorAll('.pillar')], core = document.getElementById('core'), outs = [...board.querySelectorAll('.out')], beats = [...document.querySelectorAll('.beat')];
+  const setBeat = n => beats.forEach((b, i) => b.classList.toggle('on', i === n));
+  const W = () => Math.min(board.clientWidth, 760), spread = () => W() / 4.2;
+  if (wide) {
+  gsap.set(pillars, { y: 260, opacity: 0, xPercent: -50, yPercent: -50 });
+  gsap.set(core, { xPercent: -50, yPercent: -50, scale: .2 });
+  gsap.set(outs, { xPercent: -50, yPercent: -50 });
+  const r = gsap.timeline({ scrollTrigger: { trigger: '#raoStage', start: 'top top', end: '+=1800', pin: true, scrub: .8, anticipatePin: 1, onUpdate: s => setBeat(s.progress < .36 ? 0 : s.progress < .7 ? 1 : 2) } });
+  r.to(pillars, { y: 0, opacity: 1, x: i => (i - 1.5) * spread(), rotation: i => (i - 1.5) * 3, duration: 1, stagger: .12, ease: 'power3.out' })
+   .to({}, { duration: .4 })
+   .to(pillars, { x: 0, y: 0, rotation: i => (i - 1.5) * 90, scale: .3, opacity: 0, duration: 1, stagger: .05, ease: 'power3.inOut' })
+   .to(core, { scale: 1, opacity: 1, duration: .8, ease: 'back.out(1.4)' }, '-=.4')
+   .to({}, { duration: .4 })
+   .to(core, { x: () => -W() * .22, scale: .8, duration: .8, ease: 'power3.inOut' })
+   .fromTo(outs, { x: () => -W() * .22, y: 0, opacity: 0 }, { opacity: 1, x: () => W() * .2, y: i => (i - 1) * Math.min(board.clientHeight * .3, 130), duration: .8, stagger: .12, ease: 'power3.out' }, '-=.4')
+   .to({}, { duration: .5 });
+  }
+  gsap.to('#processFill', { width: '100%', ease: 'none', scrollTrigger: { trigger: '#process', start: 'top 85%', end: 'bottom 60%', scrub: true } });
+  /* clients marquee */
+  const track = document.getElementById('logoTrack'); [...track.children].forEach(a => { const c = a.cloneNode(true); c.setAttribute('aria-hidden', 'true'); c.tabIndex = -1; track.append(c); });
+  document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
+  addEventListener('load', () => setTimeout(() => ScrollTrigger.refresh(), 300));
+})();
+
+/* editions open the gate */
+document.querySelectorAll('#editions [data-pdf]').forEach(b => { b.addEventListener('click', () => openGate(b.dataset.pdf)); b.addEventListener('mouseenter', () => { document.querySelectorAll('#editions .on').forEach(x => x.classList.remove('on')); b.classList.add('on'); }); });
+
+/* contact form */
+const form = document.getElementById('contactForm'), segs = [...form.querySelectorAll('.seg button')], status = document.getElementById('cStatus'), msgWrap = document.getElementById('msgWrap');
+let kind = 'advisory';
+segs.forEach(b => b.addEventListener('click', () => { kind = b.dataset.kind; segs.forEach(s => { s.classList.toggle('on', s === b); s.setAttribute('aria-checked', s === b); }); msgWrap.style.display = kind === 'subscribe' ? 'none' : ''; }));
+form.addEventListener('submit', async e => {
+  e.preventDefault(); const d = Object.fromEntries(new FormData(form)); if (!d.name || !/^\S+@\S+\.\S+$/.test(d.email)) { status.textContent = 'Please add your name and a valid work email.'; return; }
+  const btn = document.getElementById('cSubmit'); btn.disabled = true; status.textContent = 'Sending…';
+  try {
+    const res = await fetch(`${GATE_WORKER}/${kind === 'subscribe' ? 'subscribe' : 'contact'}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, role: kind, message: d.message || (kind === 'subscribe' ? 'Subscription request from the website' : '') }) });
+    if (!res.ok) throw new Error(); status.textContent = kind === 'subscribe' ? 'Thank you. We will confirm your subscription by email.' : 'Thank you. We will reply by email.'; form.reset();
+  } catch { status.textContent = kind === 'subscribe' ? 'Subscriptions open shortly. Email us at [Research email].' : 'Something went wrong. Email us at [Research email].'; }
+  finally { btn.disabled = false; }
+});
+
+/* gate modal */
+let _gatePdf = '';
+function openGate(pdf) { _gatePdf = pdf; document.getElementById('gateOverlay').hidden = false; document.body.style.overflow = 'hidden'; document.getElementById('gateForm').hidden = false; document.getElementById('gateSuccess').hidden = true; document.getElementById('gateName').focus(); }
+function closeGate() { document.getElementById('gateOverlay').hidden = true; document.body.style.overflow = ''; document.getElementById('gateError').hidden = true; document.getElementById('gateName').value = ''; document.getElementById('gateEmail').value = ''; const b = document.getElementById('gateSubmitBtn'); b.textContent = 'Send me the report'; b.disabled = false; }
+async function submitGate(e) {
+  e.preventDefault(); const name = document.getElementById('gateName').value.trim(), email = document.getElementById('gateEmail').value.trim(), btn = document.getElementById('gateSubmitBtn'), err = document.getElementById('gateError');
+  btn.textContent = 'Sending…'; btn.disabled = true; err.hidden = true;
+  try { const res = await fetch(`${GATE_WORKER}/send-report`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, pdf: _gatePdf }) }); const data = await res.json(); if (!res.ok) throw new Error(data.error || 'Something went wrong.'); document.getElementById('gateEmailDisplay').textContent = email; document.getElementById('gateForm').hidden = true; document.getElementById('gateSuccess').hidden = false; }
+  catch (ex) { err.textContent = ex.message; err.hidden = false; } finally { btn.textContent = 'Send me the report'; btn.disabled = false; }
+}
+document.getElementById('gateOverlay').addEventListener('click', function (e) { if (e.target === this) closeGate(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('gateOverlay').hidden) closeGate(); });
+</script>
+<!--THEMEJS-->
+</body>
+</html>
