@@ -428,39 +428,137 @@ function respond(body, status, headers) {
   return new Response(JSON.stringify(body), { status, headers });
 }
 
+// Upstream time limits. Without them a stalled Gemini request held the
+// caller for ~2 minutes before Cloudflare gave up with a bare 502 (seen
+// 2026-11-02 on gemini-3.7/3.8-flash). These bound the wait for response
+// *headers* only — once a stream has started, its body is never cut off.
+const GEMINI_ATTEMPT_TIMEOUT_MS = 45000;
+const GEMINI_TOTAL_BUDGET_MS = 60000;
+const HKU_TIMEOUT_MS = 60000;
+
+// fetch() that aborts if no response headers arrive within `ms`. Throws an
+// Error named 'TimeoutError' on expiry.
+async function fetchWithTimeout(url, init, ms) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), ms);
+  try {
+    return await fetch(url, { ...init, signal: ctl.signal });
+  } catch (err) {
+    if (ctl.signal.aborted) {
+      const e = new Error(`No response within ${Math.round(ms / 1000)}s`);
+      e.name = 'TimeoutError';
+      throw e;
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// One JSON line per upstream call, so `wrangler tail` / Workers Logs can be
+// filtered by evt, model or status.
+function logUpstream(fields) {
+  const line = JSON.stringify({ evt: 'upstream', ...fields });
+  if (fields.ok) console.log(line); else console.error(line);
+}
+
+// Uniform error body. `error.message` is what the chatbot shows the user;
+// the rest is there for debugging from the browser's network tab.
+function upstreamError(failure, cors) {
+  const headers = { ...cors };
+  if (failure.retryAfterS) headers['Retry-After'] = String(failure.retryAfterS);
+  return new Response(JSON.stringify({
+    error: {
+      message: failure.message,
+      type: failure.kind,
+      model: failure.model,
+      upstream_status: failure.upstreamStatus ?? null,
+      quota_id: failure.quotaId ?? null,
+      retry_after_s: failure.retryAfterS ?? null,
+      elapsed_ms: failure.elapsedMs,
+    },
+  }), { status: failure.status, headers });
+}
+
+// Turns a non-OK Gemini response into something actionable. The free tier's
+// per-model daily cap (20 requests/day on the Flash models, 2026-11-02) is
+// the usual cause of "only flash-lite works", so 429s name the exact quota.
+function describeGeminiFailure(model, status, errorInfo, rawText) {
+  const base = { model, upstreamStatus: status };
+  if (status === 429 || errorInfo?.status === 'RESOURCE_EXHAUSTED') {
+    const details = errorInfo?.details || [];
+    const violation = details.flatMap(d => d.violations || [])[0];
+    const delay = details.find(d => d.retryDelay)?.retryDelay; // e.g. "72226s"
+    const retryAfterS = delay ? parseInt(delay, 10) || null : null;
+    const quotaId = violation?.quotaId || null;
+    const perDay = /PerDay/.test(quotaId || '');
+    const limit = violation?.quotaValue ? ` (limit ${violation.quotaValue})` : '';
+    const wait = retryAfterS
+      ? (retryAfterS >= 3600 ? ` Resets in ~${Math.round(retryAfterS / 3600)}h.` : ` Retry in ~${retryAfterS}s.`)
+      : '';
+    return {
+      ...base, status: 429, kind: 'quota', quotaId, retryAfterS,
+      message: `${model} has hit its ${perDay ? 'daily' : 'rate'} limit${limit}${/FreeTier/.test(quotaId || '') ? ' on the Gemini free tier' : ''}.${wait} Try another model.`,
+    };
+  }
+  if (status === 503 || errorInfo?.status === 'UNAVAILABLE') {
+    return { ...base, status: 503, kind: 'overloaded', message: `${model} is overloaded right now — please try again in a moment or switch model.` };
+  }
+  if (status === 404) {
+    return { ...base, status: 502, kind: 'model_not_found', message: `${model} is not available to this API key.` };
+  }
+  const detail = errorInfo?.message || (rawText || '').slice(0, 200) || `HTTP ${status}`;
+  return { ...base, status: 502, kind: 'upstream_error', message: `Gemini error (${model}): ${detail}` };
+}
+
 // Gemini occasionally returns a transient 503 "UNAVAILABLE" under demand
 // spikes (confirmed 2026-09-28 — retrying the identical request immediately
-// afterward succeeded). Retry once before giving up, and hand back the real
-// upstream error so the caller can surface an accurate message instead of a
-// generic "upstream failed" — used by both handleGeminiChat and
+// afterward succeeded). Retry once if the time budget allows; otherwise hand
+// back a described failure — used by both handleGeminiChat and
 // handleGeminiStream below.
-async function fetchGeminiWithRetry(url, body) {
-  for (let attempt = 0; attempt < 2; attempt++) {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    if (res.ok) return { res, errorInfo: null, rawText: null };
+async function fetchGeminiWithRetry(url, body, ctx) {
+  const started = Date.now();
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    const remaining = GEMINI_TOTAL_BUDGET_MS - (Date.now() - started);
+    const attemptStart = Date.now();
+    let res;
+    try {
+      res = await fetchWithTimeout(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }, Math.min(GEMINI_ATTEMPT_TIMEOUT_MS, remaining));
+    } catch (err) {
+      const timedOut = err.name === 'TimeoutError';
+      const failure = {
+        model: ctx.model, status: timedOut ? 504 : 502, kind: timedOut ? 'timeout' : 'network',
+        message: timedOut
+          ? `${ctx.model} did not respond within ${Math.round((Date.now() - started) / 1000)}s — please try again or switch model.`
+          : `Could not reach Gemini (${err.message}).`,
+        elapsedMs: Date.now() - started,
+      };
+      logUpstream({ ...ctx, attempt, ok: false, kind: failure.kind, ms: Date.now() - attemptStart, error: err.message });
+      return { res: null, failure };
+    }
+
+    if (res.ok) {
+      logUpstream({ ...ctx, attempt, ok: true, status: res.status, ms: Date.now() - attemptStart });
+      return { res, failure: null };
+    }
 
     const rawText = await res.text();
     let errorInfo = null;
     try { errorInfo = JSON.parse(rawText)?.error || null; } catch {}
-    const overloaded = errorInfo?.status === 'UNAVAILABLE' || errorInfo?.code === 503;
-    if (overloaded && attempt === 0) {
+    const failure = { ...describeGeminiFailure(ctx.model, res.status, errorInfo, rawText), elapsedMs: Date.now() - started };
+    logUpstream({ ...ctx, attempt, ok: false, status: res.status, kind: failure.kind, quotaId: failure.quotaId, ms: Date.now() - attemptStart, error: (errorInfo?.message || rawText || '').slice(0, 300) });
+
+    const timeLeft = GEMINI_TOTAL_BUDGET_MS - (Date.now() - started);
+    if (failure.kind === 'overloaded' && attempt === 1 && timeLeft > 5000) {
       await new Promise(r => setTimeout(r, 600));
       continue;
     }
-    return { res, errorInfo, rawText };
+    return { res, failure };
   }
-}
-
-function geminiErrorMessage(errorInfo) {
-  if (errorInfo?.status === 'UNAVAILABLE' || errorInfo?.code === 503) {
-    return 'Gemini is temporarily overloaded — please try again in a moment.';
-  }
-  if (errorInfo?.message) return `Gemini error: ${errorInfo.message}`;
-  return 'Gemini upstream failed.';
 }
 
 // ── Gemini Chat (OpenAI-format ↔ Gemini API conversion) ──────────────────────
@@ -543,12 +641,8 @@ async function handleGeminiChat(request, env, cors) {
   if (geminiTools) body.tools = geminiTools;
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${safeModel}:generateContent?key=${env.GEMINI_API_KEY}`;
-  const { res, errorInfo, rawText } = await fetchGeminiWithRetry(url, body);
-
-  if (!res.ok) {
-    console.error('Gemini error:', rawText);
-    return respond({ error: geminiErrorMessage(errorInfo) }, 502, cors);
-  }
+  const { res, failure } = await fetchGeminiWithRetry(url, body, { route: 'gemini-chat', model: safeModel, uid: user.localId });
+  if (failure) return upstreamError(failure, cors);
 
   const data = await res.json();
   const parts = data.candidates?.[0]?.content?.parts || [];
@@ -640,12 +734,8 @@ async function handleGeminiStream(request, env, cors) {
   if (geminiTools) body.tools = geminiTools;
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${safeModel}:streamGenerateContent?alt=sse&key=${env.GEMINI_API_KEY}`;
-  const { res, errorInfo, rawText } = await fetchGeminiWithRetry(url, body);
-
-  if (!res.ok) {
-    console.error('Gemini stream error:', rawText);
-    return respond({ error: geminiErrorMessage(errorInfo) }, 502, cors);
-  }
+  const { res, failure } = await fetchGeminiWithRetry(url, body, { route: 'gemini-stream', model: safeModel, uid: user.localId });
+  if (failure) return upstreamError(failure, cors);
 
   return new Response(res.body, {
     headers: {
@@ -706,6 +796,39 @@ async function handleHkuChat(request, env, cors) {
 // response). Matches HKU's own portal-generated code sample, which always
 // sends it.
 // (All three confirmed by direct testing against gpt-5-mini/gpt-5.5, 2026-09-28.)
+// Shared HKU fetch: applies HKU_TIMEOUT_MS and logs every call. On failure
+// returns an error Response ready to hand back to the client; on success
+// returns a plain { json() } wrapper, so callers branch on `instanceof Response`.
+async function fetchHku(url, init, model, label, cors) {
+  const started = Date.now();
+  let res;
+  try {
+    res = await fetchWithTimeout(url, init, HKU_TIMEOUT_MS);
+  } catch (err) {
+    const timedOut = err.name === 'TimeoutError';
+    logUpstream({ route: 'hku-chat', model, ok: false, kind: timedOut ? 'timeout' : 'network', ms: Date.now() - started, error: err.message });
+    return upstreamError({
+      model, status: timedOut ? 504 : 502, kind: timedOut ? 'timeout' : 'network', elapsedMs: Date.now() - started,
+      message: timedOut ? `${label} (${model}) did not respond within ${HKU_TIMEOUT_MS / 1000}s.` : `Could not reach ${label} (${err.message}).`,
+    }, cors);
+  }
+  if (res.ok) {
+    logUpstream({ route: 'hku-chat', model, ok: true, status: res.status, ms: Date.now() - started });
+    return { json: () => res.json() };
+  }
+  const rawText = await res.text();
+  let detail = rawText.slice(0, 200);
+  try { const j = JSON.parse(rawText); detail = j?.error?.message || j?.message || detail; } catch {}
+  logUpstream({ route: 'hku-chat', model, ok: false, status: res.status, ms: Date.now() - started, error: rawText.slice(0, 300) });
+  return upstreamError({
+    model, upstreamStatus: res.status, elapsedMs: Date.now() - started,
+    status: res.status === 429 ? 429 : 502, kind: res.status === 429 ? 'quota' : 'upstream_error',
+    message: res.status === 429
+      ? `${label} (${model}) rate limit reached — wait a minute or switch model.`
+      : `${label} error (${model}, HTTP ${res.status}): ${detail || 'no details'}`,
+  }, cors);
+}
+
 async function callHkuOpenAI(env, model, messages, max_tokens, cors) {
   const url = `${HKU_BASE}/openai/student/deployments/${model}/chat/completions?api-version=2025-04-01-preview`;
   const body = {
@@ -713,15 +836,12 @@ async function callHkuOpenAI(env, model, messages, max_tokens, cors) {
     max_completion_tokens: Math.max(max_tokens ?? 2000, 2000),
   };
 
-  const res = await fetch(url, {
+  const res = await fetchHku(url, {
     method: 'POST',
     headers: { 'api-key': env.HKU_API_KEY, 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
     body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    console.error('HKU OpenAI error:', await res.text());
-    return respond({ error: 'HKU OpenAI upstream failed.' }, 502, cors);
-  }
+  }, model, 'HKU OpenAI', cors);
+  if (res instanceof Response) return res;
   const data = await res.json();
   return respond(data, 200, cors); // already {choices:[{message:{...}}], usage:{...}}
 }
@@ -736,15 +856,12 @@ async function callHkuClaude(env, model, messages, max_tokens, temperature, cors
   };
   if (system) body.system = system;
 
-  const res = await fetch(url, {
+  const res = await fetchHku(url, {
     method: 'POST',
     headers: { 'api-key': env.HKU_API_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    console.error('HKU Claude error:', await res.text());
-    return respond({ error: 'HKU Claude upstream failed.' }, 502, cors);
-  }
+  }, model, 'HKU Claude', cors);
+  if (res instanceof Response) return res;
   const data = await res.json();
   const text = (data.output?.message?.content || []).map(c => c.text || '').join('');
   return respond({

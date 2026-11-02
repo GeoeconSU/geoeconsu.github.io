@@ -15409,8 +15409,11 @@ async function runAgentLoop(userText, onTextChunk = null) {
     // Hybrid models ("hku-*"): tool-calling always runs on Gemini — the HKU
     // gateway's models are only ever asked for a final, no-tools answer once
     // the loop below has finished gathering data (see callHkuFinalAnswer).
+    // Tools run on flash-lite: the Gemini project is on the free tier, where
+    // gemini-3.8-flash allows only 20 requests/day and one question can use
+    // up to MAX_AGENT_STEPS of them (2026-11-02).
     const hkuFinalModel = selectedModel.startsWith('hku-') ? selectedModel.slice(4) : null;
-    const toolModel = hkuFinalModel ? 'gemini-3.8-flash' : selectedModel;
+    const toolModel = hkuFinalModel ? 'gemini-3.5-flash-lite' : selectedModel;
 
     for (let step = 0; step < MAX_AGENT_STEPS; step++) {
         // Step 0 is kept short to push the model straight into tool calls, but
@@ -15460,6 +15463,44 @@ async function runAgentLoop(userText, onTextChunk = null) {
     return final.content || 'Analysis complete.';
 }
 
+// gsu-gate gives up on Gemini after 60s and on HKU after 60s, so if no
+// response headers arrive within this window the worker itself is
+// unreachable. Only the wait for headers is bounded — a stream that has
+// started is never cut off. The user's Stop button still aborts everything.
+const WORKER_RESPONSE_TIMEOUT_MS = 75000;
+
+async function fetchWorker(url, init) {
+    const ctl = new AbortController();
+    const outer = _abortController ? _abortController.signal : null;
+    if (outer) {
+        if (outer.aborted) ctl.abort();
+        else outer.addEventListener('abort', () => ctl.abort(), { once: true });
+    }
+    let timedOut = false;
+    const timer = setTimeout(() => { timedOut = true; ctl.abort(); }, WORKER_RESPONSE_TIMEOUT_MS);
+    try {
+        return await fetch(url, { ...init, signal: ctl.signal });
+    } catch (e) {
+        if (timedOut) throw new Error(`No response from the AI service after ${WORKER_RESPONSE_TIMEOUT_MS / 1000}s — please try again or switch model.`);
+        throw e;
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+// gsu-gate errors are { error: { message, type, model, upstream_status,
+// quota_id, retry_after_s, elapsed_ms } } (older deploys sent { error: "..." }).
+// The full body goes to the console so failures can be diagnosed from
+// DevTools; the user sees the message.
+async function workerError(response, route) {
+    const raw = await response.text().catch(() => '');
+    let body = null;
+    try { body = JSON.parse(raw); } catch {}
+    console.error(`[chat] ${route} failed: HTTP ${response.status}`, body || raw);
+    const e = body?.error;
+    return new Error((typeof e === 'string' ? e : e?.message) || `${route} failed (HTTP ${response.status})`);
+}
+
 async function callGroqAPIAgent(messages, tools = null, maxTokens = 8000, onTextChunk = null, modelOverride = null) {
     const model = modelOverride || selectedModel;
     const isGemini = model.startsWith('gemini-');
@@ -15493,14 +15534,10 @@ async function callHkuFinalAnswer(messages, hkuModel) {
         { role: 'system', content: 'All research and tool calls needed for this turn are already complete and appear above. Do not call or describe calling any tool. Using only the information already gathered above, write the final answer to the user\'s most recent question now, following the formatting and analytical standards given in the earlier system instructions.' }
     ];
     const body = { model: hkuModel, messages: finalMessages, max_tokens: 4000, temperature: 0.3 };
-    const response = await fetch(HKU_CHAT_URL, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        signal: _abortController ? _abortController.signal : undefined
+    const response = await fetchWorker(HKU_CHAT_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
     });
-    if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err?.error?.message || `HTTP ${response.status}`);
-    }
+    if (!response.ok) throw await workerError(response, `hku-chat (${hkuModel})`);
     const data = await response.json();
     return data.choices?.[0]?.message || { content: 'No response.' };
 }
@@ -15513,16 +15550,12 @@ async function callGeminiStreaming(messages, tools, maxTokens, onTextChunk, mode
     // expected to exist by the time a user can reach the chatbot.
     if (!auth.currentUser) throw new Error('Sign in required.');
     const idToken = await auth.currentUser.getIdToken();
-    const response = await fetch(GEMINI_STREAM_URL, {
+    const response = await fetchWorker(GEMINI_STREAM_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
-        body: JSON.stringify(body),
-        signal: _abortController ? _abortController.signal : undefined
+        body: JSON.stringify(body)
     });
-    if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err?.error?.message || `HTTP ${response.status}`);
-    }
+    if (!response.ok) throw await workerError(response, `gemini-stream (${body.model})`);
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -15955,10 +15988,10 @@ const CHAT_MODELS = [
     { id: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Lite', desc: 'Fastest · Quick lookups',            staffOnly: false },
     { id: 'gemini-3.8-flash',      label: 'Gemini 3.8',      desc: 'Balanced · Better reasoning',        staffOnly: false },
     { id: 'openai/gpt-oss-120b',   label: 'GPT OSS 120B',    desc: 'Most capable · No streaming',        staffOnly: true  },
-    { id: 'hku-gpt-5-mini',       label: 'GPT-5 mini (HKU)', desc: 'Hybrid · Gemini tools, GPT-5 mini answer · No streaming', staffOnly: true, directorOnly: true },
-    { id: 'hku-gpt-5.5',          label: 'GPT-5.5 (HKU)',   desc: 'Hybrid · Gemini tools, GPT-5.5 answer · 3 req/min cap · No streaming', staffOnly: true, directorOnly: true },
-    { id: 'hku-claude-sonnet-5', label: 'Claude Sonnet 5 (HKU)', desc: 'Hybrid · Gemini tools, Claude answer · 3 req/min cap · No streaming', staffOnly: true, directorOnly: true },
-    { id: 'hku-claude-opus-4.6', label: 'Claude Opus 4.6 (HKU)', desc: 'Hybrid · Gemini tools, Opus answer · 3 req/min cap · No streaming', staffOnly: true, directorOnly: true },
+    { id: 'hku-gpt-5-mini',       label: 'GPT-5 mini (HKU)', desc: 'Hybrid · Gemini Lite tools, GPT-5 mini answer · No streaming', staffOnly: true, directorOnly: true },
+    { id: 'hku-gpt-5.5',          label: 'GPT-5.5 (HKU)',   desc: 'Hybrid · Gemini Lite tools, GPT-5.5 answer · 3 req/min cap · No streaming', staffOnly: true, directorOnly: true },
+    { id: 'hku-claude-sonnet-5', label: 'Claude Sonnet 5 (HKU)', desc: 'Hybrid · Gemini Lite tools, Claude answer · 3 req/min cap · No streaming', staffOnly: true, directorOnly: true },
+    { id: 'hku-claude-opus-4.6', label: 'Claude Opus 4.6 (HKU)', desc: 'Hybrid · Gemini Lite tools, Opus answer · 3 req/min cap · No streaming', staffOnly: true, directorOnly: true },
     { id: 'gemini-3.7-flash',      label: 'Gemini 3.7',      desc: 'Older model · superseded by 3.8',    staffOnly: false, legacy: true },
     { id: 'gemini-3.6-flash',      label: 'Gemini 3.6',      desc: 'Older model · superseded by 3.8',    staffOnly: false, legacy: true },
     { id: 'gemini-3.5-flash',      label: 'Gemini 3.5',      desc: 'Older model · superseded by 3.8',    staffOnly: false, legacy: true },

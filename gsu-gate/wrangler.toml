@@ -13,3 +13,9 @@ compatibility_date = "2025-01-01"
 [vars]
 FIREBASE_DB_URL = "https://gsu-tracker-default-rtdb.europe-west1.firebasedatabase.app"
 FIREBASE_API_KEY = "AIzaSyBs_SkNDkmNTBFqEYfd8EarqGCgTsHlrDk"
+
+# Persist console output (incl. the JSON `evt: "upstream"` lines) to Workers
+# Logs in the dashboard, so failures can be investigated after the fact
+# without having had `wrangler tail` running at the time.
+[observability]
+enabled = true
