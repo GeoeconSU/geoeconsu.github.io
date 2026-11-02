@@ -15468,11 +15468,21 @@ async function runAgentLoop(userText, onTextChunk = null) {
 // The HKU models can't call tools at this stage, but given a prompt that
 // leans on render_chart they sometimes reply with "[Calling tool(s): ...]"
 // lines instead of prose (seen with Claude Opus 4.6, 2026-11-02). Strip those;
-// if nothing real is left, use Gemini's own answer rather than show junk.
+// if nothing real is left — or the HKU call fails or times out — use
+// Gemini's own answer (with a note saying so) rather than show junk or an
+// error, since the data gathering already succeeded.
 async function hkuAnswerOrFallback(messages, hkuModel, geminiDraft) {
     const meta = CHAT_MODELS.find(m => m.id === 'hku-' + hkuModel);
-    updateChatStatus('thinking', `Writing answer with ${meta ? meta.label : hkuModel}…`);
-    const raw = (await callHkuFinalAnswer(messages, hkuModel)).content || '';
+    const label = meta ? meta.label : hkuModel;
+    updateChatStatus('thinking', `Writing answer with ${label}… (can take up to a minute)`);
+    let raw;
+    try {
+        raw = (await callHkuFinalAnswer(messages, hkuModel)).content || '';
+    } catch (e) {
+        if (e.name === 'AbortError' || !geminiDraft) throw e;
+        console.warn(`[chat] ${hkuModel} failed; showing the Gemini answer instead`, e);
+        return `${geminiDraft}\n\n*${label} was unavailable (${e.message}) — this answer was written by Gemini 3.5 Lite.*`;
+    }
     // Matches "[Calling tool(s): …]", "**[Calling tools: …]**", "[Called tool: …]".
     const cleaned = raw.replace(/^.*\[Call(?:ing|ed) tools?(?:\(s\))?:.*$/gim, '').trim();
     if (cleaned) return cleaned;
@@ -15480,13 +15490,15 @@ async function hkuAnswerOrFallback(messages, hkuModel, geminiDraft) {
     return geminiDraft || 'No response received.';
 }
 
-// gsu-gate gives up on Gemini after 60s and on HKU after 60s, so if no
-// response headers arrive within this window the worker itself is
-// unreachable. Only the wait for headers is bounded — a stream that has
-// started is never cut off. The user's Stop button still aborts everything.
+// gsu-gate gives up on Gemini after 60s and on HKU after 150s (HKU doesn't
+// stream, so its headers only arrive with the finished answer). These sit
+// just above those, so they only fire if the worker itself is unreachable.
+// Only the wait for headers is bounded — a stream that has started is never
+// cut off. The user's Stop button still aborts everything.
 const WORKER_RESPONSE_TIMEOUT_MS = 75000;
+const HKU_RESPONSE_TIMEOUT_MS = 170000;
 
-async function fetchWorker(url, init) {
+async function fetchWorker(url, init, timeoutMs = WORKER_RESPONSE_TIMEOUT_MS) {
     const ctl = new AbortController();
     const outer = _abortController ? _abortController.signal : null;
     if (outer) {
@@ -15494,11 +15506,11 @@ async function fetchWorker(url, init) {
         else outer.addEventListener('abort', () => ctl.abort(), { once: true });
     }
     let timedOut = false;
-    const timer = setTimeout(() => { timedOut = true; ctl.abort(); }, WORKER_RESPONSE_TIMEOUT_MS);
+    const timer = setTimeout(() => { timedOut = true; ctl.abort(); }, timeoutMs);
     try {
         return await fetch(url, { ...init, signal: ctl.signal });
     } catch (e) {
-        if (timedOut) throw new Error(`No response from the AI service after ${WORKER_RESPONSE_TIMEOUT_MS / 1000}s — please try again or switch model.`);
+        if (timedOut) throw new Error(`No response from the AI service after ${timeoutMs / 1000}s — please try again or switch model.`);
         throw e;
     } finally {
         clearTimeout(timer);
@@ -15553,7 +15565,7 @@ async function callHkuFinalAnswer(messages, hkuModel) {
     const body = { model: hkuModel, messages: finalMessages, max_tokens: 4000, temperature: 0.3 };
     const response = await fetchWorker(HKU_CHAT_URL, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-    });
+    }, HKU_RESPONSE_TIMEOUT_MS);
     if (!response.ok) throw await workerError(response, `hku-chat (${hkuModel})`);
     const data = await response.json();
     return data.choices?.[0]?.message || { content: 'No response.' };

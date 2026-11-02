@@ -434,7 +434,10 @@ function respond(body, status, headers) {
 // *headers* only — once a stream has started, its body is never cut off.
 const GEMINI_ATTEMPT_TIMEOUT_MS = 45000;
 const GEMINI_TOTAL_BUDGET_MS = 60000;
-const HKU_TIMEOUT_MS = 60000;
+// HKU's routes don't stream, so headers only arrive once the whole answer is
+// written — Claude Opus 4.6 took 30-55s on typical chatbot payloads and
+// exceeded 60s on a real one (2026-11-02).
+const HKU_TIMEOUT_MS = 150000;
 
 // fetch() that aborts if no response headers arrive within `ms`. Throws an
 // Error named 'TimeoutError' on expiry.
