@@ -879,24 +879,34 @@ async function callHkuClaude(env, model, messages, max_tokens, temperature, cors
 // ever asked for a final answer, never to make new tool calls itself, so
 // past tool_calls/tool-result history is flattened into plain text turns
 // rather than translated into Bedrock's native toolUse/toolResult blocks.
+//
+// The calls themselves are NOT written into assistant turns: an earlier
+// version did ("[Called tool(s): render_chart(...)]") and Claude Opus copied
+// the pattern, replying with "[Calling tool(s): ...]" lines instead of an
+// answer (2026-11-02). Each result is instead handed over in the user turn
+// as labelled data, so there is no assistant-side tool syntax to imitate.
 function toBedrockConverse(messages) {
   let system = null;
   const flat = []; // { role: 'user'|'assistant', text }
+  const callLabel = {}; // tool_call_id → "name(args)"
 
   for (const msg of messages) {
-    if (msg.role === 'system') {
+    if (msg.role === 'system' && flat.length === 0) {
       system = system ? system + '\n\n' + msg.content : msg.content;
+    } else if (msg.role === 'system') {
+      // A system message after the conversation has started (the chatbot's
+      // "tools are done — write the final answer now" note) must stay where
+      // it is. Folding it into the top-level system prompt buried it under
+      // ~26 KB of instructions and Opus kept asking for more tools.
+      flat.push({ role: 'user', text: `[Instruction] ${msg.content || ''}` });
     } else if (msg.role === 'user') {
       flat.push({ role: 'user', text: msg.content || '' });
     } else if (msg.role === 'assistant') {
-      let text = msg.content || '';
-      if (msg.tool_calls && msg.tool_calls.length) {
-        const calls = msg.tool_calls.map(tc => `${tc.function.name}(${tc.function.arguments})`).join(', ');
-        text += (text ? '\n' : '') + `[Called tool(s): ${calls}]`;
-      }
-      flat.push({ role: 'assistant', text: text || '(tool call)' });
+      for (const tc of msg.tool_calls || []) callLabel[tc.id] = `${tc.function.name}(${tc.function.arguments})`;
+      if (msg.content) flat.push({ role: 'assistant', text: msg.content });
     } else if (msg.role === 'tool') {
-      flat.push({ role: 'user', text: `[Tool result]: ${msg.content || ''}` });
+      const label = callLabel[msg.tool_call_id] || 'a data lookup';
+      flat.push({ role: 'user', text: `Data already retrieved via ${label}:\n${msg.content || ''}` });
     }
   }
 

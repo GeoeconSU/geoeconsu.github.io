@@ -15414,12 +15414,15 @@ async function runAgentLoop(userText, onTextChunk = null) {
     // up to MAX_AGENT_STEPS of them (2026-11-02).
     const hkuFinalModel = selectedModel.startsWith('hku-') ? selectedModel.slice(4) : null;
     const toolModel = hkuFinalModel ? 'gemini-3.5-flash-lite' : selectedModel;
+    // In hybrid mode Gemini's closing text is only a draft the HKU model
+    // replaces, so don't stream it into the bubble just to swap it out.
+    const streamCb = hkuFinalModel ? null : onTextChunk;
 
     for (let step = 0; step < MAX_AGENT_STEPS; step++) {
         // Step 0 is kept short to push the model straight into tool calls, but
         // not so short that a multi-country retrieval plan gets truncated.
         const maxTok = step === 0 ? 1500 : 8000;
-        const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok, onTextChunk, toolModel);
+        const response = await callGroqAPIAgent(messages, ALL_TOOLS, maxTok, streamCb, toolModel);
 
         if (response.tool_calls && response.tool_calls.length > 0) {
             const toolResults = [];
@@ -15449,7 +15452,7 @@ async function runAgentLoop(userText, onTextChunk = null) {
             updateChatStatus('thinking', 'Synthesizing…');
         } else {
             const reply = hkuFinalModel
-                ? (await callHkuFinalAnswer(messages, hkuFinalModel)).content || 'No response received.'
+                ? await hkuAnswerOrFallback(messages, hkuFinalModel, response.content)
                 : (response.content || 'No response received.');
             addTraceStep('respond', reply.slice(0, 100) + (reply.length > 100 ? '…' : ''), reply);
             return reply;
@@ -15457,10 +15460,24 @@ async function runAgentLoop(userText, onTextChunk = null) {
     }
     // Fallback final call if loop exhausted without direct response
     addTraceStep('respond', 'Generating final response…');
-    const final = hkuFinalModel
-        ? await callHkuFinalAnswer(messages, hkuFinalModel)
-        : await callGroqAPIAgent(messages, null, 8000, onTextChunk, toolModel);
+    if (hkuFinalModel) return await hkuAnswerOrFallback(messages, hkuFinalModel, '');
+    const final = await callGroqAPIAgent(messages, null, 8000, streamCb, toolModel);
     return final.content || 'Analysis complete.';
+}
+
+// The HKU models can't call tools at this stage, but given a prompt that
+// leans on render_chart they sometimes reply with "[Calling tool(s): ...]"
+// lines instead of prose (seen with Claude Opus 4.6, 2026-11-02). Strip those;
+// if nothing real is left, use Gemini's own answer rather than show junk.
+async function hkuAnswerOrFallback(messages, hkuModel, geminiDraft) {
+    const meta = CHAT_MODELS.find(m => m.id === 'hku-' + hkuModel);
+    updateChatStatus('thinking', `Writing answer with ${meta ? meta.label : hkuModel}…`);
+    const raw = (await callHkuFinalAnswer(messages, hkuModel)).content || '';
+    // Matches "[Calling tool(s): …]", "**[Calling tools: …]**", "[Called tool: …]".
+    const cleaned = raw.replace(/^.*\[Call(?:ing|ed) tools?(?:\(s\))?:.*$/gim, '').trim();
+    if (cleaned) return cleaned;
+    console.warn(`[chat] ${hkuModel} replied with tool-call text only; showing the Gemini answer instead`, raw);
+    return geminiDraft || 'No response received.';
 }
 
 // gsu-gate gives up on Gemini after 60s and on HKU after 60s, so if no
