@@ -4,6 +4,10 @@
     ".write": false,
 
     "protected-data": {
+      "rao_csv": {
+        ".read": "auth != null && auth.token.email_verified == true",
+        ".write": false
+      },
       "rao9_csv": {
         ".read": "auth != null && auth.token.email_verified == true",
         ".write": false

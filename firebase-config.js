@@ -8,7 +8,7 @@ const firebaseConfig = {
     apiKey:            "AIzaSyBs_SkNDkmNTBFqEYfd8EarqGCgTsHlrDk",
     authDomain:        "gsu-members.firebaseapp.com",
     // Realtime Database instance (gsu-members project) — holds the gated
-    // rao9.csv dataset under protected-data/rao9_csv. See database.rules.json.
+    // rao.csv dataset under protected-data/rao_csv. See database.rules.json.
     databaseURL:       "https://gsu-members-default-rtdb.firebaseio.com",
     projectId:         "gsu-members",
     storageBucket:     "gsu-members.firebasestorage.app",

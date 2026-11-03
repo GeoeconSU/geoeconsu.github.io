@@ -8,7 +8,7 @@ const { chromium, devices } = require('playwright');
 const { login } = require('../lib/auth');
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:8000';
-const PAGE_PATH = process.env.PAGE || 'observatory.html';
+const PAGE_PATH = process.env.PAGE || 'rao.html';
 const OUT_DIR = path.join(__dirname, '..', 'screenshots', 'font-fix-check');
 
 (async () => {

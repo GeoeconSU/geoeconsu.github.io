@@ -1,0 +1,878 @@
+<!-- Retired: formerly rao.html, renamed to rao-exp.html ("-exp" = expired / explanation)
+     when observatory.html was promoted to production as the new rao.html. Most of this
+     page's content is slated to migrate into index.html, with the rest cut — that pass
+     hasn't happened yet. Not linked from anywhere. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSU | Understanding RAO</title>
+    
+    <link rel="icon" type="image/x-icon" href="assets/gsu.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-bg: #192030;
+            --secondary-bg: #1f283b;
+            --text-white: #ffffff;
+            --accent-gold: #cba84e;
+            --font-head: 'Playfair Display', serif;
+            --font-body: 'EB Garamond', serif;
+            --easing: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5 {
+            font-family: var(--font-head);
+            font-weight: 400;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 40px;
+            height: 1px;
+            background-color: var(--accent-gold);
+            transition: width 0.6s var(--easing);
+        }
+
+        section:hover h2::after {
+            width: 100%;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: var(--accent-gold);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        h5 {
+            font-size: 1.2rem;
+            color: var(--text-white);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.15rem;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+            opacity: 0.9;
+            max-width: 75ch;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            opacity: 0.9;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        strong {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s ease;
+            position: relative;
+        }
+
+        /* Utility */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn {
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 1rem 2.5rem;
+            font-family: var(--font-head);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            margin-top: 1rem;
+            transition: all 0.4s var(--easing);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Navigation */
+        nav {
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(25, 32, 48, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: padding 0.3s ease;
+        }
+
+        .logo img {
+            height: 50px; 
+            width: auto;
+            display: block;
+        }
+
+        .nav-links a {
+            font-family: var(--font-head);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            margin-left: 2rem;
+            opacity: 0.7;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: var(--accent-gold);
+        }
+
+        /* Hero Section */
+        #hero {
+            padding: 12rem 0 6rem;
+            background: radial-gradient(circle at 70% 30%, rgba(203, 168, 78, 0.1) 0%, rgba(25, 32, 48, 0) 60%);
+        }
+
+        /* Section Layouts */
+        section {
+            padding: 6rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        section:nth-child(even) {
+            background-color: var(--secondary-bg);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: start;
+        }
+
+        .pillar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .pillar-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .pillar-card:hover {
+            border-color: rgba(203, 168, 78, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Tree Explorer Styles */
+        .tree-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .tree-root-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0;
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .tree-root-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            height: 2rem;
+            background: rgba(203, 168, 78, 0.25);
+        }
+
+        .tree-dimensions-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+            position: relative;
+            padding-top: 2rem;
+        }
+
+        .tree-dimensions-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 23.9%;
+            right: 23.9%;
+            height: 1px;
+            background: rgba(203, 168, 78, 0.25);
+        }
+
+        .dimension-node.root-node {
+            position: relative;
+        }
+
+        .dimension-node.root-node::after {
+            content: '';
+            position: absolute;
+            top: -3rem;
+            left: 50%;
+            width: 1px;
+            height: 2rem;
+            background: rgba(203, 168, 78, 0.25);
+        }
+
+        .tree-branch {
+            list-style: none;
+            padding-left: 2.5rem;
+            border-left: 1px solid rgba(203, 168, 78, 0.15);
+            margin-left: 1.2rem;
+            position: relative;
+        }
+
+        .tree-node {
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .tree-node::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 1.8rem;
+            width: 2.5rem;
+            height: 1px;
+            background: rgba(203, 168, 78, 0.15);
+        }
+
+        .node-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1rem 1.8rem;
+            cursor: pointer;
+            transition: all 0.3s var(--easing);
+            display: block;
+            width: 100%;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .dimension-node > .node-card {
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .node-card:hover {
+            border-color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .node-card h3, .node-card h4, .node-card h5 {
+            margin-bottom: 0;
+            color: var(--text-white);
+        }
+
+        .node-card p {
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            margin-bottom: 0;
+            opacity: 0.6;
+        }
+
+        .root-card {
+            border-color: var(--accent-gold);
+            background: rgba(203, 168, 78, 0.1);
+            text-align: center;
+            width: 320px;
+            cursor: default;
+        }
+        
+        .root-node::before {
+            display: none;
+        }
+
+        .dimension-node > .node-card {
+            border-left: 3px solid var(--accent-gold);
+            cursor: default;
+        }
+
+        .pillar-node > .node-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.8rem 1.5rem;
+        }
+        
+        .pillar-node > .node-card h5 {
+            color: var(--accent-gold);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .variable-node > .node-card {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: default;
+            padding: 0.6rem 1.2rem;
+        }
+        
+        .variable-node > .node-card:hover {
+            transform: none;
+            background: transparent;
+            border-color: rgba(203, 168, 78, 0.2);
+        }
+
+        .node-content {
+            display: none;
+            overflow: hidden;
+        }
+
+        .node-content.active {
+            display: block;
+            animation: slideDown 0.4s var(--easing);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toggle-icon {
+            position: absolute;
+            right: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon::before, .toggle-icon::after {
+            content: '';
+            position: absolute;
+            background: var(--accent-gold);
+        }
+
+        .toggle-icon::before {
+            width: 100%;
+            height: 2px;
+            top: 4px;
+            left: 0;
+        }
+
+        .toggle-icon::after {
+            width: 2px;
+            height: 100%;
+            top: 0;
+            left: 4px;
+        }
+
+        .expanded .toggle-icon::after {
+            display: none;
+        }
+
+        @media (max-width: 800px) {
+            .tree-dimensions-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pillar-card h5 {
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .pillar-card ul {
+            padding-left: 1.2rem;
+            margin-bottom: 0;
+        }
+        
+        .pillar-card li {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Rating Scale */
+        .scale-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid transparent;
+        }
+
+        .scale-score {
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            min-width: 120px;
+        }
+        
+        .scale-desc strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            color: var(--text-white);
+        }
+
+        /* Footer */
+        footer {
+            padding: 5rem 0;
+            background: #151a28;
+            font-size: 0.95rem;
+        }
+
+        .footer-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 3rem;
+        }
+
+        /* Animation Classes */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s var(--easing), transform 1s var(--easing);
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .delay-1 { transition-delay: 0.1s; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            h1 { font-size: 2.5rem; }
+            .grid-2 { grid-template-columns: 1fr; gap: 3rem; }
+            .nav-links { display: none; }
+            #hero { padding-top: 8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="container">
+        <div class="logo">
+            <a href="index.html"><img src="assets/gsu.png" alt="GSU Logo"></a>
+        </div>
+        <div class="nav-links">
+            <a href="index.html#about">About</a>
+            <a href="index.html#barometer">Barometer</a>
+            <a href="index.html#services">Services</a>
+            <a href="index.html#rao-engine">RAO Engine</a>
+            <a href="index.html#team">Our Team</a>
+            <a href="mailto:geoecon@16thcouncil.uk?subject=Inquiry regarding Strategic Advice">Contact</a>
+        </div>
+    </nav>
+
+    <header id="hero" class="container">
+        <div class="fade-up">
+            <h4>Methodology</h4>
+            <h1>Understanding the <br><span style="color:var(--accent-gold);">Risk-Adjusted Opportunity</span> (RAO) Score</h1>
+            <p>A comprehensive analytical framework designed to evaluate countries for foreign investment attractiveness by balancing economic opportunity with stability and risk.</p>
+        </div>
+    </header>
+
+    <section id="introduction">
+        <div class="container grid-2">
+            <div class="fade-up">
+                <h2>What is RAO?</h2>
+                <p>The Risk-Adjusted Opportunity (RAO) Score is a comprehensive analytical framework designed to evaluate countries for foreign investment attractiveness. Unlike traditional investment indices that focus narrowly on either growth potential or political risk, the RAO combines economic opportunity indicators with stability and risk metrics to produce a single, actionable score that reflects the real-world complexity of international investment decisions.</p>
+                <p>At its core, the RAO recognizes a fundamental truth: extraordinary growth opportunities mean little if they exist in unstable environments, while perfectly stable countries may offer limited returns if they lack economic dynamism.</p>
+            </div>
+            <div class="fade-up delay-1">
+                <h2>Why It Matters</h2>
+                <p>In the contemporary geo-economic landscape, thinking geopolitically has transitioned from a specialized skill to a fundamental leadership discipline. The global order is increasingly defined by structural uncertainty, where political developments frequently outpace traditional corporate planning cycles.</p>
+                <p>The RAO provides a disciplined framework for translating international political developments into direct economic exposure assessments. It allows organizations to map critical dependencies, quantify trade-offs, and develop the optionality required to protect core business functions before disruptions become headlines.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="framework">
+        <div class="container">
+            <div class="fade-up">
+                <h2>How RAO Works</h2>
+                <p>The RAO methodology rests on a two-dimensional framework that mirrors how sophisticated investors actually think about international markets:</p>
+            </div>
+            
+            <div class="grid-2" style="margin-top: 3rem;">
+                <div class="pillar-card fade-up">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">The Opportunity Dimension</h3>
+                    <p>Measures what a country offers: market size and growth, openness to trade and investment, infrastructure quality, technological readiness, regulatory efficiency, and workforce capabilities. This dimension answers the question: <strong>"What can we achieve here?"</strong></p>
+                </div>
+                <div class="pillar-card fade-up delay-1">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">The Fragility Dimension</h3>
+                    <p>Measures what could go wrong: external vulnerabilities, fiscal stresses, monetary instability, labor market weaknesses, market concentration risks, and institutional fragility. This dimension answers the question: <strong>"How sustainable and secure is this environment?"</strong></p>
+                </div>
+            </div>
+            
+            <div class="fade-up" style="margin-top: 3rem; text-align: center;">
+                 <p style="margin: 0 auto;">The final RAO score combines these dimensions with greater weight placed on opportunity than stability, reflecting the reality that investors are fundamentally opportunity-seeking but must account for risk as a constraint.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="rao-explorer">
+        <div class="container">
+            <div class="fade-up" style="text-align: center; margin-bottom: 4rem;">
+                <h2>What the RAO comprises of</h2>
+                <p style="margin: 0 auto;">Explore the underlying dimensions, pillars, and variables of the RAO methodology.</p>
+            </div>
+
+            <div class="tree-container fade-up delay-1">
+                <!-- Root: RAO -->
+                <div class="tree-root-wrapper">
+                    <div class="node-card root-card">
+                        <h3>RAO SCORE</h3>
+                        <p>Risk-Adjusted Opportunity</p>
+                    </div>
+                </div>
+                
+                <div class="tree-dimensions-wrapper">
+                    <!-- Opportunity Dimension -->
+                    <div class="tree-node dimension-node root-node">
+                        <div class="node-card">
+                            <h4>Opportunity Dimension</h4>
+                            <p>6 Pillars, 15 Variables</p>
+                        </div>
+                        <div class="node-content active"> <!-- Dimension content always visible -->
+                            <div class="tree-branch">
+                                <!-- Opportunity Pillars -->
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Market Access</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Trade Openness</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">High-Tech Export Intensity</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Capital Environment</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Foreign Investment Attractiveness</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Domestic Capital Formation</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Financial Market Depth</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Trade Infrastructure</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Customs Efficiency</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Logistics Infrastructure Quality</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Digital Economy</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">ICT Service Export Competitiveness</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Digital Commerce Readiness</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Frontier Technology Readiness Index (FTRI)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Business Environment</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Regulatory Quality for Business (B-Ready)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Innovation & Characteristics</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Economic Dynamism</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Market Sophistication</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Labor Force Scale</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Productive Capacities Index (PCI)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fragility Dimension -->
+                    <div class="tree-node dimension-node root-node">
+                        <div class="node-card">
+                            <h4>Fragility Dimension</h4>
+                            <p>6 Pillars, 13 Variables</p>
+                        </div>
+                        <div class="node-content active"> <!-- Dimension content always visible -->
+                            <div class="tree-branch">
+                                <!-- Fragility Pillars -->
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>External Vulnerability</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Current Account Imbalance</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">External Asset Position</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Export Partner Concentration</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Export Product Concentration</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Fiscal Health</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Government Debt Burden</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Fiscal Balance Trajectory</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Monetary & Price Stability</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Inflation Pressure</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Labor Market Stress</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Labor Market Quality</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Skills Mismatch</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Labor Informality</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Market Structure</h5><div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Market Concentration Risk (HHI)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tree-node pillar-node">
+                                    <div class="node-card" onclick="toggleNode(this)"><h5>Institutional Quality</h5><div class="toggle-icon"></div></div>
+                                    <div class="node-content">
+                                        <div class="tree-branch">
+                                            <div class="tree-node variable-node"><div class="node-card">Political Stability</div></div>
+                                            <div class="tree-node variable-node"><div class="node-card">Corruption Perceptions (CPI)</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="rating-scale">
+        <div class="container">
+            <div class="grid-2">
+                <div class="fade-up">
+                    <h2>The Rating Scale</h2>
+                    <p>RAO scores range from zero to ten, translating quantitative scores into qualitative investment outlooks.</p>
+                </div>
+                
+                <div class="fade-up delay-1">
+                    <div class="scale-item" style="border-color: #2ecc71;">
+                        <div class="scale-score">7.5 - 10.0</div>
+                        <div class="scale-desc">
+                            <strong>Excellent</strong>
+                            Highly attractive environments combining strong opportunities with low risks.
+                        </div>
+                    </div>
+                    <div class="scale-item" style="border-color: #f1c40f;">
+                        <div class="scale-score">6.0 - 7.5</div>
+                        <div class="scale-desc">
+                            <strong>Good</strong>
+                            Favorable environments with manageable risks. Most successful international investments occur here.
+                        </div>
+                    </div>
+                    <div class="scale-item" style="border-color: #e67e22;">
+                        <div class="scale-score">4.5 - 6.0</div>
+                        <div class="scale-desc">
+                            <strong>Moderate</strong>
+                            Mixed potential requiring careful, sector-specific evaluation and risk management.
+                        </div>
+                    </div>
+                    <div class="scale-item" style="border-color: #e74c3c;">
+                        <div class="scale-score">3.0 - 4.5</div>
+                        <div class="scale-desc">
+                            <strong>Challenging</strong>
+                            Limited opportunities or elevated risks. Appropriate only for specialized strategies.
+                        </div>
+                    </div>
+                    <div class="scale-item" style="border-color: #c0392b;">
+                        <div class="scale-score">0 - 3.0</div>
+                        <div class="scale-desc">
+                            <strong>Poor</strong>
+                            High risks substantially outweigh opportunities. Severe instability or crisis.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="strategic-value">
+        <div class="container fade-up">
+            <h2>The Strategic Value</h2>
+            <div class="grid-2">
+                <p>The true value lies not in the single number at the top of the page but in the discipline the methodology imposes: the requirement to examine all relevant dimensions of opportunity and risk, the use of authoritative data rather than perception, and the creation of comparability across countries.</p>
+                <p>For executives and investors navigating an era where political developments outpace corporate planning cycles and where permission risk can materialize overnight, the RAO offers a structured way to think about where to deploy capital, how to balance portfolios, and where vulnerabilities lie.</p>
+            </div>
+            <div style="margin-top: 3rem; text-align: center;">
+                <a href="map.html" class="btn">View RAO Heatmap</a>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <strong style="color:var(--accent-gold); text-transform:uppercase; letter-spacing:1px;">The Sixteenth Council</strong><br>
+                    <span style="opacity:0.7;">Office 5336<br>182-184 High Street North<br>East Ham London, E6 2JA<br>United Kingdom</span>
+                </div>
+                <div style="text-align: right;">
+                    <a href="mailto:geoecon@16thcouncil.uk" style="border-bottom: 1px solid var(--accent-gold);">geoecon@16thcouncil.uk</a><br>
+                    <span style="opacity:0.7;">+44 7881 1644457</span><br>
+                    <a href="http://www.16thcouncil.uk" target="_blank" style="opacity:0.7;">www.16thcouncil.uk</a>
+                </div>
+            </div>
+            <div style="margin-top: 2rem; opacity: 0.4; font-size: 0.8rem; text-align: center;">
+                &copy; 2025 Sixteenth Council Geoeconomic Strategic Unit. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Tree Explorer Logic ---
+        function toggleNode(element) {
+            const content = element.nextElementSibling;
+            if (!content) return;
+            
+            const isVisible = content.classList.contains('active');
+            
+            if (isVisible) {
+                content.classList.remove('active');
+                element.classList.remove('expanded');
+            } else {
+                content.classList.add('active');
+                element.classList.add('expanded');
+            }
+        }
+
+        // --- Standard UI Fade Logic ---
+        const observerOptions = { root: null, threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

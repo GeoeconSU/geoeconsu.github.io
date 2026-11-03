@@ -1,5 +1,6 @@
-// Mobile/responsive visual audit for observatory.html (and, with PAGE=dashboard.html,
-// dashboard.html). Logs in once per device profile, visits every main tab, and
+// Mobile/responsive visual audit for rao.html (formerly observatory.html; set
+// PAGE=observatory_dev.html to audit the dev sandbox instead). Logs in once per
+// device profile, visits every main tab, and
 // records a screenshot + horizontal-overflow check + console errors for each.
 //
 // Usage:
@@ -10,7 +11,7 @@
 // Start the site locally first (from the repo root): python -m http.server 8000
 //
 // Output: testing/screenshots/<device>/<tab>.png + testing/screenshots/report.json
-// (both gitignored — screenshots can show real RAO9 panel data).
+// (both gitignored — screenshots can show real RAO panel data).
 
 require('dotenv').config();
 const fs = require('fs');
@@ -19,7 +20,7 @@ const { chromium, devices } = require('playwright');
 const { login } = require('../lib/auth');
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:8000';
-const PAGE_PATH = process.env.PAGE || 'observatory.html';
+const PAGE_PATH = process.env.PAGE || 'rao.html';
 const OUT_DIR = path.join(__dirname, '..', 'screenshots');
 
 // A deliberately small, representative set — not every device, just the

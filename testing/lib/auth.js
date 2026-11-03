@@ -1,8 +1,9 @@
-// Shared Firebase email/password sign-in for observatory.html / dashboard.html.
-// Both pages use the same #app-gate markup (id="login-email"/"login-password",
-// a single submit button inside #auth-login-form) and the same post-login
-// signal: #app-gate gains the "gate-hidden" class once Fieldnotes.login()
-// resolves successfully.
+// Shared Firebase email/password sign-in for rao.html (formerly observatory.html)
+// and its dev sandbox observatory_dev.html — the retired dashboard.html is now
+// archive/dashboard.html and no longer live. Both pages use the same #app-gate
+// markup (id="login-email"/"login-password", a single submit button inside
+// #auth-login-form) and the same post-login signal: #app-gate gains the
+// "gate-hidden" class once Fieldnotes.login() resolves successfully.
 
 async function login(page, { baseUrl, pagePath, email, password }) {
   if (!email || !password) {
@@ -24,7 +25,7 @@ async function login(page, { baseUrl, pagePath, email, password }) {
   try {
     // state:'attached', not the default 'visible' — gate-hidden's whole job
     // is to make #app-gate invisible, so waiting for it to be "visible"
-    // can never succeed. Generous timeout: a real Firebase sign-in + RAO9
+    // can never succeed. Generous timeout: a real Firebase sign-in + RAO
     // panel fetch against production (not localhost) is slower than a dev
     // server.
     await page.waitForSelector('#app-gate.gate-hidden', { timeout: 40000, state: 'attached' });

@@ -5,10 +5,14 @@
   "description": "Playwright-based visual/responsive audit tooling for the RAO dashboard and observatory — not part of the deployed site.",
   "scripts": {
     "install-browser": "playwright install chromium",
-    "audit:mobile": "node audits/mobile-audit.js"
+    "audit:mobile": "node audits/mobile-audit.js",
+    "test": "playwright test"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
     "playwright": "^1.48.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
   }
 }

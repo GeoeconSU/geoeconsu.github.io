@@ -1,7 +1,9 @@
 # Playwright testing tools
 
-Browser-automation tooling for visually auditing `dashboard.html` / `observatory.html`
-(mobile responsiveness, touch targets, console errors). Not part of the deployed
+Browser-automation tooling for visually auditing `rao.html` (formerly `observatory.html`;
+the retired `dashboard.html` now lives at `archive/dashboard.html`) and its
+`observatory_dev.html` dev sandbox (mobile responsiveness, touch targets, console
+errors). Not part of the deployed
 site — GitHub Pages ignores this directory entirely since nothing links to it.
 
 ## Setup
@@ -28,6 +30,22 @@ npm run audit:mobile
 Screenshots and a `report.json` land in `testing/screenshots/` (gitignored — see
 "Why screenshots aren't committed" below).
 
+## Running the test suite
+
+`tests/rao.spec.js` is a `@playwright/test` suite (separate from the ad-hoc
+audit scripts above) covering the unauthenticated gate, authenticated sign-in,
+each nav tab rendering without console errors, the `#search-results` portal
+gotcha, `.tab-lock` z-index, the renamed `rao_csv` dataset actually loading,
+and a mobile-viewport smoke check. With the site already running locally and
+`.env` filled in:
+
+```bash
+npm test
+```
+
+No CI wiring or `webServer` auto-start — start `python -m http.server 8000`
+yourself first, same as for the audits above.
+
 ## Test account
 
 Use a **dedicated, low-privilege `gsu-members` account created specifically for
@@ -42,8 +60,8 @@ as any other password, even though its blast radius is intentionally small.
 
 ## Why screenshots aren't committed
 
-Anything captured after sign-in can show real RAO9 panel data rendered in the
-UI — the same proprietary dataset `rao9.csv` is deliberately kept out of this
+Anything captured after sign-in can show real RAO panel data rendered in the
+UI — the same proprietary dataset `rao.csv` is deliberately kept out of this
 repo for (see root `CLAUDE.md`'s Data Files section). A screenshot is just
 another way that same data could leak into a public repo. `testing/.gitignore`
 excludes `screenshots/`, `test-results/`, and `playwright-report/` for this

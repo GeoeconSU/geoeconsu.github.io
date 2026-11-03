@@ -10,10 +10,15 @@ config.js
 dev/
 
 # Proprietary RAO dataset — lives in the Firebase Realtime Database
-# (protected-data/rao9_csv), gated by database.rules.json, not shipped as a
+# (protected-data/rao_csv), gated by database.rules.json, not shipped as a
 # public static file. See CLAUDE.md.
-data/rao9.csv
-data/rao9_rtdb_import.json
+data/rao.csv
+data/rao_rtdb_import.json
+
+# Candidate/temp RAO panel vintages — same sensitivity as rao.csv above
+# (same schema, real panel data).
+data/rao_temp.csv
+RAO_production_panel_*.csv
 
 # Internal docs — not meant to be publicly servable off GitHub Pages
 CLAUDE.md

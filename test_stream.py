@@ -5,7 +5,7 @@ STREAM_URL = 'https://gsu-gate.guduruadip.workers.dev/gemini-stream'
 CHAT_URL   = 'https://gsu-gate.guduruadip.workers.dev/gemini-chat'
 MODEL_LITE = 'gemini-3.1-flash-lite'
 MODEL_35   = 'gemini-3.5-flash'
-CSV_PATH   = 'data/rao9.csv'
+CSV_PATH   = 'data/rao.csv'
 OUTPUT     = 'notes/chat_test_results.md'
 
 # ── Minimal data loader ───────────────────────────────────────────────────────

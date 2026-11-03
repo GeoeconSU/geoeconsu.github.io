@@ -6978,7 +6978,7 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 
 // ===== DATA & STATE =====
 // rao8 panel data structures
-let panelData   = [];              // all rows from rao9.csv
+let panelData   = [];              // all rows from rao.csv
 let countryMap  = new Map();       // Map<iso, Map<year, Row>>
 let latestSlice = [];              // latest-year rows, ranked
 let countryMeta = new Map();       // Map<iso, {country_name, archetype, region}>
@@ -7221,14 +7221,14 @@ document.addEventListener('click', (e) => {
 });
 
 // ===== FILE HANDLING =====
-// rao9.csv is proprietary — it is not a static repo file, it lives in the
-// Firebase Realtime Database under protected-data/rao9_csv, gated by
+// rao.csv is proprietary — it is not a static repo file, it lives in the
+// Firebase Realtime Database under protected-data/rao_csv, gated by
 // database.rules.json to signed-in verified users only. Call this only after
 // onAuthReady() confirms that.
-let _rao9Loaded = false;
+let _raoLoaded = false;
 function loadDefaultCSV() {
-    if (_rao9Loaded) return;
-    _rao9Loaded = true;
+    if (_raoLoaded) return;
+    _raoLoaded = true;
     Promise.all([
         fetch('regions.json').then(r => r.json()),
         firebase.database().ref('protected-data/rao_csv').once('value')
@@ -7255,7 +7255,7 @@ function loadDefaultCSV() {
     })
     .catch(err => {
         console.error('Error loading data:', err);
-        _rao9Loaded = false;
+        _raoLoaded = false;
         alert('Error loading data. Please ensure you are signed in with a verified account and try again.');
     });
 }
@@ -16009,7 +16009,7 @@ function renderCoverage(sources) {
     const webSrcs = sources.filter(s => s.type === 'web');
     const liveSrcs = sources.filter(s => s.type === 'live');
     let html = '<span class="cov-label"><i class="ri-database-line"></i> Data sources:</span>';
-    if (raoSrcs.length) html += '<span class="cov-chip rao"><i class="ri-bar-chart-box-line"></i> RAO9 Dataset</span>';
+    if (raoSrcs.length) html += '<span class="cov-chip rao"><i class="ri-bar-chart-box-line"></i> RAO Dataset</span>';
     // The live layer is a distinct provenance class: verified, first-party, and
     // dated — worth distinguishing from both the annual panel and open web.
     if (liveSrcs.length) html += '<span class="cov-chip rao"><i class="ri-pulse-line"></i> RAO Live' + (NEWS.asOf ? ' · ' + NEWS.asOf : '') + '</span>';
