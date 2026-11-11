@@ -97,7 +97,8 @@ function init() {
 
     // Load Image and Create Globe
     const imgLoader = new THREE.ImageLoader();
-    imgLoader.load('assets/land-mask.png', (image) => {
+    imgLoader.setCrossOrigin('anonymous');
+    imgLoader.load(window.GSU_LAND_MASK || 'assets/land-mask.png', (image) => {
         const canvas = document.createElement('canvas');
         canvas.width = image.width;
         canvas.height = image.height;
