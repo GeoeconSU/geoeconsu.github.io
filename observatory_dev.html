@@ -7234,7 +7234,7 @@ function loadDefaultCSV() {
     _raoLoaded = true;
     Promise.all([
         fetch('regions.json').then(r => r.json()),
-        firebase.database().ref('protected-data/rao9_csv').once('value')
+        firebase.database().ref('protected-data/rao_csv').once('value')
             .then(snap => snap.val()),
         // The news layer is additive: loadNewsLayer() swallows its own failures
         // and returns a NEWS object with ok:false, so a rules change or an
