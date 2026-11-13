@@ -7222,16 +7222,19 @@ document.addEventListener('click', (e) => {
 
 // ===== FILE HANDLING =====
 // rao.csv is proprietary — it is not a static repo file, it lives in the
-// Firebase Realtime Database under protected-data/rao_csv, gated by
-// database.rules.json to signed-in verified users only. Call this only after
-// onAuthReady() confirms that.
+// Firebase Realtime Database, gated by database.rules.json to signed-in
+// verified users only. Call this only after onAuthReady() confirms that.
+// Reading from protected-data/rao9_csv (the known-populated node, same as
+// production rao.html) rather than rao_csv, which isn't confirmed to have
+// current data in it — rao9_csv is the safer, more direct source. Both
+// paths carry the same read rule in database.rules.json.
 let _raoLoaded = false;
 function loadDefaultCSV() {
     if (_raoLoaded) return;
     _raoLoaded = true;
     Promise.all([
         fetch('regions.json').then(r => r.json()),
-        firebase.database().ref('protected-data/rao_csv').once('value')
+        firebase.database().ref('protected-data/rao9_csv').once('value')
             .then(snap => snap.val()),
         // The news layer is additive: loadNewsLayer() swallows its own failures
         // and returns a NEWS object with ok:false, so a rules change or an
