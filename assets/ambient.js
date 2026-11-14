@@ -12,7 +12,7 @@
   document.body.prepend(cv);
   const ctx = cv.getContext('2d');
 
-  const GAP = fine ? 34 : 44, LEVELS = 8, R = 210;
+  const GAP = fine ? 36 : 46, LEVELS = 8, R = 165;
   let W = 0, H = 0, dpr = 1, cols = 0, rows = 0, n = 0;
   let energy, offX, offY, phase, speedF;              /* per-dot state */
   const ptr = { x: -9999, y: -9999, sx: -9999, sy: -9999, v: 0, seen: false, last: 0 };
@@ -22,7 +22,7 @@
   function makeGlow() {
     glow = document.createElement('canvas'); glow.width = glow.height = 560;
     const g = glow.getContext('2d'), rg = g.createRadialGradient(280, 280, 0, 280, 280, 280);
-    rg.addColorStop(0, 'rgba(206,182,128,.16)'); rg.addColorStop(.45, 'rgba(160,172,205,.06)'); rg.addColorStop(1, 'rgba(160,172,205,0)');
+    rg.addColorStop(0, 'rgba(206,182,128,.075)'); rg.addColorStop(.45, 'rgba(160,172,205,.03)'); rg.addColorStop(1, 'rgba(160,172,205,0)');
     g.fillStyle = rg; g.fillRect(0, 0, 560, 560);
   }
   function resize() {
@@ -37,7 +37,7 @@
     if (reduced) drawStill();
   }
   function drawStill() {
-    ctx.clearRect(0, 0, W, H); ctx.fillStyle = 'rgba(200,208,228,.07)'; ctx.beginPath();
+    ctx.clearRect(0, 0, W, H); ctx.fillStyle = 'rgba(200,208,228,.05)'; ctx.beginPath();
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const x = c * GAP, y = r * GAP; ctx.moveTo(x + 1, y); ctx.arc(x, y, 1, 0, 6.2832); }
     ctx.fill();
   }
@@ -45,7 +45,7 @@
   /* eight batches from cool silver (quiet) to warm gold (lit): one path and one fill per batch */
   const COL = [];
   for (let k = 0; k < LEVELS; k++) {
-    const t = k / (LEVELS - 1), a = .06 + t * .74;
+    const t = k / (LEVELS - 1), a = .04 + t * .4;
     COL.push(`rgba(${Math.round(196 + 36 * t)},${Math.round(206 + 0 * t)},${Math.round(228 - 84 * t)},${a.toFixed(3)})`);
   }
   const bx = [], by = [], br = [];
@@ -69,13 +69,13 @@
     for (let i = ripples.length - 1; i >= 0; i--) { ripples[i].r += 7.5 * k; ripples[i].s *= Math.pow(.972, k); if (ripples[i].s < .03) ripples.splice(i, 1); }
 
     const drift = (window.scrollY * .12) % GAP;        /* the grid slips a little as the page scrolls */
-    const reach = R + ptr.v * 3, decay = Math.pow(.945, k), spring = Math.min(1, .14 * k);
+    const reach = R + ptr.v * 2, decay = Math.pow(.945, k), spring = Math.min(1, .14 * k);
     for (let b = 0; b < LEVELS; b++) { bx[b].length = 0; by[b].length = 0; br[b].length = 0; }
     ctx.clearRect(0, 0, W, H);
     if (ptr.seen) ctx.drawImage(glow, Math.round(ptr.sx - 280), Math.round(ptr.sy - 280));
 
     /* mesh between lit neighbours, drawn first so dots sit on top */
-    ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(214,190,138,.11)'; ctx.beginPath();
+    ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(214,190,138,.055)'; ctx.beginPath();
     let i = 0;
     for (let r = 0; r < rows; r++) {
       const gy = r * GAP - drift;
@@ -86,8 +86,8 @@
           const dx = gx - ptr.sx, dy = gy - ptr.sy, d = Math.hypot(dx, dy);
           if (d < reach) {
             const f = 1 - d / reach, s = f * f * (3 - 2 * f);
-            target = s * (.5 + Math.min(ptr.v / 22, .5));
-            if (d > .01) { const push = s * (10 + ptr.v * .5); tx = dx / d * push; ty = dy / d * push; }
+            target = s * (.4 + Math.min(ptr.v / 26, .45));
+            if (d > .01) { const push = s * (5 + ptr.v * .3); tx = dx / d * push; ty = dy / d * push; }
           }
         }
         for (let q = 0; q < ripples.length; q++) {
@@ -96,11 +96,11 @@
         }
         let e = energy[i] * decay; if (target > e) e += (target - e) * .5; energy[i] = e;
         offX[i] += (tx - offX[i]) * spring; offY[i] += (ty - offY[i]) * spring;
-        const tw = Math.pow(Math.max(0, Math.sin(time * speedF[i] + phase[i])), 14) * .42;   /* a dot surfacing on its own */
+        const tw = Math.pow(Math.max(0, Math.sin(time * speedF[i] + phase[i])), 14) * .24;   /* a dot surfacing on its own */
         const lit = Math.min(1, e + tw);
         const x = gx + offX[i], y = gy + offY[i];
         const b = Math.min(LEVELS - 1, (lit * LEVELS) | 0);
-        bx[b].push(x); by[b].push(y); br[b].push(1 + e * 1.9 + tw * .9);
+        bx[b].push(x); by[b].push(y); br[b].push(1 + e * 1.1 + tw * .6);
         if (e > .3) {
           if (c + 1 < cols && energy[i + 1] > .3) { ctx.moveTo(x, y); ctx.lineTo(gx + GAP + offX[i + 1], gy + offY[i + 1]); }
           if (r + 1 < rows && energy[i + cols] > .3) { ctx.moveTo(x, y); ctx.lineTo(gx + offX[i + cols], gy + GAP + offY[i + cols]); }

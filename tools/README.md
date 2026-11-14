@@ -36,3 +36,17 @@ Needs Python 3 with `pip install pymupdf pillow`.
 | `assets/ambient.js` | dot-field background and the silver pointer |
 | `assets/globe.classic.js`, `assets/land-mask.js` | hero globe and its continent mask |
 | `assets/books/` | generated page images and manifest |
+
+## Add or replace a team photo
+
+Team portraits on the homepage are 4:5 crops centred on the face, so heads are never cut off.
+Drop the original into `team/`, then:
+
+```bash
+python tools/build_portraits.py newperson.jpg
+```
+
+It writes `team/portraits/newperson.webp`. Point the card's `<img>` at that file. If the face is not
+found the script prints `GUESS`; add the photo to `MANUAL` at the top of the script with the face position.
+
+Needs `pip install "opencv-python-headless<5" pillow numpy`.

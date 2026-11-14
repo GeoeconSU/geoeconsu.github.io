@@ -10,7 +10,7 @@ const svgEl = (tag, attrs = {}, parent) => { const e = document.createElementNS(
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const debounce = (fn, ms = 150) => { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; };
 /* run fn once when el first comes into view; independent of pinned sections above it */
-function inView(el, fn, margin = '0px 0px -10% 0px') {
+function inView(el, fn, margin = '0px 0px -4% 0px') {
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.disconnect(); fn(); } }), { rootMargin: margin });
   io.observe(el);
 }
@@ -37,11 +37,11 @@ function pageMotion() {
     .to(heroWords, { y: 0, duration: 1.1, stagger: .09, delay: .15 })
     .to('.hero [data-rise]', { opacity: 1, y: 0, duration: .9, stagger: .12, startAt: { y: 16 } }, '-=.8');
   gsap.to('#canvas-container', { yPercent: 14, opacity: .25, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-  $$('main h2').forEach(h => { const ws = split(h); h.classList.add('h2-split'); inView(h, () => gsap.to(ws, { y: 0, duration: 1, ease: 'expo.out', stagger: .06 })); });
+  $$('main h2').forEach(h => { const ws = split(h); h.classList.add('h2-split'); inView(h, () => gsap.to(ws, { y: 0, duration: .8, ease: 'expo.out', stagger: .05 })); });
   $$('[data-anim]').forEach(el => inView(el, () => {
     const kind = el.dataset.anim, d = parseFloat(el.dataset.delay || 0);
     const from = kind === 'left' ? { x: -60, opacity: 0 } : kind === 'right' ? { x: 60, opacity: 0 } : kind === 'fade' ? { opacity: 0 } : { y: 48, opacity: 0 };
-    gsap.fromTo(el, from, { x: 0, y: 0, opacity: 1, duration: 1.1, delay: d, ease: 'expo.out', clearProps: 'transform' });
+    gsap.fromTo(el, from, { x: 0, y: 0, opacity: 1, duration: .85, delay: d * .7, ease: 'expo.out', clearProps: 'transform' });
   }));
   setTimeout(() => $$('.h2-split .w > span').forEach(e => { if (!gsap.isTweening(e) && e.getBoundingClientRect().top < innerHeight) e.style.transform = 'none'; }), 5000);
 }
@@ -96,7 +96,7 @@ function flowmap() {
   if (!layout() || !motion) { drawn = true; layout(); return; }
   /* where along a power2.inOut tween the line reaches a given fraction of its length */
   const when = f => (f < .5 ? Math.sqrt(f / 2) : 1 - Math.sqrt((1 - f) / 2));
-  const D = 1.7;
+  const D = 1.3;
   gsap.set($$('.flow-track i', map), { scale: 0 }); gsap.set($$('.flow-track span', map), { opacity: 0, y: 10 });
   gsap.set(parts.map(p => p.land), { scale: 0, transformOrigin: '50% 50%' });
   gsap.set($$('.flow-head', map), { opacity: 0, x: -28 });
@@ -106,7 +106,7 @@ function flowmap() {
     layout();
     const tl = gsap.timeline({ onComplete() { drawn = true; parts.forEach(p => (p.path.style.strokeDasharray = 'none')); pips(); } });
     parts.forEach((p, k) => {
-      const at = k * .24;
+      const at = k * .16;
       tl.to($('.flow-head', p.row), { opacity: 1, x: 0, duration: .9, ease: 'expo.out' }, at)
         .to(p.path, { strokeDashoffset: 0, duration: D, ease: 'power2.inOut' }, at + .15);
       p.nodes.forEach((li, j) => {
@@ -115,58 +115,72 @@ function flowmap() {
       });
       tl.to(p.land, { scale: 1, duration: .45, ease: 'back.out(3)' }, at + .15 + D - .05);
     });
-    tl.to('.flow-goal .ring-out', { strokeDashoffset: 0, duration: 1.3, ease: 'power2.inOut' }, 1.35)
-      .to('.flow-goal .ring-in', { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' }, 1.6)
-      .to('.flow-goal p span, .flow-goal p em', { opacity: 1, y: 0, duration: .8, stagger: .16, ease: 'expo.out' }, 2.1);
-  }, '0px 0px -22% 0px');
+    tl.to('.flow-goal .ring-out', { strokeDashoffset: 0, duration: 1, ease: 'power2.inOut' }, 1)
+      .to('.flow-goal .ring-in', { strokeDashoffset: 0, duration: .9, ease: 'power2.inOut' }, 1.15)
+      .to('.flow-goal p span, .flow-goal p em', { opacity: 1, y: 0, duration: .7, stagger: .12, ease: 'expo.out' }, 1.5);
+  }, '0px 0px -8% 0px');
 }
 
-/* ---------- book stages: Barometer, India Horizon ---------- */
+/* ---------- book stages: Barometer, India Horizon ----------
+   The book never takes over the page. It turns only when the wheel is used with the pointer on the book
+   itself; anywhere else the page scrolls past it. Clicks, the arrow buttons and the arrow keys also turn it. */
 const stages = [];
+let lastPageWheel = 0;
+addEventListener('wheel', () => { lastPageWheel = performance.now(); }, { passive: true });   /* only wheels the book did not take reach here */
 function bookStage(section) {
   if (!window.GSUBook) return;
   const books = GSUBook.group(section.dataset.group); if (!books.length) return;
   const host = $('.book', section), list = $('.editions', section), label = $('.book-hint b', section);
   const prev = $('[data-prev]', section), next = $('[data-next]', section);
-  const s = { section, book: null, target: 0, cur: 0, busy: false, st: null };
-  const show = p => { s.book.setProgress(p); if (prev) { prev.disabled = s.target <= 0; next.disabled = s.target >= s.book.max; } };
-  function open(b, btn) {
-    const mount = () => { s.book = GSUBook.mount(host, b); s.busy = false; if (label) label.textContent = b.label; section.dataset.current = b.slug; show(s.cur); };
+  const s = { section, book: null, target: 0, cur: 0, pending: null, lastOwn: 0, snap: 0 };
+  const buttons = () => { if (prev) { prev.disabled = s.target <= .001; next.disabled = s.target >= s.book.max - .001; } };
+  s.buttons = buttons;
+  function mount(b) { s.book = GSUBook.mount(host, b); s.cur = 0; s.target = 0; s.pending = null; if (label) label.textContent = b.label; section.dataset.current = b.slug; buttons(); }
+  s.mount = mount;
+  function choose(b, btn) {
     $$('button', list).forEach(x => { const on = x === btn; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
-    if (!s.book || !motion || s.cur < .02) { mount(); return; }
-    s.busy = true;                                              /* close the old edition, then let the new one open */
-    gsap.to(s, { cur: 0, duration: .5, ease: 'power2.in', onUpdate: () => s.book.setProgress(s.cur), onComplete: mount });
+    /* a new edition always starts from its cover: close whatever is open first, then swap */
+    if (!s.book || s.cur < .02 || reduced) mount(b); else { s.pending = b; s.target = 0; }
   }
   let first = null;
   books.forEach((b, i) => {
     const btn = document.createElement('button'); btn.type = 'button';
-    btn.innerHTML = `<span>${b.label}</span>${i === 0 ? '<small>Latest</small>' : ''}`;
-    btn.addEventListener('click', () => { if (s.book.book !== b) open(b, btn); });
+    btn.innerHTML = '<span>' + b.label + '</span>' + (i === 0 ? '<small>Latest</small>' : '');
+    btn.addEventListener('click', () => { if ((s.pending || s.book.book) !== b) choose(b, btn); });
     list.append(btn); if (!i) first = btn;
   });
-  open(books[0], first);
+  choose(books[0], first);
   $$('[data-request]', section).forEach(btn => btn.addEventListener('click', () => {
-    const b = s.book.book;
+    const b = s.pending || s.book.book;
     if (b.gate) openGate(b.gate); else if (b.href) window.open(b.href, '_blank', 'noopener'); else { pickKind('subscribe'); goTo('#contact'); }
   }));
-  const step = d => { s.target = clamp(Math.round(s.target) + d, 0, s.book.max); if (!motion) { s.cur = s.target; } show(s.cur); };
+  const step = d => { if (s.pending) return; s.target = clamp(Math.round(s.target) + d, 0, s.book.max); s.book.load(); buttons(); };
   if (prev) { prev.addEventListener('click', () => step(-1)); next.addEventListener('click', () => step(1)); }
-  if (motion && wide) {
-    /* one spread per stretch of scroll, with a rest on each so a spread can be read */
-    const shape = x => { const i = Math.floor(x), f = x - i; return i + clamp((f - .12) / .76, 0, 1); };
-    s.st = ScrollTrigger.create({
-      trigger: $('.stage-in', section), start: 'top top', end: () => '+=' + Math.round(s.book.max * 640 + 260), pin: true, anticipatePin: 1, invalidateOnRefresh: true,
-      onUpdate: st => { s.target = shape(st.progress * s.book.max); if (st.progress > 0) s.book.load(); },
-    });
-  } else {
-    section.classList.add('no-pin');
-    host.addEventListener('click', () => { if (s.target >= s.book.max) { s.target = 0; show(s.cur); } else step(1); });
-  }
+  host.addEventListener('click', e => { const r = host.getBoundingClientRect(); step(s.target < .5 || e.clientX > r.left + r.width / 2 ? 1 : -1); });
+  host.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { e.preventDefault(); step(1); } else if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); } });
+  host.addEventListener('wheel', e => {
+    if (s.pending) return;
+    const now = performance.now(), dir = Math.sign(e.deltaY);
+    if (!dir) return;
+    if (now - lastPageWheel < 260 && now - s.lastOwn > 260) return;                        /* the page is mid-scroll and just passing under the pointer */
+    if ((dir > 0 && s.target >= s.book.max - .001) || (dir < 0 && s.target <= .001)) return; /* nothing left to turn: give the wheel back to the page */
+    e.preventDefault(); e.stopPropagation();
+    s.lastOwn = now;
+    const px = e.deltaMode === 1 ? e.deltaY * 34 : e.deltaMode === 2 ? e.deltaY * innerHeight : e.deltaY;
+    s.target = clamp(s.target + px / 300, 0, s.book.max);
+    s.book.load(); buttons();
+    clearTimeout(s.snap); s.snap = setTimeout(() => { s.target = Math.round(s.target); buttons(); }, 200);   /* settle flat on a spread */
+  }, { passive: false });
   inView(section, () => s.book.load(), '900px 0px 900px 0px');
   stages.push(s);
 }
 function stageLoop() {
-  for (const s of stages) { if (s.busy || !s.book) continue; const d = s.target - s.cur; if (Math.abs(d) > .0004) { s.cur += d * .13; s.book.setProgress(s.cur); } }
+  for (const s of stages) {
+    if (!s.book) continue;
+    const d = s.target - s.cur;
+    if (Math.abs(d) > .0004) { s.cur = reduced ? s.target : s.cur + d * (s.pending ? .22 : .14); s.book.setProgress(s.cur); }
+    if (s.pending && s.cur < .02) s.mount(s.pending);
+  }
   requestAnimationFrame(stageLoop);
 }
 
@@ -178,12 +192,12 @@ function pillars() {
   [slabs, items].forEach(group => group.forEach((el, i) => { el.addEventListener('mouseenter', () => setActive(i)); el.addEventListener('focusin', () => setActive(i)); }));
   setActive(0);
   if (!motion) { stack.classList.add('ready'); return; }
-  const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 80%', end: 'top 18%', scrub: .7, onUpdate: st => stack.classList.toggle('ready', st.progress > .97) } });
+  const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 95%', end: 'top 46%', scrub: .35, onUpdate: st => stack.classList.toggle('ready', st.progress > .97) } });
   [3, 2, 1, 0].forEach((i, n) => {
     tl.fromTo(slabs[i], { y: -170 - n * 26, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'power3.out' }, n * .6)
       .fromTo(items[i], { x: 40, opacity: 0, '--line': 0 }, { x: 0, opacity: 1, '--line': 1, duration: .8, ease: 'power2.out' }, n * .6 + .45);
   });
-  gsap.to('#processFill', { width: '100%', ease: 'none', scrollTrigger: { trigger: '#process', start: 'top 85%', end: 'bottom 60%', scrub: true } });
+  gsap.to('#processFill', { width: '100%', ease: 'none', scrollTrigger: { trigger: '#process', start: 'top 95%', end: 'top 60%', scrub: .3 } });
 }
 
 /* ---------- how we work: the climb ---------- */
@@ -219,7 +233,7 @@ function climb() {
     for (let i = 1; i < pts.length; i++) { total += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); cum.push(total); }
     const fr = [1, 3, 5, 7].map(i => cum[i] / total), len = rise.getTotalLength(), T = 6;
     gsap.set(rise, { strokeDasharray: len, strokeDashoffset: len });
-    tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 78%', end: 'top 16%', scrub: .6 } });
+    tl = gsap.timeline({ scrollTrigger: { trigger: root, start: 'top 96%', end: 'top 44%', scrub: .35 } });
     tl.fromTo(base, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, duration: 1, ease: 'none' }, 0)
       .to(rise, { strokeDashoffset: 0, duration: T, ease: 'none' }, .4)
       .fromTo([area, echo], { opacity: 0 }, { opacity: i => (i ? .7 : 1), duration: T, ease: 'none' }, .4);
