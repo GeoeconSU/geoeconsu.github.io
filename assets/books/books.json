@@ -1,0 +1,105 @@
+{
+  "books": {
+    "grb-q3-2026": {
+      "slug": "grb-q3-2026",
+      "group": "barometer",
+      "title": "Geoeconomic Risk Barometer",
+      "label": "Q3 2026",
+      "order": 202603,
+      "ratio": 0.706,
+      "pages": [
+        "assets/books/grb-q3-2026/p01.webp",
+        "assets/books/grb-q3-2026/p02.webp",
+        "assets/books/grb-q3-2026/p03.webp",
+        "assets/books/grb-q3-2026/p04.webp",
+        "assets/books/grb-q3-2026/p05.webp",
+        "assets/books/grb-q3-2026/p06.webp",
+        "assets/books/grb-q3-2026/p07.webp",
+        "assets/books/grb-q3-2026/p08.webp",
+        "assets/books/grb-q3-2026/p09.webp",
+        "assets/books/grb-q3-2026/p10.webp",
+        "assets/books/grb-q3-2026/p11.webp"
+      ],
+      "gate": "GRB Q3 2026.pdf"
+    },
+    "grb-q2-2026": {
+      "slug": "grb-q2-2026",
+      "group": "barometer",
+      "title": "Geoeconomic Risk Barometer",
+      "label": "Q2 2026",
+      "order": 202602,
+      "ratio": 0.7069,
+      "pages": [
+        "assets/books/grb-q2-2026/p01.webp",
+        "assets/books/grb-q2-2026/p02.webp",
+        "assets/books/grb-q2-2026/p03.webp",
+        "assets/books/grb-q2-2026/p04.webp",
+        "assets/books/grb-q2-2026/p05.webp",
+        "assets/books/grb-q2-2026/p06.webp",
+        "assets/books/grb-q2-2026/p07.webp",
+        "assets/books/grb-q2-2026/p08.webp",
+        "assets/books/grb-q2-2026/p09.webp",
+        "assets/books/grb-q2-2026/p10.webp",
+        "assets/books/grb-q2-2026/p11.webp"
+      ],
+      "gate": "GRB Q2 2026.pdf"
+    },
+    "grb-q1-2026": {
+      "slug": "grb-q1-2026",
+      "group": "barometer",
+      "title": "Geoeconomic Risk Barometer",
+      "label": "Q1 2026",
+      "order": 202601,
+      "ratio": 0.7069,
+      "pages": [
+        "assets/books/grb-q1-2026/p01.webp",
+        "assets/books/grb-q1-2026/p02.webp",
+        "assets/books/grb-q1-2026/p03.webp",
+        "assets/books/grb-q1-2026/p04.webp",
+        "assets/books/grb-q1-2026/p05.webp",
+        "assets/books/grb-q1-2026/p06.webp",
+        "assets/books/grb-q1-2026/p07.webp",
+        "assets/books/grb-q1-2026/p08.webp",
+        "assets/books/grb-q1-2026/p09.webp",
+        "assets/books/grb-q1-2026/p10.webp",
+        "assets/books/grb-q1-2026/p11.webp"
+      ],
+      "gate": "GRB Q1 2026.pdf"
+    },
+    "grb-q4-2025": {
+      "slug": "grb-q4-2025",
+      "group": "barometer",
+      "title": "Geoeconomic Risk Barometer",
+      "label": "Q4 2025",
+      "order": 202504,
+      "ratio": 0.7069,
+      "pages": [
+        "assets/books/grb-q4-2025/p01.webp",
+        "assets/books/grb-q4-2025/p02.webp",
+        "assets/books/grb-q4-2025/p03.webp",
+        "assets/books/grb-q4-2025/p04.webp",
+        "assets/books/grb-q4-2025/p05.webp",
+        "assets/books/grb-q4-2025/p06.webp",
+        "assets/books/grb-q4-2025/p07.webp",
+        "assets/books/grb-q4-2025/p08.webp",
+        "assets/books/grb-q4-2025/p09.webp",
+        "assets/books/grb-q4-2025/p10.webp",
+        "assets/books/grb-q4-2025/p11.webp"
+      ],
+      "gate": "GRB Q4 2025.pdf"
+    },
+    "india-horizon-2026-10": {
+      "slug": "india-horizon-2026-10",
+      "group": "india-horizon",
+      "title": "India Horizon",
+      "label": "October 2026",
+      "order": 202610,
+      "ratio": 0.7056,
+      "pages": [
+        "assets/books/india-horizon-2026-10/p01.webp",
+        "assets/books/india-horizon-2026-10/p02.webp",
+        "assets/books/india-horizon-2026-10/p03.webp"
+      ]
+    }
+  }
+}
