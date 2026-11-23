@@ -5938,7 +5938,6 @@ body.observatory{font-size:16px;background:#192030;isolation:isolate}
 <button aria-label="Compare" class="nav-item obs-nav-link" onclick="switchTab('compare')" type="button"><i aria-hidden="true" class="ri-scales-line"></i><span>Compare</span></button>
 <button aria-label="Rankings" class="nav-item obs-nav-link" onclick="switchTab('rankings')" type="button"><i aria-hidden="true" class="ri-trophy-line"></i><span>Rankings</span></button>
 <button aria-label="Analytics" class="nav-item obs-nav-link" onclick="switchTab('analytics')" type="button"><i aria-hidden="true" class="ri-bar-chart-line"></i><span>Analytics</span></button>
-<button aria-label="Pulse" class="nav-item obs-nav-link" onclick="switchTab('pulse')" type="button"><i aria-hidden="true" class="ri-pulse-line"></i><span>Pulse</span></button>
 <!-- Insights tab removed for this build (its chatbot backend requires a Firebase ID token, unavailable without login) — the #tab-insights content and its JS stay in the DOM as inert dead code, just unreachable. -->
 </nav></aside><header class="header glass-panel"><div class="obs-brand"><div class="logo">
 <img alt="GSU" class="logo-icon" src="assets/GSU_Transparent.png"/>
@@ -8520,14 +8519,13 @@ function renderLiveRibbon() {
         <div class="live-ribbon-track">
             ${movers.slice(0, 14).map(r => {
                 const imp = newsImpactOf(r);
-                return `<div class="ticker" onclick="switchTab('pulse'); setTimeout(() => focusSignal('${r.country}'), 260);"
+                return `<div class="ticker"
                              title="${r.country_name}: ${r.rao_score.toFixed(2)} → ${r.news.working.toFixed(2)} · ${eventTypeMeta(r.news.eventType).label}">
                     <span class="ticker-iso">${r.country}</span>
                     <span class="ticker-delta" style="color:${impactColor(imp)};">${impactArrow(imp)}${Math.abs(imp).toFixed(2)}</span>
                 </div>`;
             }).join('')}
         </div>
-        <span class="live-ribbon-all" onclick="switchTab('pulse')">All signals →</span>
     </div>`;
 }
 
@@ -9718,14 +9716,6 @@ function renderLiveSignalCard(iso, year) {
                     <span style="color:var(--w45);">·</span>
                     <span>${nw.halfLifeDays}-day half-life</span>
                     <div style="flex:1;min-width:130px;">${decayMeter(nw, { label:false })}</div>
-                </div>
-                <div style="display:flex;gap:1.1rem;padding-top:0.9rem;flex-wrap:wrap;">
-                    <button class="signal-foot-btn" onclick="switchTab('pulse'); setTimeout(()=>{ _pulseOpen.add('${iso}'); _pulsePanel['${iso}']='evidence'; renderPulseFeed(); focusSignal('${iso}'); }, 260);">
-                        <i class="ri-double-quotes-l"></i> Evidence &amp; sources
-                    </button>
-                    <button class="signal-foot-btn" onclick="switchTab('pulse'); setTimeout(()=>{ _pulseOpen.add('${iso}'); _pulsePanel['${iso}']='attribution'; renderPulseFeed(); focusSignal('${iso}'); }, 260);">
-                        <i class="ri-node-tree"></i> Variable attribution
-                    </button>
                 </div>
             </div>
             <div>
