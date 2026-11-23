@@ -1,0 +1,23 @@
+name = "rao-lite-gate"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# One-time setup:
+#   wrangler kv:namespace create RAO_LITE_KV
+#   → paste the returned id below
+#
+#   wrangler secret put EVENT_PASSCODE        ← the code you'll share via QR/in person
+#
+#   wrangler kv:key put --binding=RAO_LITE_KV access_enabled true
+#   wrangler kv:key put --binding=RAO_LITE_KV data --path=./rao_full_history.csv
+#     (rao_full_history.csv = a one-time export of the Firebase Realtime
+#      Database's protected-data/rao9_csv node — never commit that file to git)
+#
+# After the event, kill access with no redeploy:
+#   wrangler kv:key put --binding=RAO_LITE_KV access_enabled false
+[[kv_namespaces]]
+binding = "RAO_LITE_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+[observability]
+enabled = true
