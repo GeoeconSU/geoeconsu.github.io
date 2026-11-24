@@ -126,10 +126,14 @@ service cloud.firestore {
     }
 
     // ── Document management: Sections → Events → Files → Comments ─────────────
-    //    A Section is a destination/purpose ("Geoeconomic Risk Barometer",
-    //    "Strategic Briefs", or any director-created internal one). An Event
-    //    is one instance within a section (a quarterly release, one brief).
-    //    Each Event holds multiple Files — exactly one flagged `active` (the
+    //    A Section is a destination/purpose ("Barometer", "Strategic
+    //    Briefs", "Client Docs", "Conference Docs", or any other
+    //    director-created one). Its Firestore doc ID is a slug of its name
+    //    (see admin.html's slugify()) — also used as its Storage folder
+    //    name, so the bucket is human-browsable by the same name, e.g.
+    //    Documents/barometer/q1-2026/GRB_Q1_2026.pdf. An Event is one
+    //    instance within a section (a quarterly release, one brief). Each
+    //    Event holds multiple Files — exactly one flagged `active` (the
     //    real/final one to show or share), the rest are drafts kept around
     //    for a time-crunch, pruned by a director once the event is settled.
     //    File bytes live in Firebase Storage (see storage.rules); these
@@ -144,62 +148,78 @@ service cloud.firestore {
     // not a promise that a NEW section instantly appears somewhere on the
     // site; this hardcoded list is the actual security-relevant boundary,
     // matching exactly what load-briefs.js/load-grb-reports.js/gsu-gate
-    // query. Extend it only alongside real frontend work for a new section.
+    // query. These are slugs (name run through slugify()), not display
+    // names — name the section exactly "Barometer" / "Strategic Briefs" so
+    // it slugifies to one of these. Extend only alongside real frontend
+    // work for a new section.
     function isPubliclyWiredSection(sectionId) {
-      return sectionId in ['grb', 'strategic-briefs'];
+      return sectionId in ['barometer', 'strategic-briefs'];
     }
 
     match /sections/{sectionId} {
       allow read: if isEmployee();
       allow create, update, delete: if isDirectorOrFounder();
-    }
 
-    match /events/{eventId} {
-      // Public, unauthenticated read — only for events in one of the two
-      // pre-wired sections, approved, and visible. Needed by the marketing
-      // site (load-briefs.js) and gsu-gate's unauthenticated GRB lookup.
-      allow read: if isPubliclyWiredSection(resource.data.sectionId)
-                  && resource.data.status == 'approved'
-                  && resource.data.visible == true;
+      // Events nest under their section (sectionId is the parent path
+      // segment, not a field) — this is what lets storage.rules deduce an
+      // event's approval state from a Storage path alone (Documents/
+      // {sectionId}/{eventId}/{fileName} maps 1:1 to this Firestore path),
+      // since security rules can only do direct get()/exists() lookups, not
+      // queries. Event IDs are a slug of their title (see admin.html's
+      // slugify()), same reasoning as sections — human-browsable, and
+      // deterministic from the Storage path.
+      match /events/{eventId} {
+        // Public, unauthenticated read — only in one of the two pre-wired
+        // sections, approved, and visible. Needed by the marketing site
+        // (load-briefs.js) and gsu-gate's unauthenticated GRB lookup.
+        allow read: if isPubliclyWiredSection(sectionId)
+                    && resource.data.status == 'approved'
+                    && resource.data.visible == true;
 
-      // Staff can see everything else — pending events awaiting approval,
-      // and all conference/client-section events, which are never public
-      // regardless of status/visible.
-      allow read: if isEmployee();
-
-      // Any staff member can create an event — but only as 'pending' and
-      // invisible, attributed to themselves. Cannot self-approve.
-      allow create: if isEmployee()
-                    && request.resource.data.status == 'pending'
-                    && request.resource.data.visible == false
-                    && request.resource.data.createdBy == request.auth.uid;
-
-      // Approve/reject/hide/show/delete — director/head only.
-      allow update, delete: if isApproverTier();
-
-      match /files/{fileId} {
-        // Files are only ever listed/opened from the admin console — the
-        // public site only ever reads the parent event's denormalized
-        // activeFileURL, never queries this subcollection directly.
+        // Staff can see everything else — pending events awaiting
+        // approval, and all conference/client-section events, which are
+        // never public regardless of status/visible.
         allow read: if isEmployee();
 
-        // Any staff member can add a draft or editable-copy file.
-        allow create: if isEmployee();
+        // Any staff member can create an event — but only as 'pending' and
+        // invisible, attributed to themselves. Cannot self-approve.
+        allow create: if isEmployee()
+                      && request.resource.data.status == 'pending'
+                      && request.resource.data.visible == false
+                      && request.resource.data.createdBy == request.auth.uid;
 
-        // Marking a file active, or deleting a draft, is curatorial —
-        // director/head only, matching who prunes drafts after an event
-        // settles.
+        // Approve/reject/hide/show/delete — director/head only.
         allow update, delete: if isApproverTier();
 
-        match /comments/{commentId} {
-          // PDF review comments — any staff can read/add; resolving or
-          // deleting is the author's own call, or a director/head cleaning
-          // up. Purely informal feedback — never blocks approval.
+        // Files are keyed by a sanitized version of their filename (not a
+        // random ID), so the download always presents the real original
+        // name and a same-named re-upload replaces the prior draft in
+        // place — see admin.html's uploadFileToEventRaw().
+        match /files/{fileId} {
+          // Files are only ever listed/opened from the admin console — the
+          // public site only ever reads the parent event's denormalized
+          // activeFileURL, never queries this subcollection directly.
           allow read: if isEmployee();
-          allow create: if isEmployee()
-                        && request.resource.data.authorUid == request.auth.uid;
-          allow update, delete: if isEmployee()
-                        && (resource.data.authorUid == request.auth.uid || isApproverTier());
+
+          // Any staff member can add a draft or editable-copy file.
+          allow create: if isEmployee();
+
+          // Marking a file active, or deleting a draft, is curatorial —
+          // director/head only, matching who prunes drafts after an event
+          // settles.
+          allow update, delete: if isApproverTier();
+
+          match /comments/{commentId} {
+            // PDF review comments — any staff can read/add; resolving or
+            // deleting is the author's own call, or a director/head
+            // cleaning up. Purely informal feedback — never blocks
+            // approval.
+            allow read: if isEmployee();
+            allow create: if isEmployee()
+                          && request.resource.data.authorUid == request.auth.uid;
+            allow update, delete: if isEmployee()
+                          && (resource.data.authorUid == request.auth.uid || isApproverTier());
+          }
         }
       }
     }

@@ -4,14 +4,64 @@ const ALLOWED_ORIGINS = [
   'http://127.0.0.1:8000',
 ];
 
-// Only these filenames can be requested — prevents arbitrary URL fetch
-const ALLOWED_PDFS = {
-  'GRB Q2 2026.pdf': 'docs/GRB Q2 2026.pdf',
-  'GRB Q1 2026.pdf': 'docs/GRB Q1 2026.pdf',
-  'GRB Q4 2025.pdf': 'docs/GRB Q4 2025.pdf',
-};
+// GRB reports now live in the admin Documents system (Firestore + Firebase
+// Storage), not as git-committed files — see admin.html's Documents tab
+// (Sections → Events → Files) and firestore.rules' isPubliclyWiredSection()
+// carve-out for the 'barometer' section's approved + visible events, which
+// is exactly what lookupApprovedGrbReport queries. Each release is one
+// Event nested under sections/barometer/events (not a flat collection with
+// a sectionId field — the admin console's section must be named exactly
+// "Barometer" so it slugifies to this doc ID); its *active* file (not a
+// draft) is what gets emailed out.
+const FIRESTORE_PROJECT_ID = 'gsu-members';
 
-const SITE_BASE = 'https://geoecon.solutions';
+// Unauthenticated Firestore REST lookup — safe because firestore.rules only
+// allows events under sections/barometer to be read publicly when they're
+// already status:'approved', visible:true, which is exactly what this query
+// filters on; nothing broader is exposed. Querying against the parent
+// sections/barometer document's path (rather than the database root) scopes
+// `from: [{ collectionId: 'events' }]` to just that section's events
+// subcollection. Returns the matching event's activeFileURL, or null if no
+// approved match (or no active file) exists.
+async function lookupApprovedGrbReport(title) {
+  const url = `https://firestore.googleapis.com/v1/projects/${FIRESTORE_PROJECT_ID}/databases/(default)/documents/sections/barometer:runQuery`;
+  const body = {
+    structuredQuery: {
+      from: [{ collectionId: 'events' }],
+      where: {
+        compositeFilter: {
+          op: 'AND',
+          filters: [
+            { fieldFilter: { field: { fieldPath: 'status' },  op: 'EQUAL', value: { stringValue: 'approved' } } },
+            { fieldFilter: { field: { fieldPath: 'visible' }, op: 'EQUAL', value: { booleanValue: true } } },
+            { fieldFilter: { field: { fieldPath: 'title' },   op: 'EQUAL', value: { stringValue: title } } },
+          ],
+        },
+      },
+      limit: 1,
+    },
+  };
+
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch (err) {
+    console.error('Firestore lookup request failed:', err.message);
+    return null;
+  }
+  if (!res.ok) {
+    console.error('Firestore lookup failed:', await res.text());
+    return null;
+  }
+  const rows = await res.json(); // array of { document?: {...} } entries
+  const match = rows.find(r => r.document);
+  if (!match) return null;
+  return match.document.fields?.activeFileURL?.stringValue || null;
+}
 
 export default {
   async fetch(request, env, ctx) {
@@ -83,12 +133,14 @@ async function handleSendReport(request, env, cors) {
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return respond({ error: 'Please enter a valid email address.' }, 400, cors);
   }
-  if (!ALLOWED_PDFS[pdf]) {
+  if (!pdf || typeof pdf !== 'string') {
     return respond({ error: 'Invalid report requested.' }, 400, cors);
   }
 
-  const pdfPath = ALLOWED_PDFS[pdf];
-  const pdfUrl = SITE_BASE + '/' + pdfPath.split('/').map(encodeURIComponent).join('/');
+  const pdfUrl = await lookupApprovedGrbReport(pdf);
+  if (!pdfUrl) {
+    return respond({ error: 'Invalid report requested.' }, 400, cors);
+  }
 
   // Send email with download link
   const sent = await sendReportEmail(env, email, name.trim(), pdf, pdfUrl);

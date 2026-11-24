@@ -990,9 +990,7 @@
                     <p>The Barometer provides a decision-grade overview of where execution is most feasible in the near and medium term. It blends hard indicators with regional insights and corridor-level analysis.</p>
                     <p>Central to the framework is our <strong>Risk-Adjusted Opportunity (RAO)</strong> score, a concise tool underpinning our country briefs, triggers-to-watch, and strategic outlook. Published quarterly, with interim updates when conditions materially shift.</p>
                     <br>
-                    <button class="btn" onclick="openGate('GRB Q2 2026.pdf')">Download Q2 2026 Report (PDF)</button>
-                    <button class="btn" onclick="openGate('GRB Q1 2026.pdf')" style="margin-left: 1rem; opacity: 0.7;">Q1 2026</button>
-                    <button class="btn" onclick="openGate('GRB Q4 2025.pdf')" style="margin-left: 0.5rem; opacity: 0.5;">Q4 2025</button>
+                    <span id="grb-report-buttons"><!-- populated by load-grb-reports.js from Firestore --></span>
                 </div>
                 <div class="fade-up delay-1">
                     <div class="card">
@@ -1863,8 +1861,21 @@
         document.getElementById('prevBtn').addEventListener('click', () => carousel.scrollBy({ left: -340, behavior: 'smooth' }));
     </script>
 
+    <!-- Firebase backs both loaders below: briefs and GRB reports now come
+         from the admin Documents system instead of being git-committed
+         files. firebase-config.js unconditionally calls firebase.auth(), so
+         the auth SDK has to load here too even though this page never signs
+         anyone in — no onAuthReady is defined here, so that listener is a
+         harmless no-op. -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
     <!-- Strategic Briefs Dynamic Loader -->
     <script src="load-briefs.js"></script>
+    <!-- GRB Report Buttons Dynamic Loader -->
+    <script src="load-grb-reports.js"></script>
 
     <!-- ── Barometer Gate ─────────────────────────────────────────────── -->
     <style>

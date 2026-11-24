@@ -16,18 +16,20 @@ service firebase.storage {
     function isApproverTier() { return isSignedIn() && callerLevel() <= 2; } // directors + heads
     function isEmployee()     { return isSignedIn() && callerLevel() <= 3; } // any staff
 
-    // File bytes live at events/{eventId}/{fileId}-{filename}. Access
-    // mirrors the parent event's own Firestore visibility exactly (via a
-    // cross-service read of that event doc) rather than relying on
-    // unguessable-path obscurity — so a conference/client event's files are
-    // never publicly fetchable, only a pre-wired public section's approved
-    // + visible event's files are.
-    match /events/{eventId}/{fileName} {
+    // File bytes live at Documents/{sectionId}/{eventId}/{fileName} — named
+    // the same as the matching Firestore sections/{sectionId}/events/{eventId}
+    // path, so a Storage rule can directly look up that event's own
+    // approval state via a cross-service read (no listing/query needed,
+    // since security rules can only do direct get()/exists() by path).
+    // {sectionId}/{eventId} are slugs of the section/event names (see
+    // admin.html's slugify()); {fileName} is the real original filename —
+    // a same-named re-upload simply replaces the prior draft's bytes.
+    match /Documents/{sectionId}/{eventId}/{fileName} {
       function parentEvent() {
-        return firestore.get(/databases/(default)/documents/events/$(eventId)).data;
+        return firestore.get(/databases/(default)/documents/sections/$(sectionId)/events/$(eventId)).data;
       }
       allow read: if isEmployee()
-                  || (parentEvent().sectionId in ['grb', 'strategic-briefs']
+                  || (sectionId in ['barometer', 'strategic-briefs']
                       && parentEvent().status == 'approved'
                       && parentEvent().visible == true);
       allow create: if isEmployee();

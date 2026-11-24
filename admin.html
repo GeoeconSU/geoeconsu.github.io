@@ -1596,44 +1596,67 @@ function switchConsoleTab(tab) {
 }
 
 // ══ DOCUMENTS ═══════════════════════════════════════════════════════════════
-// Sections → Events → Files (→ Comments on PDF files). Firestore `sections`
-// and `events` collections + `events/{id}/files` subcollection + Firebase
-// Storage file bytes. Security is enforced by firestore.rules/storage.rules,
-// not this UI — see those files for the real create/read/update/delete
-// boundaries (any staff, level ≤ 3, can create an event/file as 'pending';
-// isHead() — director or department head, level ≤ 2 — approves, hides,
-// marks a file active, deletes; section creation is director-only).
+// Sections → Events → Files (→ Comments on PDF files). Firestore
+// `sections/{sectionId}/events/{eventId}/files/{fileId}` — events nest under
+// their section (not a flat collection with a sectionId field) and section/
+// event IDs are slugs of their names (see slugify() below), so Storage
+// paths (Documents/{sectionId}/{eventId}/{fileName}) map 1:1 onto this
+// Firestore path and a Storage rule can look up the parent event's
+// approval state by direct path alone. Security is enforced by
+// firestore.rules/storage.rules, not this UI — see those files for the
+// real create/read/update/delete boundaries (any staff, level ≤ 3, can
+// create an event/file as 'pending'; isHead() — director or department
+// head, level ≤ 2 — approves, hides, marks a file active, deletes; section
+// creation is director-only).
 let allSections = [];
-let allEvents = [];
+let allEvents = [];             // each carries a denormalized .sectionId (derived fresh from its Firestore path on every snapshot)
 let filesByEvent = {};          // eventId -> [file objects, each with .id]
 let selectedSectionId = null;
 let expandedEventIds = new Set();
 let _sectionsUnsub = null, _eventsUnsub = null, _filesUnsub = null;
 
-// The only two sections with a real, already-built public display (see
-// load-briefs.js / load-grb-reports.js / gsu-gate's lookupApprovedGrbReport,
-// and the hardcoded isPubliclyWiredSection() list in firestore.rules /
-// storage.rules — keep all of these in sync if you ever add another).
-const RESERVED_SECTIONS = [
-    { id: 'grb', name: 'Geoeconomic Risk Barometer', displayProperty: 'webpage_display' },
-    { id: 'strategic-briefs', name: 'Strategic Briefs', displayProperty: 'webpage_display' }
-];
-
 function _actorName() {
     return (auth.currentUser && (auth.currentUser.displayName || auth.currentUser.email)) || 'Unknown';
 }
 
+// Lowercase, hyphenated, path/URL-safe identifier — used for both the
+// Firestore document ID and the matching Storage folder name, so the
+// bucket stays human-browsable (e.g. Documents/barometer/q1-2026/...).
+function slugify(name) {
+    return (name || '').toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'section';
+}
+
+// Resolves an event's parent sectionId from the already-loaded allEvents
+// list, so call sites that only have an eventId (every onclick handler)
+// can still build the right nested Firestore path without threading
+// sectionId through every function signature.
+function _sectionIdForEvent(eventId) {
+    const e = allEvents.find(x => x.id === eventId);
+    return e ? e.sectionId : null;
+}
+function eventRef(eventId) {
+    const sectionId = _sectionIdForEvent(eventId);
+    if (!sectionId) throw new Error('Unknown event: ' + eventId);
+    return db.collection('sections').doc(sectionId).collection('events').doc(eventId);
+}
+
 function startDocumentsListener() {
     if (_sectionsUnsub) return; // already listening
-    ensureReservedSections();
 
     _sectionsUnsub = db.collection('sections').onSnapshot(
         (snap) => { allSections = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderSectionPills(); },
         (err) => { console.error(err); showToast('Could not load sections.', 'error'); }
     );
 
-    _eventsUnsub = db.collection('events').onSnapshot(
-        (snap) => { allEvents = snap.docs.map(d => ({ id: d.id, ...d.data() })); updateDocStats(); renderEventsTable(); },
+    // collectionGroup finds every section's events subcollection at once;
+    // d.ref.parent.parent is the owning sections/{sectionId} doc, so its id
+    // is the event's section — always recomputed here, never trusted from
+    // a stored field, so it can't go stale.
+    _eventsUnsub = db.collectionGroup('events').onSnapshot(
+        (snap) => {
+            allEvents = snap.docs.map(d => ({ id: d.id, ...d.data(), sectionId: d.ref.parent.parent.id }));
+            updateDocStats(); renderEventsTable();
+        },
         (err) => { console.error(err); showToast('Could not load events.', 'error'); }
     );
 
@@ -1655,30 +1678,6 @@ function startDocumentsListener() {
     );
 
     document.getElementById('new-section-btn').style.display = isDirector() ? '' : 'none';
-}
-
-// Seeds the two pre-wired sections once, so a fresh project has somewhere
-// to put the first Barometer/Briefs event. Only a director attempts the
-// write (matches firestore.rules' section-create restriction) — anyone
-// else just reads whatever already exists.
-async function ensureReservedSections() {
-    if (!isDirector()) return;
-    for (const s of RESERVED_SECTIONS) {
-        try {
-            const ref = db.collection('sections').doc(s.id);
-            const snap = await ref.get();
-            if (!snap.exists) {
-                await ref.set({
-                    name: s.name,
-                    displayProperty: s.displayProperty,
-                    wiredPublicly: true,
-                    createdBy: currentAdminUid,
-                    createdByName: 'System',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            }
-        } catch (err) { console.warn('Could not seed reserved section', s.id, err); }
-    }
 }
 
 function renderSectionPills() {
@@ -1727,8 +1726,12 @@ async function createSection() {
     const name = document.getElementById('new-section-name').value.trim();
     const displayProperty = document.getElementById('new-section-display').value;
     if (!name) { showToast('Section name is required.', 'error'); return; }
+    const slug = slugify(name);
     try {
-        const ref = await db.collection('sections').add({
+        const ref = db.collection('sections').doc(slug);
+        const existing = await ref.get();
+        if (existing.exists) { showToast(`A section named "${name}" already exists.`, 'error'); return; }
+        await ref.set({
             name, displayProperty, wiredPublicly: false,
             createdBy: currentAdminUid, createdByName: _actorName(),
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1862,11 +1865,14 @@ function _safeFileName(name) { return name.replace(/[^a-zA-Z0-9._-]/g, '_'); }
 // Shared by both "new event + first file" and "add another file to an
 // existing event" — uploads the bytes to Storage, then writes the file's
 // Firestore record (always starts as a draft; call markFileActive
-// separately to promote it).
-async function uploadFileToEventRaw(eventId, file, fileType) {
+// separately to promote it). The file's ID and its Storage path's final
+// segment are both the sanitized ORIGINAL filename (no random ID), so a
+// download always presents the real name, and re-uploading a same-named
+// file simply replaces the prior draft in place.
+async function uploadFileToEventRaw(sectionId, eventId, file, fileType) {
     if (!storage) throw new Error('Storage unavailable — reload the page.');
-    const fileId = db.collection('events').doc().id; // random id, no write
-    const storagePath = `events/${eventId}/${fileId}-${_safeFileName(file.name)}`;
+    const safeName = _safeFileName(file.name);
+    const storagePath = `Documents/${sectionId}/${eventId}/${safeName}`;
     const ref = storage.ref(storagePath);
     await ref.put(file);
     const downloadURL = await ref.getDownloadURL();
@@ -1876,8 +1882,9 @@ async function uploadFileToEventRaw(eventId, file, fileType) {
         uploadedBy: currentAdminUid, uploadedByName: _actorName(),
         uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-    await db.collection('events').doc(eventId).collection('files').doc(fileId).set(fileData);
-    return { id: fileId, ...fileData };
+    await db.collection('sections').doc(sectionId).collection('events').doc(eventId)
+        .collection('files').doc(safeName).set(fileData);
+    return { id: safeName, ...fileData };
 }
 
 async function uploadFileToEvent(eventId) {
@@ -1886,10 +1893,12 @@ async function uploadFileToEvent(eventId) {
     const statusEl = document.getElementById('upload-status-' + eventId);
     const file = input.files[0];
     if (!file) { statusEl.textContent = 'Choose a file first.'; statusEl.style.color = '#a04040'; return; }
+    const sectionId = _sectionIdForEvent(eventId);
+    if (!sectionId) { statusEl.textContent = 'Unknown event.'; statusEl.style.color = '#a04040'; return; }
     statusEl.textContent = 'Uploading…'; statusEl.style.color = 'var(--text-muted)';
     try {
         const hadNoFilesYet = !(filesByEvent[eventId] && filesByEvent[eventId].length);
-        const uploaded = await uploadFileToEventRaw(eventId, file, typeSel.value);
+        const uploaded = await uploadFileToEventRaw(sectionId, eventId, file, typeSel.value);
         if (hadNoFilesYet) await markFileActive(eventId, uploaded.id, true);
         input.value = '';
         statusEl.textContent = 'Added.'; statusEl.style.color = 'var(--role-free)';
@@ -1902,16 +1911,17 @@ async function uploadFileToEvent(eventId) {
 
 async function markFileActive(eventId, fileId, silent) {
     try {
+        const ref = eventRef(eventId);
         const files = filesByEvent[eventId] || [];
         const batch = db.batch();
         files.forEach(f => {
             if (f.active && f.id !== fileId) {
-                batch.update(db.collection('events').doc(eventId).collection('files').doc(f.id), { active: false });
+                batch.update(ref.collection('files').doc(f.id), { active: false });
             }
         });
         const target = files.find(f => f.id === fileId);
-        batch.update(db.collection('events').doc(eventId).collection('files').doc(fileId), { active: true });
-        batch.update(db.collection('events').doc(eventId), {
+        batch.update(ref.collection('files').doc(fileId), { active: true });
+        batch.update(ref, {
             activeFileId: fileId,
             activeFileURL: target ? target.downloadURL : null,
             activeFileName: target ? target.fileName : null,
@@ -1933,9 +1943,10 @@ async function deleteFile(eventId, fileId) {
         if (storage && f.storagePath) {
             await storage.ref(f.storagePath).delete().catch(err => console.warn('Storage delete failed (continuing):', err));
         }
-        await db.collection('events').doc(eventId).collection('files').doc(fileId).delete();
+        const ref = eventRef(eventId);
+        await ref.collection('files').doc(fileId).delete();
         if (f.active) {
-            await db.collection('events').doc(eventId).update({ activeFileId: null, activeFileURL: null, activeFileName: null, activeFileType: null });
+            await ref.update({ activeFileId: null, activeFileURL: null, activeFileName: null, activeFileType: null });
         }
         showToast('File deleted.', 'ok');
     } catch (err) {
@@ -1960,10 +1971,18 @@ async function submitNewEvent() {
     if (!title) { statusEl.textContent = 'Title is required.'; statusEl.style.color = '#a04040'; return; }
     if (!file)  { statusEl.textContent = 'An initial file is required.'; statusEl.style.color = '#a04040'; return; }
 
+    const eventSlug = slugify(title);
     statusEl.textContent = 'Creating…'; statusEl.style.color = 'var(--text-muted)';
     try {
-        const eventRef = await db.collection('events').add({
-            sectionId: selectedSectionId,
+        const newEventRef = db.collection('sections').doc(selectedSectionId).collection('events').doc(eventSlug);
+        const existing = await newEventRef.get();
+        if (existing.exists) {
+            statusEl.textContent = `An event named "${title}" already exists in this section.`;
+            statusEl.style.color = '#a04040';
+            return;
+        }
+
+        await newEventRef.set({
             title,
             subtitle: document.getElementById('new-event-subtitle').value.trim(),
             owner: document.getElementById('new-event-owner').value.trim(),
@@ -1977,12 +1996,12 @@ async function submitNewEvent() {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        const uploaded = await uploadFileToEventRaw(eventRef.id, file, fileType);
-        await eventRef.update({
+        const uploaded = await uploadFileToEventRaw(selectedSectionId, eventSlug, file, fileType);
+        await newEventRef.update({
             activeFileId: uploaded.id, activeFileURL: uploaded.downloadURL,
             activeFileName: uploaded.fileName, activeFileType: uploaded.fileType
         });
-        await eventRef.collection('files').doc(uploaded.id).update({ active: true });
+        await newEventRef.collection('files').doc(uploaded.id).update({ active: true });
 
         ['title', 'subtitle', 'owner', 'date', 'tags', 'topic', 'description'].forEach(f => {
             const el = document.getElementById('new-event-' + f);
@@ -1999,7 +2018,7 @@ async function submitNewEvent() {
 
 async function approveEvent(eventId) {
     try {
-        await db.collection('events').doc(eventId).update({
+        await eventRef(eventId).update({
             status: 'approved', visible: true,
             approvedBy: currentAdminUid, approvedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -2009,14 +2028,14 @@ async function approveEvent(eventId) {
 
 async function rejectEvent(eventId) {
     try {
-        await db.collection('events').doc(eventId).update({ status: 'rejected', visible: false });
+        await eventRef(eventId).update({ status: 'rejected', visible: false });
         showToast('Event rejected.', 'ok');
     } catch (err) { console.error(err); showToast('Reject failed: ' + err.message, 'error'); }
 }
 
 async function toggleEventVisible(eventId, newVal) {
     try {
-        await db.collection('events').doc(eventId).update({ visible: newVal });
+        await eventRef(eventId).update({ visible: newVal });
         showToast(newVal ? 'Event shown on site.' : 'Event hidden from site.', 'ok');
     } catch (err) { console.error(err); showToast('Update failed: ' + err.message, 'error'); }
 }
@@ -2026,14 +2045,15 @@ async function deleteEvent(eventId) {
     if (!e) return;
     if (!confirm(`Delete "${e.title}" and ALL its files? This cannot be undone.`)) return;
     try {
+        const ref = eventRef(eventId);
         const files = filesByEvent[eventId] || [];
         for (const f of files) {
             if (storage && f.storagePath) {
                 await storage.ref(f.storagePath).delete().catch(err => console.warn('Storage delete failed (continuing):', err));
             }
-            await db.collection('events').doc(eventId).collection('files').doc(f.id).delete().catch(() => {});
+            await ref.collection('files').doc(f.id).delete().catch(() => {});
         }
-        await db.collection('events').doc(eventId).delete();
+        await ref.delete();
         expandedEventIds.delete(eventId);
         showToast('Event deleted.', 'ok');
     } catch (err) {
@@ -2071,7 +2091,7 @@ async function openPreviewModal(eventId, fileId) {
     }
 
     if (previewCommentsUnsub) previewCommentsUnsub();
-    previewCommentsUnsub = db.collection('events').doc(eventId).collection('files').doc(fileId).collection('comments')
+    previewCommentsUnsub = eventRef(eventId).collection('files').doc(fileId).collection('comments')
         .onSnapshot((snap) => {
             _previewComments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             renderPreviewComments();
@@ -2143,7 +2163,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function addPreviewComment(region, text) {
     try {
-        await db.collection('events').doc(previewEventId).collection('files').doc(previewFileId).collection('comments').add({
+        await eventRef(previewEventId).collection('files').doc(previewFileId).collection('comments').add({
             authorUid: currentAdminUid, authorName: _actorName(),
             page: previewPageNum, region, text, resolved: false,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -2185,12 +2205,12 @@ function renderPreviewComments() {
 }
 
 async function resolvePreviewComment(commentId) {
-    try { await db.collection('events').doc(previewEventId).collection('files').doc(previewFileId).collection('comments').doc(commentId).update({ resolved: true }); }
+    try { await eventRef(previewEventId).collection('files').doc(previewFileId).collection('comments').doc(commentId).update({ resolved: true }); }
     catch (err) { showToast(err.message, 'error'); }
 }
 async function deletePreviewComment(commentId) {
     if (!confirm('Delete this comment?')) return;
-    try { await db.collection('events').doc(previewEventId).collection('files').doc(previewFileId).collection('comments').doc(commentId).delete(); }
+    try { await eventRef(previewEventId).collection('files').doc(previewFileId).collection('comments').doc(commentId).delete(); }
     catch (err) { showToast(err.message, 'error'); }
 }
 // ══ PLANS ══════════════════════════════════════════════════════════════════

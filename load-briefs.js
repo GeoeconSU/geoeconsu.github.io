@@ -1,6 +1,15 @@
 /**
  * Strategic Briefs Dynamic Loader
- * Latest 3 in featured grid + horizontal carousel for the rest
+ * Latest 3 in featured grid + horizontal carousel for the rest.
+ *
+ * Sourced from the Firestore `sections/strategic-briefs/events` subcollection
+ * (admin.html's Documents tab — Sections → Events → Files) instead of the
+ * old git-committed briefs.json. Each brief is one Event nested under the
+ * 'strategic-briefs' section; the card links to that event's current
+ * *active* file (drafts are never shown). See firestore.rules'
+ * isPubliclyWiredSection() for the public-read condition this query relies
+ * on — the section must be named exactly "Strategic Briefs" in the admin
+ * console so it slugifies to this doc ID.
  */
 
 async function loadStrategicBriefs() {
@@ -8,10 +17,25 @@ async function loadStrategicBriefs() {
     if (!container) return;
 
     try {
-        const response = await fetch('briefs.json');
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        const briefs = data.briefs;
+        const snap = await db.collection('sections').doc('strategic-briefs').collection('events')
+            .where('status', '==', 'approved')
+            .where('visible', '==', true)
+            .get();
+
+        const briefs = snap.docs
+            .map(d => {
+                const data = d.data();
+                return {
+                    category: data.topicTag || 'Strategic Brief',
+                    title: data.title || '',
+                    subtitle: data.subtitle || '',
+                    author: data.owner || '',
+                    href: data.activeFileURL,
+                    createdAt: data.createdAt && data.createdAt.toMillis ? data.createdAt.toMillis() : 0
+                };
+            })
+            .filter(b => b.href) // an event with no active file yet has nothing to link to
+            .sort((a, b) => b.createdAt - a.createdAt); // newest first
 
         container.innerHTML = '';
 
