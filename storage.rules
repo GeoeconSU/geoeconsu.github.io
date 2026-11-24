@@ -1,0 +1,42 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Mirrors firestore.rules' caller-level helpers via the documented
+    // cross-service firestore.get()/firestore.exists() calls — Storage rules
+    // have no concept of a "user doc" on their own, so this is how a
+    // Storage rule learns the caller's level/role from their Firestore
+    // users/{uid} record.
+    function isSignedIn() { return request.auth != null; }
+    function callerLevel() {
+      return isSignedIn() && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+        ? firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.level
+        : 999;
+    }
+    function isApproverTier() { return isSignedIn() && callerLevel() <= 2; } // directors + heads
+    function isEmployee()     { return isSignedIn() && callerLevel() <= 3; } // any staff
+
+    // File bytes live at events/{eventId}/{fileId}-{filename}. Access
+    // mirrors the parent event's own Firestore visibility exactly (via a
+    // cross-service read of that event doc) rather than relying on
+    // unguessable-path obscurity — so a conference/client event's files are
+    // never publicly fetchable, only a pre-wired public section's approved
+    // + visible event's files are.
+    match /events/{eventId}/{fileName} {
+      function parentEvent() {
+        return firestore.get(/databases/(default)/documents/events/$(eventId)).data;
+      }
+      allow read: if isEmployee()
+                  || (parentEvent().sectionId in ['grb', 'strategic-briefs']
+                      && parentEvent().status == 'approved'
+                      && parentEvent().visible == true);
+      allow create: if isEmployee();
+      allow delete: if isApproverTier();
+    }
+
+    // Deny everything else by default.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

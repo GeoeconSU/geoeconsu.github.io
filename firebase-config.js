@@ -30,6 +30,10 @@ firebase.initializeApp(firebaseConfig);
 const auth      = firebase.auth();
 const db        = firebase.firestore();
 const analytics = (typeof firebase.analytics === 'function') ? firebase.analytics() : null;
+// Storage SDK is only needed by admin.html's Documents tab — guarded like
+// analytics above so pages that don't load firebase-storage-compat.js
+// (i.e. everything except admin.html) aren't affected.
+const storage   = (typeof firebase.storage === 'function') ? firebase.storage() : null;
 
 // ── Analytics helpers — call these anywhere to log events ────────────────────
 function logEvent(eventName, params) {

@@ -125,6 +125,85 @@ service cloud.firestore {
       allow write: if isDirectorOrFounder();
     }
 
+    // ── Document management: Sections → Events → Files → Comments ─────────────
+    //    A Section is a destination/purpose ("Geoeconomic Risk Barometer",
+    //    "Strategic Briefs", or any director-created internal one). An Event
+    //    is one instance within a section (a quarterly release, one brief).
+    //    Each Event holds multiple Files — exactly one flagged `active` (the
+    //    real/final one to show or share), the rest are drafts kept around
+    //    for a time-crunch, pruned by a director once the event is settled.
+    //    File bytes live in Firebase Storage (see storage.rules); these
+    //    collections are the metadata + workflow state.
+    //    level ≤ 2 = isApproverTier(): directors/founders (1) + heads (2) —
+    //    the tier that approves/curates/deletes. Section creation is kept to
+    //    level 1 only (a more structural action than approving one event).
+    function isApproverTier() { return isSignedIn() && callerLevel() <= 2; }
+
+    // Sections only a developer has wired a real public display for — the
+    // `displayProperty` field on a section is just an organizational label,
+    // not a promise that a NEW section instantly appears somewhere on the
+    // site; this hardcoded list is the actual security-relevant boundary,
+    // matching exactly what load-briefs.js/load-grb-reports.js/gsu-gate
+    // query. Extend it only alongside real frontend work for a new section.
+    function isPubliclyWiredSection(sectionId) {
+      return sectionId in ['grb', 'strategic-briefs'];
+    }
+
+    match /sections/{sectionId} {
+      allow read: if isEmployee();
+      allow create, update, delete: if isDirectorOrFounder();
+    }
+
+    match /events/{eventId} {
+      // Public, unauthenticated read — only for events in one of the two
+      // pre-wired sections, approved, and visible. Needed by the marketing
+      // site (load-briefs.js) and gsu-gate's unauthenticated GRB lookup.
+      allow read: if isPubliclyWiredSection(resource.data.sectionId)
+                  && resource.data.status == 'approved'
+                  && resource.data.visible == true;
+
+      // Staff can see everything else — pending events awaiting approval,
+      // and all conference/client-section events, which are never public
+      // regardless of status/visible.
+      allow read: if isEmployee();
+
+      // Any staff member can create an event — but only as 'pending' and
+      // invisible, attributed to themselves. Cannot self-approve.
+      allow create: if isEmployee()
+                    && request.resource.data.status == 'pending'
+                    && request.resource.data.visible == false
+                    && request.resource.data.createdBy == request.auth.uid;
+
+      // Approve/reject/hide/show/delete — director/head only.
+      allow update, delete: if isApproverTier();
+
+      match /files/{fileId} {
+        // Files are only ever listed/opened from the admin console — the
+        // public site only ever reads the parent event's denormalized
+        // activeFileURL, never queries this subcollection directly.
+        allow read: if isEmployee();
+
+        // Any staff member can add a draft or editable-copy file.
+        allow create: if isEmployee();
+
+        // Marking a file active, or deleting a draft, is curatorial —
+        // director/head only, matching who prunes drafts after an event
+        // settles.
+        allow update, delete: if isApproverTier();
+
+        match /comments/{commentId} {
+          // PDF review comments — any staff can read/add; resolving or
+          // deleting is the author's own call, or a director/head cleaning
+          // up. Purely informal feedback — never blocks approval.
+          allow read: if isEmployee();
+          allow create: if isEmployee()
+                        && request.resource.data.authorUid == request.auth.uid;
+          allow update, delete: if isEmployee()
+                        && (resource.data.authorUid == request.auth.uid || isApproverTier());
+        }
+      }
+    }
+
     // ── Tasks ─────────────────────────────────────────────────────────────────
     match /tasks/{taskId} {
       // Directors/founders manage everything.

@@ -13,6 +13,10 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <!-- PDF.js — renders a PDF to a canvas for the Documents tab's inline
+         preview + click-to-comment review tool. -->
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
     <style>
         @font-face { font-family: 'Copernicus'; src: local('Copernicus'), url('fonts/Copernicus-Book.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
         @font-face { font-family: 'Copernicus'; src: local('Copernicus Semibold'), url('fonts/Copernicus-Semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
@@ -882,6 +886,10 @@
             <i class="ri-vip-diamond-line"></i> Plans
             <span class="console-tab-badge" id="ctab-plans-badge" style="display:none;">0</span>
         </button>
+        <button class="console-tab" id="ctab-documents" onclick="switchConsoleTab('documents')">
+            <i class="ri-file-text-line"></i> Documents
+            <span class="console-tab-badge" id="ctab-documents-badge" style="display:none;">0</span>
+        </button>
     </div>
 
     <!-- Read-only notice (shown for employees, hidden for directors) -->
@@ -1072,6 +1080,161 @@
             </table>
         </div>
     </div><!-- /#view-plans -->
+
+    <!-- ══ DOCUMENTS VIEW — Sections → Events → Files. A Section is a
+         destination/purpose (Geoeconomic Risk Barometer, Strategic Briefs,
+         or any director-created internal one). An Event is one instance
+         within a section (a quarterly release, one brief). Each Event holds
+         multiple Files, exactly one flagged active (the real one to show or
+         share) — the rest are drafts kept around for a time crunch, pruned
+         by a director once the event settles. File bytes live in Firebase
+         Storage; these views manage the Firestore metadata/workflow. ═══ -->
+    <div id="view-documents" style="display:none;">
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-label">Sections</div>
+            <div class="stat-value gold" id="stat-docs-sections">—</div>
+            <div class="stat-sub">destinations / purposes</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Pending Review</div>
+            <div class="stat-value" id="stat-docs-pending" style="font-size:1.8rem;">—</div>
+            <div class="stat-sub">awaiting director/head approval</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Approved &amp; Live</div>
+            <div class="stat-value" id="stat-docs-approved" style="font-size:1.8rem;">—</div>
+            <div class="stat-sub">visible on the site</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Hidden</div>
+            <div class="stat-value" id="stat-docs-hidden" style="font-size:1.8rem;">—</div>
+            <div class="stat-sub">approved but pulled from display</div>
+        </div>
+    </div>
+
+    <!-- Sections -->
+    <div class="table-card" style="padding:1.25rem 1.5rem;margin-bottom:1.25rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1rem;">
+            <h3 style="margin:0;font-family:var(--font-head);font-size:1.1rem;">Sections</h3>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+                <select class="filter-select" id="section-display-filter" onchange="renderSectionPills()">
+                    <option value="">All Sections</option>
+                    <option value="webpage_display">Webpage Display</option>
+                    <option value="conference_client">Conference &amp; Client Use</option>
+                </select>
+                <button class="modify-btn" id="new-section-btn" onclick="toggleNewSectionForm()" style="display:none;">
+                    <i class="ri-add-line"></i> New Section
+                </button>
+            </div>
+        </div>
+        <div id="section-pills" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+        <div id="new-section-form" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-subtle);">
+            <div style="display:grid;grid-template-columns:2fr 1fr auto;gap:0.6rem;align-items:center;">
+                <input type="text" id="new-section-name" placeholder="Section name (e.g. Client X Retainer)" class="filter-select">
+                <select id="new-section-display" class="filter-select">
+                    <option value="conference_client">Conference &amp; Client Use</option>
+                    <option value="webpage_display">Webpage Display</option>
+                </select>
+                <button class="modify-btn" onclick="createSection()"><i class="ri-check-line"></i> Create</button>
+            </div>
+            <div style="font-family:var(--font-minor);font-size:0.58rem;color:var(--text-muted);margin-top:0.5rem;">
+                "Webpage Display" is just a filter label — a brand-new section doesn't automatically
+                appear anywhere on the live site; that needs matching frontend work. Only "Geoeconomic
+                Risk Barometer" and "Strategic Briefs" are wired to a real public display today.
+            </div>
+        </div>
+    </div>
+
+    <!-- Events for the selected section -->
+    <div class="toolbar">
+        <div id="events-section-label" style="font-family:var(--font-head);font-size:1rem;flex:1;">Select a section above</div>
+        <select class="filter-select" id="event-status-filter" onchange="renderEventsTable()">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+        </select>
+        <button class="modify-btn" id="new-event-btn" onclick="toggleNewEventForm()" style="display:none;">
+            <i class="ri-add-line"></i> New Event
+        </button>
+    </div>
+
+    <div id="new-event-form" class="table-card" style="display:none;padding:1.25rem 1.5rem;margin-bottom:1.25rem;">
+        <h3 style="margin:0 0 1rem;font-family:var(--font-head);font-size:1rem;">New Event</h3>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem;margin-bottom:0.6rem;">
+            <input type="text" id="new-event-title" placeholder="Title (e.g. Q1 2026, or a brief's title)" class="filter-select">
+            <input type="text" id="new-event-subtitle" placeholder="Subtitle (optional)" class="filter-select">
+            <input type="text" id="new-event-owner" placeholder="Author / Owner (optional)" class="filter-select">
+            <input type="date" id="new-event-date" class="filter-select">
+            <input type="text" id="new-event-tags" placeholder="Tags, comma separated (optional)" class="filter-select">
+            <input type="text" id="new-event-topic" placeholder="Topic label (optional, shown publicly for briefs)" class="filter-select">
+        </div>
+        <textarea id="new-event-description" placeholder="Description (optional)" class="filter-select" style="width:100%;min-height:60px;resize:vertical;margin-bottom:0.6rem;"></textarea>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+            <label style="font-family:var(--font-minor);font-size:0.62rem;text-transform:uppercase;color:var(--text-muted);">Initial file</label>
+            <input type="file" id="new-event-file">
+            <select id="new-event-file-type" class="filter-select">
+                <option value="pdf">PDF (active/draft)</option>
+                <option value="editable">Editable copy (Word/PPT/etc.)</option>
+            </select>
+            <button class="modify-btn" onclick="submitNewEvent()"><i class="ri-upload-2-line"></i> Create Event</button>
+            <button class="action-btn" onclick="toggleNewEventForm()">Cancel</button>
+        </div>
+        <div id="new-event-status" style="font-size:0.68rem;margin-top:0.5rem;"></div>
+    </div>
+
+    <div class="table-card">
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Visible</th>
+                    <th>Active File</th>
+                    <th>Created By</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="events-tbody">
+                <tr><td colspan="8"><div class="empty-state"><p>Select a section to see its events.</p></div></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    </div><!-- /#view-documents -->
+
+    <!-- Preview &amp; Comment modal — PDF.js canvas + click-drag region
+         comments. Only ever invoked for fileType:'pdf' files. -->
+    <div class="exp-modal-overlay" id="doc-preview-modal" style="display:none;" onclick="if(event.target===this) closePreviewModal()">
+        <div class="exp-modal" style="width:min(94vw,1000px);height:88vh;display:flex;flex-direction:column;">
+            <div class="exp-modal-header">
+                <span class="exp-modal-title" id="preview-modal-title">Preview</span>
+                <button class="exp-modal-close" onclick="closePreviewModal()">✕</button>
+            </div>
+            <div style="display:flex;flex:1;min-height:0;">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;overflow:auto;padding:1rem;background:#2a2a2a;">
+                    <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;color:#fff;">
+                        <button class="action-btn" onclick="previewPrevPage()"><i class="ri-arrow-left-s-line"></i></button>
+                        <span id="preview-page-label">Page 1</span>
+                        <button class="action-btn" onclick="previewNextPage()"><i class="ri-arrow-right-s-line"></i></button>
+                    </div>
+                    <div id="preview-canvas-wrap" style="position:relative;">
+                        <canvas id="preview-canvas"></canvas>
+                        <div id="preview-overlay" style="position:absolute;inset:0;cursor:crosshair;"></div>
+                    </div>
+                </div>
+                <div style="width:280px;flex-shrink:0;border-left:1px solid var(--border-subtle);overflow-y:auto;padding:0.75rem;">
+                    <h4 style="margin:0 0 0.6rem;font-size:0.8rem;">Comments</h4>
+                    <div style="font-family:var(--font-minor);font-size:0.58rem;color:var(--text-muted);margin-bottom:0.6rem;">Drag a box on the page to pin a comment.</div>
+                    <div id="preview-comments-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <!-- ── MARKET PICKER (admin) ──────────────────────────────────────────────── -->
@@ -1413,20 +1576,623 @@ function switchConsoleTab(tab) {
     document.getElementById('ctab-users').classList.toggle('active', tab === 'users');
     document.getElementById('ctab-custom').classList.toggle('active', tab === 'custom');
     document.getElementById('ctab-plans').classList.toggle('active', tab === 'plans');
-    document.getElementById('view-users').style.display  = tab === 'users'  ? '' : 'none';
-    document.getElementById('view-custom').style.display = tab === 'custom' ? '' : 'none';
-    document.getElementById('view-plans').style.display  = tab === 'plans'  ? '' : 'none';
+    document.getElementById('ctab-documents').classList.toggle('active', tab === 'documents');
+    document.getElementById('view-users').style.display     = tab === 'users'     ? '' : 'none';
+    document.getElementById('view-custom').style.display    = tab === 'custom'    ? '' : 'none';
+    document.getElementById('view-plans').style.display     = tab === 'plans'     ? '' : 'none';
+    document.getElementById('view-documents').style.display  = tab === 'documents' ? '' : 'none';
     document.getElementById('page-title').innerHTML =
-        tab === 'plans'  ? 'Plan <em>Management</em>' :
-        tab === 'custom' ? 'Campaign <em>Registrants</em>' : 'User <em>Management</em>';
+        tab === 'plans'     ? 'Plan <em>Management</em>' :
+        tab === 'custom'    ? 'Campaign <em>Registrants</em>' :
+        tab === 'documents' ? 'Document <em>Management</em>' : 'User <em>Management</em>';
     document.getElementById('page-subtitle').textContent =
-        tab === 'plans'  ? 'Approve subscriptions and set the markets each account can access' :
-        tab === 'custom' ? 'Read-only view of registrants who joined through a special-event campaign (e.g. BRICS 2026)' :
+        tab === 'plans'     ? 'Approve subscriptions and set the markets each account can access' :
+        tab === 'custom'    ? 'Read-only view of registrants who joined through a special-event campaign (e.g. BRICS 2026)' :
+        tab === 'documents' ? 'Upload briefs, GRB reports, and conference/client documents — directors and heads approve before anything public goes live' :
         'Manage roles and access levels across the GSU member base';
-    if (tab === 'plans')  { ensureMarketData(); renderPlans(); }
-    if (tab === 'custom') { renderCustom(); }
+    if (tab === 'plans')     { ensureMarketData(); renderPlans(); }
+    if (tab === 'custom')    { renderCustom(); }
+    if (tab === 'documents') { startDocumentsListener(); }
 }
 
+// ══ DOCUMENTS ═══════════════════════════════════════════════════════════════
+// Sections → Events → Files (→ Comments on PDF files). Firestore `sections`
+// and `events` collections + `events/{id}/files` subcollection + Firebase
+// Storage file bytes. Security is enforced by firestore.rules/storage.rules,
+// not this UI — see those files for the real create/read/update/delete
+// boundaries (any staff, level ≤ 3, can create an event/file as 'pending';
+// isHead() — director or department head, level ≤ 2 — approves, hides,
+// marks a file active, deletes; section creation is director-only).
+let allSections = [];
+let allEvents = [];
+let filesByEvent = {};          // eventId -> [file objects, each with .id]
+let selectedSectionId = null;
+let expandedEventIds = new Set();
+let _sectionsUnsub = null, _eventsUnsub = null, _filesUnsub = null;
+
+// The only two sections with a real, already-built public display (see
+// load-briefs.js / load-grb-reports.js / gsu-gate's lookupApprovedGrbReport,
+// and the hardcoded isPubliclyWiredSection() list in firestore.rules /
+// storage.rules — keep all of these in sync if you ever add another).
+const RESERVED_SECTIONS = [
+    { id: 'grb', name: 'Geoeconomic Risk Barometer', displayProperty: 'webpage_display' },
+    { id: 'strategic-briefs', name: 'Strategic Briefs', displayProperty: 'webpage_display' }
+];
+
+function _actorName() {
+    return (auth.currentUser && (auth.currentUser.displayName || auth.currentUser.email)) || 'Unknown';
+}
+
+function startDocumentsListener() {
+    if (_sectionsUnsub) return; // already listening
+    ensureReservedSections();
+
+    _sectionsUnsub = db.collection('sections').onSnapshot(
+        (snap) => { allSections = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderSectionPills(); },
+        (err) => { console.error(err); showToast('Could not load sections.', 'error'); }
+    );
+
+    _eventsUnsub = db.collection('events').onSnapshot(
+        (snap) => { allEvents = snap.docs.map(d => ({ id: d.id, ...d.data() })); updateDocStats(); renderEventsTable(); },
+        (err) => { console.error(err); showToast('Could not load events.', 'error'); }
+    );
+
+    // One collectionGroup listener covers every event's files subcollection
+    // at once — simpler than a per-event listener, and security rules still
+    // apply per-document (isEmployee() either way), so this exposes nothing
+    // a staff member couldn't already see event-by-event.
+    _filesUnsub = db.collectionGroup('files').onSnapshot(
+        (snap) => {
+            filesByEvent = {};
+            snap.docs.forEach(d => {
+                const eventId = d.ref.parent.parent.id;
+                (filesByEvent[eventId] = filesByEvent[eventId] || []).push({ id: d.id, ...d.data() });
+            });
+            renderEventsTable();
+            expandedEventIds.forEach(eid => renderEventFiles(eid));
+        },
+        (err) => console.error('Files listener error:', err)
+    );
+
+    document.getElementById('new-section-btn').style.display = isDirector() ? '' : 'none';
+}
+
+// Seeds the two pre-wired sections once, so a fresh project has somewhere
+// to put the first Barometer/Briefs event. Only a director attempts the
+// write (matches firestore.rules' section-create restriction) — anyone
+// else just reads whatever already exists.
+async function ensureReservedSections() {
+    if (!isDirector()) return;
+    for (const s of RESERVED_SECTIONS) {
+        try {
+            const ref = db.collection('sections').doc(s.id);
+            const snap = await ref.get();
+            if (!snap.exists) {
+                await ref.set({
+                    name: s.name,
+                    displayProperty: s.displayProperty,
+                    wiredPublicly: true,
+                    createdBy: currentAdminUid,
+                    createdByName: 'System',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        } catch (err) { console.warn('Could not seed reserved section', s.id, err); }
+    }
+}
+
+function renderSectionPills() {
+    const container = document.getElementById('section-pills');
+    if (!container) return;
+    const filter = document.getElementById('section-display-filter')?.value || '';
+    document.getElementById('stat-docs-sections').textContent = allSections.length;
+
+    const sections = allSections
+        .filter(s => !filter || s.displayProperty === filter)
+        .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+    if (!sections.length) {
+        container.innerHTML = '<div style="font-size:0.7rem;color:var(--text-muted);">No sections yet.</div>';
+        return;
+    }
+
+    container.innerHTML = sections.map(s => {
+        const active = s.id === selectedSectionId;
+        const badgeColor = s.displayProperty === 'webpage_display' ? 'var(--role-free)' : 'var(--role-employee)';
+        return `<button onclick="selectSection('${s.id}')" style="display:flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;border-radius:20px;border:1px solid ${active ? 'var(--accent-gold)' : 'var(--border-subtle)'};background:${active ? 'var(--role-director-bg)' : 'transparent'};cursor:pointer;font-family:var(--font-minor);font-size:0.7rem;color:${active ? 'var(--role-director)' : 'var(--text)'};">
+            ${escapeHtml(s.name)}
+            <span title="${s.displayProperty === 'webpage_display' ? 'Webpage Display' : 'Conference & Client Use'}" style="width:6px;height:6px;border-radius:50%;background:${badgeColor};"></span>
+        </button>`;
+    }).join('');
+
+    if (!selectedSectionId && sections.length) selectSection(sections[0].id);
+}
+
+function selectSection(sectionId) {
+    selectedSectionId = sectionId;
+    expandedEventIds.clear();
+    renderSectionPills();
+    const s = allSections.find(x => x.id === sectionId);
+    document.getElementById('events-section-label').textContent = s ? s.name : 'Section';
+    document.getElementById('new-event-btn').style.display = '';
+    renderEventsTable();
+}
+
+function toggleNewSectionForm() {
+    const el = document.getElementById('new-section-form');
+    el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+async function createSection() {
+    const name = document.getElementById('new-section-name').value.trim();
+    const displayProperty = document.getElementById('new-section-display').value;
+    if (!name) { showToast('Section name is required.', 'error'); return; }
+    try {
+        const ref = await db.collection('sections').add({
+            name, displayProperty, wiredPublicly: false,
+            createdBy: currentAdminUid, createdByName: _actorName(),
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        document.getElementById('new-section-name').value = '';
+        document.getElementById('new-section-form').style.display = 'none';
+        showToast('Section created.', 'ok');
+        selectSection(ref.id);
+    } catch (err) {
+        console.error(err);
+        showToast('Create section failed: ' + err.message, 'error');
+    }
+}
+
+function updateDocStats() {
+    document.getElementById('stat-docs-pending').textContent  = allEvents.filter(e => e.status === 'pending').length;
+    document.getElementById('stat-docs-approved').textContent = allEvents.filter(e => e.status === 'approved' && e.visible).length;
+    document.getElementById('stat-docs-hidden').textContent   = allEvents.filter(e => e.status === 'approved' && !e.visible).length;
+}
+
+function _toMillis(ts) { return ts && ts.toMillis ? ts.toMillis() : 0; }
+function _toDateStr(ts) { return ts && ts.toDate ? ts.toDate().toLocaleDateString() : '—'; }
+
+function renderEventsTable() {
+    const tbody = document.getElementById('events-tbody');
+    if (!tbody) return;
+    if (!selectedSectionId) {
+        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><p>Select a section to see its events.</p></div></td></tr>';
+        return;
+    }
+    const statusFilter = document.getElementById('event-status-filter')?.value || '';
+    let events = allEvents.filter(e => e.sectionId === selectedSectionId && (!statusFilter || e.status === statusFilter));
+    events.sort((a, b) => _toMillis(b.createdAt) - _toMillis(a.createdAt));
+
+    if (!events.length) {
+        tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><p>No events in this section yet.</p></div></td></tr>';
+        return;
+    }
+
+    const canCurate = isHead();
+    tbody.innerHTML = events.map(e => {
+        const statusStyle = e.status === 'approved' ? 'color:var(--role-free);background:var(--role-free-bg);border:1px solid rgba(74,122,94,0.25);'
+            : e.status === 'rejected' ? 'color:#a04040;background:rgba(160,64,64,0.08);border:1px solid rgba(160,64,64,0.2);'
+            : 'color:var(--role-director);background:var(--role-director-bg);border:1px solid var(--border-gold);';
+        const isExpanded = expandedEventIds.has(e.id);
+
+        let actions = '';
+        if (canCurate) {
+            if (e.status === 'pending') {
+                actions += `<button class="action-btn" title="Approve" onclick="approveEvent('${e.id}')"><i class="ri-check-line"></i></button>`;
+                actions += `<button class="action-btn danger" title="Reject" onclick="rejectEvent('${e.id}')"><i class="ri-close-line"></i></button>`;
+            }
+            if (e.status === 'approved') {
+                actions += `<button class="action-btn" title="${e.visible ? 'Hide from site' : 'Show on site'}" onclick="toggleEventVisible('${e.id}', ${!e.visible})"><i class="ri-${e.visible ? 'eye-off-line' : 'eye-line'}"></i></button>`;
+            }
+            actions += `<button class="action-btn danger" title="Delete event (and all its files)" onclick="deleteEvent('${e.id}')"><i class="ri-delete-bin-line"></i></button>`;
+        }
+
+        const row = `<tr>
+            <td><button class="action-btn" onclick="toggleEventExpand('${e.id}')" title="${isExpanded ? 'Collapse' : 'Expand'}"><i class="ri-arrow-${isExpanded ? 'down' : 'right'}-s-line"></i></button></td>
+            <td>${escapeHtml(e.title || '(untitled)')}</td>
+            <td><span class="role-badge" style="${statusStyle}">${escapeHtml(e.status)}</span></td>
+            <td>${e.status === 'approved' ? (e.visible ? '<i class="ri-eye-line" style="color:var(--role-free);"></i>' : '<i class="ri-eye-off-line" style="color:var(--text-muted);"></i>') : '—'}</td>
+            <td>${escapeHtml(e.activeFileName || '—')}</td>
+            <td>${escapeHtml(e.createdByName || '—')}</td>
+            <td>${_toDateStr(e.createdAt)}</td>
+            <td><div style="display:flex;gap:0.3rem;">${actions}</div></td>
+        </tr>`;
+
+        const filesRow = `<tr id="files-row-${e.id}" style="display:${isExpanded ? '' : 'none'};">
+            <td colspan="8" style="background:var(--bg-secondary);">
+                <div id="files-panel-${e.id}" style="padding:0.75rem 1rem;"></div>
+            </td>
+        </tr>`;
+
+        return row + filesRow;
+    }).join('');
+
+    expandedEventIds.forEach((eid) => { if (events.find(e => e.id === eid)) renderEventFiles(eid); });
+}
+
+function toggleEventExpand(eventId) {
+    if (expandedEventIds.has(eventId)) expandedEventIds.delete(eventId);
+    else expandedEventIds.add(eventId);
+    renderEventsTable();
+}
+
+function renderEventFiles(eventId) {
+    const panel = document.getElementById('files-panel-' + eventId);
+    if (!panel) return;
+    // Active file(s) first, matching the "active sorts to the top" request.
+    const files = (filesByEvent[eventId] || []).slice().sort((a, b) => {
+        if (!!a.active !== !!b.active) return a.active ? -1 : 1;
+        return _toMillis(b.uploadedAt) - _toMillis(a.uploadedAt);
+    });
+    const canCurate = isHead();
+
+    const rows = files.map(f => {
+        let actions = `<button class="action-btn" title="Download" onclick="window.open('${f.downloadURL}','_blank')"><i class="ri-download-2-line"></i></button>`;
+        if (f.fileType === 'pdf') {
+            actions += `<button class="action-btn" title="Preview &amp; comment" onclick="openPreviewModal('${eventId}','${f.id}')"><i class="ri-chat-3-line"></i></button>`;
+        }
+        if (canCurate) {
+            if (!f.active) actions += `<button class="action-btn" title="Mark active" onclick="markFileActive('${eventId}','${f.id}')"><i class="ri-star-line"></i></button>`;
+            actions += `<button class="action-btn danger" title="Delete file" onclick="deleteFile('${eventId}','${f.id}')"><i class="ri-delete-bin-line"></i></button>`;
+        }
+        return `<div style="display:flex;align-items:center;gap:0.6rem;padding:0.45rem 0.6rem;border-bottom:1px solid var(--border-subtle);${f.active ? 'background:rgba(194,165,109,0.08);' : ''}">
+            ${f.active ? '<span class="role-badge director" style="font-size:0.5rem;">ACTIVE</span>' : '<span style="font-size:0.5rem;color:var(--text-muted);">draft</span>'}
+            <span style="flex:1;font-size:0.72rem;">${escapeHtml(f.fileName || '')}</span>
+            <span style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;">${f.fileType === 'editable' ? 'editable' : 'pdf'}</span>
+            <span style="font-size:0.62rem;color:var(--text-muted);">${escapeHtml(f.uploadedByName || '—')} · ${_toDateStr(f.uploadedAt)}</span>
+            <div style="display:flex;gap:0.3rem;">${actions}</div>
+        </div>`;
+    }).join('') || '<div style="font-size:0.7rem;color:var(--text-muted);padding:0.5rem 0;">No files yet.</div>';
+
+    panel.innerHTML = `
+        ${rows}
+        <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.75rem;">
+            <input type="file" id="upload-file-${eventId}">
+            <select id="upload-file-type-${eventId}" class="filter-select">
+                <option value="pdf">PDF (draft)</option>
+                <option value="editable">Editable copy</option>
+            </select>
+            <button class="modify-btn" onclick="uploadFileToEvent('${eventId}')"><i class="ri-upload-2-line"></i> Add File</button>
+            <span id="upload-status-${eventId}" style="font-size:0.65rem;"></span>
+        </div>`;
+}
+
+function _safeFileName(name) { return name.replace(/[^a-zA-Z0-9._-]/g, '_'); }
+
+// Shared by both "new event + first file" and "add another file to an
+// existing event" — uploads the bytes to Storage, then writes the file's
+// Firestore record (always starts as a draft; call markFileActive
+// separately to promote it).
+async function uploadFileToEventRaw(eventId, file, fileType) {
+    if (!storage) throw new Error('Storage unavailable — reload the page.');
+    const fileId = db.collection('events').doc().id; // random id, no write
+    const storagePath = `events/${eventId}/${fileId}-${_safeFileName(file.name)}`;
+    const ref = storage.ref(storagePath);
+    await ref.put(file);
+    const downloadURL = await ref.getDownloadURL();
+    const fileData = {
+        fileName: file.name, storagePath, downloadURL, fileType,
+        active: false,
+        uploadedBy: currentAdminUid, uploadedByName: _actorName(),
+        uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    await db.collection('events').doc(eventId).collection('files').doc(fileId).set(fileData);
+    return { id: fileId, ...fileData };
+}
+
+async function uploadFileToEvent(eventId) {
+    const input = document.getElementById('upload-file-' + eventId);
+    const typeSel = document.getElementById('upload-file-type-' + eventId);
+    const statusEl = document.getElementById('upload-status-' + eventId);
+    const file = input.files[0];
+    if (!file) { statusEl.textContent = 'Choose a file first.'; statusEl.style.color = '#a04040'; return; }
+    statusEl.textContent = 'Uploading…'; statusEl.style.color = 'var(--text-muted)';
+    try {
+        const hadNoFilesYet = !(filesByEvent[eventId] && filesByEvent[eventId].length);
+        const uploaded = await uploadFileToEventRaw(eventId, file, typeSel.value);
+        if (hadNoFilesYet) await markFileActive(eventId, uploaded.id, true);
+        input.value = '';
+        statusEl.textContent = 'Added.'; statusEl.style.color = 'var(--role-free)';
+        showToast('File added.', 'ok');
+    } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Upload failed: ' + err.message; statusEl.style.color = '#a04040';
+    }
+}
+
+async function markFileActive(eventId, fileId, silent) {
+    try {
+        const files = filesByEvent[eventId] || [];
+        const batch = db.batch();
+        files.forEach(f => {
+            if (f.active && f.id !== fileId) {
+                batch.update(db.collection('events').doc(eventId).collection('files').doc(f.id), { active: false });
+            }
+        });
+        const target = files.find(f => f.id === fileId);
+        batch.update(db.collection('events').doc(eventId).collection('files').doc(fileId), { active: true });
+        batch.update(db.collection('events').doc(eventId), {
+            activeFileId: fileId,
+            activeFileURL: target ? target.downloadURL : null,
+            activeFileName: target ? target.fileName : null,
+            activeFileType: target ? target.fileType : null
+        });
+        await batch.commit();
+        if (!silent) showToast('Marked as active.', 'ok');
+    } catch (err) {
+        console.error(err);
+        showToast('Could not mark active: ' + err.message, 'error');
+    }
+}
+
+async function deleteFile(eventId, fileId) {
+    const f = (filesByEvent[eventId] || []).find(x => x.id === fileId);
+    if (!f) return;
+    if (!confirm(`Delete "${f.fileName}"? This cannot be undone.`)) return;
+    try {
+        if (storage && f.storagePath) {
+            await storage.ref(f.storagePath).delete().catch(err => console.warn('Storage delete failed (continuing):', err));
+        }
+        await db.collection('events').doc(eventId).collection('files').doc(fileId).delete();
+        if (f.active) {
+            await db.collection('events').doc(eventId).update({ activeFileId: null, activeFileURL: null, activeFileName: null, activeFileType: null });
+        }
+        showToast('File deleted.', 'ok');
+    } catch (err) {
+        console.error(err);
+        showToast('Delete failed: ' + err.message, 'error');
+    }
+}
+
+function toggleNewEventForm() {
+    const el = document.getElementById('new-event-form');
+    el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+async function submitNewEvent() {
+    if (!selectedSectionId) return;
+    const statusEl = document.getElementById('new-event-status');
+    const title = document.getElementById('new-event-title').value.trim();
+    const fileInput = document.getElementById('new-event-file');
+    const file = fileInput.files[0];
+    const fileType = document.getElementById('new-event-file-type').value;
+
+    if (!title) { statusEl.textContent = 'Title is required.'; statusEl.style.color = '#a04040'; return; }
+    if (!file)  { statusEl.textContent = 'An initial file is required.'; statusEl.style.color = '#a04040'; return; }
+
+    statusEl.textContent = 'Creating…'; statusEl.style.color = 'var(--text-muted)';
+    try {
+        const eventRef = await db.collection('events').add({
+            sectionId: selectedSectionId,
+            title,
+            subtitle: document.getElementById('new-event-subtitle').value.trim(),
+            owner: document.getElementById('new-event-owner').value.trim(),
+            eventDate: document.getElementById('new-event-date').value || null,
+            tags: document.getElementById('new-event-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+            topicTag: document.getElementById('new-event-topic').value.trim(),
+            description: document.getElementById('new-event-description').value.trim(),
+            status: 'pending', visible: false,
+            activeFileId: null, activeFileURL: null, activeFileName: null, activeFileType: null,
+            createdBy: currentAdminUid, createdByName: _actorName(),
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        const uploaded = await uploadFileToEventRaw(eventRef.id, file, fileType);
+        await eventRef.update({
+            activeFileId: uploaded.id, activeFileURL: uploaded.downloadURL,
+            activeFileName: uploaded.fileName, activeFileType: uploaded.fileType
+        });
+        await eventRef.collection('files').doc(uploaded.id).update({ active: true });
+
+        ['title', 'subtitle', 'owner', 'date', 'tags', 'topic', 'description'].forEach(f => {
+            const el = document.getElementById('new-event-' + f);
+            if (el) el.value = '';
+        });
+        fileInput.value = '';
+        document.getElementById('new-event-form').style.display = 'none';
+        showToast('Event created — awaiting approval.', 'ok');
+    } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Failed: ' + err.message; statusEl.style.color = '#a04040';
+    }
+}
+
+async function approveEvent(eventId) {
+    try {
+        await db.collection('events').doc(eventId).update({
+            status: 'approved', visible: true,
+            approvedBy: currentAdminUid, approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        showToast('Event approved and live.', 'ok');
+    } catch (err) { console.error(err); showToast('Approve failed: ' + err.message, 'error'); }
+}
+
+async function rejectEvent(eventId) {
+    try {
+        await db.collection('events').doc(eventId).update({ status: 'rejected', visible: false });
+        showToast('Event rejected.', 'ok');
+    } catch (err) { console.error(err); showToast('Reject failed: ' + err.message, 'error'); }
+}
+
+async function toggleEventVisible(eventId, newVal) {
+    try {
+        await db.collection('events').doc(eventId).update({ visible: newVal });
+        showToast(newVal ? 'Event shown on site.' : 'Event hidden from site.', 'ok');
+    } catch (err) { console.error(err); showToast('Update failed: ' + err.message, 'error'); }
+}
+
+async function deleteEvent(eventId) {
+    const e = allEvents.find(x => x.id === eventId);
+    if (!e) return;
+    if (!confirm(`Delete "${e.title}" and ALL its files? This cannot be undone.`)) return;
+    try {
+        const files = filesByEvent[eventId] || [];
+        for (const f of files) {
+            if (storage && f.storagePath) {
+                await storage.ref(f.storagePath).delete().catch(err => console.warn('Storage delete failed (continuing):', err));
+            }
+            await db.collection('events').doc(eventId).collection('files').doc(f.id).delete().catch(() => {});
+        }
+        await db.collection('events').doc(eventId).delete();
+        expandedEventIds.delete(eventId);
+        showToast('Event deleted.', 'ok');
+    } catch (err) {
+        console.error(err);
+        showToast('Delete failed: ' + err.message, 'error');
+    }
+}
+
+// ── Preview & Comment modal (PDF.js) ─────────────────────────────────────────
+let previewPdfDoc = null;
+let previewPageNum = 1;
+let previewEventId = null, previewFileId = null;
+let previewCommentsUnsub = null;
+let _previewComments = [];
+
+if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+}
+
+async function openPreviewModal(eventId, fileId) {
+    const f = (filesByEvent[eventId] || []).find(x => x.id === fileId);
+    if (!f) return;
+    previewEventId = eventId;
+    previewFileId = fileId;
+    previewPageNum = 1;
+    document.getElementById('preview-modal-title').textContent = f.fileName;
+    document.getElementById('doc-preview-modal').style.display = 'flex';
+
+    try {
+        previewPdfDoc = await pdfjsLib.getDocument(f.downloadURL).promise;
+        await renderPreviewPage();
+    } catch (err) {
+        console.error(err);
+        showToast('Could not load PDF preview — check Storage CORS config.', 'error');
+    }
+
+    if (previewCommentsUnsub) previewCommentsUnsub();
+    previewCommentsUnsub = db.collection('events').doc(eventId).collection('files').doc(fileId).collection('comments')
+        .onSnapshot((snap) => {
+            _previewComments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderPreviewComments();
+        }, (err) => console.error('Comments listener error:', err));
+}
+
+function closePreviewModal() {
+    document.getElementById('doc-preview-modal').style.display = 'none';
+    if (previewCommentsUnsub) { previewCommentsUnsub(); previewCommentsUnsub = null; }
+    previewPdfDoc = null;
+}
+
+async function renderPreviewPage() {
+    if (!previewPdfDoc) return;
+    const page = await previewPdfDoc.getPage(previewPageNum);
+    const viewport = page.getViewport({ scale: 1.2 });
+    const canvas = document.getElementById('preview-canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    document.getElementById('preview-page-label').textContent = `Page ${previewPageNum} / ${previewPdfDoc.numPages}`;
+    const overlay = document.getElementById('preview-overlay');
+    overlay.style.width = viewport.width + 'px';
+    overlay.style.height = viewport.height + 'px';
+    renderPreviewComments();
+}
+
+function previewPrevPage() { if (previewPageNum > 1) { previewPageNum--; renderPreviewPage(); } }
+function previewNextPage() { if (previewPdfDoc && previewPageNum < previewPdfDoc.numPages) { previewPageNum++; renderPreviewPage(); } }
+
+// Click-drag on the overlay to draw a comment region, prompting for the
+// comment text on release. Wired once at load (the overlay element itself
+// is static markup, always present, just hidden until a preview opens).
+document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('preview-overlay');
+    if (!overlay) return;
+    let startX, startY, box;
+    overlay.addEventListener('mousedown', (e) => {
+        const rect = overlay.getBoundingClientRect();
+        startX = e.clientX - rect.left; startY = e.clientY - rect.top;
+        box = document.createElement('div');
+        box.style.cssText = 'position:absolute;border:2px solid #C2A56D;background:rgba(194,165,109,0.2);pointer-events:none;';
+        box.style.left = startX + 'px'; box.style.top = startY + 'px';
+        overlay.appendChild(box);
+    });
+    overlay.addEventListener('mousemove', (e) => {
+        if (!box) return;
+        const rect = overlay.getBoundingClientRect();
+        const x = e.clientX - rect.left, y = e.clientY - rect.top;
+        box.style.left = Math.min(x, startX) + 'px'; box.style.top = Math.min(y, startY) + 'px';
+        box.style.width = Math.abs(x - startX) + 'px'; box.style.height = Math.abs(y - startY) + 'px';
+    });
+    overlay.addEventListener('mouseup', async () => {
+        if (!box) return;
+        const rect = overlay.getBoundingClientRect();
+        const region = {
+            x: parseFloat(box.style.left) / rect.width,
+            y: parseFloat(box.style.top) / rect.height,
+            width: parseFloat(box.style.width) / rect.width,
+            height: parseFloat(box.style.height) / rect.height
+        };
+        overlay.removeChild(box);
+        box = null;
+        if (region.width < 0.01 || region.height < 0.01) return; // ignore accidental clicks
+        const text = prompt('Add a comment for this area:');
+        if (text && text.trim()) await addPreviewComment(region, text.trim());
+    });
+});
+
+async function addPreviewComment(region, text) {
+    try {
+        await db.collection('events').doc(previewEventId).collection('files').doc(previewFileId).collection('comments').add({
+            authorUid: currentAdminUid, authorName: _actorName(),
+            page: previewPageNum, region, text, resolved: false,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+    } catch (err) {
+        console.error(err);
+        showToast('Could not add comment: ' + err.message, 'error');
+    }
+}
+
+function renderPreviewComments() {
+    const overlay = document.getElementById('preview-overlay');
+    const listEl = document.getElementById('preview-comments-list');
+    if (!overlay || !listEl) return;
+    overlay.querySelectorAll('.comment-marker').forEach(m => m.remove());
+
+    const onPage = _previewComments.filter(c => c.page === previewPageNum);
+    onPage.forEach((c) => {
+        const marker = document.createElement('div');
+        marker.className = 'comment-marker';
+        marker.title = c.text;
+        marker.style.cssText = `position:absolute;left:${c.region.x * 100}%;top:${c.region.y * 100}%;width:${c.region.width * 100}%;height:${c.region.height * 100}%;border:2px solid ${c.resolved ? '#5d8a72' : '#C2A56D'};background:${c.resolved ? 'rgba(93,138,114,0.15)' : 'rgba(194,165,109,0.15)'};`;
+        overlay.appendChild(marker);
+    });
+
+    const canCurate = isHead();
+    listEl.innerHTML = _previewComments.length ? _previewComments.map(c => {
+        const canModify = canCurate || c.authorUid === currentAdminUid;
+        return `<div style="padding:0.5rem;border-bottom:1px solid var(--border-subtle);font-size:0.7rem;${c.resolved ? 'opacity:0.5;' : ''}">
+            <div style="font-weight:600;">p.${c.page} · ${escapeHtml(c.authorName || '')}</div>
+            <div style="margin:0.25rem 0;">${escapeHtml(c.text)}</div>
+            <div style="color:var(--text-muted);font-size:0.6rem;">${c.createdAt && c.createdAt.toDate ? c.createdAt.toDate().toLocaleString() : ''}</div>
+            ${canModify ? `<div style="display:flex;gap:0.4rem;margin-top:0.3rem;">
+                ${!c.resolved ? `<span style="cursor:pointer;color:var(--role-free);" onclick="resolvePreviewComment('${c.id}')">Resolve</span>` : ''}
+                <span style="cursor:pointer;color:#a04040;" onclick="deletePreviewComment('${c.id}')">Delete</span>
+            </div>` : ''}
+        </div>`;
+    }).join('') : '<div style="font-size:0.7rem;color:var(--text-muted);">No comments yet.</div>';
+}
+
+async function resolvePreviewComment(commentId) {
+    try { await db.collection('events').doc(previewEventId).collection('files').doc(previewFileId).collection('comments').doc(commentId).update({ resolved: true }); }
+    catch (err) { showToast(err.message, 'error'); }
+}
+async function deletePreviewComment(commentId) {
+    if (!confirm('Delete this comment?')) return;
+    try { await db.collection('events').doc(previewEventId).collection('files').doc(previewFileId).collection('comments').doc(commentId).delete(); }
+    catch (err) { showToast(err.message, 'error'); }
+}
 // ══ PLANS ══════════════════════════════════════════════════════════════════
 const PLAN_LABELS = { free: 'Free', personal: 'Personal', enterprise: 'Enterprise' };
 let planFilter = 'pending';
